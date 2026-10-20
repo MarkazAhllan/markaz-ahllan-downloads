@@ -1597,6 +1597,9 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .cv-photos button { position: absolute; top: 6px; inset-inline-end: 6px; width: 26px; height: 26px; border-radius: 8px; border: 0; background: rgba(0,0,0,.55); color: #fff; cursor: pointer; }
 .cv-rc { font-size: 12px; font-weight: 800; color: var(--p); text-decoration: none; margin-inline-start: 6px; white-space: nowrap; }
 .cv-row .btn.wa { flex: none; }
+.upd-bar { height: 14px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.upd-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--p), #D14660); border-radius: 99px; transition: width .3s; }
+.upd-p #updPct { font-size: 22px; color: var(--p); }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -10295,7 +10298,7 @@ const SmsLink = {
     const dl = (typeof LICENSE_SERVER !== 'undefined' && LICENSE_SERVER.downloads) || 'https://github.com/MarkazAhllan/markaz-ahllan-downloads/releases/download';
     const mirror = `${dl}/sms/MarkazAhllanSMS.apk`; let url = mirror;
     try { const j = await AppUpdate.info('sms.json'); if (j && /^https?:/.test(j.apk || '')) url = j.apk; } catch (_) {}
-    if (typeof AppUpdate !== 'undefined' && AppUpdate.plugin()) return AppUpdate.install(url, mirror);
+    if (typeof AppUpdate !== 'undefined' && AppUpdate.plugin()) return AppUpdate.install(url, mirror, 'session');
     try { if (window.Capacitor?.Plugins?.Browser) { window.Capacitor.Plugins.Browser.open({ url }); return; } } catch (_) {}
     window.open(url, '_blank');
   },
@@ -10784,22 +10787,28 @@ const AppUpdate = {
       actions: [{ label: L('بعدين', 'Later'), onClick: (m) => m.close() }, { label: L('تحديث الآن', 'Update now'), cls: 'primary', icon: 'download', onClick: (m) => { m.close(); this.install(this.url(j.apk || 'downloads/MarkazAhllanPOS.apk'), j.mirror ? this.url(j.mirror) : null); } }] });
   },
   url(p) { return /^https?:/.test(p) ? p : `${this.site()}/${String(p).replace(/^\//, '')}`; },
-  async install(url, mirror) {
+  async install(url, mirror, mode = 'view') {
     const p = this.plugin();
-    if (p) {
-      try {
-        UI.toast(L('جاري تحميل الملف… هيظهرلك تأكيد التثبيت بعد ثواني', 'Downloading… the install prompt will appear shortly'), 'info', 7000);
-        let r;
-        try { r = await p.install({ url }); }
-        catch (e1) { if (!mirror || mirror === url) throw e1; UI.toast(L('بنجرب السيرفر الاحتياطي…', 'Trying the backup server…'), 'info', 5000); r = await p.install({ url: mirror }); url = mirror; }
-        if (r && r.needPermission) UI.toast(L('فعّل "السماح من هذا المصدر" لتطبيق مركز أهلاً، وارجع اضغط تثبيت تاني', 'Allow installs from this app, then tap install again'), 'warn', 8000);
-      } catch (e) {
-        UI.modal({ title: L('التحميل ما كملش', 'Download failed'), icon: 'alert', size: 'sm', body: `<div style="line-height:1.9">${esc(e.message || String(e))}<div class="faint mt">${L('جرّب تاني — ولو الـ VPN شغال اقفله. أو نزّل التحديث من المتصفح وثبّته (بياناتك هتفضل زي ما هي).', 'Try again, turn off VPN, or download in the browser.')}</div></div>`,
-          actions: [{ label: L('من المتصفح', 'Via browser'), onClick: async (m) => { m.close(); try { await window.Capacitor.Plugins.Browser.open({ url }); } catch (_) { window.open(url, '_blank'); } } }, { label: L('حاول تاني', 'Retry'), cls: 'primary', icon: 'refresh', onClick: (m) => { m.close(); this.install(url, mirror); } }] });
-      }
-      return;
+    if (!p) { try { await window.Capacitor.Plugins.Browser.open({ url }); } catch (_) { window.open(url, '_blank'); } return; }
+    // نافذة تقدّم التحميل — بتوضح النسبة، ولو حاجة اتأخرت فيه زرار تحميل من المتصفح
+    const m = UI.modal({ title: L('جاري تحميل التحديث', 'Downloading update'), icon: 'download', size: 'sm', noClose: true, body: `<div class="upd-p"><div class="upd-bar"><i id="updBar"></i></div><div class="row" style="justify-content:space-between;margin-top:8px"><b id="updPct" class="num">0%</b><span id="updMb" class="faint num"></span></div><div id="updMsg" class="faint mt" style="line-height:1.8">${L('خلّي البرنامج مفتوح لحد ما التحميل يخلص — بعدها هتظهرلك شاشة التثبيت بتاعة أندرويد، اضغط «تحديث».', 'Keep the app open — the Android install screen will appear.')}</div></div>`,
+      actions: [{ label: L('تحميل من المتصفح', 'Download via browser'), onClick: async (x) => { x.close(); try { await window.Capacitor.Plugins.Browser.open({ url }); } catch (_) { window.open(url, '_blank'); } } }, { label: L('إخفاء', 'Hide'), onClick: (x) => x.close() }] });
+    const mb = (b) => (b / 1048576).toFixed(1);
+    let h = null; try { h = await p.addListener('progress', (e) => { const el = $('#updBar', m.el); if (!el) return; const t = Number(e.total) || 0, d = Number(e.done) || 0; const pc = t > 0 ? Math.min(100, Math.floor((d / t) * 100)) : 0; el.style.width = (t > 0 ? pc : 30) + '%'; $('#updPct', m.el).textContent = t > 0 ? pc + '%' : '…'; $('#updMb', m.el).textContent = `${mb(d)}${t > 0 ? ' / ' + mb(t) : ''} MB`; if (e.downloaded) $('#updMsg', m.el).innerHTML = '✅ ' + L('اتحمل — افتح شاشة التثبيت واضغط «تحديث»', 'Downloaded — tap Update on the install screen'); }); } catch (_) {}
+    const done = () => { try { h && h.remove(); } catch (_) {} };
+    try {
+      let r;
+      try { r = await p.install({ url, mode }); }
+      catch (e1) { if (!mirror || mirror === url) throw e1; $('#updMsg', m.el).textContent = L('بنجرب السيرفر الاحتياطي…', 'Trying the backup server…'); r = await p.install({ url: mirror, mode }); url = mirror; }
+      done();
+      if (r && r.needPermission) { m.close(); return UI.toast(L('فعّل «السماح من هذا المصدر» لتطبيق مركز أهلاً، وارجع اضغط «تحديث الآن» تاني', 'Allow installs from this app, then tap Update again'), 'warn', 9000); }
+      const bar = $('#updBar', m.el); if (bar) bar.style.width = '100%'; if ($('#updPct', m.el)) $('#updPct', m.el).textContent = '100%';
+      if ($('#updMsg', m.el)) $('#updMsg', m.el).innerHTML = `✅ ${L('اتحمل. لو شاشة التثبيت ما ظهرتش خلال ثواني، اضغط «تحميل من المتصفح» وثبّت الملف فوق النسخة الحالية (بياناتك هتفضل زي ما هي).', 'Downloaded. If the installer did not appear, use the browser option.')}`;
+    } catch (e) {
+      done(); m.close();
+      UI.modal({ title: L('التحميل ما كملش', 'Download failed'), icon: 'alert', size: 'sm', body: `<div style="line-height:1.9">${esc(e.message || String(e))}<div class="faint mt">${L('جرّب تاني — ولو الـ VPN شغال اقفله. أو نزّل التحديث من المتصفح وثبّته (بياناتك هتفضل زي ما هي).', 'Try again, turn off VPN, or download via the browser.')}</div></div>`,
+        actions: [{ label: L('من المتصفح', 'Via browser'), onClick: async (x) => { x.close(); try { await window.Capacitor.Plugins.Browser.open({ url }); } catch (_) { window.open(url, '_blank'); } } }, { label: L('حاول تاني', 'Retry'), cls: 'primary', icon: 'refresh', onClick: (x) => { x.close(); this.install(url, mirror, mode); } }] });
     }
-    try { await window.Capacitor.Plugins.Browser.open({ url }); } catch (_) { window.open(url, '_blank'); }
   }
 };
 

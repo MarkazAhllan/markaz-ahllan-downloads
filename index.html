@@ -2408,7 +2408,7 @@ const LICENSE_SERVER = {
   desktop: false,   // نسخة الكمبيوتر (اتركها false لتعمل بالترخيص المحلي المربوط بالجهاز)
   graceDays: 7,     // أقصى مدة يشتغل فيها البرنامج بدون ما يتحقق من السيرفر
   checkEveryMin: 30,
-  site: 'https://markaz-ahllan-pos.netlify.app',  // موقع البرنامج على Netlify (منه بتتحمل التحديثات وتطبيق الرسائل)
+  site: 'https://markazahllan.github.io/markaz-ahllan-downloads',  // موقع البرنامج (GitHub Pages — مجاني ومن غير حد استهلاك): صفحة إعداد الرسائل + نسخة الويب + ملفات الإصدار
   downloads: 'https://github.com/MarkazAhllan/markaz-ahllan-downloads/releases/download', // سيرفر التحديثات السريع (GitHub Releases)
 };
 
@@ -8943,7 +8943,8 @@ const SmsLink = {
   },
   async installApp() {
     if (!this.site()) return UI.toast(L('رابط الموقع مش متظبط', 'Site URL not configured'), 'err');
-    const mirror = `${this.site()}/downloads/MarkazAhllanSMS.apk`; let url = mirror;
+    const dl = (typeof LICENSE_SERVER !== 'undefined' && LICENSE_SERVER.downloads) || 'https://github.com/MarkazAhllan/markaz-ahllan-downloads/releases/download';
+    const mirror = `${dl}/sms/MarkazAhllanSMS.apk`; let url = mirror;
     try { const j = await AppUpdate.info('sms.json'); if (j && /^https?:/.test(j.apk || '')) url = j.apk; } catch (_) {}
     if (typeof AppUpdate !== 'undefined' && AppUpdate.plugin()) return AppUpdate.install(url, mirror);
     try { if (window.Capacitor?.Plugins?.Browser) { window.Capacitor.Plugins.Browser.open({ url }); return; } } catch (_) {}

@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5E0F1C">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة المطور — مركز أهلاً</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<!--
+  لوحة المطور — Markaz Ahllan POS
+  مفيش أي أسرار جوه الملف ده: رابط Supabase ومفتاح service_role ومفتاح التوقيع بيتكتبوا مرة واحدة على جهازك
+  وبيتحفظوا مشفّرين (AES-GCM) برقمك السري — من غير الرقم السري محدش يقدر يقراهم حتى لو مسك الجهاز.
+  جميع الحقوق محفوظة للمصمم والمطور - م/ أسامة حسن بدري - 01145060007
+-->
+<style>
+:root{--p:#8B1A2B;--pd:#5E0F1C;--p50:#FBEDEE;--bg:#F6F1F1;--s:#fff;--s2:#FAF6F6;--t:#231719;--t2:#6E6062;--t3:#9a8c8e;--l:#EBDDDF;--ok:#118052;--okb:#E7F6EE;--w:#B86A00;--wb:#FFF4E2;--e:#C62828;--eb:#FDECEC;--i:#1F5FA8;--ib:#E8F0FB;--sh:0 10px 30px rgba(94,15,28,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#120c0d;--s:#1d1416;--s2:#251a1c;--t:#f3e9ea;--t2:#b9a9ab;--t3:#8a7b7d;--l:#3a2a2d;--p50:#3a1820;--okb:#10301f;--wb:#33260f;--eb:#3a1616;--ib:#132338;--sh:0 10px 30px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Cairo',Tahoma,sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.6}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;background:var(--s);border:1.5px solid var(--l);border-radius:12px;padding:11px 14px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--p);box-shadow:0 0 0 4px color-mix(in srgb,var(--p) 14%,transparent)}
+.mono{font-family:ui-monospace,Consolas,monospace;direction:ltr;unicode-bidi:embed}
+.num{font-variant-numeric:tabular-nums}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--l);background:var(--s);border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn.p{background:linear-gradient(135deg,#a3213a,var(--pd));color:#fff;border:0;box-shadow:0 8px 20px rgba(139,26,43,.25)}
+.btn.ok{background:var(--ok);color:#fff;border:0}.btn.e{color:var(--e);border-color:color-mix(in srgb,var(--e) 40%,var(--l))}.btn.wa{background:#25D366;color:#fff;border:0}
+.btn.sm{padding:7px 12px;font-size:13.5px;border-radius:10px}.btn.block{width:100%}
+.btn.ghost{background:transparent;border-color:transparent}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;padding:2px 10px;border-radius:999px;background:var(--s2);color:var(--t2);white-space:nowrap}
+.tag.pending{background:var(--wb);color:var(--w)}.tag.trial{background:var(--ib);color:var(--i)}.tag.active{background:var(--okb);color:var(--ok)}.tag.blocked{background:var(--eb);color:var(--e)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--t3);display:inline-block}.dot.on{background:#19c26b;box-shadow:0 0 0 3px color-mix(in srgb,#19c26b 25%,transparent)}
+.hidden{display:none!important}
+/* lock & setup */
+.center{min-height:100%;display:grid;place-items:center;padding:24px}
+.gate{width:100%;max-width:400px;text-align:center}
+.gate .lg{width:92px;height:92px;border-radius:28px;background:#fff;display:grid;place-items:center;margin:0 auto 14px;box-shadow:var(--sh)}.gate .lg img{width:76px}
+.gate h1{font-size:24px;font-weight:900}.gate p{color:var(--t2);font-size:14px}
+.pin{display:flex;justify-content:center;gap:12px;margin:22px 0 10px}.pin i{width:16px;height:16px;border-radius:50%;border:2px solid var(--p);display:block}.pin i.f{background:var(--p)}
+.pad{direction:ltr;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:300px;margin:16px auto 0}
+.pad button{height:64px;border-radius:20px;border:1.5px solid var(--l);background:var(--s);font-size:24px;font-weight:800;cursor:pointer}
+.pad button:active{background:var(--p50)}
+.shake{animation:sh .4s}@keyframes sh{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.setup{max-width:560px;width:100%;text-align:start}.setup .card{padding:20px}
+.f{margin-bottom:14px}.f label{display:block;font-weight:800;font-size:13.5px;margin-bottom:6px}.f small{color:var(--t3);font-size:12px}
+/* layout */
+.app{display:flex;min-height:100%}
+.side{width:250px;background:linear-gradient(180deg,#6e1424,#3e0912);color:#fff;padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+.side .br{display:flex;gap:10px;align-items:center;margin-bottom:16px}.side .br span{width:46px;height:46px;border-radius:14px;background:#fff;display:grid;place-items:center}.side .br img{width:38px}
+.side .br b{display:block;font-weight:900;line-height:1.2}.side .br small{opacity:.7;font-size:12px}
+.nav a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;color:rgba(255,255,255,.85);text-decoration:none;font-weight:700;cursor:pointer}
+.nav a.on{background:#fff;color:var(--pd)}.nav a .bd{margin-inline-start:auto;background:#F5B300;color:#2a1a00;border-radius:99px;font-size:12px;padding:0 8px;font-weight:900}
+.side .ft{margin-top:auto;font-size:11px;opacity:.6;line-height:1.6}
+main{flex:1;min-width:0;padding:22px 24px 110px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:18px}.top h2{font-size:24px;font-weight:900}.top .sp{flex:1}
+.bnav{display:none}
+@media (max-width:860px){.side{display:none}main{padding:14px 14px 100px}.bnav{display:flex;position:fixed;inset:auto 0 0 0;background:var(--s);border-top:1px solid var(--l);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:20;box-shadow:0 -8px 24px rgba(0,0,0,.06)}
+.bnav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;font-weight:800;color:var(--t2);text-decoration:none;padding:6px 0;border-radius:12px;position:relative;cursor:pointer}.bnav a i{font-style:normal;font-size:21px;line-height:1}
+.bnav a.on{color:var(--p);background:var(--p50)}.bnav .bd{position:absolute;top:2px;inset-inline-end:18%;background:#F5B300;color:#2a1a00;border-radius:99px;font-size:10.5px;padding:0 6px;font-weight:900}.top h2{font-size:20px}}
+/* cards */
+.card{background:var(--s);border:1px solid var(--l);border-radius:20px;box-shadow:var(--sh)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.k{padding:14px 16px;border-radius:18px;background:var(--s);border:1px solid var(--l);cursor:pointer}
+.k small{display:block;color:var(--t2);font-size:12.5px;font-weight:700}.k b{font-size:28px;font-weight:900;line-height:1.3}.k em{font-style:normal;font-size:12px;color:var(--t3)}
+.k.hero{background:linear-gradient(135deg,#a3213a,#4a0b16);color:#fff;border:0}.k.hero small,.k.hero em{color:rgba(255,255,255,.8)}
+.k.w b{color:var(--w)}.k.ok b{color:var(--ok)}.k.e b{color:var(--e)}.k.i b{color:var(--i)}
+.sec{padding:16px 18px;margin-bottom:16px}.sec h3{font-size:16px;font-weight:900;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+.row{display:flex;align-items:center;gap:10px}.wrap{flex-wrap:wrap}
+.it{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;border:1px solid var(--l);background:var(--s2);margin-bottom:8px;cursor:pointer}
+.av{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-weight:900;font-size:17px;background:var(--p50);color:var(--p);flex:none;position:relative}
+.av .dot{position:absolute;bottom:-2px;inset-inline-start:-2px;border:2px solid var(--s)}
+.it .n{flex:1;min-width:0}.it .n b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.it .n small{color:var(--t2);font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{color:var(--t3);text-align:center;padding:18px;font-weight:700}
+.bars{display:flex;align-items:flex-end;gap:4px;height:110px;padding-top:8px}.bars div{flex:1;background:linear-gradient(180deg,#c22a43,#8B1A2B);border-radius:5px 5px 0 0;min-height:3px;position:relative}
+.bars div span{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--t2);font-weight:800}
+.bl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--t3);margin-top:4px}
+/* filters */
+.search{display:flex;align-items:center;gap:8px;background:var(--s);border:1.5px solid var(--l);border-radius:14px;padding:0 12px;margin-bottom:10px}.search input{border:0;box-shadow:none!important;padding:12px 4px;background:transparent}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;scrollbar-width:none}
+.chip{border:1.5px solid var(--l);background:var(--s);border-radius:999px;padding:6px 14px;font-weight:800;font-size:13.5px;cursor:pointer;white-space:nowrap}.chip.on{background:var(--p);border-color:var(--p);color:#fff}
+.dev{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.dc{background:var(--s);border:1px solid var(--l);border-radius:18px;padding:14px;cursor:pointer;border-top:4px solid var(--l)}
+.dc.pending{border-top-color:var(--w)}.dc.trial{border-top-color:var(--i)}.dc.active{border-top-color:var(--ok)}.dc.blocked{border-top-color:var(--e)}
+.dc .h{display:flex;gap:10px;align-items:center}.dc .m{font-size:12.5px;color:var(--t2);margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}
+.dc .acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+/* sheet */
+.ov{position:fixed;inset:0;background:rgba(20,8,10,.45);backdrop-filter:blur(3px);z-index:50;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:.2s}
+.ov.in{opacity:1}.sheet{background:var(--s);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:26px 26px 0 0;padding:8px 18px calc(18px + env(safe-area-inset-bottom));transform:translateY(30px);transition:.25s}
+.ov.in .sheet{transform:none}
+@media (min-width:861px){.ov{align-items:center}.sheet{border-radius:24px}}
+.sheet .gr{width:44px;height:5px;border-radius:9px;background:var(--l);margin:6px auto 12px}
+.sheet h3{font-size:19px;font-weight:900;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin-bottom:14px}.kv span{color:var(--t2)}.kv b{font-weight:800;min-width:0;overflow-wrap:anywhere}
+.ag{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.types button{padding:12px 6px;border-radius:14px;border:1.5px solid var(--l);background:var(--s2);font-weight:800;cursor:pointer}.types button.on{border-color:var(--p);background:var(--p50);color:var(--p)}
+.types button small{display:block;font-size:11px;color:var(--t3);font-weight:700}
+/* toast */
+#toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:8px;width:min(92vw,420px)}
+.toast{background:#231719;color:#fff;border-radius:14px;padding:12px 16px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:tin .25s}.toast.e{background:var(--e)}.toast.ok{background:var(--ok)}
+@keyframes tin{from{transform:translateY(-10px);opacity:0}}
+.log{font-size:13px}.log div{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--l)}.log small{color:var(--t3);white-space:nowrap}
+.links a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;border:1px solid var(--l);margin-bottom:8px;text-decoration:none;color:var(--t);font-weight:700;background:var(--s2)}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--l)}
+.tg{width:50px;height:28px;border-radius:99px;background:var(--l);position:relative;cursor:pointer;flex:none;border:0}.tg::after{content:'';position:absolute;top:3px;inset-inline-start:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.tg.on{background:var(--ok)}.tg.on::after{inset-inline-start:25px}
+.ban{padding:12px 14px;border-radius:14px;font-weight:700;font-size:13.5px;margin-bottom:14px}.ban.w{background:var(--wb);color:var(--w)}.ban.e{background:var(--eb);color:var(--e)}.ban.i{background:var(--ib);color:var(--i)}
+.sig{text-align:center;color:var(--t3);font-size:12px;margin-top:24px}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+
+<!-- قفل -->
+<section id="lock" class="center hidden"><div class="gate">
+  <div class="lg"><img src="icon-192.png" alt=""></div><h1>لوحة المطور</h1><p id="lockMsg">اكتب الرقم السري</p>
+  <div class="pin" id="pinDots"></div>
+  <div class="pad" id="pad"></div>
+  <button class="btn ghost sm" id="forget" style="margin-top:18px;color:var(--t3)">نسيت الرقم السري؟ مسح البيانات من الجهاز ده</button>
+</div></section>
+
+<!-- إعداد أول مرة -->
+<section id="setup" class="center hidden"><div class="gate setup">
+  <div style="text-align:center"><div class="lg"><img src="icon-192.png" alt=""></div><h1>إعداد لوحة المطور</h1><p>مرة واحدة بس على كل جهاز — البيانات بتتحفظ مشفّرة برقمك السري</p></div>
+  <div class="card mt" style="margin-top:16px">
+    <div class="f"><label>رابط Supabase (Project URL)</label><input id="sUrl" class="mono" value="https://inxlleknypxzegzgzmfl.supabase.co"></div>
+    <div class="f"><label>مفتاح service_role</label><input id="sKey" class="mono" type="password" autocomplete="off" placeholder="eyJhbGciOi…"><small>Supabase ← Project Settings ← API Keys ← service_role (Reveal ← Copy)</small></div>
+    <div class="f"><label>مفتاح التوقيع الخاص (محتوى private-key.jwk.json)</label><textarea id="sJwk" class="mono" rows="3" placeholder='{"kty":"EC","crv":"P-256",...}'></textarea><small>من غيره تقدر تتابع وتوقف بس — التفعيل محتاجه</small></div>
+    <div class="f"><label>رقم سري للوحة (4 لـ 8 أرقام)</label><input id="sPin" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password"></div>
+    <div class="f"><label>تأكيد الرقم السري</label><input id="sPin2" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password"></div>
+    <button class="btn p block" id="sSave">🔐 حفظ وتشغيل</button>
+    <p id="sMsg" style="margin-top:10px;font-weight:700"></p>
+  </div>
+  <p class="sig">جميع الحقوق محفوظة للمصمم والمطور — م/ أسامة حسن بدري — 01145060007</p>
+</div></section>
+
+<!-- التطبيق -->
+<div id="app" class="app hidden">
+  <aside class="side">
+    <div class="br"><span><img src="icon-192.png" alt=""></span><div><b>لوحة المطور</b><small>Markaz Ahllan POS</small></div></div>
+    <nav class="nav" id="sideNav"></nav>
+    <div class="ft">جميع الحقوق محفوظة للمصمم والمطور<br>م/ أسامة حسن بدري — 01145060007</div>
+  </aside>
+  <main>
+    <div class="top"><h2 id="pTitle">الرئيسية</h2><span class="sp"></span><span id="stamp" class="tag"></span><button class="btn sm" id="rf" title="تحديث">🔄</button><button class="btn sm" id="lk" title="قفل">🔒</button></div>
+    <div id="view"></div>
+  </main>
+  <nav class="bnav" id="botNav"></nav>
+</div>
+
+<script>
+'use strict';
+/* ================= أدوات ================= */
+const PUB = { x: 'UtI7zoZqolmSiqBtCa6wxUvGLk9Ekffv6G2mCGbCVDg', y: 'TgfCr6egICsVfUuJZaFM9owSq8CnsFlKc5jMhassi_0' };
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const LS = { get(k, d = null) { try { const v = localStorage.getItem('mahdev:' + k); return v == null ? d : JSON.parse(v); } catch (_) { return d; } }, set(k, v) { try { localStorage.setItem('mahdev:' + k, JSON.stringify(v)); } catch (_) {} }, del(k) { try { localStorage.removeItem('mahdev:' + k); } catch (_) {} } };
+const ST = { pending: 'بانتظار موافقتك', trial: 'تجربة', active: 'مفعّل', blocked: 'موقوف' };
+const TN = { full: 'دائم', year: 'سنوي', half: '6 شهور', month: 'شهري', custom: 'مخصص' };
+const PL = { android: 'أندرويد', pwa: 'تطبيق ويب', web: 'متصفح', desktop: 'كمبيوتر' };
+const fmt = (d) => (d ? new Date(d).toLocaleString('ar-EG-u-nu-latn', { dateStyle: 'medium', timeStyle: 'short' }) : '—');
+const fdate = (d) => (d ? new Date(d).toLocaleDateString('ar-EG-u-nu-latn', { dateStyle: 'medium' }) : '—');
+const ago = (d) => { if (!d) return '—'; const m = Math.round((Date.now() - Date.parse(d)) / 6e4); if (m < 1) return 'دلوقتي'; if (m < 60) return `من ${m} دقيقة`; const h = Math.round(m / 60); if (h < 24) return `من ${h} ساعة`; const dd = Math.round(h / 24); return `من ${dd} يوم`; };
+const online = (r) => r.last_seen && Date.now() - Date.parse(r.last_seen) < 40 * 6e4;
+const waNum = (p) => { p = String(p || '').replace(/\D/g, ''); return p.startsWith('00') ? p.slice(2) : p.startsWith('0') ? '2' + p : p; };
+function toast(t, k = '') { const d = document.createElement('div'); d.className = 'toast ' + k; d.textContent = t; $('#toasts').appendChild(d); setTimeout(() => d.remove(), 3800); }
+function beep() { try { const a = new (window.AudioContext || window.webkitAudioContext)(); [0, .18].forEach((t, i) => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = i ? 1046 : 784; g.gain.setValueAtTime(.18, a.currentTime + t); g.gain.exponentialRampToValueAtTime(.001, a.currentTime + t + .16); o.connect(g).connect(a.destination); o.start(a.currentTime + t); o.stop(a.currentTime + t + .17); }); } catch (_) {} }
+
+/* ================= الخزنة المشفّرة ================= */
+const b64 = (u8) => btoa(String.fromCharCode(...new Uint8Array(u8))), ub64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+async function kdf(pin, salt) { const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveKey']); return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 250000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']); }
+async function seal(pin, obj) { const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)); const k = await kdf(pin, salt); const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, k, new TextEncoder().encode(JSON.stringify(obj))); LS.set('vault', { s: b64(salt), i: b64(iv), c: b64(ct) }); }
+async function unseal(pin) { const v = LS.get('vault'); if (!v) throw 0; const k = await kdf(pin, ub64(v.s)); const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: ub64(v.i) }, k, ub64(v.c)); return JSON.parse(new TextDecoder().decode(pt)); }
+let SEC = null; // في الذاكرة بس بعد فتح القفل
+
+/* ================= التوقيع (نفس صيغة البرنامج MAH1) ================= */
+const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+async function sign(payload) {
+  if (!SEC.jwk) throw new Error('مفتاح التوقيع مش متسجل — ضيفه من الإعدادات');
+  const k = await crypto.subtle.importKey('jwk', SEC.jwk, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
+  const p = b64u(new TextEncoder().encode(JSON.stringify(payload)));
+  const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, k, new TextEncoder().encode(p));
+  return 'MAH1-' + p + '.' + b64u(sig);
+}
+function checkJwk(t) { if (!t) return null; const o = JSON.parse(t); if (o.x !== PUB.x || o.y !== PUB.y || !o.d) throw new Error('مفتاح التوقيع مش بتاع البرنامج ده'); return { kty: 'EC', crv: 'P-256', x: o.x, y: o.y, d: o.d, ext: true }; }
+
+/* ================= API ================= */
+async function api(path, opts = {}) {
+  const r = await fetch(SEC.url.replace(/\/$/, '') + '/rest/v1/' + path, { ...opts, headers: { apikey: SEC.key, Authorization: 'Bearer ' + SEC.key, 'Content-Type': 'application/json', Prefer: 'return=representation', ...(opts.headers || {}) } });
+  if (!r.ok) throw new Error((await r.text()) || 'HTTP ' + r.status);
+  const t = await r.text(); return t ? JSON.parse(t) : null;
+}
+async function count(table) { try { const r = await fetch(SEC.url.replace(/\/$/, '') + '/rest/v1/' + table + '?select=*', { method: 'HEAD', headers: { apikey: SEC.key, Authorization: 'Bearer ' + SEC.key, Prefer: 'count=exact', 'Range-Unit': 'items', Range: '0-0' } }); const cr = r.headers.get('content-range') || ''; const n = cr.split('/')[1]; return r.ok && n && n !== '*' ? Number(n) : null; } catch (_) { return null; } }
+const patch = (mid, body) => api('pos_devices?mid=eq.' + encodeURIComponent(mid), { method: 'PATCH', body: JSON.stringify(body) });
+function logAct(t) { const l = LS.get('log', []); l.unshift({ t, at: Date.now() }); LS.set('log', l.slice(0, 300)); }
+
+/* ================= القفل ================= */
+let pin = '';
+function showLock(msg) { SEC = null; ['app', 'setup'].forEach((i) => $('#' + i).classList.add('hidden')); $('#lock').classList.remove('hidden'); $('#lockMsg').textContent = msg || 'اكتب الرقم السري'; pin = ''; dots(); }
+function dots() { $('#pinDots').innerHTML = Array.from({ length: Math.max(4, pin.length) }, (_, i) => `<i class="${i < pin.length ? 'f' : ''}"></i>`).join(''); }
+$('#pad').innerHTML = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '⌫', '0', '✓'].map((k) => `<button data-k="${k}">${k}</button>`).join('');
+$$('#pad button').forEach((b) => (b.onclick = () => key(b.dataset.k)));
+document.addEventListener('keydown', (e) => { if ($('#lock').classList.contains('hidden')) return; if (/^\d$/.test(e.key)) key(e.key); if (e.key === 'Backspace') key('⌫'); if (e.key === 'Enter') key('✓'); });
+async function key(k) {
+  if (k === '⌫') pin = pin.slice(0, -1); else if (k === '✓') return tryPin(); else if (pin.length < 8) pin += k;
+  dots(); if (pin.length >= 4 && pin.length === (LS.get('pinLen') || 0)) tryPin();
+}
+async function tryPin() {
+  try { SEC = await unseal(pin); LS.set('fails', 0); $('#lock').classList.add('hidden'); startApp(); }
+  catch (_) { const f = (LS.get('fails', 0) || 0) + 1; LS.set('fails', f); $('#pinDots').classList.add('shake'); setTimeout(() => $('#pinDots').classList.remove('shake'), 400); pin = ''; dots(); $('#lockMsg').textContent = f >= 5 ? `رقم غلط (${f} مرات) — استنى شوية وجرّب` : 'الرقم السري غلط'; if (f >= 5) { $('#pad').style.pointerEvents = 'none'; setTimeout(() => ($('#pad').style.pointerEvents = ''), 30000); } }
+}
+$('#forget').onclick = () => { if (confirm('هيتمسح رابط Supabase والمفاتيح من الجهاز ده بس (السيرفر وأجهزة العملاء مش هيتأثروا). متأكد؟')) { ['vault', 'pinLen', 'fails', 'known'].forEach(LS.del); location.reload(); } };
+let hiddenAt = 0;
+document.addEventListener('visibilitychange', () => { if (document.hidden) hiddenAt = Date.now(); else if (SEC && hiddenAt && Date.now() - hiddenAt > (LS.get('lockMin', 3) * 6e4)) showLock('اتقفلت تلقائياً — اكتب الرقم السري'); });
+
+/* ================= الإعداد ================= */
+$('#sSave').onclick = async () => {
+  const m = $('#sMsg'); const url = $('#sUrl').value.trim(), key = $('#sKey').value.trim(), p1 = $('#sPin').value.trim(), p2 = $('#sPin2').value.trim();
+  try {
+    if (!/^https:\/\/.+supabase\.co\/?$/.test(url)) throw new Error('رابط Supabase مش مظبوط');
+    if (key.length < 40) throw new Error('الصق مفتاح service_role كامل');
+    if (!/^\d{4,8}$/.test(p1)) throw new Error('الرقم السري لازم يكون من 4 لـ 8 أرقام'); if (p1 !== p2) throw new Error('الرقمين السريين مش زي بعض');
+    const jwk = checkJwk($('#sJwk').value.trim());
+    SEC = { url, key, jwk }; m.textContent = '⏳ بنجرب الاتصال…'; m.style.color = 'var(--t2)';
+    await api('pos_license_config?id=eq.1');
+    await seal(p1, SEC); LS.set('pinLen', p1.length); ['sKey', 'sJwk', 'sPin', 'sPin2'].forEach((i) => ($('#' + i).value = ''));
+    $('#setup').classList.add('hidden'); startApp(); toast('تمام ✓ اللوحة جاهزة', 'ok');
+  } catch (e) { SEC = null; m.textContent = '⚠️ ' + (e.message.includes('JWT') || e.message.includes('Invalid') ? 'مفتاح service_role غلط' : e.message); m.style.color = 'var(--e)'; }
+};
+
+/* ================= البيانات ================= */
+let ROWS = [], CFG = {}, TAB = LS.get('tab', 'home'), FIL = 'all', Q = '', loading = false;
+async function load(silent) {
+  if (loading || !SEC) return; loading = true;
+  try {
+    const [rows, cfg] = await Promise.all([api('pos_devices?select=*&order=created_at.desc'), api('pos_license_config?id=eq.1')]);
+    ROWS = rows || []; CFG = (cfg || [])[0] || {}; $('#stamp').textContent = '🟢 ' + new Date().toLocaleTimeString('ar-EG-u-nu-latn', { hour: '2-digit', minute: '2-digit' });
+    notifyNew(); draw();
+  } catch (e) { $('#stamp').textContent = '🔴 مفيش اتصال'; if (!silent) toast('تعذر الاتصال: ' + e.message.slice(0, 120), 'e'); }
+  loading = false;
+}
+function notifyNew() {
+  const known = new Set(LS.get('known', [])); const first = !known.size;
+  const fresh = ROWS.filter((r) => !known.has(r.mid)); ROWS.forEach((r) => known.add(r.mid)); LS.set('known', [...known]);
+  if (first || !fresh.length) return;
+  beep(); fresh.forEach((r) => { toast(`🆕 جهاز جديد: ${r.store_name || ''} — ${r.phone || ''}`, 'ok'); try { if (Notification.permission === 'granted') new Notification('جهاز جديد سجّل 🆕', { body: `${r.store_name || ''} — ${r.owner_name || ''} — ${r.phone || ''}`, icon: 'icon-192.png', tag: r.mid }); } catch (_) {} });
+}
+const isExp = (r) => r.status === 'active' && r.expires_at && Date.parse(r.expires_at) - Date.now() < 7 * 864e5;
+const trialLeft = (r) => (r.status === 'trial' && r.trial_start ? Date.parse(r.trial_start) + (r.trial_hours || 72) * 36e5 - Date.now() : null);
+const need = () => ROWS.filter((r) => r.status === 'pending' || isExp(r) || (trialLeft(r) != null && trialLeft(r) < 24 * 36e5));
+
+/* ================= الواجهة ================= */
+const TABS = [['home', '🏠', 'الرئيسية'], ['devices', '📱', 'الأجهزة'], ['settings', '⚙️', 'الإعدادات'], ['server', '🗄️', 'السيرفر'], ['log', '📜', 'السجل']];
+function nav() {
+  const p = ROWS.filter((r) => r.status === 'pending').length;
+  const h = (cls) => TABS.map(([k, e, l]) => `<a data-t="${k}" class="${TAB === k ? 'on' : ''}">${cls === 's' ? `<span>${e}</span><span>${l}</span>` : `<i>${e}</i>${l}`}${k === 'devices' && p ? `<span class="bd">${p}</span>` : ''}</a>`).join('');
+  $('#sideNav').innerHTML = h('s'); $('#botNav').innerHTML = h('b');
+  $$('[data-t]').forEach((a) => (a.onclick = () => { TAB = a.dataset.t; LS.set('tab', TAB); draw(); window.scrollTo(0, 0); }));
+}
+function draw() { nav(); $('#pTitle').textContent = (TABS.find((t) => t[0] === TAB) || TABS[0])[2]; ({ home, devices, settings, server, log })[TAB](); }
+function item(r, right = '') { return `<div class="it" data-m="${esc(r.mid)}"><span class="av">${esc((r.store_name || '?').trim()[0] || '?')}<i class="dot ${online(r) ? 'on' : ''}"></i></span><div class="n"><b>${esc(r.store_name || '—')}</b><small>${esc(r.owner_name || '')} · <span class="mono">${esc(r.phone || '')}</span></small></div>${right || `<span class="tag ${r.status}">${ST[r.status]}</span>`}</div>`; }
+function bindItems() { $$('[data-m]').forEach((d) => (d.onclick = (e) => { if (e.target.closest('button')) return; openDev(d.dataset.m); })); }
+
+function home() {
+  const c = (s) => ROWS.filter((r) => r.status === s).length; const on = ROWS.filter(online).length;
+  const today = ROWS.filter((r) => Date.now() - Date.parse(r.created_at) < 864e5).length;
+  const exp = ROWS.filter(isExp).length; const n = need();
+  const days = Array.from({ length: 14 }, (_, i) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (13 - i)); return d; });
+  const per = days.map((d) => ROWS.filter((r) => { const x = new Date(r.created_at); return x >= d && x < new Date(+d + 864e5); }).length); const mx = Math.max(1, ...per);
+  const plat = {}; ROWS.forEach((r) => (plat[r.platform || 'web'] = (plat[r.platform || 'web'] || 0) + 1));
+  const vers = {}; ROWS.filter((r) => r.app_version).forEach((r) => (vers[r.app_version] = (vers[r.app_version] || 0) + 1));
+  $('#view').innerHTML = `${CFG.auto_trial ? '<div class="ban i">ℹ️ التجربة التلقائية شغالة — أي جهاز جديد بياخد تجربة لوحده</div>' : ''}
+    <div class="kpis">
+      <div class="k hero" data-f="all"><small>كل الأجهزة</small><b class="num">${ROWS.length}</b><em>🟢 ${on} شغالين دلوقتي</em></div>
+      <div class="k w" data-f="pending"><small>⏳ بانتظار موافقتك</small><b class="num">${c('pending')}</b><em>${today ? `${today} جديد النهارده` : 'مفيش جديد النهارده'}</em></div>
+      <div class="k i" data-f="trial"><small>🧪 تجربة</small><b class="num">${c('trial')}</b></div>
+      <div class="k ok" data-f="active"><small>✅ مفعّل</small><b class="num">${c('active')}</b><em>${exp ? `⚠️ ${exp} بيخلص خلال أسبوع` : 'كله تمام'}</em></div>
+      <div class="k e" data-f="blocked"><small>⛔ موقوف</small><b class="num">${c('blocked')}</b></div>
+    </div>
+    <div class="grid2">
+      <div class="card sec"><h3>🔔 محتاج منك تصرّف <span class="tag">${n.length}</span></h3>${n.length ? n.slice(0, 12).map((r) => item(r, r.status === 'pending' ? `<button class="btn ok sm" data-qa="${esc(r.mid)}">تفعيل</button>` : isExp(r) ? `<span class="tag pending">ينتهي ${fdate(r.expires_at)}</span>` : `<span class="tag trial">التجربة ${Math.max(0, Math.round(trialLeft(r) / 36e5))} س</span>`)).join('') : '<div class="empty">✨ مفيش حاجة مستنياك</div>'}</div>
+      <div class="card sec"><h3>📈 التسجيلات آخر 14 يوم</h3><div class="bars">${per.map((v) => `<div style="height:${Math.round((v / mx) * 100)}%">${v ? `<span>${v}</span>` : ''}</div>`).join('')}</div><div class="bl"><span>${fdate(days[0])}</span><span>النهارده</span></div>
+        <h3 style="margin-top:18px">💻 الأنظمة</h3><div class="row wrap">${Object.entries(plat).map(([k, v]) => `<span class="tag">${PL[k] || esc(k)}: ${v}</span>`).join('') || '—'}</div>
+        <h3 style="margin-top:14px">🏷️ الإصدارات</h3><div class="row wrap">${Object.entries(vers).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, v]) => `<span class="tag mono">${esc(k)} × ${v}</span>`).join('') || '—'}</div></div>
+    </div>
+    <div class="card sec"><h3>🕓 آخر الأجهزة اللي سجّلت</h3>${ROWS.slice(0, 6).map((r) => item(r)).join('') || '<div class="empty">مفيش أجهزة لسه</div>'}</div>
+    <p class="sig">جميع الحقوق محفوظة للمصمم والمطور — م/ أسامة حسن بدري — 01145060007</p>`;
+  $$('.k[data-f]').forEach((k) => (k.onclick = () => { FIL = k.dataset.f; TAB = 'devices'; draw(); }));
+  $$('[data-qa]').forEach((b) => (b.onclick = () => activate(ROWS.find((r) => r.mid === b.dataset.qa))));
+  bindItems();
+}
+
+function devices() {
+  const F = [['all', 'الكل'], ['pending', 'بانتظار موافقتك'], ['trial', 'تجربة'], ['active', 'مفعّل'], ['exp', 'بيخلص قريب'], ['blocked', 'موقوف'], ['online', '🟢 شغال دلوقتي']];
+  const q = Q.trim().toLowerCase();
+  const ls = ROWS.filter((r) => (FIL === 'all' || (FIL === 'exp' ? isExp(r) || (trialLeft(r) != null && trialLeft(r) < 24 * 36e5) : FIL === 'online' ? online(r) : r.status === FIL)) && (!q || [r.store_name, r.owner_name, r.phone, r.mid, r.note, r.app_version].join(' ').toLowerCase().includes(q)));
+  $('#view').innerHTML = `<div class="search">🔍<input id="q" placeholder="ابحث بالمحل أو الاسم أو الموبايل أو كود الجهاز…" value="${esc(Q)}"><button class="btn sm ghost" id="csv" title="تصدير">⬇️ CSV</button></div>
+    <div class="chips">${F.map(([k, l]) => `<button class="chip ${FIL === k ? 'on' : ''}" data-fl="${k}">${l}</button>`).join('')}</div>
+    <div class="dev">${ls.map((r) => { const tl = trialLeft(r); return `<div class="dc ${r.status}" data-m="${esc(r.mid)}">
+      <div class="h"><span class="av">${esc((r.store_name || '?').trim()[0] || '?')}<i class="dot ${online(r) ? 'on' : ''}"></i></span><div style="flex:1;min-width:0"><b style="display:block">${esc(r.store_name || '—')}</b><small style="color:var(--t2)">${esc(r.owner_name || '')}</small></div><span class="tag ${r.status}">${ST[r.status]}</span></div>
+      <div class="m"><span>📞 <span class="mono">${esc(r.phone || '')}</span></span><span>💻 ${PL[r.platform] || esc(r.platform || '')} ${r.app_version ? `<span class="mono">${esc(r.app_version)}</span>` : ''}</span>
+        <span>🕓 ${ago(r.last_seen)}</span><span>${r.status === 'active' ? `🔑 ${TN[r.license_type] || ''} ${r.expires_at ? '— ' + fdate(r.expires_at) : '— دائم'}` : tl != null ? `🧪 ${tl > 0 ? 'باقي ' + Math.round(tl / 36e5) + ' ساعة' : 'التجربة خلصت'}` : `📅 ${fdate(r.created_at)}`}</span></div>
+      ${r.note ? `<div style="font-size:12.5px;margin-top:6px;color:var(--t2)">📝 ${esc(r.note)}</div>` : ''}
+      <div class="acts">${r.status !== 'active' ? `<button class="btn ok sm" data-a="act">✅ تفعيل</button>` : `<button class="btn sm" data-a="act">🔁 تجديد</button>`}${r.status === 'pending' ? `<button class="btn sm" data-a="trial">🧪 تجربة</button>` : ''}<button class="btn wa sm" data-a="wa">💬</button><button class="btn sm" data-a="call">📞</button></div></div>`; }).join('') || '<div class="empty">مفيش أجهزة مطابقة</div>'}</div>`;
+  $('#q').oninput = (e) => { Q = e.target.value; const p = e.target.selectionStart; devices(); const i = $('#q'); i.focus(); i.setSelectionRange(p, p); };
+  $$('[data-fl]').forEach((b) => (b.onclick = () => { FIL = b.dataset.fl; devices(); }));
+  $('#csv').onclick = () => exportCsv(ls);
+  $$('.dc').forEach((d) => (d.onclick = (e) => { const b = e.target.closest('[data-a]'); const r = ROWS.find((x) => x.mid === d.dataset.m); if (!b) return openDev(r.mid); act(b.dataset.a, r); }));
+}
+
+function exportCsv(ls) {
+  const cols = [['store_name', 'المحل'], ['owner_name', 'المالك'], ['phone', 'الموبايل'], ['mid', 'كود الجهاز'], ['platform', 'النظام'], ['app_version', 'الإصدار'], ['status', 'الحالة'], ['license_type', 'الترخيص'], ['expires_at', 'ينتهي'], ['created_at', 'سجّل'], ['last_seen', 'آخر ظهور'], ['note', 'ملاحظة']];
+  const csv = '﻿' + [cols.map((c) => c[1]).join(','), ...ls.map((r) => cols.map(([k]) => `"${String((k === 'status' ? ST[r[k]] : r[k]) ?? '').replace(/"/g, '""')}"`).join(','))].join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'markaz-devices-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+}
+
+/* ================= تفاصيل الجهاز ================= */
+function sheet(html, onOpen) {
+  const ov = document.createElement('div'); ov.className = 'ov'; ov.innerHTML = `<div class="sheet"><div class="gr"></div>${html}</div>`;
+  document.body.appendChild(ov); requestAnimationFrame(() => ov.classList.add('in'));
+  const close = () => { ov.classList.remove('in'); setTimeout(() => ov.remove(), 200); };
+  ov.addEventListener('click', (e) => { if (e.target === ov) close(); });
+  onOpen && onOpen(ov, close); return close;
+}
+function openDev(mid) {
+  const r = ROWS.find((x) => x.mid === mid); if (!r) return; const tl = trialLeft(r);
+  sheet(`<h3><span class="av">${esc((r.store_name || '?').trim()[0])}<i class="dot ${online(r) ? 'on' : ''}"></i></span>${esc(r.store_name || '—')} <span class="tag ${r.status}">${ST[r.status]}</span></h3>
+    <div class="kv"><span>المالك</span><b>${esc(r.owner_name || '—')}</b><span>الموبايل</span><b class="mono">${esc(r.phone || '—')}</b><span>كود الجهاز</span><b class="mono" id="cpMid" style="cursor:pointer">${esc(r.mid)} 📋</b>
+      <span>النظام</span><b>${PL[r.platform] || esc(r.platform || '—')} ${r.app_version ? `<span class="mono">${esc(r.app_version)}</span>` : ''}</b>
+      <span>الحالة</span><b>${r.status === 'active' ? `${TN[r.license_type] || ''} — ${r.expires_at ? 'لحد ' + fdate(r.expires_at) : 'دائم'}` : tl != null ? (tl > 0 ? `تجربة — باقي ${Math.round(tl / 36e5)} ساعة` : 'التجربة خلصت') : ST[r.status]}</b>
+      <span>سجّل</span><b>${fmt(r.created_at)}</b><span>آخر ظهور</span><b>${online(r) ? '🟢 ' : ''}${fmt(r.last_seen)} (${ago(r.last_seen)})</b><span>مرات الفحص</span><b class="num">${r.checks ?? 0}</b>
+      ${r.note ? `<span>ملاحظة</span><b>${esc(r.note)}</b>` : ''}</div>
+    <div class="ag">
+      ${r.status !== 'active' ? '<button class="btn ok" data-a="act">✅ تفعيل</button>' : '<button class="btn p" data-a="act">🔁 تجديد / تغيير المدة</button>'}
+      ${r.status !== 'active' ? '<button class="btn" data-a="trial">🧪 تجربة</button>' : '<button class="btn" data-a="trial">🧪 تحويل لتجربة</button>'}
+      <button class="btn wa" data-a="wa">💬 واتساب</button><button class="btn" data-a="call">📞 اتصال</button>
+      <button class="btn" data-a="note">📝 ملاحظة / اسم</button>
+      ${r.status !== 'blocked' ? '<button class="btn e" data-a="block">⛔ إيقاف</button>' : '<button class="btn" data-a="unblock">▶️ إلغاء الإيقاف</button>'}
+      <button class="btn e" data-a="del" style="grid-column:1/-1">🗑️ حذف الجهاز من السيرفر</button>
+    </div>`, (ov, close) => {
+    $('#cpMid', ov).onclick = () => { navigator.clipboard?.writeText(r.mid).then(() => toast('اتنسخ كود الجهاز', 'ok')); };
+    $$('[data-a]', ov).forEach((b) => (b.onclick = () => { close(); act(b.dataset.a, r); }));
+  });
+}
+
+async function act(a, r) {
+  try {
+    if (a === 'act') return activate(r);
+    if (a === 'trial') return trialDlg(r);
+    if (a === 'wa') return waDlg(r);
+    if (a === 'call') return (location.href = 'tel:' + String(r.phone || '').replace(/[^\d+]/g, ''));
+    if (a === 'note') return noteDlg(r);
+    if (a === 'block') { if (!confirm(`إيقاف البرنامج على جهاز «${r.store_name}»؟\nهيتقفل خلال 30 دقيقة أو عند الفتح الجاي.`)) return; await patch(r.mid, { status: 'blocked' }); logAct(`⛔ إيقاف ${r.store_name}`); toast('اتوقف ⛔'); }
+    if (a === 'unblock') { await patch(r.mid, { status: r.license_key && (!r.expires_at || Date.parse(r.expires_at) > Date.now()) ? 'active' : 'pending' }); logAct(`▶️ إلغاء إيقاف ${r.store_name}`); toast('اتلغى الإيقاف', 'ok'); }
+    if (a === 'del') { if (!confirm(`حذف «${r.store_name}» من السيرفر؟\nالبرنامج عنده هيرجع لشاشة التسجيل.`)) return; await api('pos_devices?mid=eq.' + encodeURIComponent(r.mid), { method: 'DELETE' }); logAct(`🗑️ حذف ${r.store_name} (${r.mid})`); toast('اتحذف'); }
+    await load();
+  } catch (e) { toast('خطأ: ' + e.message.slice(0, 140), 'e'); }
+}
+
+function activate(r) {
+  if (!r) return; const cur = r.status === 'active' && r.expires_at && Date.parse(r.expires_at) > Date.now();
+  let type = r.license_type && r.license_type !== 'custom' ? r.license_type : 'month';
+  sheet(`<h3>✅ ${cur ? 'تجديد' : 'تفعيل'} — ${esc(r.store_name || '')}</h3>
+    ${cur ? `<div class="ban i">الترخيص الحالي ساري لحد ${fdate(r.expires_at)} — المدة الجديدة هتتضاف بعده</div>` : ''}
+    ${!SEC.jwk ? '<div class="ban e">⚠️ مفتاح التوقيع مش متسجل على الجهاز ده — ضيفه من الإعدادات الأول</div>' : ''}
+    <div class="types">${[['month', 'شهري', '30 يوم'], ['half', '6 شهور', '182 يوم'], ['year', 'سنوي', '365 يوم'], ['full', 'دائم', 'من غير انتهاء'], ['custom', 'مخصص', 'عدد أيام']].map(([k, l, s]) => `<button data-ty="${k}" class="${type === k ? 'on' : ''}">${l}<small>${s}</small></button>`).join('')}</div>
+    <div class="f ${type === 'custom' ? '' : 'hidden'}" id="cd"><label>عدد الأيام</label><input id="days" type="number" inputmode="numeric" value="15"></div>
+    <div class="f"><label>اسم المحل (بيظهر في البرنامج)</label><input id="nm" value="${esc(r.store_name || '')}"></div>
+    <div class="f"><label>ملاحظة (اختياري) — مثلاً: دفع 300 فودافون كاش</label><input id="nt" value="${esc(r.note || '')}"></div>
+    <div id="pv" class="ban i"></div>
+    <button class="btn p block" id="go">🔑 ${cur ? 'تجديد' : 'تفعيل'} وإرسال</button>`, (ov, close) => {
+    const days = () => (type === 'custom' ? Math.max(1, Number($('#days', ov).value) || 30) : ({ full: 0, year: 365, half: 182, month: 30 })[type]);
+    const base = () => (cur ? Date.parse(r.expires_at) : Date.now());
+    const pv = () => { const d = days(); $('#pv', ov).textContent = d ? `هيبقى ساري لحد ${fdate(base() + d * 864e5)}` : 'ترخيص دائم من غير تاريخ انتهاء'; };
+    $$('[data-ty]', ov).forEach((b) => (b.onclick = () => { type = b.dataset.ty; $$('[data-ty]', ov).forEach((x) => x.classList.toggle('on', x === b)); $('#cd', ov).classList.toggle('hidden', type !== 'custom'); pv(); }));
+    $('#days', ov).oninput = pv; pv();
+    $('#go', ov).onclick = async () => {
+      const b = $('#go', ov); b.disabled = true; b.textContent = '⏳ جاري التفعيل…';
+      try {
+        const d = days(); const e = d ? base() + d * 864e5 : 0;
+        const key = await sign({ n: $('#nm', ov).value.trim() || r.store_name, m: r.mid, t: type === 'custom' ? 'month' : type, e, i: Date.now() });
+        await patch(r.mid, { status: 'active', license_key: key, license_type: type, expires_at: e ? new Date(e).toISOString() : null, note: $('#nt', ov).value.trim() || null, store_name: $('#nm', ov).value.trim() || r.store_name });
+        logAct(`✅ ${cur ? 'تجديد' : 'تفعيل'} ${r.store_name} — ${TN[type]}${e ? ' لحد ' + fdate(e) : ''}`); close(); toast('اتفعّل ✓ — الجهاز هيتفعّل لوحده', 'ok');
+        await load(); const fr = ROWS.find((x) => x.mid === r.mid) || r; waDlg(fr, 'act');
+      } catch (er) { b.disabled = false; b.textContent = '🔑 حاول تاني'; toast('خطأ: ' + er.message.slice(0, 140), 'e'); }
+    };
+  });
+}
+function trialDlg(r) {
+  sheet(`<h3>🧪 تجربة — ${esc(r.store_name || '')}</h3><div class="types">${[24, 48, 72, 120, 168, 336].map((h) => `<button data-h="${h}" class="${h === (CFG.trial_hours || 72) ? 'on' : ''}">${h >= 48 ? h / 24 + ' أيام' : 'يوم'}<small>${h} ساعة</small></button>`).join('')}</div><button class="btn p block" id="go">ابدأ التجربة</button>`, (ov, close) => {
+    let h = CFG.trial_hours || 72; $$('[data-h]', ov).forEach((b) => (b.onclick = () => { h = +b.dataset.h; $$('[data-h]', ov).forEach((x) => x.classList.toggle('on', x === b)); }));
+    $('#go', ov).onclick = async () => { try { await patch(r.mid, { status: 'trial', trial_start: new Date().toISOString(), trial_hours: h }); logAct(`🧪 تجربة ${h} ساعة — ${r.store_name}`); close(); toast('التجربة بدأت', 'ok'); await load(); waDlg(ROWS.find((x) => x.mid === r.mid) || r, 'trial'); } catch (e) { toast('خطأ: ' + e.message, 'e'); } };
+  });
+}
+function noteDlg(r) {
+  sheet(`<h3>📝 بيانات ${esc(r.store_name || '')}</h3><div class="f"><label>اسم المحل</label><input id="nm" value="${esc(r.store_name || '')}"></div><div class="f"><label>اسم المالك</label><input id="ow" value="${esc(r.owner_name || '')}"></div><div class="f"><label>الموبايل</label><input id="ph" class="mono" value="${esc(r.phone || '')}"></div><div class="f"><label>ملاحظة</label><textarea id="nt" rows="3">${esc(r.note || '')}</textarea></div><button class="btn p block" id="go">حفظ</button>`, (ov, close) => {
+    $('#go', ov).onclick = async () => { try { await patch(r.mid, { store_name: $('#nm', ov).value.trim(), owner_name: $('#ow', ov).value.trim(), phone: $('#ph', ov).value.trim(), note: $('#nt', ov).value.trim() || null }); logAct(`📝 تعديل بيانات ${r.store_name}`); close(); toast('اتحفظ', 'ok'); load(); } catch (e) { toast('خطأ: ' + e.message, 'e'); } };
+  });
+}
+function waDlg(r, pre) {
+  const n = r.owner_name || r.store_name || '';
+  const T = {
+    act: `أهلاً ${n} 👋\nتم تفعيل برنامج *مركز أهلاً POS* على جهازك ✅${r.expires_at ? `\nالاشتراك ساري لحد ${fdate(r.expires_at)}` : '\nترخيص دائم'}\nافتح البرنامج واضغط «تحقق الآن» لو لسه مفتحش.\nلأي استفسار أنا معاك 🙏\nم/ أسامة حسن بدري — 01145060007`,
+    trial: `أهلاً ${n} 👋\nفعّلتلك *نسخة تجريبية* من برنامج مركز أهلاً POS 🎁\nجرّب كل حاجة براحتك، ولو احتجت أي شرح كلمني.\nم/ أسامة حسن بدري — 01145060007`,
+    exp: `أهلاً ${n} 👋\nحبيت أفكّرك إن اشتراك برنامج مركز أهلاً POS هيخلص يوم ${fdate(r.expires_at)}.\nابعتلي عشان أجددهولك والشغل مايقفش 🙏\nم/ أسامة حسن بدري — 01145060007`,
+    welcome: `أهلاً ${n} 👋 نورت برنامج مركز أهلاً POS.\nطلبك وصلني ✅ وهفعّلك خلال دقايق.\nم/ أسامة حسن بدري — 01145060007`,
+    upd: `أهلاً ${n} 👋\nنزل تحديث جديد لبرنامج مركز أهلاً POS 🎉\nافتح البرنامج ← اضغط على اسمك فوق ← «تحقق من التحديثات» ← «تحديث الآن».\nبياناتك هتفضل زي ما هي.`,
+    blocked: `أهلاً ${n}،\nتم إيقاف البرنامج مؤقتاً على جهازك. كلمني على الرقم ده عشان نحل الموضوع 🙏\nم/ أسامة حسن بدري — 01145060007`
+  };
+  const L = [['act', '✅ تم التفعيل'], ['trial', '🧪 تجربة'], ['exp', '⏰ تذكير بالتجديد'], ['welcome', '👋 ترحيب'], ['upd', '⬆️ تحديث جديد'], ['blocked', '⛔ إيقاف']];
+  let k = pre || (r.status === 'pending' ? 'welcome' : isExp(r) ? 'exp' : r.status === 'trial' ? 'trial' : r.status === 'blocked' ? 'blocked' : 'act');
+  sheet(`<h3>💬 رسالة لـ ${esc(n)}</h3><div class="chips">${L.map(([x, l]) => `<button class="chip ${x === k ? 'on' : ''}" data-k="${x}">${l}</button>`).join('')}</div><div class="f"><textarea id="tx" rows="7">${esc(T[k])}</textarea></div><button class="btn wa block" id="go">💬 فتح واتساب</button>`, (ov, close) => {
+    $$('[data-k]', ov).forEach((b) => (b.onclick = () => { k = b.dataset.k; $$('[data-k]', ov).forEach((x) => x.classList.toggle('on', x === b)); $('#tx', ov).value = T[k]; }));
+    $('#go', ov).onclick = () => { window.open('https://wa.me/' + waNum(r.phone) + '?text=' + encodeURIComponent($('#tx', ov).value), '_blank'); close(); };
+  });
+}
+
+/* ================= الإعدادات ================= */
+function settings() {
+  const perm = 'Notification' in window ? Notification.permission : 'unsupported';
+  $('#view').innerHTML = `<div class="grid2">
+    <div class="card sec"><h3>🎛️ إعدادات التفعيل (لكل العملاء)</h3>
+      <div class="sw"><div><b>تجربة تلقائية لأي جهاز جديد</b><div style="font-size:12.5px;color:var(--t2)">لو مقفولة: كل جهاز يستنى موافقتك (الأكثر أماناً)</div></div><button class="tg ${CFG.auto_trial ? 'on' : ''}" id="at"></button></div>
+      <div class="f" style="margin-top:12px"><label>مدة التجربة (ساعات)</label><input id="th" type="number" inputmode="numeric" value="${CFG.trial_hours || 72}"></div>
+      <div class="f"><label>رسالة عامة تظهر للعملاء في شاشة التفعيل (اختياري)</label><textarea id="gm" rows="3" placeholder="مثلاً: للتفعيل ابعت واتساب 01145060007">${esc(CFG.message || '')}</textarea></div>
+      <button class="btn p block" id="sv">حفظ</button></div>
+    <div class="card sec"><h3>🔐 الجهاز ده</h3>
+      <div class="sw"><div><b>إشعار لما جهاز جديد يسجّل</b><div style="font-size:12.5px;color:var(--t2)">بيشتغل واللوحة مفتوحة (بتتحدث كل دقيقة)</div></div><button class="btn sm" id="np">${perm === 'granted' ? '✅ مفعّل' : perm === 'unsupported' ? 'غير مدعوم' : 'تفعيل'}</button></div>
+      <div class="sw"><div><b>قفل تلقائي بعد</b></div><select id="lm" style="width:auto">${[1, 3, 5, 10, 30].map((m) => `<option value="${m}" ${LS.get('lockMin', 3) === m ? 'selected' : ''}>${m} دقيقة</option>`).join('')}</select></div>
+      <div class="sw"><div><b>مفتاح التوقيع</b><div style="font-size:12.5px;color:var(--t2)">${SEC.jwk ? '✅ متسجل — تقدر تفعّل' : '⚠️ مش متسجل — المتابعة بس'}</div></div><button class="btn sm" id="jk">${SEC.jwk ? 'تغيير' : 'إضافة'}</button></div>
+      <div class="sw"><div><b>الرقم السري</b></div><button class="btn sm" id="cp">تغيير</button></div>
+      <div class="sw"><div><b>مفتاح service_role</b><div style="font-size:12.5px;color:var(--t2)" class="mono">…${esc(SEC.key.slice(-6))}</div></div><button class="btn sm" id="ck">تغيير</button></div>
+      <button class="btn e block" id="wipe" style="margin-top:14px">🗑️ مسح كل البيانات من الجهاز ده</button>
+      <div class="ban w" style="margin-top:14px">⚠️ اللوحة دي بمفتاح service_role بتتحكم في كل الأجهزة. متفتحهاش على جهاز حد تاني، ومتبعتش الرقم السري لحد.</div></div>
+  </div>
+  <div class="card sec links"><h3>🔗 روابط سريعة</h3>
+    <a href="https://github.com/MarkazAhllan/MarkazAhllan-POS/actions" target="_blank">⚙️ GitHub — متابعة البناء (Actions)</a>
+    <a href="https://github.com/MarkazAhllan/MarkazAhllan-POS/upload/main" target="_blank">⬆️ GitHub — رفع app-source.zip</a>
+    <a href="https://github.com/MarkazAhllan/markaz-ahllan-downloads/releases" target="_blank">📦 الإصدارات المنشورة (Releases)</a>
+    <a href="https://supabase.com/dashboard/project/inxlleknypxzegzgzmfl" target="_blank">🗄️ Supabase — لوحة المشروع</a>
+    <a href="https://markazahllan.github.io/markaz-ahllan-downloads/" target="_blank">🌐 موقع البرنامج (صفحة العملاء)</a></div>`;
+  $('#at').onclick = (e) => e.currentTarget.classList.toggle('on');
+  $('#sv').onclick = async () => { try { await api('pos_license_config?id=eq.1', { method: 'PATCH', body: JSON.stringify({ auto_trial: $('#at').classList.contains('on'), trial_hours: Number($('#th').value) || 72, message: $('#gm').value.trim() || null }) }); logAct('🎛️ تعديل إعدادات التفعيل'); toast('اتحفظ ✓', 'ok'); load(true); } catch (e) { toast('خطأ: ' + e.message, 'e'); } };
+  $('#np').onclick = async () => { if (!('Notification' in window)) return toast('المتصفح ده مش بيدعم الإشعارات', 'e'); const p = await Notification.requestPermission(); toast(p === 'granted' ? 'الإشعارات اتفعلت ✓' : 'الإشعارات مرفوضة — فعّلها من إعدادات المتصفح', p === 'granted' ? 'ok' : 'e'); settings(); };
+  $('#lm').onchange = (e) => LS.set('lockMin', Number(e.target.value));
+  const reseal = async (fn, ok) => { const p = prompt('اكتب الرقم السري الحالي للتأكيد'); if (!p) return; try { await unseal(p); } catch (_) { return toast('الرقم السري غلط', 'e'); } await fn(p); toast(ok, 'ok'); settings(); };
+  $('#jk').onclick = () => reseal(async (p) => { const t = prompt('الصق محتوى private-key.jwk.json'); if (!t) return; try { SEC.jwk = checkJwk(t.trim()); await seal(p, SEC); logAct('🔑 تحديث مفتاح التوقيع'); } catch (e) { toast(e.message, 'e'); throw e; } }, 'مفتاح التوقيع اتحفظ ✓');
+  $('#ck').onclick = () => reseal(async (p) => { const t = prompt('الصق مفتاح service_role الجديد'); if (!t || t.trim().length < 40) return; SEC.key = t.trim(); await seal(p, SEC); logAct('🔑 تحديث service_role'); }, 'المفتاح اتحفظ ✓');
+  $('#cp').onclick = () => reseal(async () => { const n = prompt('الرقم السري الجديد (4 لـ 8 أرقام)'); if (!/^\d{4,8}$/.test(n || '')) return toast('لازم من 4 لـ 8 أرقام', 'e'); await seal(n, SEC); LS.set('pinLen', n.length); logAct('🔐 تغيير الرقم السري'); }, 'الرقم السري اتغير ✓');
+  $('#wipe').onclick = () => { if (confirm('هيتمسح رابط Supabase والمفاتيح والسجل من الجهاز ده بس. متأكد؟')) { ['vault', 'pinLen', 'fails', 'known', 'log', 'tab'].forEach(LS.del); location.reload(); } };
+}
+
+/* ================= السيرفر ================= */
+async function server() {
+  $('#view').innerHTML = '<div class="card sec"><div class="empty">⏳ بنحسب…</div></div>';
+  const T = [['pos_devices', '📱 الأجهزة المسجلة', 'سيرفر التفعيل'], ['pos_sync', '🔄 سجلات المزامنة', 'بيانات المحلات المتزامنة'], ['pos_sms', '📩 رسائل المحافظ', 'رسائل لسه ماتنقلتش'], ['pos_sms_cfg', '🏪 محلات مربوطة برسائل المحافظ', 'إعدادات الربط'], ['pos_docs', '🗂️ المزامنة القديمة', 'لو موجودة']];
+  const t0 = performance.now(); let ping = null; try { await api('pos_license_config?id=eq.1&select=id'); ping = Math.round(performance.now() - t0); } catch (_) {}
+  const counts = await Promise.all(T.map(([t]) => count(t)));
+  $('#view').innerHTML = `<div class="kpis"><div class="k ${ping == null ? 'e' : ping < 800 ? 'ok' : 'w'}"><small>⚡ سرعة السيرفر</small><b class="num">${ping == null ? '✕' : ping + 'ms'}</b><em>${ping == null ? 'مفيش اتصال' : ping < 800 ? 'ممتاز' : 'بطيء شوية'}</em></div>${T.map(([t, l, s], i) => counts[i] == null ? '' : `<div class="k"><small>${l}</small><b class="num">${counts[i].toLocaleString('en')}</b><em>${s}</em></div>`).join('')}</div>
+    <div class="card sec"><h3>ℹ️ ملاحظات</h3><div style="color:var(--t2);font-size:14px;line-height:1.9">
+      • الخطة المجانية في Supabase فيها حد 500 ميجا لقاعدة البيانات — سجلات المزامنة هي أكتر حاجة بتاخد مساحة.<br>
+      • لو المشروع اتوقف لعدم الاستخدام (Paused)، افتح لوحة Supabase واضغط Restore.<br>
+      • الجداول اللي مش ظاهرة هنا معناها إن الكود بتاعها لسه ما اتشغلش.</div></div>`;
+}
+function log() {
+  const l = LS.get('log', []);
+  $('#view').innerHTML = `<div class="card sec"><h3>📜 سجل اللي عملته من الجهاز ده <span class="tag">${l.length}</span></h3><div class="log">${l.map((x) => `<div><span style="flex:1">${esc(x.t)}</span><small>${fmt(x.at)}</small></div>`).join('') || '<div class="empty">مفيش حاجة لسه</div>'}</div>${l.length ? '<button class="btn sm e" id="clr" style="margin-top:12px">مسح السجل</button>' : ''}</div>`;
+  $('#clr') && ($('#clr').onclick = () => { if (confirm('مسح السجل؟')) { LS.del('log'); log(); } });
+}
+
+/* ================= تشغيل ================= */
+let timer = null;
+function startApp() { $('#app').classList.remove('hidden'); draw(); load(); clearInterval(timer); timer = setInterval(() => !document.hidden && load(true), 60000); }
+$('#rf').onclick = () => load(); $('#lk').onclick = () => showLock();
+document.addEventListener('visibilitychange', () => { if (!document.hidden && SEC) load(true); });
+if (!window.isSecureContext || !crypto.subtle) { document.body.innerHTML = '<div class="center"><div class="gate"><h1>⚠️</h1><p>اللوحة محتاجة تتفتح من الرابط (https) أو كملف على جهازك.</p></div></div>'; }
+else if (LS.get('vault')) showLock(); else $('#setup').classList.remove('hidden');
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>

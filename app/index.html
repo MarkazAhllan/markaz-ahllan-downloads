@@ -1025,18 +1025,6 @@ input:not([type]) { width: 100%; height: 40px; border: 1px solid var(--line-2); 
 @media (max-width: 900px) { .ow-grid { grid-template-columns: 1fr; } .ftr-row { padding: 12px 14px; } .ftr-row.sub { margin-inline-start: 14px; } }
 
 /* ---- Live display screen ---- */
-.disp { min-height: calc(100vh / var(--z, 1)); background: radial-gradient(120% 80% at 50% 0%, var(--p-800), #0a0a0b 70%); color: #fff; display: flex; flex-direction: column; padding: 24px 32px; }
-.disp header { display: flex; align-items: center; gap: 18px; margin-bottom: 24px; }
-.disp header img { width: 90px; height: 90px; background: #fff; border-radius: 24px; padding: 6px; }
-.disp h1 { margin: 0; font-size: 38px; font-weight: 900; } .disp header p { margin: 4px 0 0; opacity: .8; font-size: 18px; }
-.disp-clock { font-size: 48px; font-weight: 900; }
-.disp-grid { flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 22px; align-content: start; }
-.disp-card { background: var(--wc); border-radius: 26px; padding: 26px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
-.disp-card .dn { font-size: 24px; font-weight: 800; opacity: .95; }
-.disp-card .dno { font-size: 56px; font-weight: 900; letter-spacing: 2px; margin: 8px 0; background: rgba(255,255,255,.95); color: #111; border-radius: 18px; padding: 10px; }
-.disp-card .dow { font-size: 24px; font-weight: 800; }
-.disp-empty { font-size: 22px; opacity: .8; text-align: center; padding: 60px; grid-column: 1 / -1; }
-.disp footer { text-align: center; opacity: .75; margin-top: 20px; font-size: 15px; }
 
 /* ================= Sidebar groups (dropdown) ================= */
 .side-nav .grp-h { all: unset; box-sizing: border-box; width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 12px; margin: 8px 0 2px; border-radius: 10px; cursor: pointer;
@@ -1049,7 +1037,7 @@ input:not([type]) { width: 100%; height: 40px; border: 1px solid var(--line-2); 
 .side-nav .grp-h .caret svg { width: 14px; height: 14px; }
 .side-nav .grp-h.open .caret { transform: rotate(180deg); }
 .side-nav .grp-h.open .badge { display: none !important; }
-.side-nav .grp-h .badge { background: #F5B300; color: #2a1a00; }
+.side-nav .grp-h .badge { background: #F5B300; color: #2a1a00; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; display: inline-grid; place-items: center; font-size: 12px; font-weight: 800; margin-inline-start: 6px; }
 .grp-b { overflow: hidden; max-height: 1400px; transition: max-height .28s ease, opacity .2s; padding-inline-start: 6px; border-inline-start: 1px solid rgba(255,255,255,.08); margin-inline-start: 12px; }
 .grp-b.collapsed { max-height: 0; opacity: 0; }
 :root[data-skin="blackgold"] .side-nav .grp-h.open { color: #D4A017; }
@@ -1369,6 +1357,67 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
   .modal-bg { background: rgba(18, 6, 9, .55); }
   .wcard, #page > .card, #page > .grid > .card { content-visibility: auto; contain-intrinsic-size: auto 360px; }
 }
+
+/* ================= شاشة العرض المباشر v2 ================= */
+.disp-body { margin: 0; overflow: hidden; }
+.disp { --dbg: radial-gradient(120% 90% at 50% -10%, #A8283C 0%, var(--p, #8B1A2B) 35%, #2a0a10 100%); --dfg: #fff; --dsub: rgba(255,255,255,.78);
+  height: 100vh; height: 100dvh; background: var(--dbg); color: var(--dfg); display: flex; flex-direction: column; padding: clamp(14px, 2.4vw, 34px); gap: clamp(12px, 1.8vw, 24px); box-sizing: border-box; font-family: inherit; position: relative; }
+.disp.theme-dark { --dbg: radial-gradient(120% 90% at 50% -10%, #2b2124 0%, #0d0a0b 70%); }
+.disp.theme-light { --dbg: linear-gradient(180deg, #FBF1F2, #F3E6E8); --dfg: #231719; --dsub: #6E6062; }
+.disp-h { display: flex; align-items: center; gap: clamp(10px, 1.6vw, 22px); }
+.disp-h img { width: clamp(54px, 6vw, 96px); height: clamp(54px, 6vw, 96px); border-radius: 22%; background: #fff; padding: 5px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.disp-t h1 { margin: 0; font-size: clamp(24px, 3.4vw, 50px); font-weight: 900; line-height: 1.15; }
+.disp-t p { margin: 4px 0 0; color: var(--dsub); font-size: clamp(14px, 1.7vw, 24px); font-weight: 600; }
+.disp-time { text-align: end; } .disp-time b { display: block; font-size: clamp(26px, 3.6vw, 56px); font-weight: 900; line-height: 1; } .disp-time small { color: var(--dsub); font-size: clamp(12px, 1.2vw, 18px); }
+.disp-x { width: 44px; height: 44px; border-radius: 14px; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.12); color: inherit; font-size: 20px; cursor: pointer; }
+.disp-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(var(--dcols, 3), minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 24px); align-content: center; overflow: auto; }
+.disp-card { container-type: inline-size; background: var(--wc, #7A6A6D); color: #fff; border-radius: clamp(18px, 2vw, 30px); padding: clamp(14px, 1.8vw, 28px); text-align: center; box-shadow: 0 22px 50px rgba(0,0,0,.3); display: flex; flex-direction: column; gap: clamp(6px, .8vw, 12px); justify-content: center; }
+.disp-card .dn, .dfc .dn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: clamp(16px, 1.8vw, 26px); font-weight: 800; }
+.disp-card .dn i, .dfc .dn i { width: .7em; height: .7em; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.25); }
+.disp-card .dno { font-size: clamp(20px, 10.5cqi, 64px); font-weight: 900; letter-spacing: 1.5px; background: #fff; color: #111; border-radius: clamp(12px, 1.4vw, 20px); padding: clamp(6px, .8vw, 12px) 10px; white-space: nowrap; }
+.disp-card .dow { font-size: clamp(18px, 2vw, 30px); font-weight: 800; }
+.d-av { align-self: center; font-size: clamp(14px, 1.4vw, 22px); font-weight: 700; padding: 6px 16px; border-radius: 999px; background: rgba(255,255,255,.22); }
+.d-av b { font-weight: 900; } .d-av.low { background: #FFD54F; color: #4a3500; } .d-av.off { background: rgba(0,0,0,.35); }
+.disp-empty { grid-column: 1 / -1; text-align: center; font-size: clamp(18px, 2vw, 28px); color: var(--dsub); padding: 40px; }
+.disp-f { display: flex; flex-direction: column; gap: 8px; text-align: center; }
+.disp-msg { font-size: clamp(15px, 1.6vw, 24px); font-weight: 700; }
+.disp-sig { font-size: clamp(11px, 1vw, 14px); color: var(--dsub); }
+.disp-tk { overflow: hidden; white-space: nowrap; background: rgba(255,255,255,.14); border-radius: 12px; padding: 8px 0; font-size: clamp(15px, 1.6vw, 24px); font-weight: 700; }
+.disp.theme-light .disp-tk { background: #fff; }
+.disp-tk span { display: inline-block; padding-inline-start: 100%; animation: dtk 22s linear infinite; }
+[dir=rtl] .disp-tk span { animation-name: dtk-rtl; }
+@keyframes dtk { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+@keyframes dtk-rtl { from { transform: translateX(0); } to { transform: translateX(100%); } }
+/* العرض الكبير أثناء العملية */
+.disp-focus { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; padding: clamp(16px, 3vw, 48px); background: rgba(10, 4, 6, .72); backdrop-filter: blur(6px); animation: dfin .25s ease-out; }
+.disp-focus[hidden] { display: none; }
+@keyframes dfin { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: none; } }
+.dfc { container-type: inline-size; background: var(--wc, #7A6A6D); color: #fff; width: min(1100px, 100%); border-radius: clamp(22px, 3vw, 40px); padding: clamp(20px, 3vw, 48px); text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,.45); display: flex; flex-direction: column; gap: clamp(10px, 1.4vw, 20px); }
+.dfc-k { font-size: clamp(18px, 2.2vw, 34px); font-weight: 800; opacity: .95; }
+.dfc .dno { font-size: clamp(30px, 10cqi, 128px); font-weight: 900; letter-spacing: 3px; background: #fff; color: #111; border-radius: clamp(16px, 2vw, 28px); padding: clamp(8px, 1.2vw, 18px); line-height: 1.1; white-space: nowrap; }
+.dfc .dow { font-size: clamp(22px, 3vw, 46px); font-weight: 900; }
+.dfc-am { font-size: clamp(22px, 2.8vw, 42px); font-weight: 800; background: rgba(0,0,0,.18); border-radius: 16px; padding: 8px 18px; align-self: center; }
+.dfc .d-av { font-size: clamp(16px, 1.8vw, 28px); }
+.dfc-bar { height: 6px; border-radius: 6px; background: rgba(255,255,255,.25); overflow: hidden; }
+.dfc-bar i { display: block; height: 100%; background: #fff; transform-origin: right; animation: dbar linear forwards; }
+@keyframes dbar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@media (max-width: 700px) { .disp-grid { grid-template-columns: 1fr !important; align-content: start; } .disp-time small { display: none; } }
+/* اختيار المحافظ في الإعدادات */
+.ds-w { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; background: var(--surface); }
+.ds-w:has(input:checked) { border-color: var(--p); background: var(--p-50); }
+.ds-wt { display: flex; flex-direction: column; min-width: 0; } .ds-wt b { font-size: 15px; } .ds-wt small { color: var(--text-3, #8a7c7e); font-size: 12px; }
+
+/* النوافذ المنبثقة: منع أي نص طويل (مسار ملف / رابط) إنه يوسّع النافذة برا الشاشة */
+.modal-bg { grid-template-columns: minmax(0, 1fr); }
+.modal { min-width: 0; justify-self: center; }
+.modal-b { min-width: 0; overflow-wrap: anywhere; }
+/* نافذة «تم الحفظ» */
+.saved-box { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+.saved-ic { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--ok-bg, #E7F6EE); color: var(--ok, #118052); font-size: 30px; }
+.saved-name { font-weight: 800; font-size: 15px; direction: ltr; word-break: break-all; }
+.saved-path { width: 100%; box-sizing: border-box; direction: ltr; text-align: left; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; background: var(--surface-2); border: 1px dashed var(--line-2); border-radius: 12px; padding: 9px 12px; word-break: break-all; color: var(--text-2); }
+.saved-tip { font-size: 13px; color: var(--text-3, #8a7c7e); line-height: 1.7; }
+.modal.saved .modal-f { flex-direction: column-reverse; } .modal.saved .modal-f .btn { width: 100%; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2183,8 +2232,10 @@ const NativeFiles = {
   async save(name, b64, mime) {
     try {
       const r = await this.plugin().saveFile({ name, data: b64, mime });
-      UI.modal({ title: L('تم الحفظ ✓', 'Saved ✓'), icon: 'check', size: 'sm', body: `<div style="line-height:1.9">${L('الملف اتحفظ في', 'Saved to')}:<div class="mono" style="direction:ltr;text-align:left;background:var(--surface-2);padding:8px 10px;border-radius:10px;margin-top:6px;overflow-wrap:anywhere">${esc(r.path || name)}</div><div class="faint mt">${L('تقدر تلاقيه في تطبيق "الملفات" ← التنزيلات. أو ابعته دلوقتي على واتساب / Drive / الإيميل.', 'Find it in Files → Downloads, or share it now.')}</div></div>`,
-        actions: [{ label: L('تمام', 'OK'), onClick: (m) => m.close() }, { label: L('مشاركة', 'Share'), cls: 'primary', icon: 'send', onClick: (m) => { m.close(); this.share(name, b64); } }] });
+      const fname = String(r.path || name).split('/').pop(); const folder = String(r.path || '').slice(0, -fname.length) || 'Download/MarkazAhllan/';
+      UI.modal({ title: L('تم الحفظ', 'Saved'), icon: 'check', size: 'sm saved', body: `<div class="saved-box"><div class="saved-ic">✓</div><div class="saved-name">${esc(fname)}</div>
+          <div class="saved-path">📁 ${esc(folder)}</div><div class="saved-tip">${L('تلاقيه في تطبيق «الملفات» ← التنزيلات ← MarkazAhllan. وتقدر تبعته دلوقتي على واتساب أو Google Drive عشان يبقى معاك نسخة برا الموبايل.', 'Find it in Files → Downloads → MarkazAhllan, or share it now.')}</div></div>`,
+        actions: [{ label: L('تمام', 'OK'), onClick: (m) => m.close() }, { label: L('مشاركة الملف (واتساب / Drive)', 'Share (WhatsApp / Drive)'), cls: 'primary', icon: 'send', onClick: (m) => { m.close(); this.share(name, b64); } }] });
       return r.path || name;
     } catch (e) { UI.toast(L('تعذر حفظ الملف: ', 'Could not save: ') + (e.message || e), 'err', 6000); return null; }
   },
@@ -2899,13 +2950,13 @@ function labelsHTML(list /* [{product, copies}] */) {
  * ========================================================= */
 const Modules = {};
 const NAV = [
-  { id: 'main', grp: ['الرئيسية', 'Main'], items: ['dashboard', 'pos', 'lines'], fixed: true },
-  { id: 'services', grp: ['تحويلات الكاش وماكينات الدفع', 'Cash transfers & POS machines'], icon: 'wallet', items: ['wallets', 'machines'] },
-  { id: 'maint', grp: ['', ''], icon: 'tool', items: ['repairs'], fixed: true },
+  { id: 'main', grp: ['الرئيسية', 'Main'], items: ['dashboard', 'pos'], fixed: true },
+  { id: 'services', grp: ['المحافظ الإلكترونية وماكينات الدفع', 'E-wallets & payment machines'], icon: 'wallet', items: ['wallets', 'machines'] },
   { id: 'commerce', grp: ['المبيعات والمخزون', 'Sales & stock'], icon: 'cart', items: ['sales', 'customers', 'purchases', 'inventory', 'suppliers'] },
-  { id: 'finance', grp: ['المالية', 'Finance'], icon: 'bank', items: ['shifts', 'expenses', 'capital', 'reports'] },
+  { id: 'more', grp: ['', ''], items: ['lines', 'repairs'], fixed: true },
   { id: 'hr', grp: ['الموارد البشرية', 'HR'], icon: 'users', items: ['users', 'attendance', 'payroll'] },
-  { id: 'system', grp: ['النظام', 'System'], icon: 'settings', items: ['owner', 'backup', 'settings'] }
+  { id: 'finance', grp: ['المالية', 'Finance'], icon: 'bank', items: ['shifts', 'expenses', 'capital', 'reports'] },
+  { id: 'system', grp: ['النظام', 'System'], icon: 'settings', items: ['settings', 'backup'] }
 ];
 const App = {
   current: null, licenseState: null,
@@ -3034,7 +3085,6 @@ const App = {
     $('#btnAI') && ($('#btnAI').onclick = () => AI.toggle());
     $('#userChip').onclick = (e) => UI.dropdown(e.currentTarget, [
       ...(App.isMobile() ? [{ icon: 'globe', label: LANG === 'ar' ? 'English' : 'العربية', onClick: () => this.toggleLang() }, { icon: DB.settings().theme === 'dark' ? 'sun' : 'moon', label: L('تبديل المظهر', 'Toggle theme'), onClick: () => this.toggleTheme() }, { icon: 'bell', label: L('التنبيهات', 'Notifications'), onClick: () => Notify.toggle() }] : []),
-      ...(Session.can('owner') ? [{ icon: 'key', label: L('لوحة المالك', 'Owner panel'), onClick: () => this.go('owner') }] : []),
       { icon: 'sun', label: L('مظهر البرنامج', 'App theme'), onClick: () => skinDialog() },
       { icon: 'lock', label: L('تغيير كلمة المرور', 'Change password'), onClick: () => Modules.users.changeOwnPassword() },
       { icon: 'key', label: L('تفعيل / الترخيص', 'License'), onClick: () => License.activationDialog(() => this.refreshTop()) },
@@ -6254,7 +6304,7 @@ Modules.wallets = {
       <button class="wc-more" data-act="more">${icon('settings')}${L('خيارات أخرى', 'More options')}</button>
       <div class="wc-opts hidden">
         <button data-act="hide">${icon('eye')}${w.hidden ? L('إظهار', 'Show') : L('إخفاء', 'Hide')}</button>
-        ${feat('display') ? `<button data-act="display">${icon('pos')}${w.onDisplay ? L('إزالة من شاشة العرض', 'Remove from display') : L('إظهار على شاشة العرض', 'Show on display')}</button>` : ''}
+        ${feat('display') ? `<button data-act="dispnow">${icon('send')}${L('اعرضها على الشاشة الآن', 'Show on display now')}</button>` : ''}${feat('display') ? `<button data-act="display">${icon('pos')}${w.onDisplay ? L('إزالة من شاشة العرض', 'Remove from display') : L('إظهار على شاشة العرض', 'Show on display')}</button>` : ''}
         ${Session.can('wallets.manage') ? `<button data-act="edit">${icon('edit')}${L('تعديل بيانات', 'Edit details')}</button><button data-act="limits">${icon('shield')}${L('تعديل الليميت', 'Edit limits')}</button><button data-act="adjust">${icon('swap')}${L('مطابقة الرصيد', 'Reconcile')}</button>` : ''}
         <button data-act="fund">${icon('plus')}${L('تغذية من الدرج', 'Fund from drawer')}</button><button data-act="cashout">${icon('minus')}${L('سحب للدرج', 'Cash out to drawer')}</button>
         <button data-act="statement">${icon('file')}${L('كشف حساب', 'Statement')}</button>
@@ -6273,6 +6323,7 @@ Modules.wallets = {
         if (a === 'reserve') return this.toggleReserve(w);
         if (a === 'open') return this.openWallet(w);
         if (a === 'deposit' || a === 'withdraw') return this.opDialog(a, w);
+        if (a === 'dispnow') { Display.focus(w, 0, 'show'); UI.toast(L('ظهرت على شاشة العرض ✓', 'Shown on the display ✓')); return; }
         if (a === 'display') { DB.update('wallets', w.id, { onDisplay: !w.onDisplay }); UI.toast(w.onDisplay ? L('اتشالت من شاشة العرض', 'Removed from display') : L('هتظهر على شاشة العرض', 'Will show on display')); return this.body(); }
         if (a === 'hide') { DB.update('wallets', w.id, { hidden: !w.hidden }); return this.body(); }
         if (a === 'edit') return this.edit(w);
@@ -6845,7 +6896,8 @@ Object.assign(Modules.wallets, {
     const dtLocal = (d) => { d = new Date(d); return `${dayKey(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
     const st0 = t0.status || 'completed';
     const title = edit ? L('تعديل عملية', 'Edit operation') + ' ' + (t0.opNo || '') : L('عملية جديدة', 'New operation');
-    const m = UI.modal({ title, icon: 'wallet', size: 'sm opf', body: `
+    const dispOn = !edit && typeof Display !== 'undefined' && feat('display') && Display.cfg().focusOnOp;
+    const m = UI.modal({ title, icon: 'wallet', size: 'sm opf', onClose: () => dispOn && Display.clear(), body: `
       <div class="opf-head" id="opfHead"></div>
       ${!w0 || edit ? `<div class="opf-r"><label>${L('المحفظة', 'Wallet')}:</label><select name="walletId">${ws.map((w) => `<option value="${w.id}" ${w.id === wid ? 'selected' : ''}>${esc(w.name)} — ${esc(fmtWalletNo(walletNo(w)))}</option>`).join('')}</select></div>` : ''}
       <div class="opf-r"><label>${L('نوع العملية', 'Operation type')}:</label><select name="type">${[['withdraw', L('سحب (استلام رصيد)', 'Withdraw (receive)')], ['deposit', L('إيداع (تحويل رصيد)', 'Deposit (send)')], ['xwithdraw', L('سحب خارجي', 'External withdraw')], ['xdeposit', L('إيداع خارجي', 'External deposit')]].filter(([k]) => feat('external') || !k.startsWith('x') || (external && edit)).map(([k, l]) => `<option value="${k}" ${(external ? 'x' : '') + type === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
@@ -6891,6 +6943,12 @@ Object.assign(Modules.wallets, {
     $('#opfPick', el).onclick = () => { const i = q('clientPhone'); i.focus(); i.value = ''; i.dispatchEvent(new Event('input')); try { i.showPicker && i.showPicker(); } catch (_) {} };
     q('clientPhone').onchange = () => { const p = q('clientPhone').value; const last = DB.all('walletTx').filter((x) => x.clientPhone === p && x.clientName).pop(); if (last && (!q('clientName').value || q('clientName').value === L('عميل نقدي', 'Walk-in'))) q('clientName').value = last.clientName; const c = DB.find('customers', (c2) => c2.phone === p); if (c && !q('customerId').value) { q('customerId').value = c.id; calc(); } };
     head(); calc(); setTimeout(() => q('amount').focus(), 80);
+    // شاشة العرض: في السحب العميل محتاج يشوف رقم المحفظة اللي هيحوّل عليها + المبلغ
+    if (dispOn) {
+      const push = debounce(() => { if (!document.body.contains(el)) return; if (q('type').value === 'withdraw') Display.focus(DB.get('wallets', wid), Number(q('amount').value) || 0, 'withdraw'); else Display.clear(); }, 350);
+      ['change', 'input'].forEach((ev) => el.addEventListener(ev, (e) => { if (['walletId', 'type', 'amount'].includes(e.target.name)) push(); }));
+      push();
+    }
   },
   submitOpForm(x, { external, edit }) {
     const v = UI.read(x.el);
@@ -8000,7 +8058,7 @@ Modules.backup = {
     ${Sync.card()}
     <div class="grid g2"><div class="card"><div class="card-h"><h3>${L('محتوى قاعدة البيانات', 'Database contents')}</h3></div><div class="card-b"><div class="grid g3">${counts.filter((c) => c[0] !== 'settings').map(([c, n]) => `<div class="stat-mini"><span class="l mono">${c}</span><span class="v num">${num(n)}</span></div>`).join('')}</div></div></div>
       <div class="card" style="border-color:var(--err)"><div class="card-h"><h3 style="color:var(--err)">${L('منطقة الخطر', 'Danger zone')}</h3></div><div class="card-b"><p class="muted">${L('اعمل نسخة احتياطية قبل أي عملية هنا.', 'Back up before using these.')}</p>
-      <div class="row wrap"><button class="btn" id="bkDemo">${icon('sparkles')}${L('تحميل بيانات تجريبية', 'Load demo data')}</button><button class="btn" id="bkClearTx">${icon('trash')}${L('مسح العمليات فقط', 'Clear transactions only')}</button><button class="btn danger" id="bkReset">${icon('alert')}${L('ضبط المصنع (مسح الكل)', 'Factory reset')}</button></div></div></div></div>`;
+      <div class="row wrap"><button class="btn" id="bkEnc">${icon('lock')}${L('نسخة مشفّرة بكلمة سر (.mahx)', 'Encrypted backup (.mahx)')}</button><button class="btn" id="bkSel">${icon('trash')}${L('مسح مخصص (أختار إيه يتمسح)', 'Selective reset')}</button><button class="btn" id="bkDemo">${icon('sparkles')}${L('تحميل بيانات تجريبية', 'Load demo data')}</button><button class="btn" id="bkClearTx">${icon('trash')}${L('مسح العمليات فقط', 'Clear transactions only')}</button><button class="btn danger" id="bkReset">${icon('alert')}${L('ضبط المصنع (مسح الكل)', 'Factory reset')}</button></div></div></div></div>`;
     $('#bkExp').onclick = () => Backup.export(); $('#bkRes').onclick = () => Backup.restore();
     if (DB.desktop) {
       $('#bkAuto').onchange = (e) => DB.saveSettings({ backup: { auto: e.target.checked } }); $('#bkInt').onchange = (e) => DB.saveSettings({ backup: { intervalHours: +e.target.value } });
@@ -8008,6 +8066,7 @@ Modules.backup = {
       $('#bkDir').onclick = () => window.api.sys.openPath();
     }
     Sync.bind();
+    $('#bkEnc').onclick = () => SecureBackup.exportDialog(); $('#bkSel').onclick = () => OwnerTools.resetDialog();
     $('#bkDemo').onclick = async () => { if (await UI.confirm(L('إضافة بيانات تجريبية (منتجات، محافظ، ماكينات، مبيعات...) لتجربة البرنامج؟', 'Add demo data?'), { danger: false })) { Seed.demo(); UI.toast(L('تمت إضافة البيانات التجريبية', 'Demo data added')); App.go('dashboard'); } };
     $('#bkClearTx').onclick = async () => { if (!(await UI.confirm(L('مسح كل المبيعات والمشتريات وحركات المحافظ والماكينات والورديات؟ (تبقى المنتجات والعملاء والإعدادات)', 'Clear all transactions? Products, customers and settings stay.')))) return; const d = DB.exportAll(); ['sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machineTx', 'walletTx', 'cashMoves', 'expenses', 'shifts', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'capital', 'repairs', 'losses'].forEach((c) => (d[c] = [])); await DB.importAll(d); audit('data.clearTx'); UI.toast(L('تم المسح', 'Cleared')); App.go('dashboard'); };
     $('#bkReset').onclick = async () => { if (!(await UI.confirm(L('سيتم مسح كل البيانات نهائياً والرجوع لإعدادات المصنع. هل أنت متأكد تماماً؟', 'Erase EVERYTHING and reset?')))) return; const lic = DB.settings().license, tr = DB.settings().trialStart; const d = {}; COLLECTIONS.forEach((c) => (d[c] = [])); await DB.importAll(d); DB.saveSettings({ license: lic, trialStart: tr }); try { localStorage.removeItem('mah:demoSeeded'); } catch (_) {} location.reload(); };
@@ -8019,7 +8078,7 @@ Modules.settings = {
   title: () => L('الإعدادات', 'Settings'), icon: 'settings', perm: 'settings', tab: 'store',
   render(el) {
     el.innerHTML = `<div class="row mb"><div id="stTabs"></div></div><div id="stBody"></div>`;
-    UI.tabs($('#stTabs'), [{ id: 'store', label: L('بيانات المحل', 'Store'), icon: 'factory' }, { id: 'general', label: L('عام', 'General'), icon: 'settings' }, { id: 'features', label: L('المميزات', 'Features'), icon: 'layers' }, { id: 'receipt', label: L('تصميم الإيصال', 'Receipt'), icon: 'receipt' }, { id: 'label', label: L('ملصق الباركود', 'Barcode label'), icon: 'barcode' }, { id: 'lists', label: L('القوائم', 'Lists'), icon: 'layers' }, { id: 'wa', label: L('واتساب', 'WhatsApp'), icon: 'whatsapp' }, { id: 'ai', label: L('المساعد الذكي', 'AI'), icon: 'sparkles' }, { id: 'license', label: L('الترخيص', 'License'), icon: 'key' }, { id: 'about', label: L('حول البرنامج', 'About'), icon: 'info' }], this.tab, (t) => { this.tab = t; this.body(); });
+    UI.tabs($('#stTabs'), [{ id: 'store', label: L('بيانات المحل', 'Store'), icon: 'factory' }, { id: 'general', label: L('عام', 'General'), icon: 'settings' }, { id: 'features', label: L('المميزات', 'Features'), icon: 'layers' }, ...(Session.can('owner') ? [{ id: 'admin', label: L('الإدارة والأمان', 'Admin & security'), icon: 'shield' }] : []), { id: 'display', label: L('شاشة العرض', 'Display'), icon: 'pos' }, { id: 'receipt', label: L('تصميم الإيصال', 'Receipt'), icon: 'receipt' }, { id: 'label', label: L('ملصق الباركود', 'Barcode label'), icon: 'barcode' }, { id: 'lists', label: L('القوائم', 'Lists'), icon: 'layers' }, { id: 'wa', label: L('واتساب', 'WhatsApp'), icon: 'whatsapp' }, { id: 'ai', label: L('المساعد الذكي', 'AI'), icon: 'sparkles' }, { id: 'license', label: L('الترخيص', 'License'), icon: 'key' }, { id: 'about', label: L('حول البرنامج', 'About'), icon: 'info' }], this.tab, (t) => { this.tab = t; this.body(); });
     this.body();
   },
   saveBar(onSave) { return `<div class="row mt"><div class="spacer"></div><button class="btn primary lg" id="stSave">${icon('check')}${L('حفظ الإعدادات', 'Save settings')}</button></div>`; },
@@ -8034,6 +8093,30 @@ Modules.settings = {
       $('#lgUp').onclick = async () => { const d = await pickImage(400); if (d) { logo = d; $('#stLogo').src = d; } };
       $('#lgReset').onclick = () => { logo = ''; $('#stLogo').src = 'assets/logo.png'; };
       $('#stSave').onclick = () => { if (!UI.validate(b)) return; const v = UI.read(b); const appName = v.appName || 'Markaz Ahllan POS'; delete v.appName; DB.saveSettings({ appName, store: { ...v, logo } }); UI.toast(L('تم الحفظ', 'Saved')); App.shell(); };
+    } else if (t === 'display') {
+      Display.settingsBody(b);
+    } else if (t === 'admin') {
+      if (!Session.can('owner')) { b.innerHTML = UI.empty(L('الصفحة دي للمالك بس', 'Owner only'), 'lock'); return; }
+      const it = (id, ic, tt, d, tag = '') => `<button class="ow-item" data-ow="${id}"><span class="ow-ic">${ic}</span><span class="ow-tx"><b>${tt}</b><small>${d}</small></span>${tag}<span class="ow-arr">${LANG === 'ar' ? '←' : '→'}</span></button>`;
+      b.innerHTML = `<div class="ow-grid">
+        <div class="card ow-card"><div class="ow-h"><span class="ow-ic">👥</span><div><b>${L('المحل والموظفين', 'Store & staff')}</b><small>${L('الفروع والأدوار وبيانات دخول المالك', 'Branches, roles and owner login')}</small></div></div>
+          ${it('branches', '🏢', L('الفروع', 'Branches'), L('إضافة الفروع وإدارتها وتعيين فرع الجهاز ده', 'Add and manage branches'))}
+          ${it('employees', '🧑‍💼', L('الموظفين والمستخدمين', 'Employees & users'), L('إضافة المستخدمين وصلاحياتهم', 'Users and permissions'))}
+          ${it('roles', '🔐', L('الأدوار والصلاحيات', 'Roles & permissions'), L('أدوار مخصصة بصلاحيات محددة', 'Custom roles'))}
+          ${it('login', '🛡️', L('بيانات دخول المالك', 'Owner login'), L('تغيير اسم المستخدم وكلمة المرور', 'Change username and password'), `<span class="tag ok">${L('هام', 'Important')}</span>`)}
+        </div>
+        <div class="card ow-card"><div class="ow-h"><span class="ow-ic">🔒</span><div><b>${L('الأجهزة والأمان', 'Devices & security')}</b><small>${L('القفل التلقائي والأجهزة المتصلة', 'Auto-lock and connected devices')}</small></div></div>
+          ${it('security', '⏱️', L('إعدادات الأمان', 'Security settings'), L('القفل التلقائي ومحاولات الدخول الخاطئة', 'Auto-lock and failed logins'))}
+          ${it('devices', '📱', L('الأجهزة المتصلة', 'Connected devices'), L('عرض الأجهزة وتوثيقها أو حظرها', 'View, trust or block devices'))}
+          ${it('logoutall', '🚪', L('تسجيل خروج من كل الأجهزة', 'Sign out all devices'), L('إنهاء كل الجلسات المفتوحة', 'End all sessions'))}
+          ${it('health', '🩺', L('فحص سلامة البيانات', 'Data health check'), L('فحص المخزون والمحافظ والدرج والأمان مع درجة صحة النظام', 'Full system scan'))}
+        </div></div>`;
+      $$('[data-ow]', b).forEach((x) => (x.onclick = () => {
+        const k = x.dataset.ow;
+        if (k === 'branches') OwnerTools.branches(); if (k === 'employees') App.go('users'); if (k === 'roles') OwnerTools.roles(); if (k === 'login') OwnerTools.ownerLogin();
+        if (k === 'security') OwnerTools.security(); if (k === 'devices') OwnerTools.devices(); if (k === 'health') DataHealth.open();
+        if (k === 'logoutall') UI.confirm(L('تسجيل الخروج من كل الأجهزة؟ كل المستخدمين هيحتاجوا يسجلوا دخول تاني (بما فيهم أنت).', 'Sign out all devices, including this one?')).then((ok) => { if (ok) { Devices.logoutAll(); audit('devices.logoutall'); App.logout(); } });
+      }));
     } else if (t === 'general') {
       b.innerHTML = `<div class="card card-b">${UI.form([{ name: 'lang', label: L('لغة البرنامج', 'Language'), type: 'select', options: [['ar', 'العربية'], ['en', 'English']], col: 4 }, { name: 'theme', label: L('المظهر', 'Theme'), type: 'select', options: [['light', L('فاتح', 'Light')], ['dark', L('داكن', 'Dark')]], col: 4 }, { name: 'taxRate', label: L('نسبة الضريبة على المبيعات %', 'Sales tax %'), type: 'number', col: 4 },
         { name: 'currency', label: L('العملة (عربي)', 'Currency (AR)'), col: 4 }, { name: 'currencyEn', label: L('العملة (إنجليزي)', 'Currency (EN)'), col: 4 }, { type: 'html', col: 4, html: '' },
@@ -8221,79 +8304,118 @@ const Security = {
   ok(u) { delete this.attempts[u]; }
 };
 
-/* ---------------- شاشة العرض المباشر للزبائن ---------------- */
+/* =========================================================
+ * شاشة العرض المباشر للزبائن (شاشة خارجية / تابلت / موبايل)
+ * - العادي: كروت المحافظ المختارة (الرقم + اسم المالك + متاح دخول اليوم)
+ * - أثناء عملية سحب: المحفظة اللي العميل هيحوّل عليها بتظهر لوحدها كبيرة مع المبلغ
+ * - التواصل بين البرنامج والشاشة: BroadcastChannel + localStorage (بيشتغل على الكمبيوتر والمتصفح)
+ * ========================================================= */
+const DISPLAY_DEFAULT = { title: 'حوّل على أي رقم من دول', message: 'سعداء بزيارتكم — مركز أهلاً للخدمات الإلكترونية', ticker: '', showOwner: true, showAvail: true, showNetwork: true, hideFull: true, focusOnOp: true, focusSec: 90, showAmount: true, cols: 'auto', theme: 'brand', refreshSec: 15 };
 const Display = {
-  open() { const url = location.href.replace(/#.*$/, '') + '#display'; if (DB.desktop) window.open(url, '_blank'); else { const w = window.open(url, '_blank'); if (!w) UI.toast(L('افتح الرابط في نافذة جديدة: ', 'Open in a new window: ') + url, 'warn', 6000); } },
+  KEY: 'mah:display:live',
+  cfg() { return { ...DISPLAY_DEFAULT, ...(DB.settings().display || {}) }; },
+  url() { return location.href.replace(/#.*$/, '') + '#display'; },
+  native() { const C = window.Capacitor; return !!(C && C.isNativePlatform && C.isNativePlatform()); },
+  open() {
+    if (!feat('display')) return UI.toast(L('فعّل «شاشة العرض المباشر» الأول من الإعدادات ← شاشة العرض', 'Enable the live display first'), 'warn', 5000);
+    if (this.native()) { try { sessionStorage.setItem('mah:dispInApp', '1'); } catch (_) {} location.hash = '#display'; location.reload(); return; }
+    const w = window.open(this.url(), 'mah-display'); if (!w) UI.toast(L('المتصفح منع النافذة — اسمح بالنوافذ المنبثقة أو افتح الرابط: ', 'Popup blocked — open: ') + this.url(), 'warn', 7000);
+  },
+  /* ---------- من البرنامج للشاشة ---------- */
+  chan() { try { return this._ch || (this._ch = new BroadcastChannel('mah-display')); } catch (_) { return null; } },
+  send(msg) { msg.at = Date.now(); try { localStorage.setItem(this.KEY, JSON.stringify(msg)); } catch (_) {} try { this.chan()?.postMessage(msg); } catch (_) {} },
+  info(w) {
+    const a = Modules.wallets.avail(w);
+    return { id: w.id, network: w.network, net: netName(w.network), number: fmtWalletNo(walletNo(w)) || '—', owner: w.owner || '', availIn: a.inDay, limitIn: w.dailyInLimit || 0 };
+  },
+  focus(w, amount, op) { if (!feat('display') || !w) return; const c = this.cfg(); this.send({ type: 'focus', w: this.info(w), amount: Number(amount) || 0, op: op || 'withdraw', sec: c.focusSec }); },
+  clear() { if (!feat('display')) return; this.send({ type: 'clear' }); },
+  refreshAll() { if (feat('display')) this.send({ type: 'refresh' }); },
+
+  /* ---------- الشاشة نفسها ---------- */
+  live: null,
   async render() {
-    await DB.init(); const s = DB.settings(); LANG = s.lang || 'ar'; App.applyLang(); applySkin(s.skin); document.documentElement.dataset.theme = 'dark';
-    const ws = Wallets.ordered().filter((w) => w.onDisplay && w.active !== false);
-    const n = new Date();
-    document.body.innerHTML = `<div class="disp"><header><img src="${logoSrc()}"><div><h1>${esc(s.store.name)}</h1><p>${L('أرقام المحافظ المتاحة للتحويل', 'Wallet numbers for transfers')}</p></div><div class="spacer"></div><div class="disp-clock num">${pad(n.getHours())}:${pad(n.getMinutes())}</div></header>
-      <main class="disp-grid">${ws.length ? ws.map((w) => `<div class="disp-card wnet-${w.network}"><div class="dn">${netName(w.network)}</div><div class="dno num" dir="ltr">${esc(fmtWalletNo(walletNo(w)))}</div>${w.owner ? `<div class="dow">${esc(w.owner)}</div>` : ''}</div>`).join('') : `<div class="disp-empty">${L('اختر المحافظ اللي تظهر هنا من كارت المحفظة ← خيارات أخرى ← إظهار على شاشة العرض', 'Choose wallets from card → More → Show on display')}</div>`}</main>
-      <footer>سعداء بزيارتكم — مركز أهلاً للخدمات الإلكترونية · ${COPYRIGHT_AR}</footer></div>`;
-    setTimeout(() => this.render(), 15000);
+    await DB.init(); const s = DB.settings(); LANG = s.lang || 'ar'; App.applyLang(); applySkin(s.skin);
+    document.documentElement.dataset.theme = 'dark'; document.body.classList.add('disp-body');
+    const c = this.cfg(); const inApp = (() => { try { return sessionStorage.getItem('mah:dispInApp') === '1'; } catch (_) { return false; } })();
+    document.body.innerHTML = `<div class="disp theme-${c.theme}">
+      <header class="disp-h"><img src="${logoSrc()}" alt=""><div class="disp-t"><h1>${esc(s.store.name)}</h1><p>${esc(c.title)}</p></div><div class="spacer"></div><div class="disp-time"><b id="dClock"></b><small id="dDate"></small></div>${inApp ? `<button class="disp-x" id="dExit" title="${L('رجوع للبرنامج', 'Back to app')}">✕</button>` : ''}</header>
+      <main id="dMain"></main>
+      <div class="disp-focus" id="dFocus" hidden></div>
+      <footer class="disp-f">${c.ticker ? `<div class="disp-tk"><span>${esc(c.ticker)}</span></div>` : ''}<div class="disp-msg">${esc(c.message)}</div><div class="disp-sig">${esc(COPYRIGHT_AR)}</div></footer></div>`;
+    $('#dExit') && ($('#dExit').onclick = () => { try { sessionStorage.removeItem('mah:dispInApp'); } catch (_) {} location.hash = ''; location.reload(); });
+    const tick = () => { const n = new Date(); $('#dClock').textContent = n.toLocaleTimeString(LANG === 'en' ? 'en-GB' : 'ar-EG', { hour: '2-digit', minute: '2-digit' }); $('#dDate').textContent = n.toLocaleDateString(LANG === 'en' ? 'en-GB' : 'ar-EG', { weekday: 'long', day: 'numeric', month: 'long' }); };
+    tick(); setInterval(tick, 15000);
+    this.grid();
+    setInterval(async () => { await DB.init(); this.grid(); }, Math.max(5, Number(c.refreshSec) || 15) * 1000);
+    const onMsg = (m) => { if (!m || !m.type) return; if (m.type === 'focus') this.showFocus(m); else if (m.type === 'clear') this.hideFocus(); else if (m.type === 'refresh') DB.init().then(() => this.grid()); };
+    try { this.chan()?.addEventListener('message', (e) => onMsg(e.data)); } catch (_) {}
+    let lastAt = 0;
+    setInterval(() => { try { const m = JSON.parse(localStorage.getItem(this.KEY) || 'null'); if (m && m.at > lastAt) { lastAt = m.at; if (Date.now() - m.at < 5 * 60e3) onMsg(m); } } catch (_) {} }, 700);
+    try { const m0 = JSON.parse(localStorage.getItem(this.KEY) || 'null'); lastAt = m0?.at || 0; } catch (_) {}
+  },
+  availHTML(i, c, big) {
+    if (!c.showAvail) return '';
+    if (i.availIn == null) return `<div class="d-av ok">${L('متاح للتحويل', 'Available')}</div>`;
+    const pct = i.limitIn ? i.availIn / i.limitIn : 1; const cls = i.availIn <= 0 ? 'off' : pct < 0.15 ? 'low' : 'ok';
+    return `<div class="d-av ${cls}">${i.availIn <= 0 ? L('وصلت للحد اليومي', 'Daily limit reached') : `${L('متاح دخول اليوم', 'Available in today')}: <b class="num">${money(i.availIn, false)}</b> ${big ? esc(DB.settings().currency || 'ج.م') : ''}`}</div>`;
+  },
+  grid() {
+    const c = this.cfg(); let ws = Wallets.ordered().filter((w) => w.onDisplay && w.active !== false && !w.hidden).map((w) => this.info(w));
+    if (c.hideFull) ws = ws.filter((i) => i.availIn == null || i.availIn > 0);
+    const el = $('#dMain'); if (!el) return;
+    el.className = 'disp-grid' + (c.cols !== 'auto' ? ' fixed' : ''); el.style.setProperty('--dcols', c.cols !== 'auto' ? c.cols : Math.min(4, Math.max(1, ws.length > 4 ? 3 : ws.length)));
+    el.innerHTML = ws.length ? ws.map((i) => `<div class="disp-card wnet-${i.network}">${c.showNetwork ? `<div class="dn"><i></i>${esc(i.net)}</div>` : ''}<div class="dno num" dir="ltr">${esc(i.number)}</div>${c.showOwner && i.owner ? `<div class="dow">${esc(i.owner)}</div>` : ''}${this.availHTML(i, c)}</div>`).join('')
+      : `<div class="disp-empty">${L('اختار المحافظ اللي تظهر من: الإعدادات ← شاشة العرض', 'Choose wallets in Settings → Display')}</div>`;
+  },
+  showFocus(m) {
+    const c = this.cfg(); const i = m.w; const el = $('#dFocus'); if (!el || !i) return;
+    el.innerHTML = `<div class="dfc wnet-${i.network}"><div class="dfc-k">${m.op === 'withdraw' ? L('حوّل المبلغ على الرقم ده', 'Send the amount to this number') : L('رقم المحفظة', 'Wallet number')}</div>
+      ${c.showNetwork ? `<div class="dn"><i></i>${esc(i.net)}</div>` : ''}<div class="dno num" dir="ltr">${esc(i.number)}</div>${c.showOwner && i.owner ? `<div class="dow">${L('باسم', 'Name')}: ${esc(i.owner)}</div>` : ''}
+      ${c.showAmount && m.amount ? `<div class="dfc-am">${L('المبلغ', 'Amount')}: <b class="num">${money(m.amount, false)}</b> ${esc(DB.settings().currency || 'ج.م')}</div>` : ''}${this.availHTML(i, c, true)}
+      <div class="dfc-bar"><i style="animation-duration:${Math.max(10, Number(m.sec) || 90)}s"></i></div></div>`;
+    el.hidden = false; document.body.classList.add('disp-focused');
+    clearTimeout(this._ft); this._ft = setTimeout(() => this.hideFocus(), Math.max(10, Number(m.sec) || 90) * 1000);
+  },
+  hideFocus() { const el = $('#dFocus'); if (el) el.hidden = true; document.body.classList.remove('disp-focused'); clearTimeout(this._ft); },
+
+  /* ---------- إعدادات الشاشة (تبويب في الإعدادات) ---------- */
+  settingsBody(b) {
+    const c = this.cfg(); const on = feat('display'); const ws = Wallets.ordered().filter((w) => w.active !== false);
+    b.innerHTML = `<div class="grid" style="grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px" id="dsGrid">
+      <div class="card card-b">
+        <div class="ftr-row" style="padding:0 0 12px"><div><b>${L('تفعيل شاشة العرض المباشر 📺', 'Enable live display 📺')}</b><small>${L('شاشة خارجية (أو تابلت / موبايل) قدام العميل بتعرض أرقام المحافظ', 'A customer-facing screen with wallet numbers')}</small></div><label class="switch"><input type="checkbox" id="dsOn" ${on ? 'checked' : ''}><span></span></label></div>
+        ${UI.form([
+          { name: 'title', label: L('العنوان اللي تحت اسم المحل', 'Subtitle'), col: 12 },
+          { name: 'message', label: L('رسالة أسفل الشاشة', 'Bottom message'), col: 12 },
+          { name: 'ticker', label: L('شريط إعلانات متحرك (اختياري)', 'Scrolling ticker (optional)'), col: 12, placeholder: L('مثال: خصم 10% على الإكسسوارات — شحن كروت كل الشبكات', 'e.g. 10% off accessories') },
+          { name: 'showOwner', label: L('إظهار اسم المالك', 'Show owner name'), type: 'checkbox', col: 6 }, { name: 'showAvail', label: L('إظهار «متاح دخول اليوم»', 'Show available-in today'), type: 'checkbox', col: 6 },
+          { name: 'showNetwork', label: L('إظهار اسم الشبكة', 'Show network'), type: 'checkbox', col: 6 }, { name: 'hideFull', label: L('إخفاء المحفظة لما توصل للحد اليومي', 'Hide wallets at daily limit'), type: 'checkbox', col: 6 },
+          { name: 'focusOnOp', label: L('أثناء عملية السحب: اعرض المحفظة المختارة لوحدها كبيرة', 'During withdrawal: show the chosen wallet full-screen'), type: 'checkbox', col: 12 },
+          { name: 'showAmount', label: L('إظهار المبلغ المطلوب تحويله', 'Show requested amount'), type: 'checkbox', col: 6 },
+          { name: 'focusSec', label: L('مدة العرض الكبير (ثانية)', 'Focus duration (sec)'), type: 'select', options: [[30, '30'], [60, '60'], [90, '90'], [120, '120'], [180, '180']], col: 6 },
+          { name: 'cols', label: L('عدد الكروت في الصف', 'Cards per row'), type: 'select', options: [['auto', L('تلقائي', 'Auto')], [1, '1'], [2, '2'], [3, '3'], [4, '4']], col: 6 },
+          { name: 'theme', label: L('ألوان الشاشة', 'Screen theme'), type: 'select', options: [['brand', L('لون البرنامج', 'Brand')], ['dark', L('داكن', 'Dark')], ['light', L('فاتح', 'Light')]], col: 6 },
+          { name: 'refreshSec', label: L('تحديث الأرصدة كل (ثانية)', 'Refresh every (sec)'), type: 'select', options: [[10, '10'], [15, '15'], [30, '30'], [60, '60']], col: 6 }
+        ], c)}
+        <div class="row mt wrap" style="gap:8px"><button class="btn primary" id="dsSave">${icon('check')}${L('حفظ', 'Save')}</button><div class="spacer"></div><button class="btn" id="dsOpen">${icon('pos')}${L('فتح شاشة العرض', 'Open display')}</button><button class="btn" id="dsTest">${icon('send')}${L('تجربة عرض محفظة', 'Test focus')}</button></div>
+      </div>
+      <div class="card"><div class="card-h"><h3>${L('المحافظ اللي بتظهر على الشاشة', 'Wallets on the display')}</h3></div><div class="card-b" style="display:flex;flex-direction:column;gap:6px">
+        ${ws.length ? ws.map((w) => { const a = Modules.wallets.avail(w); return `<label class="ds-w wnet-${w.network}"><input type="checkbox" data-dw="${w.id}" ${w.onDisplay ? 'checked' : ''}><i class="color-dot wdot-${w.network}"></i><span class="ds-wt"><b dir="ltr">${esc(fmtWalletNo(walletNo(w)) || w.name)}</b><small>${esc(w.owner || w.name || '')} · ${netName(w.network)}${a.inDay != null ? ` · ${L('متاح اليوم', 'Avail. today')} ${money(a.inDay, false)}` : ''}</small></span></label>`; }).join('') : `<div class="faint">${L('مفيش محافظ لسه', 'No wallets yet')}</div>`}
+        <div class="faint mt">${L('💡 على الكمبيوتر: اسحب نافذة الشاشة للشاشة التانية واضغط F11 لملء الشاشة. على الموبايل/التابلت: الشاشة بتفتح جوه البرنامج ومعاها زرار رجوع.', 'Tip: on desktop drag the window to the second monitor and press F11.')}</div>
+      </div></div></div>`;
+    const grid = $('#dsGrid', b); if (App.isMobile()) grid.style.gridTemplateColumns = '1fr';
+    $('#dsOn', b).onchange = (e) => { DB.saveSettings({ features: { display: e.target.checked } }); audit('feature.display', e.target.checked); UI.toast(L('تم الحفظ', 'Saved')); };
+    $$('[data-dw]', b).forEach((x) => (x.onchange = () => { DB.update('wallets', x.dataset.dw, { onDisplay: x.checked }); this.refreshAll(); }));
+    const read = () => { const v = UI.read(b); v.focusSec = Number(v.focusSec) || 90; v.refreshSec = Number(v.refreshSec) || 15; return v; };
+    $('#dsSave', b).onclick = () => { DB.saveSettings({ display: read() }); this.refreshAll(); UI.toast(L('تم الحفظ — افتح الشاشة من جديد لو العنوان أو الألوان اتغيرت', 'Saved')); };
+    $('#dsOpen', b).onclick = () => { DB.saveSettings({ display: read() }); this.open(); };
+    $('#dsTest', b).onclick = () => { const w = Wallets.ordered().find((x) => x.onDisplay && x.active !== false) || ws[0]; if (!w) return UI.toast(L('أضف محفظة الأول', 'Add a wallet first'), 'warn'); this.focus(w, 1500, 'withdraw'); UI.toast(L('اتبعتت للشاشة ✓', 'Sent to the display ✓')); };
   }
 };
 
-/* ---------------- لوحة المالك ---------------- */
-Modules.owner = {
-  title: () => L('لوحة المالك', 'Owner panel'), icon: 'key', perm: 'owner',
-  render(el) {
-    const s = DB.settings();
-    const item = (id, ic, t, d, badge = '') => `<button class="ow-item" data-ow="${id}"><span class="ow-ic">${ic}</span><span class="ow-tx"><b>${t}</b><small>${d}</small></span>${badge}<span class="ow-arr">${LANG === 'ar' ? '←' : '→'}</span></button>`;
-    el.innerHTML = `<div class="ow">
-      <div class="ow-hero"><h1>🏢 ${L('مرحبًا بك في لوحة المالك', 'Welcome to the owner panel')}</h1><p>${L('ابدأ بإعداد بيانات المحل، الفروع، والموظفين.', 'Start by setting up the store, branches and staff.')}</p>
-        <div class="row wrap" style="justify-content:center;gap:8px"><button class="btn" id="owShop" style="background:#475569;color:#fff;border-color:#475569">🏪 ${L('دخول للمحل', 'Enter store')}</button><button class="btn danger" data-guide="1">▶ ${L('شرح 1', 'Guide 1')}</button><button class="btn danger" data-guide="2">▶ ${L('شرح 2', 'Guide 2')}</button></div></div>
-      <div class="ow-grid">
-        <div class="card ow-card"><div class="ow-h"><span class="ow-ic">⚙️</span><div><b>${L('الإدارة والتهيئة', 'Administration & setup')}</b><small>${L('إعداد المحل والفروع والموظفين والصلاحيات', 'Store, branches, staff and permissions')}</small></div></div>
-          ${item('store', '🏬', L('إعدادات المحل', 'Store settings'), L('تعديل بيانات المحل، الشعار، والإعدادات العامة', 'Store data, logo and general settings'))}
-          ${item('offline', '📦', L('تحميل بياناتي للأوفلاين', 'Download my data offline'), L('ملف مشفّر (.mahx) لاستيراده في نسخة سطح المكتب', 'Encrypted .mahx file for the desktop app'), `<span class="tag ok">${L('أوفلاين', 'Offline')}</span>`)}
-          ${item('branches', '🏢', L('الفروع', 'Branches'), L('إضافة الفروع وإدارتها وتفعيل/إيقاف كل فرع', 'Add, manage, enable/disable branches'))}
-          ${item('employees', '👥', L('الموظفين', 'Employees'), L('إضافة المستخدمين وتحديد الأدوار والصلاحيات', 'Users, roles and permissions'))}
-          ${item('roles', '🔐', L('الأدوار والصلاحيات', 'Roles & permissions'), L('إدارة الأدوار وإنشاء أدوار مخصصة جديدة', 'Manage and create custom roles'))}
-          ${item('wallets', '💼', L('إعداد المحافظ', 'Wallet setup'), L('تعريف الأنواع والشركات والليمتات', 'Types, providers and limits'))}
-          ${item('machines', '🧾', L('إعدادات أنواع مكن الدفع', 'Payment machines'), L('تعريف أنواع مكن الدفع وحساباتها وعملياتها', 'Machine types, accounts and operations'))}
-          ${item('features', '🧩', L('مميزات البرنامج', 'Program features'), L('تفعيل وتعطيل الأنظمة: الورديات، الآجل، المكن، العرض...', 'Enable/disable modules and behaviours'))}
-          ${item('login', '🛡️', L('تعديل بيانات دخول المالك', 'Owner login details'), L('تغيير اسم المستخدم وكلمة المرور', 'Change username and password'), `<span class="tag ok">${L('هام', 'Important')}</span>`)}
-        </div>
-        <div style="display:flex;flex-direction:column;gap:16px">
-          <div class="card ow-card"><div class="ow-h"><span class="ow-ic">🔒</span><div><b>${L('الأجهزة والأمان', 'Devices & security')}</b><small>${L('إعدادات الأمان وإدارة الأجهزة المتصلة', 'Security settings and connected devices')}</small></div></div>
-            ${item('health', '🩺', L('فحص سلامة البيانات', 'Data health check'), L('فحص شامل للمخزون والمحافظ والدرج والأمان والنسخ الاحتياطي مع درجة صحة النظام', 'Full scan with a system health score'))}
-            ${item('security', '⚙️', L('إعدادات الأمان', 'Security settings'), L('القفل التلقائي ومحاولات الدخول الخاطئة', 'Auto-lock and failed login protection'))}
-            ${item('devices', '📱', L('الأجهزة المتصلة', 'Connected devices'), L('عرض الأجهزة وإدارة الثقة والحظر', 'View devices, trust and block'))}
-            ${item('logoutall', '🚪', L('تسجيل خروج من كل الأجهزة', 'Sign out all devices'), L('إنهاء جميع الجلسات ومسح قائمة الأجهزة', 'End all sessions'))}
-            ${item('display', '📺', L('شاشة العرض المباشر', 'Live display screen'), L('عرض أرقام المحافظ على شاشة خارجية للزبائن', 'Show wallet numbers on a customer screen'), feat('display') ? '' : `<span class="tag">${L('معطلة', 'Off')}</span>`)}
-          </div>
-          <div class="card ow-card"><div class="ow-h"><span class="ow-ic">💾</span><div><b>${L('النسخ الاحتياطي', 'Backup')}</b><small>${L('حفظ واستعادة بيانات النظام', 'Save and restore system data')}</small></div></div>
-            <div style="padding:14px;display:flex;flex-direction:column;gap:10px"><button class="btn ok lg block" id="owBk">💾 ${L('حفظ نسخة احتياطية', 'Save a backup')}</button>
-            <div class="stat-mini" style="flex-direction:row;align-items:center;gap:8px">${icon('clock')}<span class="faint">${L('آخر نسخة محفوظة', 'Last saved backup')}:</span><b class="num">${fmtDT(s.backup.lastManual || s.backup.lastAuto)}</b></div>
-            <button class="btn danger lg block" id="owRs">♻️ ${L('استعادة النسخة الاحتياطية', 'Restore backup')}</button></div></div>
-        </div>
-      </div>
-      <div class="card ow-danger"><div class="ow-h"><span class="ow-ic">⛔</span><div><b style="color:var(--err)">${L('منطقة الخطر (إعادة ضبط المصنع)', 'Danger zone (factory reset)')}</b></div></div>
-        <div style="padding:14px"><button class="btn danger lg block" id="owReset">☢️ ${L('إعادة ضبط النظام (System Reset)', 'System reset')}</button><p class="faint tc">⚠️ ${L('استخدم هذه الأدوات بحذر شديد. عملية إعادة الضبط تقوم بمسح البيانات المختارة نهائياً.', 'Use with extreme care. Reset permanently erases the selected data.')}</p></div></div></div>`;
-    $('#owShop').onclick = () => App.go('dashboard');
-    $$('[data-guide]', el).forEach((b) => (b.onclick = () => this.guide(+b.dataset.guide)));
-    $('#owBk').onclick = () => Backup.export(); $('#owRs').onclick = () => Backup.restore();
-    $('#owReset').onclick = () => this.resetDialog();
-    $$('[data-ow]', el).forEach((b) => (b.onclick = () => {
-      const k = b.dataset.ow;
-      if (k === 'store') { Modules.settings.tab = 'store'; App.go('settings'); }
-      if (k === 'health') DataHealth.open();
-      if (k === 'offline') SecureBackup.exportDialog();
-      if (k === 'branches') this.branches();
-      if (k === 'employees') App.go('users');
-      if (k === 'roles') this.roles();
-      if (k === 'wallets') { Modules.wallets.tab = 'wallets'; App.go('wallets'); }
-      if (k === 'machines') App.go('machines');
-      if (k === 'features') { Modules.settings.tab = 'features'; App.go('settings'); }
-      if (k === 'login') this.ownerLogin();
-      if (k === 'security') this.security();
-      if (k === 'devices') this.devices();
-      if (k === 'logoutall') UI.confirm(L('تسجيل الخروج من كل الأجهزة؟ كل المستخدمين هيحتاجوا يسجلوا دخول تاني (بما فيهم أنت).', 'Sign out all devices, including this one?')).then((ok) => { if (ok) { Devices.logoutAll(); audit('devices.logoutAll'); App.logout(); } });
-      if (k === 'display') { if (!feat('display')) return UI.toast(L('فعّل "شاشة العرض المباشر" من مميزات البرنامج أولاً', 'Enable the live display in features first'), 'warn'); Display.open(); }
-    }));
-  },
+/* ---------------- أدوات الإدارة والأمان (اتنقلت من لوحة المالك للإعدادات) ---------------- */
+const OwnerTools = {
   guide(n) {
     const steps = n === 1
       ? [L('من "إعدادات المحل" اكتب اسم المحل والتليفون وارفع اللوجو.', 'Set store name, phone and logo.'), L('من "الفروع" أضف فروعك واختار الفرع الحالي للجهاز ده.', 'Add branches and pick this device’s branch.'), L('من "الموظفين" أضف المستخدمين، ومن "الأدوار" حدد صلاحيات كل دور.', 'Add users and set role permissions.'), L('من "مميزات البرنامج" فعّل الأنظمة اللي محتاجها بس.', 'Enable only the features you need.')]

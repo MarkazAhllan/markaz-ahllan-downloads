@@ -1418,6 +1418,118 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .saved-path { width: 100%; box-sizing: border-box; direction: ltr; text-align: left; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; background: var(--surface-2); border: 1px dashed var(--line-2); border-radius: 12px; padding: 9px 12px; word-break: break-all; color: var(--text-2); }
 .saved-tip { font-size: 13px; color: var(--text-3, #8a7c7e); line-height: 1.7; }
 .modal.saved .modal-f { flex-direction: column-reverse; } .modal.saved .modal-f .btn { width: 100%; }
+
+/* ================= Sidebar chevrons v2 — أسهم القائمة: أقصى اليسار، تحت بعض، بشكل موحّد ================= */
+.side-nav .grp-h, .side-nav a.has-sub { padding-inline-end: 16px; }
+.side-nav .grp-b a.has-sub { padding-inline-end: 8px; } /* الصندوق الداخلي واخد 8px (هامش 4 + حشوة 4) فالأسهم بتيجي على خط واحد */
+.side-nav .grp-h > span, .side-nav a.has-sub > span { flex: 1 1 auto; min-width: 0; line-height: 1.35; }
+.side-nav .grp-h .badge, .side-nav a.has-sub .badge { margin-inline-start: 0 !important; }
+.side-nav .grp-h .caret, .side-nav a.has-sub .caret {
+  margin-inline-start: auto !important; width: 26px; height: 26px; flex: 0 0 26px; border-radius: 8px; display: grid; place-items: center;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.10); color: rgba(255,255,255,.78); opacity: 1;
+  transition: transform .25s cubic-bezier(.4,0,.2,1), background .15s, color .15s, border-color .15s;
+}
+.side-nav .grp-h .badge + .caret, .side-nav a.has-sub .badge + .caret { margin-inline-start: 8px !important; }
+.side-nav .grp-h .caret svg, .side-nav a.has-sub .caret svg { width: 15px; height: 15px; stroke-width: 2.6; opacity: 1; }
+.side-nav .grp-h:hover .caret, .side-nav a.has-sub .caret:hover { background: rgba(255,255,255,.16); color: #fff; border-color: rgba(255,255,255,.2); }
+.side-nav .grp-h.open .caret, .side-nav a.has-sub .caret.open { transform: rotate(180deg); background: rgba(255,255,255,.18); color: #fff; border-color: rgba(255,255,255,.24); }
+.side-nav a.has-sub.active .caret { background: color-mix(in srgb, currentColor 10%, transparent); border-color: color-mix(in srgb, currentColor 22%, transparent); color: inherit; }
+:root[data-skin="blackgold"] .side-nav .grp-h.open .caret { color: #D4A017; border-color: rgba(212,160,23,.4); }
+
+/* ================= قسم الموبايلات ================= */
+.ph-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.ph-k { display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); min-width: 0; }
+.ph-k > span { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; background: var(--p-50); flex: none; }
+.ph-k small { display: block; color: var(--text-2); font-size: 12px; }
+.ph-k b { display: block; font-size: 22px; font-weight: 800; line-height: 1.25; }
+.ph-k em { display: block; font-style: normal; font-size: 12px; color: var(--text-3, var(--text-2)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-k.hero { background: linear-gradient(135deg, var(--p), var(--p-700, var(--p))); color: var(--on-p, #fff); border: 0; }
+.ph-k.hero > span { background: rgba(255,255,255,.16); }
+.ph-k.hero small, .ph-k.hero em { color: rgba(255,255,255,.82); }
+.ph-k.warn { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); background: color-mix(in srgb, var(--warn) 7%, var(--surface)); }
+.ph-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.ph-search { flex: 1 1 280px; display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0 6px 0 12px; height: 44px; min-width: 0; }
+[dir=rtl] .ph-search { padding: 0 12px 0 6px; }
+.ph-search > svg { color: var(--text-2); flex: none; }
+.ph-search input { border: 0 !important; background: transparent !important; box-shadow: none !important; height: 40px; flex: 1; min-width: 0; padding: 0; outline: none; }
+.seg button.on { background: var(--p); color: var(--on-p, #fff); box-shadow: var(--shadow-sm); }
+.seg.big { display: flex; width: 100%; } .seg.big button { flex: 1; justify-content: center; text-align: center; padding: 10px 12px; }
+.ph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.ph-card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 14px 12px; cursor: pointer; overflow: hidden; transition: transform .15s, box-shadow .15s; display: flex; flex-direction: column; gap: 8px; }
+.ph-card::before { content: ''; position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 4px; background: var(--bc, var(--p)); }
+.ph-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.ph-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ph-brand { font-size: 11.5px; font-weight: 800; letter-spacing: .4px; color: var(--bc, var(--p)); background: color-mix(in srgb, var(--bc, var(--p)) 12%, transparent); padding: 2px 9px; border-radius: 999px; }
+.ph-model { font-size: 17px; font-weight: 800; line-height: 1.3; }
+.ph-specs { display: flex; flex-wrap: wrap; gap: 5px; }
+.ph-specs span { font-size: 11.5px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 2px 8px; color: var(--text-2); }
+.ph-imei { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--text-2); text-align: start; }
+.ph-price { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed var(--line); padding-top: 8px; margin-top: auto; }
+.ph-price small { display: block; font-size: 11px; color: var(--text-2); }
+.ph-price b { font-size: 20px; font-weight: 800; color: var(--p); }
+.ph-acts { display: flex; gap: 6px; } .ph-acts .btn.primary { flex: 1; }
+.ph-foot { font-size: 12px; }
+.ph-form { display: flex; flex-direction: column; gap: 12px; }
+.ph-sec { background: var(--surface-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.ph-sec h4 { margin: 0 0 10px; font-size: 14px; }
+.ph-chk { display: flex; flex-wrap: wrap; gap: 6px; }
+.ph-chk label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-2, var(--line)); background: var(--surface); cursor: pointer; font-size: 13px; user-select: none; transition: .15s; }
+.ph-chk label input { display: none; }
+.ph-chk label::before { content: '○'; font-weight: 800; color: var(--text-3, #999); }
+.ph-chk label.on { background: color-mix(in srgb, var(--ok) 12%, var(--surface)); border-color: color-mix(in srgb, var(--ok) 50%, transparent); color: var(--ok); font-weight: 700; }
+.ph-chk label.on::before { content: '✓'; color: var(--ok); }
+.ph-dh { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; margin-bottom: 12px; background: linear-gradient(135deg, color-mix(in srgb, var(--bc, var(--p)) 14%, var(--surface)), var(--surface)); border: 1px solid var(--line); }
+.ph-dh h2 { margin: 4px 0 6px; font-size: 22px; }
+.ph-big { font-size: 26px; font-weight: 800; color: var(--p); margin: 4px 0; }
+.ph-dr { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px; }
+.ph-dr:last-child { border-bottom: 0; } .ph-dr > span { color: var(--text-2); flex: none; } .ph-dr > b { text-align: end; font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.ph-tl { display: flex; flex-direction: column; gap: 6px; }
+.ph-tl > div { display: grid; grid-template-columns: 30px 1fr; column-gap: 8px; align-items: center; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); }
+.ph-tl > div > i { grid-row: span 3; font-style: normal; font-size: 18px; text-align: center; }
+.ph-tl > div > span, .ph-tl > div > small { color: var(--text-2); font-size: 12px; }
+.prod.ph-prod { border-top: 3px solid var(--bc, var(--p)); }
+.prod.ph-prod .pic { display: grid; place-items: center; gap: 2px; color: var(--bc, var(--p)); } .prod.ph-prod .pic small { font-size: 10.5px; font-weight: 800; }
+#posCats .ph-chip { border-color: color-mix(in srgb, var(--p) 40%, transparent); font-weight: 800; }
+.cart-item.phone { background: color-mix(in srgb, var(--p) 5%, transparent); border-radius: 10px; }
+.cart-item.trade { background: color-mix(in srgb, var(--ok) 8%, transparent); border-radius: 10px; }
+
+/* ================= قسم كاميرات المراقبة ================= */
+.ph-k.hero.cv { background: linear-gradient(135deg, #12355B, #1F5FA8); }
+.cv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.cv-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; cursor: pointer; display: flex; flex-direction: column; gap: 9px; transition: transform .15s, box-shadow .15s; border-top: 4px solid var(--line-2, var(--line)); min-width: 0; }
+.cv-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.cv-card.st-quote { border-top-color: #1F5FA8; } .cv-card.st-scheduled { border-top-color: var(--warn); } .cv-card.st-installed { border-top-color: var(--ok); } .cv-card.st-cancelled { opacity: .6; border-top-color: var(--err); }
+.cv-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.cv-cust { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.cv-cust b { display: block; font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .cv-cust small { color: var(--text-2); font-size: 12px; }
+.av { width: 38px; height: 38px; border-radius: 12px; flex: none; display: grid; place-items: center; font-weight: 800; font-size: 16px; background: var(--p-50); color: var(--p); }
+.cv-addr { font-size: 12.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cv-items { font-size: 13px; background: var(--surface-2); border-radius: 10px; padding: 8px 10px; line-height: 1.6; }
+.cv-money { display: flex; gap: 6px; } .cv-money > div { flex: 1; min-width: 0; } .cv-money small { display: block; font-size: 11px; color: var(--text-2); } .cv-money b { font-size: 16px; font-weight: 800; }
+.cv-bar { height: 6px; border-radius: 99px; background: var(--surface-2); overflow: hidden; } .cv-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--ok), color-mix(in srgb, var(--ok) 70%, #fff)); border-radius: 99px; }
+.cv-foot { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-height: 30px; }
+.cv-stock-k { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.cv-stock-k > div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; min-width: 0; }
+.cv-stock-k small { display: block; font-size: 12px; color: var(--text-2); } .cv-stock-k b { display: block; font-size: 20px; font-weight: 800; } .cv-stock-k em { font-style: normal; font-size: 12px; opacity: .85; }
+.cv-stock-k > .hl { background: linear-gradient(135deg, #0F7A4A, #19A463); color: #fff; border: 0; } .cv-stock-k > .hl small { color: rgba(255,255,255,.85); }
+.cv-stock-k > .bad { border-color: color-mix(in srgb, var(--err) 45%, var(--line)); background: color-mix(in srgb, var(--err) 6%, var(--surface)); }
+.cv-tbl tr[data-pid] { cursor: pointer; } .cv-tbl tr.low td { background: color-mix(in srgb, var(--err) 5%, transparent); }
+.cv-tbl tfoot td { font-weight: 800; background: var(--surface-2); }
+.cv-pi { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: #E6EEF8; color: #1F5FA8; flex: none; }
+.cv-m { position: relative; min-width: 80px; height: 20px; border-radius: 6px; background: var(--surface-2); overflow: hidden; }
+.cv-m i { position: absolute; inset-block: 0; inset-inline-start: 0; background: color-mix(in srgb, var(--ok) 30%, transparent); }
+.cv-m span { position: relative; display: block; text-align: center; font-size: 11.5px; font-weight: 800; line-height: 20px; }
+.cv-pick { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.cv-kits { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+.cv-it input { height: 34px; padding: 0 8px; font-size: 13px; width: 100%; min-width: 60px; box-sizing: border-box; }
+.cv-it td { vertical-align: middle; }
+.cv-sum { position: sticky; bottom: -18px; display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(0,0,0,.06); z-index: 2; }
+.cv-sum > div { flex: 1 1 110px; min-width: 0; } .cv-sum small { display: block; font-size: 11.5px; color: var(--text-2); } .cv-sum b { font-size: 17px; font-weight: 800; }
+.cv-sum .t b { color: var(--p); font-size: 20px; } .cv-sum .p b { color: var(--ok); } .cv-sum em { font-style: normal; font-size: 12px; color: var(--ok); margin-inline-start: 4px; }
+.cv-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); margin-bottom: 6px; cursor: pointer; }
+.cv-row:hover { border-color: var(--p); }
+.cv-dvr { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 13px; } .cv-dvr code { background: var(--surface-2); padding: 1px 6px; border-radius: 6px; direction: ltr; display: inline-block; }
+@media (max-width: 640px) { .ph-kpis, .cv-stock-k { grid-template-columns: 1fr 1fr; gap: 8px; } .ph-k { padding: 10px; gap: 8px; } .ph-k > span { width: 36px; height: 36px; font-size: 18px; border-radius: 11px; } .ph-k.hero { grid-column: 1 / -1; } .cv-pick .ph-search { flex: 1 1 100%; } .cv-sum { position: static; } .cv-sum > div { flex: 1 1 40%; } .ph-grid, .cv-grid { grid-template-columns: 1fr; } .ph-k b { font-size: 19px; } .ph-bar > .row { width: 100%; } .ph-bar > .row .btn { flex: 1; } }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -1672,6 +1784,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   <script>
 /* Stroke icon set (24x24) */
 const ICONS = {
+  chev: '<path d="m6 9 6 6 6-6"/>',
   dashboard: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
   pos: '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4M6 9h4M6 12h7"/>',
   cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 7H6"/>',
@@ -1814,7 +1927,7 @@ const AVATAR_COLORS = ['#8B1A2B', '#1F5FA8', '#16825D', '#B26A00', '#6B2C91', '#
 function avatarColor(s) { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return AVATAR_COLORS[h % AVATAR_COLORS.length]; }
 
 /* ---------------- Database (Realm via Electron IPC / browser fallback) ---------------- */
-const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox'];
+const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs'];
 
 const DEFAULT_SETTINGS = {
   appName: 'Markaz Ahllan POS',
@@ -1828,7 +1941,7 @@ const DEFAULT_SETTINGS = {
   ai: { apiKey: '', model: 'claude-sonnet-5-5' },
   sync: { code: '', auto: true, interval: 5, lastPush: '', lastSeq: 0, lastSync: null },
   backup: { auto: true, intervalHours: 12, lastAuto: null },
-  features: { credit: true, creditShare: true, opDate: true, editOwnOnly: false, machines: true, expenses: true, display: false, external: true, autoInternal: false, netFee: true, companyRef: false, roundFee5: false, repairs: true, lines: true, simSales: false },
+  features: { credit: true, creditShare: true, opDate: true, editOwnOnly: false, machines: true, expenses: true, display: false, external: true, autoInternal: false, netFee: true, companyRef: false, roundFee5: false, repairs: true, lines: true, simSales: false, phones: true, cctv: true },
   security: { autoLockMin: 0, maxAttempts: 5, lockoutMin: 2 },
   roles: [], branchId: '',
   /* أنواع الماكينات (قابلة للتعديل والتلوين) */
@@ -1845,6 +1958,8 @@ const DEFAULT_SETTINGS = {
     { id: 'cc5', network: 'اتصالات', kind: 'card', value: 10, cost: 9.75, price: 11, active: true }, { id: 'cc6', network: 'وي', kind: 'card', value: 10, cost: 9.75, price: 11, active: true },
     { id: 'cc7', network: 'فودافون', kind: 'topup', value: 50, cost: 48.8, price: 52, active: true }, { id: 'cc8', network: 'أورانج', kind: 'topup', value: 50, cost: 48.8, price: 52, active: true }
   ],
+  cctv: { cats: [], warrantyMonths: 12, quoteDays: 7, maintMonths: 0, terms: 'الأسعار شاملة التركيب والتشغيل وضبط المشاهدة على الموبايل.\nالضمان لا يشمل سوء الاستخدام أو الكهرباء أو الكسر.\nيتم دفع العربون عند الموافقة والباقي بعد التركيب.' },
+  phones: { staleDays: 30 },
   repair: {
     autoWA: true, warrantyDays: 30, inspectionFee: 0,
     deviceTypes: ['كاميرا', 'كاميرا مراقبة', 'جهاز تسجيل DVR / NVR', 'لابتوب', 'كمبيوتر', 'موبايل', 'تابلت', 'راوتر', 'شاشة', 'أخرى'],
@@ -1915,7 +2030,7 @@ const DB = {
     if (this._settings) return this._settings;
     const s = this.maps.settings.get('main') || {};
     const merged = { ...DEFAULT_SETTINGS, ...s };
-    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
+    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
     this._settings = merged; return merged;
   },
   saveSettings(patch) {
@@ -1967,12 +2082,13 @@ const PERMS = [
   ['customers', 'العملاء والآجل', 'Customers & credit'], ['machines', 'ماكينات الشحن', 'Charging machines'], ['wallets', 'معاملات الكاش', 'Cash wallets'], ['wallets.manage', 'تعديل وحذف عمليات المحافظ', 'Edit/delete wallet ops'],
   ['expenses', 'المصروفات', 'Expenses'], ['reports', 'التقارير', 'Reports'], ['capital', 'رأس المال', 'Capital'], ['shifts', 'الورديات', 'Shifts'],
   ['users', 'المستخدمين', 'Users'], ['attendance', 'الحضور والانصراف', 'Attendance'], ['payroll', 'المرتبات', 'Payroll'], ['backup', 'النسخ الاحتياطي', 'Backup'],
-  ['settings', 'الإعدادات', 'Settings'], ['owner', 'لوحة المالك', 'Owner panel'], ['repairs', 'الصيانة', 'Repairs'], ['lines', 'خطوط الشركات: استعلام وتحصيل', 'Lines: view & collect'], ['lines.manage', 'خطوط الشركات: تحكم كامل (إضافة/تعديل/أسعار/حسابات المفوض)', 'Lines: full control'], ['machines.price', 'تعديل المحصّل من العميل في الكروت', 'Edit card collected price'], ['losses', 'التالف والهوالك', 'Damaged & waste'], ['ai', 'المساعد الذكي', 'AI assistant'], ['discount', 'منح خصم', 'Give discount'], ['limit.override', 'تجاوز الليمت', 'Override limits']
+  ['settings', 'الإعدادات', 'Settings'], ['owner', 'لوحة المالك', 'Owner panel'], ['repairs', 'الصيانة', 'Repairs'], ['lines', 'خطوط الشركات: استعلام وتحصيل', 'Lines: view & collect'], ['lines.manage', 'خطوط الشركات: تحكم كامل (إضافة/تعديل/أسعار/حسابات المفوض)', 'Lines: full control'], ['machines.price', 'تعديل المحصّل من العميل في الكروت', 'Edit card collected price'], ['losses', 'التالف والهوالك', 'Damaged & waste'], ['ai', 'المساعد الذكي', 'AI assistant'], ['discount', 'منح خصم', 'Give discount'], ['limit.override', 'تجاوز الليمت', 'Override limits'],
+  ['phones', 'قسم الموبايلات: عرض وبيع', 'Phones: view & sell'], ['phones.buy', 'قسم الموبايلات: شراء وتعديل الأجهزة', 'Phones: buy & edit'], ['cctv', 'كاميرات المراقبة: عرض وتحصيل', 'CCTV: view & collect'], ['cctv.manage', 'كاميرات المراقبة: إنشاء وتعديل التركيبات', 'CCTV: manage installations'], ['cctv.secret', 'كاميرات المراقبة: رؤية باسوردات الأجهزة', 'CCTV: view device passwords']
 ];
 const ROLE_PRESETS = {
   admin: PERMS.map((p) => p[0]),
   manager: PERMS.map((p) => p[0]).filter((p) => !['users', 'backup', 'settings'].includes(p)),
-  cashier: ['dashboard', 'pos', 'sales', 'customers', 'machines', 'wallets', 'repairs', 'lines', 'shifts', 'attendance', 'ai', 'discount'],
+  cashier: ['dashboard', 'pos', 'sales', 'customers', 'machines', 'wallets', 'repairs', 'lines', 'shifts', 'attendance', 'ai', 'discount', 'phones', 'cctv'],
   accountant: ['dashboard', 'sales', 'purchases', 'suppliers', 'customers', 'expenses', 'reports', 'capital', 'payroll']
 };
 const ROLE_NAMES = { admin: ['مدير النظام', 'Administrator'], manager: ['مدير الفرع', 'Branch manager'], cashier: ['كاشير', 'Cashier'], accountant: ['محاسب', 'Accountant'], custom: ['مخصص', 'Custom'] };
@@ -2000,7 +2116,7 @@ const CASH_SOURCES = {
   'customer-pay': ['تحصيل من عملاء', 'Customer collections'], 'supplier-pay': ['سداد موردين', 'Supplier payments'],
   'wallet-withdraw': ['سحب محافظ', 'Wallet withdrawals'], 'wallet-deposit': ['إيداع محافظ', 'Wallet deposits'], 'wallet-fee': ['عمولات المحافظ', 'Wallet fees'],
   'machine-service': ['خدمات الماكينات', 'Machine services'], lines: ['خطوط الشركات', 'Mobile lines'], 'machine-topup': ['شحن رصيد الماكينات', 'Machine top-ups'],
-  capital: ['رأس المال', 'Capital'], opening: ['رصيد افتتاحي', 'Opening'], adjust: ['تسوية', 'Adjustment'], salary: ['مرتبات وسلف', 'Salaries & advances'], 'shift-close': ['تسليم وردية', 'Shift handover']
+  capital: ['رأس المال', 'Capital'], opening: ['رصيد افتتاحي', 'Opening'], adjust: ['تسوية', 'Adjustment'], salary: ['مرتبات وسلف', 'Salaries & advances'], 'shift-close': ['تسليم وردية', 'Shift handover'], 'phone-buy': ['شراء موبايلات', 'Phone purchases'], cctv: ['تركيبات الكاميرات', 'CCTV installations']
 };
 
 /* ---------------- UI kit ---------------- */
@@ -2831,6 +2947,8 @@ const Sales = {
       status: 'completed', notes: notes || '', tendered: tendered || null, change: tendered ? round2(tendered - sum(payments.filter((p) => p.method === 'cash'), (p) => p.amount)) : 0, returns: []
     });
     for (const it of items) Stock.move(it.productId, -it.qty, 'sale', sale.no);
+    if (typeof Phones !== 'undefined') try { Phones.onSale(sale); } catch (e) { console.warn(e); }
+    if (typeof CCTV !== 'undefined') try { CCTV.onSale(sale); } catch (e) { console.warn(e); }
     for (const p of payments) {
       if (p.method === 'cash') cashMove(p.amount, 'sale', sale.no);
       if ((p.method === 'wallet' || p.method === 'instapay') && p.walletId) DB.insert('walletTx', { walletId: p.walletId, type: 'sale', amount: p.amount, fee: 0, balanceDelta: p.amount, cashDelta: 0, ref: sale.no, date: nowISO(), userId: Session.user.id, shiftId: sh?.id || null, clientName: customerId ? DB.get('customers', customerId)?.name : '' });
@@ -2843,12 +2961,13 @@ const Sales = {
   returnItems(sale, lines, refundMethod) {
     let amount = 0; const rItems = [];
     for (const { idx, qty } of lines) {
-      if (!qty) continue; const it = sale.items[idx];
+      if (!qty) continue; const it = sale.items[idx]; if (it.tradeIn) continue;
       const unitNet = it.price - (it.discount || 0) / it.qty;
       const ratio = sale.subtotal ? (sale.subtotal - sale.discount + sale.tax) / sale.subtotal : 1;
       const val = round2(unitNet * qty * ratio); amount += val;
       it.returned = (it.returned || 0) + qty; rItems.push({ name: it.name, qty, value: val });
       Stock.move(it.productId, qty, 'return', sale.no);
+      if (it.phoneId && typeof Phones !== 'undefined') Phones.onReturn(sale, idx);
     }
     amount = round2(amount); if (!amount) return null;
     if (refundMethod === 'credit' && sale.customerId) Customers.tx(sale.customerId, 'return', -amount, sale.no, L('مرتجع', 'Return'));
@@ -2872,7 +2991,7 @@ async function receiptHTML(sale, { preview = false } = {}) {
   const w = r.width === 'A4' ? '190mm' : r.width + 'mm';
   const qr = r.showQR ? await qrDataURL(`${st.nameEn || st.name}|${sale.no}|${sale.total}|${sale.date}`, 120) : null;
   const fs = r.fontSize || 12;
-  const rows = sale.items.map((i) => `<tr><td>${esc(i.name)}${i.discount ? `<div class="sm">${L('خصم', 'Disc')} ${money(i.discount, false)}</div>` : ''}</td><td class="c">${i.qty}</td><td class="c">${money(i.price, false)}</td><td class="e">${money(i.qty * i.price - (i.discount || 0), false)}</td></tr>`).join('');
+  const rows = sale.items.map((i) => `<tr><td>${esc(i.name)}${i.imei ? `<div class="sm" dir="ltr" style="text-align:start">IMEI ${esc(i.imei)}</div>` : ''}${i.phoneId && i.warrantyDays ? `<div class="sm">${L('ضمان', 'Warranty')} ${i.warrantyDays} ${L('يوم', 'days')} — ${L('حتى', 'until')} ${fmtDate(addDays(new Date(sale.date), i.warrantyDays))}</div>` : ''}${i.discount ? `<div class="sm">${L('خصم', 'Disc')} ${money(i.discount, false)}</div>` : ''}</td><td class="c">${i.qty}</td><td class="c">${money(i.price, false)}</td><td class="e">${money(i.qty * i.price - (i.discount || 0), false)}</td></tr>`).join('');
   const pays = sale.payments.map((p) => `<div class="ln"><span>${payName(p.method)}${p.walletId ? ' (' + esc(DB.get('wallets', p.walletId)?.name || '') + ')' : ''}</span><span>${money(p.amount, false)}</span></div>`).join('');
   const body = `<div class="rc">
     ${r.showLogo ? `<div class="c"><img src="${logoSrc()}" class="logo"></div>` : ''}
@@ -2953,7 +3072,7 @@ const NAV = [
   { id: 'main', grp: ['الرئيسية', 'Main'], items: ['dashboard', 'pos'], fixed: true },
   { id: 'services', grp: ['المحافظ الإلكترونية وماكينات الدفع', 'E-wallets & payment machines'], icon: 'wallet', items: ['wallets', 'machines'] },
   { id: 'commerce', grp: ['المبيعات والمخزون', 'Sales & stock'], icon: 'cart', items: ['sales', 'customers', 'purchases', 'inventory', 'suppliers'] },
-  { id: 'more', grp: ['', ''], items: ['lines', 'repairs'], fixed: true },
+  { id: 'more', grp: ['', ''], items: ['phones', 'cctv', 'lines', 'repairs'], fixed: true },
   { id: 'hr', grp: ['الموارد البشرية', 'HR'], icon: 'users', items: ['users', 'attendance', 'payroll'] },
   { id: 'finance', grp: ['المالية', 'Finance'], icon: 'bank', items: ['shifts', 'expenses', 'capital', 'reports'] },
   { id: 'system', grp: ['النظام', 'System'], icon: 'settings', items: ['settings', 'backup'] }
@@ -2971,6 +3090,7 @@ const App = {
     }
     // ترحيل الصلاحيات: الكاشير يستعلم ويحصّل اشتراكات الخطوط، ومدير الفرع له التحكم الكامل
     if ((s.permMig || 0) < 2) { DB.all('users').forEach((u) => { if (u.role === 'admin') return; const p = new Set(u.perms || []); if (u.role === 'cashier' || u.role === 'manager') p.add('lines'); if (u.role === 'manager') p.add('lines.manage'); DB.update('users', u.id, { perms: [...p] }); }); DB.saveSettings({ permMig: 2 }); }
+    if ((DB.settings().permMig || 0) < 3) { DB.all('users').forEach((u) => { if (u.role === 'admin') return; const p = new Set(u.perms || []); if (u.role === 'cashier' || u.role === 'manager') { p.add('phones'); p.add('cctv'); } if (u.role === 'manager') { p.add('phones.buy'); p.add('cctv.manage'); } DB.update('users', u.id, { perms: [...p] }); }); DB.saveSettings({ permMig: 3 }); }
     if (!DB.all('categories').length) Seed.basics();
     const demoMode = !DB.desktop && !window.MAH_MOBILE; // نسخة الموبايل تبدأ فاضية (بدون بيانات تجريبية)
     if (demoMode && !DB.all('products').length) Seed.demo(); if (demoMode && !DB.all('lines').length) try { Seed.lines(); } catch (_) {} if (demoMode && !DB.all('subLines').length) try { Seed.corp(); } catch (e) { console.warn(e); }
@@ -3126,7 +3246,7 @@ const App = {
   navVisible(id) { return Modules[id] && Session.can(Modules[id].perm || id) && (!Modules[id].enabled || Modules[id].enabled()); },
   navItemHTML(id) {
     const M = Modules[id]; const so = this.subOpen(id);
-    return `<a data-nav="${id}" ${M.subs ? 'class="has-sub"' : ''}>${icon(M.icon)}<span>${M.title()}</span>${M.badge ? `<em class="badge" data-badge="${id}" style="display:none;font-style:normal"></em>` : ''}${M.subs ? `<i class="caret ${so ? 'open' : ''}" data-caret="${id}" title="${L('إظهار / إخفاء القائمة', 'Expand / collapse')}">${icon('arrowDown')}</i>` : ''}</a>`
+    return `<a data-nav="${id}" ${M.subs ? 'class="has-sub"' : ''}>${icon(M.icon)}<span>${M.title()}</span>${M.badge ? `<em class="badge" data-badge="${id}" style="display:none;font-style:normal"></em>` : ''}${M.subs ? `<i class="caret ${so ? 'open' : ''}" data-caret="${id}" title="${L('إظهار / إخفاء القائمة', 'Expand / collapse')}">${icon('chev')}</i>` : ''}</a>`
       + (M.subs ? `<div class="side-sub ${so ? '' : 'collapsed'}" data-subof="${id}">${M.subs().map((sb) => `<a data-nav="${id}" data-tab="${sb.tab}">${icon(sb.icon)}<span>${sb.label}</span>${sb.count ? `<em class="badge" data-subbadge="${id}:${sb.tab}" style="display:none;font-style:normal"></em>` : ''}</a>`).join('')}</div>` : '');
   },
   navHTML() {
@@ -3134,7 +3254,7 @@ const App = {
       const items = g.items.filter((id) => this.navVisible(id)); if (!items.length) return '';
       if (g.fixed) return (g.grp[0] ? `<div class="grp">${L(...g.grp)}</div>` : '') + items.map((id) => this.navItemHTML(id)).join('');
       const open = this.grpOpen(g.id);
-      return `<button class="grp-h ${open ? 'open' : ''}" data-grp="${g.id}" type="button">${icon(g.icon)}<span>${L(...g.grp)}</span><em class="badge" data-grpbadge="${g.id}" style="display:none;font-style:normal"></em><i class="caret">${icon('arrowDown')}</i></button>
+      return `<button class="grp-h ${open ? 'open' : ''}" data-grp="${g.id}" type="button">${icon(g.icon)}<span>${L(...g.grp)}</span><em class="badge" data-grpbadge="${g.id}" style="display:none;font-style:normal"></em><i class="caret">${icon('chev')}</i></button>
         <div class="grp-b ${open ? '' : 'collapsed'}" data-grpb="${g.id}">${items.map((id) => this.navItemHTML(id)).join('')}</div>`;
     }).join('');
   },
@@ -3319,7 +3439,7 @@ Modules.dashboard = {
     const sales = Sales.inRange(from, today);
     const salesTotal = sum(sales, Sales.net), profit = sum(sales, Sales.netProfit);
     const wtx = DB.filter('walletTx', (t) => inRange(t.date, from, today)), mtx = DB.filter('machineTx', (t) => inRange(t.date, from, today));
-    const repProfit = Repairs.profitIn(from, today); const cashFees = sum(wtx, (t) => t.fee || 0) + sum(mtx, (t) => (t.fee || 0) + (t.commission || 0)) + repProfit + Lines.profitIn(from, today);
+    const repProfit = Repairs.profitIn(from, today); const cashFees = sum(wtx, (t) => t.fee || 0) + sum(mtx, (t) => (t.fee || 0) + (t.commission || 0)) + repProfit + Lines.profitIn(from, today) + (typeof CCTV !== 'undefined' ? CCTV.profitIn(from, today) : 0);
     const expenses = sum(DB.filter('expenses', (e) => inRange(e.date, from, today)), (e) => e.amount);
     const sh = Session.shift();
     const u = Session.user;
@@ -3464,10 +3584,11 @@ Modules.pos = {
     q.onkeydown = (e) => {
       if (e.key !== 'Enter') return; e.preventDefault();
       const v = q.value.trim(); if (!v) return;
+      const ph = typeof Phones !== 'undefined' && Phones.on() && Phones.byCode(v); if (ph) { this.addPhone(ph); q.value = ''; this.renderGrid(); return; }
       const p = findProductByCode(v) || (this.filtered().length === 1 ? this.filtered()[0] : null);
       if (p) { this.addProduct(p); q.value = ''; this.renderGrid(); } else UI.toast(L('المنتج غير موجود', 'Product not found') + ': ' + v, 'warn');
     };
-    $('#posCam').onclick = () => Scanner.camera((code) => { const p = findProductByCode(code); p ? this.addProduct(p) : UI.toast(L('كود غير معروف', 'Unknown code'), 'warn'); });
+    $('#posCam').onclick = () => Scanner.camera((code) => this.onScan(code));
     $('#posQuick').onclick = () => this.quickItem();
     $('#posClear').onclick = async () => { if (this.cart.length && (await UI.confirm(L('مسح كل الأصناف من الفاتورة؟', 'Clear the cart?')))) this.reset(); };
     $('#posHold').onclick = () => { if (!this.cart.length) return; this.held.push({ cart: this.cart, customerId: this.customerId, discount: this.discount, discountType: this.discountType, at: nowISO() }); this.reset(); UI.toast(L('تم تعليق الفاتورة', 'Sale held')); };
@@ -3481,10 +3602,10 @@ Modules.pos = {
     setTimeout(() => q.focus(), 50);
   },
   onKey(k) { if (k === 'F2') $('#posQ')?.focus(); if (k === 'F4') this.checkout(); },
-  onScan(code) { const p = findProductByCode(code); if (p) this.addProduct(p); else UI.toast(L('كود غير معروف: ', 'Unknown code: ') + code, 'warn'); },
+  onScan(code) { const ph = typeof Phones !== 'undefined' && Phones.on() && Phones.byCode(code); if (ph) return this.addPhone(ph); const p = findProductByCode(code); if (p) this.addProduct(p); else UI.toast(L('كود غير معروف: ', 'Unknown code: ') + code, 'warn'); },
   renderCats() {
     const cats = DB.all('categories');
-    $('#posCats').innerHTML = `<button data-c="" class="${!this.cat ? 'active' : ''}">${L('الكل', 'All')}</button>` + cats.map((c) => `<button data-c="${c.id}" class="${this.cat === c.id ? 'active' : ''}">${esc(c.name)}</button>`).join('');
+    $('#posCats').innerHTML = `<button data-c="" class="${!this.cat ? 'active' : ''}">${L('الكل', 'All')}</button>` + (typeof Phones !== 'undefined' && Phones.on() && Session.can('phones') ? `<button data-c="__ph" class="ph-chip ${this.cat === '__ph' ? 'active' : ''}">📱 ${L('الموبايلات', 'Phones')} <span class="tag" style="padding:0 6px">${Phones.stock().filter((p) => p.status === 'stock').length}</span></button>` : '') + cats.map((c) => `<button data-c="${c.id}" class="${this.cat === c.id ? 'active' : ''}">${esc(c.name)}</button>`).join('');
     $$('#posCats button').forEach((b) => (b.onclick = () => { this.cat = b.dataset.c; this.renderCats(); this.renderGrid(); }));
   },
   filtered() {
@@ -3492,6 +3613,7 @@ Modules.pos = {
     return DB.filter('products', (p) => p.active !== false && (!this.cat || p.categoryId === this.cat) && (!q || (p.name + ' ' + (p.barcode || '') + ' ' + (p.sku || '')).toLowerCase().includes(q)));
   },
   renderGrid() {
+    if (this.cat === '__ph') return this.renderPhones();
     const list = this.filtered().slice(0, 120);
     $('#posGrid').innerHTML = list.length ? list.map((p) => {
       const out = p.trackStock !== false && p.qty <= 0;
@@ -3506,6 +3628,24 @@ Modules.pos = {
     const s = $('#posCust'); if (!s) return;
     s.innerHTML = `<option value="">${L('عميل نقدي', 'Walk-in customer')}</option>` + DB.all('customers').map((c) => `<option value="${c.id}" ${c.id === this.customerId ? 'selected' : ''}>${esc(c.name)}${c.phone ? ' — ' + esc(c.phone) : ''}${Customers.balance(c) > 0 ? ` (${L('عليه', 'owes')} ${money(Customers.balance(c), false)})` : ''}</option>`).join('');
     s.onchange = () => (this.customerId = s.value || null);
+  },
+  renderPhones() {
+    const q = Phones.norm($('#posQ')?.value || ''), ql = ($('#posQ')?.value || '').trim().toLowerCase(); const inCart = new Set(this.cart.map((i) => i.phoneId).filter(Boolean));
+    const list = DB.filter('phones', (p) => p.status === 'stock' && !inCart.has(p.id) && (!ql || Phones.full(p).toLowerCase().includes(ql) || [p.imei1, p.imei2, p.code].some((x) => x && Phones.norm(x).includes(q)))).slice(0, 120);
+    $('#posGrid').innerHTML = list.length ? list.map((p) => `<button class="prod ph-prod" data-ph="${p.id}" style="--bc:${Phones.color(p)}">
+        <span class="q tag ${PH_COND[p.condition || 'new'][2]}">${L(...PH_COND[p.condition || 'new'].slice(0, 2))}</span>
+        <div class="pic">${icon('phone')}<small>${esc(p.brand || '')}</small></div>
+        <div class="n">${esc(p.model || '')} ${esc(p.storage || '')}</div><div class="faint" dir="ltr" style="font-size:10.5px">${esc((p.imei1 || '').slice(-6))}</div><div class="pr num">${money(p.price)}</div></button>`).join('')
+      : `<div style="grid-column:1/-1">${UI.empty(L('مفيش موبايلات متاحة — ضيفها من قسم الموبايلات', 'No phones in stock'), 'phone')}</div>`;
+    $$('#posGrid [data-ph]').forEach((b) => (b.onclick = () => this.addPhone(DB.get('phones', b.dataset.ph))));
+  },
+  addPhone(p, { silent = false } = {}) {
+    if (!p) return;
+    if (p.status === 'sold') return UI.toast(L(`الجهاز ده اتباع قبل كده (${p.saleNo || ''})`, 'This phone is already sold'), 'err', 5000);
+    if (this.cart.some((i) => i.phoneId === p.id)) return silent || UI.toast(L('الجهاز موجود في الفاتورة بالفعل', 'Already in the cart'), 'warn');
+    this.cart.push({ productId: null, phoneId: p.id, name: Phones.full(p), qty: 1, price: Number(p.price) || 0, cost: Number(p.buyPrice) || 0, discount: 0, imei: p.imei1 || '', warrantyDays: Number(p.warrantyDays) || 0, minPrice: Number(p.minPrice) || 0, custom: true });
+    if ($('#posCart')) { this.renderCart(); if (this.cat === '__ph') this.renderGrid(); }
+    if (!silent) UI.toast(L(`تمت إضافة ${Phones.full(p)}`, 'Phone added'));
   },
   addProduct(p) {
     if (!p) return;
@@ -3533,10 +3673,10 @@ Modules.pos = {
   renderCart() {
     const c = $('#posCart'); if (!c) return;
     $('#posCount').textContent = sum(this.cart, (i) => i.qty);
-    c.innerHTML = this.cart.length ? this.cart.map((i, k) => `<div class="cart-item">
-        <div style="min-width:0"><div class="n">${esc(i.name)}</div><div class="p row" style="gap:6px">${Session.can('discount') ? `<input type="number" data-price="${k}" value="${i.price}" style="width:90px;height:28px;font-size:12px;padding:0 6px">` : money(i.price)}<span>× ${i.qty}</span></div></div>
-        <div class="qty"><button data-dec="${k}">−</button><input data-qty="${k}" value="${i.qty}" type="number"><button data-inc="${k}">+</button></div>
-        <div style="text-align:end;min-width:80px"><b class="num">${money(i.qty * i.price - (i.discount || 0), false)}</b><div><button class="btn ghost sm" data-del="${k}" style="height:24px;padding:0 4px;color:var(--err)">${icon('x')}</button></div></div></div>`).join('')
+    c.innerHTML = this.cart.length ? this.cart.map((i, k) => { const one = i.phoneId || i.tradeIn; return `<div class="cart-item ${i.tradeIn ? 'trade' : i.phoneId ? 'phone' : ''}">
+        <div style="min-width:0"><div class="n">${i.phoneId ? '📱 ' : i.tradeIn ? '🔄 ' : ''}${esc(i.name)}</div>${i.imei ? `<div class="faint" dir="ltr" style="font-size:11px;text-align:start">IMEI ${esc(i.imei)}${i.warrantyDays ? ` · 🛡️ ${i.warrantyDays}${L('ي', 'd')}` : ''}</div>` : ''}<div class="p row" style="gap:6px">${Session.can('discount') && !i.tradeIn ? `<input type="number" data-price="${k}" value="${i.price}" style="width:90px;height:28px;font-size:12px;padding:0 6px">` : money(i.price)}${one ? '' : `<span>× ${i.qty}</span>`}</div></div>
+        ${one ? '<div></div>' : `<div class="qty"><button data-dec="${k}">−</button><input data-qty="${k}" value="${i.qty}" type="number"><button data-inc="${k}">+</button></div>`}
+        <div style="text-align:end;min-width:80px"><b class="num">${money(i.qty * i.price - (i.discount || 0), false)}</b><div><button class="btn ghost sm" data-del="${k}" style="height:24px;padding:0 4px;color:var(--err)">${icon('x')}</button></div></div></div>`; }).join('')
       : UI.empty(L('امسح باركود أو اختر منتج لبدء البيع', 'Scan or pick a product to start'), 'cart');
     const t = this.totals();
     $('#posTotals').innerHTML = `
@@ -3548,7 +3688,7 @@ Modules.pos = {
     $$('[data-dec]', c).forEach((b) => (b.onclick = () => { const i = this.cart[b.dataset.dec]; i.qty > 1 ? i.qty-- : this.cart.splice(b.dataset.dec, 1); this.renderCart(); }));
     $$('[data-del]', c).forEach((b) => (b.onclick = () => { this.cart.splice(b.dataset.del, 1); this.renderCart(); }));
     $$('[data-qty]', c).forEach((b) => (b.onchange = () => { const v = Math.max(0, Number(b.value) || 0); if (!v) this.cart.splice(b.dataset.qty, 1); else this.cart[b.dataset.qty].qty = v; this.renderCart(); }));
-    $$('[data-price]', c).forEach((b) => (b.onchange = () => { this.cart[b.dataset.price].price = Math.max(0, Number(b.value) || 0); this.renderCart(); }));
+    $$('[data-price]', c).forEach((b) => (b.onchange = () => { const i = this.cart[b.dataset.price]; let v = Math.max(0, Number(b.value) || 0); if (i.phoneId && i.minPrice && v < i.minPrice && !Session.can('limit.override')) { UI.toast(L(`أقل سعر مسموح للجهاز ده ${money(i.minPrice)}`, `Minimum price is ${money(i.minPrice)}`), 'err'); v = i.minPrice; } i.price = v; this.renderCart(); }));
     const d = $('#posDisc'); if (d) { d.onchange = () => { this.discount = Number(d.value) || 0; this.renderCart(); }; $('#posDiscT').onchange = (e) => { this.discountType = e.target.value; this.renderCart(); }; }
     const hn = $('#heldN'); if (hn) hn.textContent = this.held.length || '';
     if ($('#posBarN')) { $('#posBarN').textContent = sum(this.cart, (i) => i.qty); $('#posBarT').textContent = money(t.total); }
@@ -3566,7 +3706,8 @@ Modules.pos = {
     if (!this.cart.length) return UI.toast(L('الفاتورة فارغة', 'Cart is empty'), 'warn');
     if (!App.needShift()) return;
     const t = this.totals();
-    if (t.total < 0) return UI.toast(L('الخصم أكبر من قيمة الفاتورة', 'Discount exceeds total'), 'err');
+    if (t.total < 0) return UI.toast(this.cart.some((i) => i.tradeIn) ? L('قيمة الاستبدال أكبر من سعر الجهاز — اشتري الجهاز من قسم الموبايلات بدل الاستبدال', 'Trade-in exceeds the total') : L('الخصم أكبر من قيمة الفاتورة', 'Discount exceeds total'), 'err');
+    const soldPh = this.cart.find((i) => i.phoneId && DB.get('phones', i.phoneId)?.status === 'sold'); if (soldPh) return UI.toast(L(`الجهاز ${soldPh.name} اتباع بالفعل — شيله من الفاتورة`, 'A phone in the cart is already sold'), 'err', 5000);
     const wallets = DB.filter('wallets', (w) => w.active !== false);
     let method = 'cash';
     const m = UI.modal({ title: L('إتمام الدفع', 'Checkout'), icon: 'money', size: 'lg', body: `
@@ -3835,8 +3976,8 @@ Modules.inventory = {
       footer: (r) => `<td colspan="${canCost ? 5 : 3}">${L('الإجمالي', 'Total')}</td><td>${num(sum(r.filter((p) => p.trackStock !== false), (p) => p.qty))}</td><td colspan="2"></td>`
     });
   },
-  edit(p, onSave) {
-    const isNew = !p; p = p || { type: 'accessory', trackStock: true, active: true, unit: L('قطعة', 'pcs'), minQty: 2, qty: 0 };
+  edit(p, onSave, defaults) {
+    const isNew = !p; p = p || { type: 'accessory', trackStock: true, active: true, unit: L('قطعة', 'pcs'), minQty: 2, qty: 0, ...(defaults || {}) };
     const cats = DB.all('categories');
     const m = UI.modal({ title: isNew ? L('منتج جديد', 'New product') : L('تعديل منتج', 'Edit product'), icon: 'box', size: 'lg', body: UI.form([
       { name: 'name', label: L('اسم المنتج', 'Product name'), required: true, col: 8 },
@@ -3968,7 +4109,7 @@ Modules.inventory = {
     UI.toast(L(`تم استيراد ${added} منتج جديد وتحديث ${updated}`, `Imported ${added}, updated ${updated}`)); App.reload();
   }
 };
-function moveName(t) { return ({ sale: L('بيع', 'Sale'), purchase: L('شراء', 'Purchase'), return: L('مرتجع بيع', 'Sale return'), 'purchase-return': L('مرتجع شراء', 'Purchase return'), adjust: L('تسوية', 'Adjustment'), opening: L('رصيد افتتاحي', 'Opening'), count: L('جرد', 'Count') })[t] || t; }
+function moveName(t) { return ({ sale: L('بيع', 'Sale'), purchase: L('شراء', 'Purchase'), return: L('مرتجع بيع', 'Sale return'), 'purchase-return': L('مرتجع شراء', 'Purchase return'), adjust: L('تسوية', 'Adjustment'), opening: L('رصيد افتتاحي', 'Opening'), count: L('جرد', 'Count'), cctv: L('تركيب كاميرات', 'CCTV install'), 'cctv-return': L('مرتجع تركيب', 'CCTV return') })[t] || t; }
 function pickImage(maxSize = 300) {
   return new Promise((res) => {
     const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
@@ -4802,7 +4943,7 @@ Modules.repairs = {
   },
 
   /* ---------------- الاستلام ---------------- */
-  receive(r, warrantyOf) {
+  receive(r, warrantyOf, prefill) {
     const c = this.cfg(); const isEdit = !!r;
     const custs = DB.all('customers');
     const md = UI.modal({ title: isEdit ? L('تعديل بيانات الجهاز', 'Edit device') + ' — ' + r.no : warrantyOf ? L('استلام بالضمان', 'Warranty intake') + ' — ' + warrantyOf.no : L('استلام جهاز للصيانة', 'Receive device for repair'), icon: 'tool', size: 'xl', body: `
@@ -4824,7 +4965,7 @@ Modules.repairs = {
         { name: 'priority', label: L('الأولوية', 'Priority'), type: 'select', col: 3, options: [['normal', L('عادي', 'Normal')], ['urgent', L('مستعجل', 'Urgent')]] },
         { name: 'notes', label: L('ملاحظات داخلية', 'Internal notes'), col: isEdit ? 6 : 6 },
         ...(isEdit ? [] : [{ name: 'sendWA', label: L('إرسال رسالة استلام على واتساب', 'Send WhatsApp receipt message'), type: 'checkbox', col: 6, value: c.autoWA }, { name: 'print', label: L('طباعة إيصال الاستلام', 'Print intake ticket'), type: 'checkbox', col: 6, value: true }])
-      ], r || (warrantyOf ? { ...warrantyOf, issue: '', estimate: 0, notes: L('ضمان على إيصال ', 'Warranty of ') + warrantyOf.no } : { deviceType: c.deviceTypes[0], priority: 'normal' })),
+      ], r || (warrantyOf ? { ...warrantyOf, issue: '', estimate: 0, notes: L('ضمان على إيصال ', 'Warranty of ') + warrantyOf.no } : { deviceType: c.deviceTypes[0], priority: 'normal', ...(prefill || {}) })),
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: isEdit ? L('حفظ', 'Save') : L('استلام الجهاز', 'Receive device'), cls: 'primary', icon: 'check', onClick: (x) => {
         if (!UI.validate(x.el)) return; const v = UI.read(x.el);
         const acc = $$('[data-acc].active', x.el).map((b) => b.dataset.acc);
@@ -5042,6 +5183,799 @@ Modules.repairs = {
       DB.saveSettings({ repair: { autoWA: !!v.autoWA, warrantyDays: Number(v.warrantyDays) || 0, inspectionFee: Number(v.inspectionFee) || 0, deviceTypes: lines(v.deviceTypes), accessories: lines(v.accessories), terms: v.terms, templates } });
       audit('repair.settings'); UI.toast(L('تم الحفظ', 'Saved'));
     };
+  }
+};
+
+</script>
+  <script>
+/* =========================================================
+ * قسم الموبايلات — كل جهاز قطعة لوحدها برقم IMEI
+ * شراء (من مورد / من زبون / استبدال) • بيع من نقطة البيع • ضمان • تاريخ الجهاز • أرباح كل جهاز
+ * مربوط بـ: نقطة البيع، الدرج والورديات، الموردين، العملاء والآجل، المرتجعات، التقارير
+ * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+ * ========================================================= */
+const PH_COND = { new: ['جديد متبرشم', 'New (sealed)', 'ok'], open: ['جديد مفتوح', 'New (open box)', 'info'], used: ['مستعمل', 'Used', 'warn'] };
+const PH_GRADE = { A: ['ممتاز', 'Excellent'], B: ['كويس جداً', 'Very good'], C: ['مقبول', 'Fair'] };
+const PH_STATUS = { stock: ['في المخزون', 'In stock', 'ok'], reserved: ['محجوز', 'Reserved', 'warn'], sold: ['مباع', 'Sold', ''], repair: ['في الصيانة', 'In repair', 'info'] };
+const PH_CHECKS = [['screen', 'الشاشة واللمس', 'Screen & touch'], ['cams', 'الكاميرات', 'Cameras'], ['charge', 'الشحن', 'Charging'], ['bio', 'البصمة / الوش', 'Biometrics'], ['speaker', 'السماعة', 'Speaker'], ['mic', 'المايك', 'Mic'], ['wifi', 'واي فاي / بلوتوث', 'Wi-Fi / BT'], ['net', 'الشبكة والشرايح', 'Network & SIM'], ['body', 'الجسم بدون كسر', 'Body intact']];
+const PH_ACC = [['box', 'الكرتونة', 'Box'], ['charger', 'الشاحن', 'Charger'], ['cable', 'الكابل', 'Cable'], ['earphones', 'السماعة', 'Earphones'], ['invoice', 'فاتورة الشراء', 'Invoice'], ['cover', 'جراب / سكرينة', 'Case / protector']];
+const PH_STORAGE = ['16GB', '32GB', '64GB', '128GB', '256GB', '512GB', '1TB'];
+const PH_RAM = ['2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '16GB'];
+
+const Phones = {
+  on() { return DB.settings().features.phones !== false; },
+  all() { return DB.all('phones'); },
+  stock() { return DB.filter('phones', (p) => p.status === 'stock' || p.status === 'reserved'); },
+  norm(c) { return String(c || '').replace(/\s+/g, '').toUpperCase(); },
+  byCode(code) { const c = this.norm(code); if (c.length < 4) return null; return DB.find('phones', (p) => [p.imei1, p.imei2, p.serial, p.code].some((x) => x && this.norm(x) === c)); },
+  name(p) { return [p.brand, p.model].filter(Boolean).join(' '); },
+  full(p) { return [this.name(p), [p.storage, p.ram].filter(Boolean).join('/'), p.color].filter(Boolean).join(' '); },
+  color(p) { const b = PHONE_BRANDS.find(([en, ar]) => [en.toLowerCase(), ar].includes(String(p.brand || '').toLowerCase())); return b ? b[2] : '#8B1A2B'; },
+  days(p) { return Math.max(0, Math.floor((Date.now() - new Date(p.buyDate || p.createdAt).getTime()) / 864e5)); },
+  warrantyLeft(p) { if (!p.warrantyUntil) return null; return Math.ceil((new Date(p.warrantyUntil).getTime() - Date.now()) / 864e5); },
+  luhn(s) { s = String(s || '').replace(/\D/g, ''); if (s.length !== 15) return false; let t = 0; for (let i = 0; i < 15; i++) { let d = +s[14 - i]; if (i % 2) { d *= 2; if (d > 9) d -= 9; } t += d; } return t % 10 === 0; },
+  hist(p, action, note = '') { return [...(p.history || []), { at: nowISO(), action, note, by: Session.user?.name || '' }]; },
+  staleDays() { return Number(DB.settings().phones?.staleDays) || 30; },
+
+  /* شراء / إضافة جهاز — بيسجّل الفلوس في الدرج أو على المورد */
+  create(v, { pay = 'drawer', silent = false } = {}) {
+    const no = DB.nextNo('phbuy', 'PB-');
+    const doc = DB.insert('phones', { ...v, code: v.code || DB.nextNo('phone', 'PH-'), buyNo: no, buyDate: v.buyDate || nowISO(), status: 'stock', payFrom: pay, userId: Session.user?.id, history: [{ at: nowISO(), action: 'buy', note: `${no} — ${money(v.buyPrice || 0)}`, by: Session.user?.name || '' }] });
+    const amt = Number(v.buyPrice) || 0;
+    if (amt && v.source !== 'tradein') {
+      if (pay === 'drawer') cashMove(-amt, 'phone-buy', no, this.full(doc));
+      if (pay === 'credit' && v.supplierId) Suppliers.tx(v.supplierId, 'purchase', amt, no, L('شراء موبايل', 'Phone purchase') + ' ' + this.full(doc));
+    }
+    audit('phone.buy', `${no} ${this.full(doc)} ${doc.imei1 || ''}`);
+    return doc;
+  },
+  /* بعد البيع من نقطة البيع */
+  onSale(sale) {
+    sale.items.forEach((it) => {
+      if (it.phoneId) {
+        const p = DB.get('phones', it.phoneId); if (!p) return;
+        const wd = Number(it.warrantyDays ?? p.warrantyDays) || 0;
+        DB.update('phones', p.id, { status: 'sold', saleId: sale.id, saleNo: sale.no, soldAt: sale.date, soldPrice: round2(it.price - (it.discount || 0)), customerId: sale.customerId || null, customerName: sale.customerId ? DB.get('customers', sale.customerId)?.name || '' : '', warrantyUntil: wd ? addDays(new Date(sale.date), wd).toISOString() : null, history: this.hist(p, 'sale', `${sale.no} — ${money(it.price)}`) });
+      }
+      if (it.tradeIn) { // جهاز العميل اللي دخل في الاستبدال
+        const t = it.tradeIn; this.create({ ...t, source: 'tradein', buyPrice: Math.abs(Number(it.price) || 0), tradeSaleNo: sale.no, sellerName: t.sellerName || (sale.customerId ? DB.get('customers', sale.customerId)?.name : '') }, { pay: 'none' });
+      }
+    });
+  },
+  onReturn(sale, idx) {
+    const it = sale.items[idx]; if (!it?.phoneId) return;
+    const p = DB.get('phones', it.phoneId); if (!p) return;
+    DB.update('phones', p.id, { status: 'stock', saleId: null, saleNo: null, soldAt: null, soldPrice: null, customerId: null, customerName: '', warrantyUntil: null, returnedFrom: sale.no, history: this.hist(p, 'return', sale.no) });
+  },
+
+  /* تقرير الموبايلات للتقارير */
+  report(from, to, canCost) {
+    const inR = (d) => inRange(d, from, to);
+    const bought = DB.filter('phones', (p) => inR(p.buyDate)), sold = DB.filter('phones', (p) => p.status === 'sold' && inR(p.soldAt)), stock = this.stock();
+    const rev = sum(sold, (p) => p.soldPrice || 0), cost = sum(sold, (p) => p.buyPrice || 0), prof = rev - cost;
+    const stale = stock.filter((p) => this.days(p) >= this.staleDays());
+    const byBrand = {}; sold.forEach((p) => { const b = p.brand || '—'; (byBrand[b] ||= { n: 0, rev: 0, prof: 0 }); byBrand[b].n++; byBrand[b].rev += p.soldPrice || 0; byBrand[b].prof += (p.soldPrice || 0) - (p.buyPrice || 0); });
+    return {
+      title: L('تقرير الموبايلات', 'Phones report'),
+      kpis: [[L('أجهزة مباعة', 'Phones sold'), num(sold.length)], [L('إيراد البيع', 'Revenue'), money(rev)], ...(canCost ? [[L('ربح الموبايلات', 'Phones profit'), money(prof)], [L('قيمة المخزون (تكلفة)', 'Stock value (cost)'), money(sum(stock, (p) => p.buyPrice || 0))]] : []), [L('أجهزة اتشرت', 'Phones bought'), num(bought.length)], [L('في المخزون', 'In stock'), num(stock.length)], [L(`راكد أكتر من ${this.staleDays()} يوم`, 'Stale'), num(stale.length)]],
+      tables: [
+        { title: L('الأجهزة المباعة', 'Sold phones'), cols: [L('التاريخ', 'Date'), L('الجهاز', 'Phone'), 'IMEI', L('الحالة', 'Condition'), L('العميل', 'Customer'), L('الفاتورة', 'Invoice'), L('سعر البيع', 'Price'), ...(canCost ? [L('التكلفة', 'Cost'), L('الربح', 'Profit')] : [])],
+          rows: sold.sort((a, b) => (a.soldAt < b.soldAt ? 1 : -1)).map((p) => [fmtDate(p.soldAt), esc(this.full(p)), esc(p.imei1 || ''), L(...PH_COND[p.condition || 'new'].slice(0, 2)), esc(p.customerName || L('عميل نقدي', 'Walk-in')), p.saleNo || '', p.soldPrice || 0, ...(canCost ? [p.buyPrice || 0, round2((p.soldPrice || 0) - (p.buyPrice || 0))] : [])]),
+          foot: [L('الإجمالي', 'Total'), '', '', '', '', '', rev, ...(canCost ? [cost, prof] : [])], money: true },
+        { title: L('حسب الماركة', 'By brand'), cols: [L('الماركة', 'Brand'), L('العدد', 'Count'), L('الإيراد', 'Revenue'), ...(canCost ? [L('الربح', 'Profit')] : [])], rows: Object.entries(byBrand).sort((a, b) => b[1].rev - a[1].rev).map(([b, x]) => [esc(b), x.n, round2(x.rev), ...(canCost ? [round2(x.prof)] : [])]) },
+        { title: L('المخزون الحالي', 'Current stock'), cols: [L('الكود', 'Code'), L('الجهاز', 'Phone'), 'IMEI', L('الحالة', 'Condition'), L('أيام في المخزون', 'Days in stock'), L('سعر البيع', 'Price'), ...(canCost ? [L('التكلفة', 'Cost')] : [])],
+          rows: stock.sort((a, b) => this.days(b) - this.days(a)).map((p) => [p.code, esc(this.full(p)), esc(p.imei1 || ''), L(...PH_COND[p.condition || 'new'].slice(0, 2)), this.days(p), p.price || 0, ...(canCost ? [p.buyPrice || 0] : [])]) }
+      ]
+    };
+  }
+};
+
+Modules.phones = {
+  title: () => L('قسم الموبايلات', 'Phones'), sub: () => L('بيع وشراء الموبايلات بالـ IMEI', 'Phones by IMEI'), icon: 'phone', perm: 'phones', tab: 'stock', q: '', brand: '', cond: '',
+  enabled: () => Phones.on(),
+  badge: () => Phones.stock().filter((p) => Phones.days(p) >= Phones.staleDays()).length,
+  render(el) {
+    const st = Phones.stock(), canCost = Session.can('inventory.cost');
+    const mk = monthKey(); const soldM = DB.filter('phones', (p) => p.status === 'sold' && monthKey(p.soldAt) === mk);
+    const stale = st.filter((p) => Phones.days(p) >= Phones.staleDays());
+    const brands = [...new Set(Phones.all().map((p) => p.brand).filter(Boolean))].sort();
+    el.innerHTML = `<div class="ph-kpis">
+        <div class="ph-k hero"><span>📱</span><div><small>${L('في المخزون', 'In stock')}</small><b class="num">${num(st.length)}</b><em>${canCost ? `${L('بتكلفة', 'cost')} ${money(sum(st, (p) => p.buyPrice || 0), false)}` : `${L('بقيمة بيع', 'retail')} ${money(sum(st, (p) => p.price || 0), false)}`}</em></div></div>
+        <div class="ph-k"><span>🛒</span><div><small>${L('اتباع الشهر ده', 'Sold this month')}</small><b class="num">${num(soldM.length)}</b><em>${money(sum(soldM, (p) => p.soldPrice || 0), false)}</em></div></div>
+        ${canCost ? `<div class="ph-k"><span>💰</span><div><small>${L('ربح الشهر', 'Month profit')}</small><b class="num pos">${money(sum(soldM, (p) => (p.soldPrice || 0) - (p.buyPrice || 0)), false)}</b><em>${L('من الموبايلات', 'from phones')}</em></div></div>` : ''}
+        <div class="ph-k ${stale.length ? 'warn' : ''}"><span>⏳</span><div><small>${L(`راكد +${Phones.staleDays()} يوم`, `Stale ${Phones.staleDays()}+ days`)}</small><b class="num">${num(stale.length)}</b><em>${stale.length ? L('اعرضها بسعر أقل', 'Consider a discount') : L('ممتاز', 'Great')}</em></div></div>
+      </div>
+      <div class="ph-bar">
+        <div class="ph-search">${icon('search')}<input id="phQ" type="search" placeholder="${L('ابحث بالموديل أو الـ IMEI أو الكود…', 'Search model, IMEI or code…')}" value="${esc(this.q)}"><button class="btn sm" id="phCam" title="${L('مسح بالكاميرا', 'Camera scan')}">${icon('camera')}</button></div>
+        <div class="row wrap" style="gap:8px">
+          ${Session.can('phones.buy') ? `<button class="btn primary" id="phAdd">${icon('plus')}${L('شراء / إضافة جهاز', 'Buy / add phone')}</button>` : ''}
+          <button class="btn" id="phTrade">${icon('swap')}${L('استبدال', 'Trade-in')}</button>
+          <button class="btn" id="phWar">${icon('shield')}${L('استعلام ضمان', 'Warranty lookup')}</button>
+          <button class="btn ghost" id="phXl">${icon('excel')}Excel</button>
+        </div>
+      </div>
+      <div class="row wrap mb" style="gap:8px">
+        <div class="tabs" id="phTabs">${[['stock', L('المخزون', 'Stock'), st.length], ['sold', L('المباع', 'Sold')], ['all', L('كل الأجهزة', 'All')]].map(([k, l, n]) => `<button data-t="${k}" class="${this.tab === k ? 'active' : ''}">${l}${n ? ` <span class="tag" style="padding:0 7px">${n}</span>` : ''}</button>`).join('')}</div>
+        <div class="spacer"></div>
+        <select id="phBrand" style="width:auto;height:38px"><option value="">${L('كل الماركات', 'All brands')}</option>${brands.map((b) => `<option ${b === this.brand ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select>
+        <div class="seg" id="phCond">${[['', L('الكل', 'All')], ...Object.entries(PH_COND).map(([k, v]) => [k, L(v[0], v[1])])].map(([k, l]) => `<button data-c="${k}" class="${this.cond === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+      </div>
+      <div id="phList"></div>`;
+    const draw = () => this.list($('#phList', el));
+    $('#phQ', el).oninput = debounce((e) => { this.q = e.target.value; draw(); }, 150);
+    $('#phQ', el).onkeydown = (e) => { if (e.key === 'Enter') { const p = Phones.byCode(e.target.value); if (p) this.details(p); } };
+    $('#phCam', el).onclick = () => Scanner.camera((code) => { const p = Phones.byCode(code); if (p) this.details(p); else { this.q = code; App.reload(); } });
+    $('#phAdd', el) && ($('#phAdd', el).onclick = () => this.form());
+    $('#phTrade', el).onclick = () => this.tradeIn();
+    $('#phWar', el).onclick = () => this.warranty();
+    $('#phXl', el).onclick = () => this.excel();
+    $$('#phTabs [data-t]', el).forEach((b) => (b.onclick = () => { this.tab = b.dataset.t; App.reload(); }));
+    $('#phBrand', el).onchange = (e) => { this.brand = e.target.value; draw(); };
+    $$('#phCond [data-c]', el).forEach((b) => (b.onclick = () => { this.cond = b.dataset.c; $$('#phCond [data-c]', el).forEach((x) => x.classList.toggle('on', x === b)); draw(); }));
+    draw();
+  },
+  onScan(code) { const p = Phones.byCode(code); if (p) this.details(p); else UI.toast(L('مفيش جهاز بالرقم ده: ', 'No phone with: ') + code, 'warn'); },
+  filtered() {
+    const q = this.q.trim().toLowerCase(), qn = Phones.norm(this.q);
+    return Phones.all().filter((p) => (this.tab === 'stock' ? p.status !== 'sold' : this.tab === 'sold' ? p.status === 'sold' : true)
+      && (!this.brand || p.brand === this.brand) && (!this.cond || p.condition === this.cond)
+      && (!q || (Phones.full(p) + ' ' + (p.code || '')).toLowerCase().includes(q) || [p.imei1, p.imei2, p.serial].some((x) => x && Phones.norm(x).includes(qn))))
+      .sort((a, b) => (this.tab === 'sold' ? (a.soldAt < b.soldAt ? 1 : -1) : (a.buyDate < b.buyDate ? 1 : -1)));
+  },
+  list(box) {
+    const ls = this.filtered(); const canCost = Session.can('inventory.cost');
+    if (!ls.length) { box.innerHTML = UI.empty(this.tab === 'stock' ? L('مفيش أجهزة في المخزون — اضغط «شراء / إضافة جهاز»', 'No phones in stock') : L('مفيش أجهزة', 'No phones'), 'phone'); return; }
+    box.innerHTML = `<div class="ph-grid">${ls.map((p) => {
+      const c = PH_COND[p.condition || 'new'], s = PH_STATUS[p.status] || PH_STATUS.stock, d = Phones.days(p), w = Phones.warrantyLeft(p);
+      return `<div class="ph-card" style="--bc:${Phones.color(p)}" data-ph="${p.id}">
+        <div class="ph-top"><span class="ph-brand">${esc(p.brand || '—')}</span><span class="tag ${c[2]}">${L(c[0], c[1])}${p.condition === 'used' && p.grade ? ` · ${L(...PH_GRADE[p.grade])}` : ''}</span><span class="spacer"></span>${p.status !== 'stock' ? `<span class="tag ${s[2]}">${L(s[0], s[1])}</span>` : d >= Phones.staleDays() ? `<span class="tag warn">⏳ ${d} ${L('يوم', 'd')}</span>` : `<span class="faint" style="font-size:12px">${d} ${L('يوم', 'd')}</span>`}</div>
+        <div class="ph-model">${esc(p.model || '')}</div>
+        <div class="ph-specs">${[p.storage, p.ram && `RAM ${p.ram}`, p.color, p.condition === 'used' && p.battery ? `🔋 ${p.battery}%` : ''].filter(Boolean).map((x) => `<span>${esc(x)}</span>`).join('')}</div>
+        <div class="ph-imei" dir="ltr">IMEI ${esc(p.imei1 || '—')}</div>
+        <div class="ph-price"><div><small>${p.status === 'sold' ? L('اتباع بـ', 'Sold for') : L('سعر البيع', 'Price')}</small><b class="num">${money(p.status === 'sold' ? p.soldPrice : p.price, false)}</b></div>${canCost ? `<div class="faint" style="text-align:end;font-size:12px">${L('تكلفة', 'Cost')} ${money(p.buyPrice || 0, false)}<br><b class="${(p.status === 'sold' ? p.soldPrice : p.price) - (p.buyPrice || 0) >= 0 ? 'pos' : 'neg'}">${L('ربح', 'Profit')} ${money((p.status === 'sold' ? p.soldPrice : p.price) - (p.buyPrice || 0), false)}</b></div>` : ''}</div>
+        ${p.status === 'sold' ? `<div class="ph-foot faint">${esc(p.customerName || L('عميل نقدي', 'Walk-in'))} · ${p.saleNo || ''}${w != null ? ` · ${w > 0 ? `🛡️ ${L('ضمان', 'Warranty')} ${w} ${L('يوم', 'd')}` : L('الضمان انتهى', 'Warranty ended')}` : ''}</div>`
+          : `<div class="ph-acts"><button class="btn primary sm" data-sell="${p.id}">${icon('cart')}${L('بيع', 'Sell')}</button><button class="btn sm" data-lbl="${p.id}" title="${L('ملصق', 'Label')}">${icon('barcode')}</button>${Session.can('phones.buy') ? `<button class="btn sm" data-ed="${p.id}" title="${L('تعديل', 'Edit')}">${icon('edit')}</button>` : ''}</div>`}
+      </div>`; }).join('')}</div>`;
+    $$('[data-ph]', box).forEach((c) => (c.onclick = (e) => { if (e.target.closest('button')) return; this.details(DB.get('phones', c.dataset.ph)); }));
+    $$('[data-sell]', box).forEach((b) => (b.onclick = () => this.sell(DB.get('phones', b.dataset.sell))));
+    $$('[data-lbl]', box).forEach((b) => (b.onclick = () => this.label(DB.get('phones', b.dataset.lbl))));
+    $$('[data-ed]', box).forEach((b) => (b.onclick = () => this.form(DB.get('phones', b.dataset.ed))));
+  },
+
+  /* ---------- نموذج الشراء / الإضافة ---------- */
+  fields(p = {}, { trade = false } = {}) {
+    const sups = DB.all('suppliers');
+    const chk = (list, key, vals) => `<div class="ph-chk">${list.map(([k, a, e]) => `<label class="${vals?.[k] ? 'on' : ''}"><input type="checkbox" data-${key}="${k}" ${vals?.[k] ? 'checked' : ''}>${L(a, e)}</label>`).join('')}</div>`;
+    return `<div class="ph-form">
+      <div class="ph-sec"><h4>📱 ${L('بيانات الجهاز', 'Device')}</h4>${UI.form([
+        { name: 'brand', label: L('الماركة', 'Brand'), required: true, col: 4, attrs: 'list="phBrands" autocomplete="off"', placeholder: 'Samsung' },
+        { name: 'model', label: L('الموديل', 'Model'), required: true, col: 8, placeholder: L('مثال: Galaxy A15 / iPhone 13', 'e.g. Galaxy A15') },
+        { name: 'storage', label: L('المساحة', 'Storage'), type: 'select', options: [['', '—'], ...PH_STORAGE], col: 4 }, { name: 'ram', label: L('الرام', 'RAM'), type: 'select', options: [['', '—'], ...PH_RAM], col: 4 }, { name: 'color', label: L('اللون', 'Color'), col: 4 }
+      ], p)}<datalist id="phBrands">${PHONE_BRANDS.map(([en, ar]) => `<option value="${en}">${ar}</option>`).join('')}</datalist></div>
+      <div class="ph-sec"><h4>🔢 ${L('الأرقام', 'Identifiers')}</h4>${UI.form([
+        { type: 'html', col: 6, html: `<label class="lbl">IMEI 1 <span class="req">*</span></label><div class="row" style="gap:6px"><input name="imei1" value="${esc(p.imei1 || '')}" required dir="ltr" inputmode="numeric" maxlength="17" placeholder="15 ${L('رقم', 'digits')}" style="font-weight:700;letter-spacing:1px"><button type="button" class="btn sm" data-scan="imei1">${icon('camera')}</button></div><div class="faint" id="imeiHint" style="margin-top:4px">${L('اطلب *#06# من الموبايل عشان يظهر الـ IMEI', 'Dial *#06# to show the IMEI')}</div>` },
+        { type: 'html', col: 6, html: `<label class="lbl">IMEI 2 <span class="faint">(${L('للموبايلات بخطين', 'dual SIM')})</span></label><div class="row" style="gap:6px"><input name="imei2" value="${esc(p.imei2 || '')}" dir="ltr" inputmode="numeric" maxlength="17"><button type="button" class="btn sm" data-scan="imei2">${icon('camera')}</button></div>` },
+        { name: 'serial', label: L('الرقم التسلسلي (اختياري)', 'Serial (optional)'), col: 6, attrs: 'dir="ltr"' }
+      ], p)}</div>
+      <div class="ph-sec"><h4>✨ ${L('الحالة', 'Condition')}</h4>
+        <div class="seg big" id="phCondSel">${Object.entries(PH_COND).map(([k, v]) => `<button type="button" data-cv="${k}" class="${(p.condition || (trade ? 'used' : 'new')) === k ? 'on' : ''}">${L(v[0], v[1])}</button>`).join('')}</div><input type="hidden" name="condition" value="${p.condition || (trade ? 'used' : 'new')}">
+        <div id="phUsed" class="mt">${UI.form([{ name: 'grade', label: L('التقييم', 'Grade'), type: 'select', options: Object.entries(PH_GRADE).map(([k, v]) => [k, `${k} — ${L(v[0], v[1])}`]), col: 6 }, { name: 'battery', label: L('صحة البطارية %', 'Battery health %'), type: 'number', col: 6, attrs: 'min="0" max="100"' }], p)}
+          <label class="lbl mt">${L('الفحص', 'Checks')}</label>${chk(PH_CHECKS, 'ck', p.checks || (p.id ? {} : Object.fromEntries(PH_CHECKS.map(([k]) => [k, true]))))}</div>
+        <label class="lbl mt">${L('الملحقات', 'Accessories')}</label>${chk(PH_ACC, 'ac', p.acc || {})}</div>
+      <div class="ph-sec"><h4>💰 ${L('الأسعار والضمان', 'Prices & warranty')}</h4>${UI.form([
+        { name: 'buyPrice', label: trade ? L('قيمة الاستبدال (بتتخصم من سعر الجديد)', 'Trade-in value') : L('سعر الشراء (التكلفة)', 'Buy price (cost)'), type: 'number', required: true, col: 4 },
+        ...(trade ? [] : [{ name: 'price', label: L('سعر البيع', 'Selling price'), type: 'number', required: true, col: 4 }, { name: 'minPrice', label: L('أقل سعر للموظف', 'Min price for staff'), type: 'number', col: 4 }]),
+        ...(trade ? [{ name: 'price', label: L('سعر البيع المتوقع بعدين', 'Expected resale price'), type: 'number', col: 4 }] : []),
+        { name: 'warrantyDays', label: L('ضمان عند البيع (يوم)', 'Warranty on sale (days)'), type: 'select', options: [[0, L('بدون', 'None')], [3, '3'], [7, '7'], [14, '14'], [30, '30'], [90, '90'], [180, '180'], [365, '365']], col: 4 }
+      ], { warrantyDays: p.id ? p.warrantyDays : (p.condition === 'used' || trade ? 7 : 365), ...p })}</div>
+      ${trade ? `<div class="ph-sec"><h4>👤 ${L('صاحب الجهاز', 'Owner')}</h4>${UI.form([{ name: 'sellerName', label: L('الاسم', 'Name'), col: 6 }, { name: 'sellerPhone', label: L('الموبايل', 'Phone'), type: 'tel', col: 6 }, { name: 'sellerNid', label: L('الرقم القومي', 'National ID'), col: 12, attrs: 'maxlength="14" inputmode="numeric" dir="ltr"' }], p)}</div>` : `
+      <div class="ph-sec"><h4>🏷️ ${L('مصدر الجهاز', 'Source')}</h4>
+        <div class="seg big" id="phSrc">${[['supplier', L('من مورد / تاجر', 'From supplier')], ['customer', L('من زبون (مستعمل)', 'From a customer')], ['stock', L('موجود عندي (بدون دفع)', 'Already owned')]].map(([k, l]) => `<button type="button" data-sv="${k}" class="${(p.source || 'supplier') === k ? 'on' : ''}">${l}</button>`).join('')}</div><input type="hidden" name="source" value="${p.source || 'supplier'}">
+        <div id="phSupBox" class="mt">${UI.form([{ name: 'supplierId', label: L('المورد', 'Supplier'), type: 'select', options: [['', '—'], ...sups.map((s) => [s.id, s.name])], col: 6 }], p)}</div>
+        <div id="phSellerBox" class="mt">${UI.form([{ name: 'sellerName', label: L('اسم البائع', 'Seller name'), col: 6 }, { name: 'sellerPhone', label: L('موبايل البائع', 'Seller phone'), type: 'tel', col: 6 }, { name: 'sellerNid', label: L('الرقم القومي للبائع', 'Seller national ID'), col: 6, attrs: 'maxlength="14" inputmode="numeric" dir="ltr"' },
+          { type: 'html', col: 6, html: `<label class="lbl">${L('صورة البطاقة (بتحميك لو الجهاز طلع مسروق)', 'ID photo (protects you)')}</label><div class="row" style="gap:8px"><button type="button" class="btn sm" id="phIdPic">${icon('camera')}${L('إضافة صورة', 'Add photo')}</button><img id="phIdPrev" src="${p.sellerIdPhoto || ''}" style="height:40px;border-radius:8px;${p.sellerIdPhoto ? '' : 'display:none'}"></div>` }], p)}</div>
+        ${p.id ? '' : `<div id="phPayBox" class="mt">${UI.form([{ name: 'pay', label: L('الدفع', 'Payment'), type: 'select', options: [['drawer', L('نقدي من الدرج', 'Cash from drawer')], ['outside', L('من خارج الدرج', 'Outside the drawer')], ['credit', L('آجل على المورد', 'On supplier credit')]], col: 12 }])}</div>`}
+      </div>`}
+      <div class="ph-sec">${UI.form([{ name: 'notes', label: L('ملاحظات', 'Notes'), type: 'textarea', col: 12 }], p)}</div>
+    </div>`;
+  },
+  bindFields(el, p = {}) {
+    const seg = (id, name, after) => $$(`#${id} button`, el).forEach((b) => (b.onclick = () => { $$(`#${id} button`, el).forEach((x) => x.classList.toggle('on', x === b)); $(`[name=${name}]`, el).value = b.dataset.cv || b.dataset.sv; after && after(); }));
+    const used = () => { const u = $('[name=condition]', el).value === 'used'; $('#phUsed', el).style.display = u ? '' : 'none'; };
+    const src = () => { const s = $('[name=source]', el)?.value; if (!s) return; $('#phSupBox', el).style.display = s === 'supplier' ? '' : 'none'; $('#phSellerBox', el).style.display = s === 'customer' ? '' : 'none'; const pb = $('#phPayBox', el); if (pb) { pb.style.display = s === 'stock' ? 'none' : ''; const o = $('[name=pay] option[value=credit]', el); if (o) o.hidden = s !== 'supplier'; if (s !== 'supplier' && $('[name=pay]', el).value === 'credit') $('[name=pay]', el).value = 'drawer'; } };
+    seg('phCondSel', 'condition', used); seg('phSrc', 'source', src); used(); src();
+    $$('.ph-chk input', el).forEach((i) => (i.onchange = () => i.parentElement.classList.toggle('on', i.checked)));
+    $$('[data-scan]', el).forEach((b) => (b.onclick = () => Scanner.camera((code) => { const i = $(`[name=${b.dataset.scan}]`, el); i.value = String(code).replace(/\D/g, '').slice(0, 15) || code; i.dispatchEvent(new Event('input')); })));
+    const im = $('[name=imei1]', el); const hint = $('#imeiHint', el);
+    im.oninput = () => { const v = im.value.replace(/\D/g, ''); if (!v) { hint.innerHTML = L('اطلب *#06# من الموبايل عشان يظهر الـ IMEI', 'Dial *#06# to show the IMEI'); return; } const dup = Phones.byCode(v); hint.innerHTML = dup && dup.id !== p.id ? `<span class="neg">⚠️ ${L('الرقم ده متسجل قبل كده', 'Already registered')}: ${esc(Phones.full(dup))}</span>` : v.length !== 15 ? `<span class="neg">${v.length}/15</span>` : Phones.luhn(v) ? `<span class="pos">✓ ${L('رقم IMEI سليم', 'Valid IMEI')}</span>` : `<span style="color:var(--warn)">⚠️ ${L('الرقم مش مظبوط — راجعه', 'Check the number')}</span>`; };
+    im.oninput();
+    const pic = $('#phIdPic', el); if (pic) pic.onclick = async () => { const d = await pickImage(900); if (d) { el.dataset.idpic = d; const pv = $('#phIdPrev', el); pv.src = d; pv.style.display = ''; } };
+  },
+  readFields(el) {
+    const v = UI.read(el); const out = { brand: v.brand, model: v.model, storage: v.storage, ram: v.ram, color: v.color, imei1: String(v.imei1 || '').replace(/\s/g, ''), imei2: String(v.imei2 || '').replace(/\s/g, ''), serial: v.serial || '', condition: v.condition || 'new',
+      grade: v.condition === 'used' ? v.grade : '', battery: v.condition === 'used' && v.battery !== '' ? Number(v.battery) : '', buyPrice: Number(v.buyPrice) || 0, price: Number(v.price) || 0, minPrice: Number(v.minPrice) || 0, warrantyDays: Number(v.warrantyDays) || 0, notes: v.notes || '',
+      checks: Object.fromEntries($$('[data-ck]', el).map((i) => [i.dataset.ck, i.checked])), acc: Object.fromEntries($$('[data-ac]', el).map((i) => [i.dataset.ac, i.checked])) };
+    if (v.source !== undefined) { out.source = v.source; out.supplierId = v.source === 'supplier' ? v.supplierId || '' : ''; }
+    if (v.sellerName !== undefined) { out.sellerName = v.sellerName; out.sellerPhone = v.sellerPhone; out.sellerNid = v.sellerNid; }
+    if (el.dataset.idpic) out.sellerIdPhoto = el.dataset.idpic;
+    return { out, pay: v.pay || 'drawer' };
+  },
+  check(out, id) {
+    if (!out.imei1) return L('اكتب IMEI 1', 'Enter IMEI 1');
+    const dup = [out.imei1, out.imei2].filter(Boolean).map((x) => Phones.byCode(x)).find((d) => d && d.id !== id);
+    if (dup) return L(`الـ IMEI متسجل قبل كده على: ${Phones.full(dup)} (${dup.code})`, 'IMEI already registered');
+    return null;
+  },
+  form(p) {
+    if (!Session.can('phones.buy')) return;
+    if (!p && !App.needShift()) return;
+    const m = UI.modal({ title: p ? L('تعديل جهاز', 'Edit phone') + ' ' + p.code : L('شراء / إضافة جهاز', 'Buy / add phone'), icon: 'phone', size: 'lg', body: this.fields(p || {}),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: p ? L('حفظ', 'Save') : L('تسجيل الجهاز', 'Save phone'), cls: 'primary lg', icon: 'check', onClick: async (x) => {
+        if (!UI.validate(x.el)) return; const { out, pay } = this.readFields(x.el); const err = this.check(out, p?.id); if (err) return UI.toast(err, 'err', 5000);
+        if (!p && out.imei1.length === 15 && !Phones.luhn(out.imei1) && !(await UI.confirm(L('رقم الـ IMEI مش مظبوط حسب الفحص. تسجّله برضه؟', 'IMEI checksum failed. Save anyway?'), { danger: false }))) return;
+        if (out.source === 'customer' && !out.sellerName) return UI.toast(L('اكتب اسم البائع', 'Enter the seller name'), 'err');
+        if (p) { DB.update('phones', p.id, { ...out, history: Phones.hist(p, 'edit') }); audit('phone.edit', p.code); x.close(); UI.toast(L('تم الحفظ', 'Saved')); App.reload(); return; }
+        const doc = Phones.create(out, { pay: out.source === 'stock' ? 'none' : pay }); x.close();
+        UI.toast(L(`تم تسجيل ${Phones.full(doc)} ✓`, 'Phone saved ✓')); if (out.source === 'customer') this.buyReceipt(doc); App.reload();
+      } }] });
+    this.bindFields(m.el, p || {});
+  },
+  buyReceipt(p) {
+    const s = DB.settings();
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:3mm}body{font-family:'Rubik',Tahoma,Arial;font-size:12px;margin:0}h2{text-align:center;margin:4px 0}table{width:100%;border-collapse:collapse}td{padding:3px 0;border-bottom:1px dashed #ccc}.c{text-align:center}.sig{margin-top:22px;border-top:1px solid #000;padding-top:4px;text-align:center}</style></head><body>
+      <div class="c"><b>${esc(s.store.name)}</b><br>${esc(s.store.phone || '')}</div><h2>${L('إيصال شراء جهاز', 'Phone purchase receipt')}</h2><div class="c">${p.buyNo} — ${fmtDT(p.buyDate)}</div>
+      <table><tr><td>${L('الجهاز', 'Phone')}</td><td>${esc(Phones.full(p))}</td></tr><tr><td>IMEI</td><td dir="ltr">${esc(p.imei1)}${p.imei2 ? ' / ' + esc(p.imei2) : ''}</td></tr><tr><td>${L('الحالة', 'Condition')}</td><td>${L(...PH_COND[p.condition].slice(0, 2))}${p.battery ? ` — 🔋 ${p.battery}%` : ''}</td></tr>
+      <tr><td>${L('البائع', 'Seller')}</td><td>${esc(p.sellerName || '')}</td></tr><tr><td>${L('الموبايل', 'Phone')}</td><td>${esc(p.sellerPhone || '')}</td></tr><tr><td>${L('الرقم القومي', 'National ID')}</td><td dir="ltr">${esc(p.sellerNid || '')}</td></tr><tr><td><b>${L('المبلغ', 'Amount')}</b></td><td><b>${money(p.buyPrice)}</b></td></tr></table>
+      <p style="font-size:11px">${L('أقر أنا البائع بأن الجهاز ملكي الخاص وخالي من أي مشاكل قانونية، وأتحمل المسئولية كاملة عن ذلك.', 'I declare that this device is my property and free of any legal issues.')}</p><div class="sig">${L('توقيع البائع', 'Seller signature')}</div></body></html>`, { type: 'receipt' });
+  },
+
+  /* ---------- البيع → نقطة البيع ---------- */
+  sell(p) {
+    if (!p || p.status === 'sold') return;
+    Modules.pos.addPhone(p); App.go('pos');
+  },
+  label(p) {
+    const s = DB.settings(); const lb = s.label;
+    printHTML(labelsHTML([{ product: { name: `${Phones.name(p)} ${p.storage || ''}`.trim(), barcode: p.imei1 || p.code, price: p.price }, copies: 1 }]).replace('</body>', ''), { type: 'label' });
+  },
+
+  /* ---------- تفاصيل الجهاز وتاريخه ---------- */
+  details(p) {
+    if (!p) return; const c = PH_COND[p.condition || 'new'], s = PH_STATUS[p.status] || PH_STATUS.stock, w = Phones.warrantyLeft(p), canCost = Session.can('inventory.cost');
+    const ACT = { buy: ['🛒', L('اتشرى', 'Bought')], sale: ['✅', L('اتباع', 'Sold')], return: ['↩️', L('رجع مرتجع', 'Returned')], edit: ['✏️', L('اتعدل', 'Edited')], repair: ['🔧', L('دخل الصيانة', 'To repair')], label: ['🏷️', L('ملصق', 'Label')] };
+    const row = (k, v) => (v || v === 0 ? `<div class="ph-dr"><span>${k}</span><b>${v}</b></div>` : '');
+    const m = UI.modal({ title: Phones.full(p), icon: 'phone', size: 'lg', body: `<div class="ph-det">
+      <div class="ph-dh" style="--bc:${Phones.color(p)}"><div><span class="ph-brand">${esc(p.brand || '')}</span><h2>${esc(p.model || '')}</h2><div class="ph-specs">${[p.storage, p.ram && `RAM ${p.ram}`, p.color].filter(Boolean).map((x) => `<span>${esc(x)}</span>`).join('')}</div></div>
+        <div style="text-align:end"><span class="tag ${s[2]}">${L(s[0], s[1])}</span><div class="ph-big num">${money(p.status === 'sold' ? p.soldPrice : p.price, false)}</div>${p.status === 'sold' && w != null ? `<div class="tag ${w > 0 ? 'ok' : 'err'}">🛡️ ${w > 0 ? L(`ضمان باقي ${w} يوم`, `${w} days warranty left`) : L('الضمان انتهى', 'Warranty ended')}</div>` : ''}</div></div>
+      <div class="grid g2" style="gap:12px">
+        <div class="card card-b">${row(L('الكود', 'Code'), p.code)}${row('IMEI 1', `<span dir="ltr">${esc(p.imei1 || '')}</span>`)}${row('IMEI 2', p.imei2 ? `<span dir="ltr">${esc(p.imei2)}</span>` : '')}${row(L('السيريال', 'Serial'), p.serial ? esc(p.serial) : '')}${row(L('الحالة', 'Condition'), L(c[0], c[1]) + (p.grade ? ` — ${L(...PH_GRADE[p.grade])}` : ''))}${row(L('البطارية', 'Battery'), p.battery ? p.battery + '%' : '')}
+          ${row(L('الملحقات', 'Accessories'), PH_ACC.filter(([k]) => p.acc?.[k]).map(([, a, e]) => L(a, e)).join('، ') || '—')}${p.condition === 'used' && p.checks ? row(L('الفحص', 'Checks'), PH_CHECKS.map(([k, a, e]) => `<span class="${p.checks[k] ? 'pos' : 'neg'}">${p.checks[k] ? '✓' : '✗'} ${L(a, e)}</span>`).join(' &nbsp;')) : ''}</div>
+        <div class="card card-b">${canCost ? row(L('سعر الشراء', 'Buy price'), money(p.buyPrice || 0)) : ''}${row(L('سعر البيع', 'Price'), money(p.price || 0))}${canCost && p.status === 'sold' ? row(L('الربح', 'Profit'), `<span class="pos">${money((p.soldPrice || 0) - (p.buyPrice || 0))}</span>`) : ''}
+          ${row(L('اتشرى من', 'Bought from'), p.source === 'supplier' ? esc(DB.get('suppliers', p.supplierId)?.name || L('مورد', 'Supplier')) : p.source === 'tradein' ? L('استبدال', 'Trade-in') + (p.tradeSaleNo ? ` (${p.tradeSaleNo})` : '') : p.source === 'customer' ? L('زبون', 'Customer') : L('مخزون سابق', 'Existing stock'))}${row(L('البائع', 'Seller'), p.sellerName ? `${esc(p.sellerName)} ${p.sellerPhone ? '— ' + esc(p.sellerPhone) : ''}` : '')}${row(L('الرقم القومي', 'National ID'), p.sellerNid ? `<span dir="ltr">${esc(p.sellerNid)}</span>` : '')}
+          ${row(L('تاريخ الشراء', 'Bought on'), fmtDT(p.buyDate))}${p.status === 'sold' ? row(L('اتباع لـ', 'Sold to'), `${esc(p.customerName || L('عميل نقدي', 'Walk-in'))} — ${p.saleNo} — ${fmtDT(p.soldAt)}`) : row(L('في المخزون من', 'In stock for'), Phones.days(p) + ' ' + L('يوم', 'days'))}
+          ${p.sellerIdPhoto ? `<div class="mt"><img src="${p.sellerIdPhoto}" style="max-width:100%;max-height:160px;border-radius:10px;border:1px solid var(--line)"></div>` : ''}</div>
+      </div>
+      ${p.notes ? `<div class="card card-b mt">📝 ${esc(p.notes)}</div>` : ''}
+      <h4 class="mt" style="margin-bottom:8px">${L('تاريخ الجهاز', 'History')}</h4><div class="ph-tl">${(p.history || []).slice().reverse().map((h) => `<div><i>${(ACT[h.action] || ['•'])[0]}</i><b>${(ACT[h.action] || ['', h.action])[1]}</b><span>${esc(h.note || '')}</span><small>${fmtDT(h.at)} · ${esc(h.by || '')}</small></div>`).join('')}</div></div>`,
+      actions: [
+        ...(p.status !== 'sold' ? [{ label: L('بيع', 'Sell'), cls: 'primary', icon: 'cart', onClick: (x) => { x.close(); this.sell(p); } }, { label: L('ملصق', 'Label'), icon: 'barcode', onClick: () => { this.label(p); return false; } }] : []),
+        ...(p.status === 'sold' && feat('repairs') ? [{ label: L('دخول صيانة / ضمان', 'Send to repair'), icon: 'tool', onClick: (x) => { x.close(); this.toRepair(p); } }] : []),
+        ...(p.saleId ? [{ label: L('الفاتورة', 'Invoice'), icon: 'receipt', onClick: (x) => { const sl = DB.get('sales', p.saleId); if (sl) { x.close(); Modules.sales.view(sl); } } }] : []),
+        ...(Session.can('phones.buy') ? [{ label: L('تعديل', 'Edit'), icon: 'edit', onClick: (x) => { x.close(); this.form(p); } }] : []),
+        ...(Session.can('phones.buy') && p.status !== 'sold' ? [{ label: L('حذف', 'Delete'), cls: 'danger', icon: 'trash', onClick: async (x) => { if (!(await UI.confirm(L('حذف الجهاز من المخزون؟ (الفلوس اللي اتدفعت فيه مش هترجع للدرج تلقائياً)', 'Delete this phone?')))) return; DB.remove('phones', p.id); audit('phone.delete', p.code); x.close(); App.reload(); } }] : []),
+        { label: L('إغلاق', 'Close'), onClick: (x) => x.close() }] });
+  },
+  toRepair(p) {
+    DB.update('phones', p.id, { history: Phones.hist(p, 'repair', L('ضمان', 'Warranty')) });
+    if (typeof Modules.repairs?.receive === 'function') return Modules.repairs.receive(null, null, { deviceType: 'موبايل', brand: p.brand, model: [p.model, p.storage].filter(Boolean).join(' '), serial: p.imei1, customerName: p.customerName || '', phone: DB.get('customers', p.customerId)?.phone || '', notes: L(`ضمان بيع ${p.saleNo || ''} — ${p.code}`, 'Sale warranty') });
+    App.go('repairs'); UI.toast(L(`سجّل الجهاز في الصيانة — IMEI ${p.imei1}`, 'Register it in repairs'), 'info', 6000);
+  },
+
+  /* ---------- الاستبدال (Trade-in) ---------- */
+  tradeIn() {
+    if (!App.needShift()) return;
+    const st = Phones.stock().filter((p) => p.status === 'stock'); if (!st.length) return UI.toast(L('مفيش أجهزة في المخزون للبيع', 'No phones in stock'), 'warn');
+    const m = UI.modal({ title: L('استبدال: جهاز العميل القديم مقابل جهاز جديد', 'Trade-in'), icon: 'swap', size: 'lg', body: `
+      <div class="ph-sec"><h4>📤 ${L('الجهاز اللي العميل هياخده', 'Phone the customer takes')}</h4><select id="trOut">${st.map((p) => `<option value="${p.id}">${esc(Phones.full(p))} — ${money(p.price, false)} — IMEI ${esc(p.imei1 || '')}</option>`).join('')}</select></div>
+      <div class="ph-sec"><h4>📥 ${L('الجهاز اللي العميل بيسلّمه', 'Phone the customer gives')}</h4></div>${this.fields({}, { trade: true })}
+      <div class="grid g3 mt" id="trSum"></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('كمّل في نقطة البيع', 'Continue in POS'), cls: 'primary lg', icon: 'cart', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const { out } = this.readFields(x.el); const err = this.check(out); if (err) return UI.toast(err, 'err', 5000);
+        if (!(out.buyPrice > 0)) return UI.toast(L('اكتب قيمة الاستبدال', 'Enter the trade-in value'), 'err');
+        const ph = DB.get('phones', $('#trOut', x.el).value); x.close();
+        Modules.pos.addPhone(ph, { silent: true });
+        Modules.pos.cart.push({ productId: null, name: `${L('استبدال', 'Trade-in')}: ${Phones.full(out)}`, qty: 1, price: -Math.abs(out.buyPrice), cost: -Math.abs(out.buyPrice), discount: 0, custom: true, imei: out.imei1, tradeIn: { ...out, source: 'tradein' } });
+        App.go('pos'); UI.toast(L('الجهاز الجديد وخصم الاستبدال اتضافوا للفاتورة — كمّل الدفع', 'Added to the cart — continue to payment'), 'ok', 5000);
+      } }] });
+    this.bindFields(m.el, {});
+    const sumUp = () => { const ph = DB.get('phones', $('#trOut', m.el).value); const tv = Number($('[name=buyPrice]', m.el).value) || 0; $('#trSum', m.el).innerHTML = `<div class="stat-mini"><span class="l">${L('سعر الجديد', 'New phone')}</span><span class="v num">${money(ph?.price || 0)}</span></div><div class="stat-mini"><span class="l">${L('قيمة القديم', 'Trade-in')}</span><span class="v num neg">− ${money(tv)}</span></div><div class="stat-mini" style="background:var(--p-50)"><span class="l">${L('العميل يدفع فرق', 'Customer pays')}</span><span class="v num">${money(Math.max(0, (ph?.price || 0) - tv))}</span></div>`; };
+    $('#trOut', m.el).onchange = sumUp; $('[name=buyPrice]', m.el).addEventListener('input', sumUp); sumUp();
+  },
+
+  /* ---------- استعلام الضمان ---------- */
+  warranty() {
+    const m = UI.modal({ title: L('استعلام ضمان / تاريخ جهاز', 'Warranty lookup'), icon: 'shield', size: 'sm', body: `<label class="lbl">IMEI ${L('أو كود الجهاز', 'or code')}</label><div class="row" style="gap:6px"><input id="wQ" dir="ltr" inputmode="numeric" style="font-size:18px;font-weight:700"><button class="btn" id="wCam">${icon('camera')}</button></div><div id="wRes" class="mt"></div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('بحث', 'Search'), cls: 'primary', icon: 'search', onClick: () => { go(); return false; } }] });
+    const go = () => { const p = Phones.byCode($('#wQ', m.el).value); const r = $('#wRes', m.el);
+      if (!p) { r.innerHTML = `<div class="tag err" style="padding:10px;white-space:normal">${L('الجهاز ده مش متسجل عندنا', 'Not found in our records')}</div>`; return; }
+      const w = Phones.warrantyLeft(p); r.innerHTML = `<div class="card card-b"><b>${esc(Phones.full(p))}</b><div class="faint">${p.code} · ${L(...PH_STATUS[p.status].slice(0, 2))}</div>${p.status === 'sold' ? `<div class="mt">${L('اتباع', 'Sold')} ${fmtDate(p.soldAt)} — ${esc(p.customerName || L('عميل نقدي', 'Walk-in'))}</div><div class="tag ${w > 0 ? 'ok' : 'err'} mt" style="font-size:15px;padding:6px 12px">🛡️ ${w == null ? L('بدون ضمان', 'No warranty') : w > 0 ? L(`في الضمان — باقي ${w} يوم`, `${w} days left`) : L('الضمان انتهى', 'Warranty ended')}</div>` : ''}<div class="mt"><button class="btn sm" id="wOpen">${icon('eye')}${L('التفاصيل والتاريخ', 'Details & history')}</button></div></div>`;
+      $('#wOpen', r).onclick = () => { m.close(); this.details(p); }; };
+    $('#wQ', m.el).onkeydown = (e) => e.key === 'Enter' && go();
+    $('#wCam', m.el).onclick = () => Scanner.camera((c) => { $('#wQ', m.el).value = c; go(); });
+  },
+
+  /* ---------- Excel ---------- */
+  excel() {
+    const rows = this.filtered().map((p) => ({ [L('الكود', 'Code')]: p.code, [L('الماركة', 'Brand')]: p.brand, [L('الموديل', 'Model')]: p.model, [L('المساحة', 'Storage')]: p.storage || '', [L('الرام', 'RAM')]: p.ram || '', [L('اللون', 'Color')]: p.color || '', 'IMEI 1': p.imei1 || '', 'IMEI 2': p.imei2 || '',
+      [L('الحالة', 'Condition')]: L(...PH_COND[p.condition || 'new'].slice(0, 2)), [L('البطارية', 'Battery')]: p.battery || '', ...(Session.can('inventory.cost') ? { [L('سعر الشراء', 'Buy price')]: p.buyPrice || 0 } : {}), [L('سعر البيع', 'Price')]: p.price || 0,
+      [L('الوضع', 'Status')]: L(...PH_STATUS[p.status].slice(0, 2)), [L('تاريخ الشراء', 'Bought')]: fmtDate(p.buyDate), [L('تاريخ البيع', 'Sold')]: p.soldAt ? fmtDate(p.soldAt) : '', [L('سعر البيع الفعلي', 'Sold price')]: p.soldPrice || '', [L('العميل', 'Customer')]: p.customerName || '' }));
+    exportExcel(rows, 'phones', L('الموبايلات', 'Phones'));
+  }
+};
+
+</script>
+  <script>
+/* =========================================================
+ * قسم كاميرات المراقبة والتركيبات
+ * عرض سعر ← عملية تركيب (عربون / دفعات / تحصيل كامل) ← تم التركيب ← ضمان وزيارات صيانة
+ * + شاشة مخزون الكاميرات: التكلفة، سعر البيع، الربح المتوقع، المحجوز للتركيبات، النواقص
+ * مربوط بـ: المخزون، الدرج، المحافظ، آجل العملاء، التقارير، الأرباح، الصيانة
+ * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+ * ========================================================= */
+const CV_STATUS = { quote: ['عرض سعر', 'Quote', 'info'], scheduled: ['مجدول للتركيب', 'Scheduled', 'warn'], installed: ['تم التركيب', 'Installed', 'ok'], cancelled: ['ملغي', 'Cancelled', 'err'] };
+const CV_VISIT = { maint: ['صيانة دورية', 'Periodic maintenance'], warranty: ['زيارة ضمان', 'Warranty visit'], paid: ['زيارة بمقابل', 'Paid visit'], extend: ['إضافة / توسعة', 'Extension'] };
+const CV_DVR = ['DVR', 'NVR', 'XVR', L('كاميرات واي فاي (بدون جهاز)', 'Wi-Fi cameras (no recorder)')];
+
+const CCTV = {
+  on() { return feat('cctv'); },
+  cfg() { return DB.settings().cctv || {}; },
+  camRx: /كامير|مراقب|DVR|NVR|XVR|cctv|hik|dahua/i,
+  isCam(p) { const c = this.cfg().cats || []; if (c.length) return c.includes(p.categoryId); return p.type === 'camera' || this.camRx.test(DB.get('categories', p.categoryId)?.name || ''); },
+  products() { return DB.filter('products', (p) => p.active !== false && this.isCam(p)); },
+  jobs() { return DB.all('cctvJobs'); },
+  addMonths(d, m) { const x = new Date(d); x.setMonth(x.getMonth() + Number(m || 0)); return x; },
+  itemsTotal(j) { return round2(sum(j.items || [], (i) => (Number(i.qty) || 0) * (Number(i.price) || 0))); },
+  itemsCost(j) { return round2(sum(j.items || [], (i) => (Number(i.qty) || 0) * (Number(i.cost) || 0))); },
+  visitsFee(j) { return round2(sum(j.visits || [], (v) => Number(v.fee) || 0)); },
+  total(j) { return round2(Math.max(0, this.itemsTotal(j) + (Number(j.labor) || 0) - (Number(j.discount) || 0)) + this.visitsFee(j)); },
+  jobTotal(j) { return round2(Math.max(0, this.itemsTotal(j) + (Number(j.labor) || 0) - (Number(j.discount) || 0))); },
+  cost(j) { return round2(this.itemsCost(j) + (Number(j.laborCost) || 0)); },
+  expProfit(j) { return round2(this.jobTotal(j) - this.cost(j)); },
+  paid(j) { return round2(sum(j.payments || [], (p) => p.amount)); },
+  due(j) { return j.status === 'quote' || j.status === 'cancelled' ? 0 : round2(this.total(j) - this.paid(j)); },
+  /** الربح بيتحسب يوم التركيب + رسوم الزيارات يوم الزيارة */
+  profitIn(from, to) {
+    let t = 0;
+    DB.filter('cctvJobs', (j) => j.status === 'installed').forEach((j) => { if (inRange(j.installedAt, from, to)) t += this.expProfit(j); (j.visits || []).forEach((v) => { if (v.fee && inRange(v.date, from, to)) t += Number(v.fee) || 0; }); });
+    return round2(t);
+  },
+  warrantyLeft(j) { if (j.status !== 'installed' || !j.warrantyUntil) return null; return Math.ceil((new Date(j.warrantyUntil) - Date.now()) / 864e5); },
+  itemWarranty(j, i) { if (j.status !== 'installed') return null; const m = Number(i.warrantyMonths ?? j.warrantyMonths) || 0; if (!m) return null; return Math.ceil((this.addMonths(j.installedAt, m) - Date.now()) / 864e5); },
+  reserved(pid) { return round2(sum(DB.filter('cctvJobs', (j) => j.status === 'scheduled'), (j) => sum((j.items || []).filter((i) => i.productId === pid), (i) => i.qty))); },
+  find(code) {
+    const c = String(code || '').trim().toLowerCase(); if (!c) return null; const d = c.replace(/\D/g, '');
+    return this.jobs().find((j) => String(j.no).toLowerCase() === c || (d.length >= 7 && String(j.phone || '').replace(/\D/g, '').endsWith(d.slice(-10))) || (j.items || []).some((i) => (i.serials || []).some((s) => String(s).toLowerCase() === c)));
+  },
+  summary(j) { const its = (j.items || []).filter((i) => i.qty > 0); return its.slice(0, 4).map((i) => `${i.qty > 1 ? i.qty + '× ' : ''}${i.name}`).join(' · ') + (its.length > 4 ? ` +${its.length - 4}` : ''); },
+  camCount(j) { return sum((j.items || []).filter((i) => /كامير|camera|cam\b/i.test(i.name)), (i) => i.qty); },
+  hist(j, action, note = '') { return [...(j.history || []), { at: nowISO(), action, note, by: Session.user?.name || '' }]; },
+  applyStock(j, sign) { (j.items || []).forEach((i) => { if (i.productId && i.qty) Stock.move(i.productId, sign * i.qty, sign < 0 ? 'cctv' : 'cctv-return', j.no, L('تركيب كاميرات', 'CCTV install')); }); },
+  ensureCustomer(j) {
+    if (j.customerId && DB.get('customers', j.customerId)) return j.customerId;
+    const k = DB.find('customers', (x) => x.phone && j.phone && x.phone === j.phone) || DB.insert('customers', { name: j.customerName, phone: j.phone, address: j.address || '', creditLimit: 0 });
+    DB.update('cctvJobs', j.id, { customerId: k.id }); return k.id;
+  },
+  srcOpts(credit = true) { return [['drawer', L('نقدي في الدرج', 'Cash drawer')], ...DB.filter('wallets', (w) => w.active !== false).map((w) => ['w:' + w.id, L('محفظة: ', 'Wallet: ') + w.name]), ...(credit ? [['credit', L('آجل على حساب العميل', 'On customer credit')]] : [])]; },
+  takePayment(j, amount, src, note) {
+    amount = round2(amount); if (!amount) return;
+    if (src && src.startsWith('w:')) DB.insert('walletTx', { walletId: src.slice(2), type: 'sale', amount, fee: 0, balanceDelta: amount, cashDelta: 0, ref: j.no, note: L('تركيب كاميرات ', 'CCTV ') + j.no, date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null, status: 'completed' });
+    else if (src === 'credit') Customers.tx(this.ensureCustomer(j), 'sale', amount, j.no, L('تركيب كاميرات آجل ', 'CCTV on credit ') + j.no);
+    else cashMove(amount, 'cctv', j.no, `${L('كاميرات', 'CCTV')} ${j.no} — ${note || ''}`);
+    const cur = DB.get('cctvJobs', j.id);
+    DB.update('cctvJobs', j.id, { payments: [...(cur.payments || []), { id: uid(), amount, src: src || 'drawer', note: note || '', date: nowISO(), userId: Session.user.id, by: Session.user.name }], history: this.hist(cur, 'pay', `${money(amount)} — ${note || ''}`) });
+    audit('cctv.pay', `${j.no} ${amount}`);
+  },
+  srcName(src) { if (!src || src === 'drawer') return L('نقدي', 'Cash'); if (src === 'credit') return L('آجل', 'Credit'); if (src.startsWith('w:')) return DB.get('wallets', src.slice(2))?.name || L('محفظة', 'Wallet'); return src; },
+  onSale() {},
+  /* شاشة/تقرير المخزون */
+  stockRows() {
+    return this.products().map((p) => { const q = Number(p.qty) || 0, r = this.reserved(p.id), cost = Number(p.cost) || 0, price = Number(p.price) || 0;
+      return { p, q, r, free: round2(q - r), cost, price, vCost: round2(Math.max(0, q) * cost), vPrice: round2(Math.max(0, q) * price), prof: round2(Math.max(0, q) * (price - cost)), margin: price ? round2(((price - cost) / price) * 100) : 0, low: p.trackStock !== false && q - r <= (Number(p.minQty) || 0) }; });
+  },
+  report(from, to, canCost) {
+    const inst = DB.filter('cctvJobs', (j) => j.status === 'installed' && inRange(j.installedAt, from, to));
+    const quotes = DB.filter('cctvJobs', (j) => inRange(j.date, from, to));
+    const conv = quotes.filter((j) => j.wasQuote && j.status !== 'quote' && j.status !== 'cancelled').length, qn = quotes.filter((j) => j.wasQuote).length;
+    const rev = sum(inst, (j) => this.jobTotal(j)), prof = this.profitIn(from, to), due = sum(this.jobs(), (j) => Math.max(0, this.due(j)));
+    const st = this.stockRows(); const top = {};
+    inst.forEach((j) => (j.items || []).forEach((i) => { const k = i.name; (top[k] ||= { q: 0, v: 0, c: 0 }); top[k].q += i.qty; top[k].v += i.qty * i.price; top[k].c += i.qty * (i.cost || 0); }));
+    return {
+      title: L('تقرير تركيبات الكاميرات', 'CCTV installations report'),
+      kpis: [[L('تركيبات تمت', 'Installations'), num(inst.length)], [L('قيمة التركيبات', 'Installations value'), money(rev)], ...(canCost ? [[L('صافي ربح الكاميرات', 'CCTV profit'), money(prof)]] : []), [L('كاميرات اتركبت', 'Cameras installed'), num(sum(inst, (j) => this.camCount(j)))], [L('عروض أسعار', 'Quotes'), `${num(qn)} (${L('اتحول', 'converted')} ${num(conv)})`], [L('فلوس متبقية عند العملاء', 'Outstanding'), money(due)], ...(canCost ? [[L('مخزون الكاميرات بالتكلفة', 'CCTV stock at cost'), money(sum(st, (x) => x.vCost))], [L('الربح المتوقع من المخزون', 'Expected stock profit'), money(sum(st, (x) => x.prof))]] : [])],
+      tables: [
+        { title: L('التركيبات', 'Installations'), cols: [L('التاريخ', 'Date'), L('الرقم', 'No'), L('العميل', 'Customer'), L('العنوان', 'Address'), L('الأجهزة', 'Devices'), L('الإجمالي', 'Total'), L('المدفوع', 'Paid'), L('المتبقي', 'Due'), ...(canCost ? [L('التكلفة', 'Cost'), L('الربح', 'Profit')] : [])], money: true,
+          rows: inst.sort((a, b) => (a.installedAt < b.installedAt ? 1 : -1)).map((j) => [fmtDate(j.installedAt), j.no, esc(j.customerName || ''), esc(j.address || ''), esc(this.summary(j)), this.jobTotal(j), this.paid(j), Math.max(0, this.due(j)), ...(canCost ? [this.cost(j), this.expProfit(j)] : [])]),
+          foot: [L('الإجمالي', 'Total'), '', '', '', '', rev, sum(inst, (j) => this.paid(j)), sum(inst, (j) => Math.max(0, this.due(j))), ...(canCost ? [sum(inst, (j) => this.cost(j)), sum(inst, (j) => this.expProfit(j))] : [])] },
+        { title: L('أكتر الأجهزة تركيباً', 'Most installed items'), cols: [L('الصنف', 'Item'), L('الكمية', 'Qty'), L('القيمة', 'Value'), ...(canCost ? [L('الربح', 'Profit')] : [])], rows: Object.entries(top).sort((a, b) => b[1].q - a[1].q).slice(0, 25).map(([n, x]) => [esc(n), x.q, round2(x.v), ...(canCost ? [round2(x.v - x.c)] : [])]) },
+        { title: L('مخزون الكاميرات ومستلزماتها', 'CCTV stock'), cols: [L('الصنف', 'Item'), L('الكمية', 'Qty'), L('محجوز', 'Reserved'), ...(canCost ? [L('التكلفة', 'Cost')] : []), L('البيع', 'Price'), ...(canCost ? [L('القيمة بالتكلفة', 'Value at cost'), L('الربح المتوقع', 'Expected profit')] : [])],
+          rows: st.map((x) => [esc(x.p.name), x.q, x.r, ...(canCost ? [money(x.cost, false)] : []), money(x.price, false), ...(canCost ? [money(x.vCost, false), money(x.prof, false)] : [])]) }
+      ]
+    };
+  }
+};
+
+Modules.cctv = {
+  title: () => L('كاميرات المراقبة', 'CCTV'), sub: () => L('عروض الأسعار والتركيبات والضمان والمخزون', 'Quotes, installs, warranty & stock'), icon: 'cctv', perm: 'cctv', tab: 'jobs', q: '', fil: 'active', lowOnly: false,
+  enabled: () => CCTV.on(),
+  badge: () => DB.filter('cctvJobs', (j) => j.status === 'scheduled' && j.scheduledAt && dayKey(j.scheduledAt) <= dayKey()).length,
+  render(el) {
+    const canCost = Session.can('inventory.cost'), mk = monthKey(), all = CCTV.jobs();
+    const sched = all.filter((j) => j.status === 'scheduled'), instM = all.filter((j) => j.status === 'installed' && monthKey(j.installedAt) === mk);
+    const due = all.filter((j) => CCTV.due(j) > 0.01), soon = all.filter((j) => { const w = CCTV.warrantyLeft(j); return w != null && w >= 0 && w <= 30; });
+    const visits = all.filter((j) => j.status === 'installed' && j.nextVisit && dayKey(j.nextVisit) <= dayKey(addDays(new Date(), 7)));
+    const quotes = all.filter((j) => j.status === 'quote');
+    el.innerHTML = `<div class="ph-kpis">
+        <div class="ph-k hero cv"><span>📹</span><div><small>${L('تركيبات جارية', 'Upcoming installs')}</small><b class="num">${num(sched.length)}</b><em>${quotes.length ? `${num(quotes.length)} ${L('عرض سعر مفتوح', 'open quotes')}` : L('مفيش عروض مفتوحة', 'No open quotes')}</em></div></div>
+        <div class="ph-k"><span>✅</span><div><small>${L('اتركب الشهر ده', 'Installed this month')}</small><b class="num">${num(instM.length)}</b><em>${money(sum(instM, (j) => CCTV.jobTotal(j)), false)}</em></div></div>
+        ${canCost ? `<div class="ph-k"><span>💰</span><div><small>${L('ربح الشهر', 'Month profit')}</small><b class="num pos">${money(CCTV.profitIn(mk + '-01', mk + '-31'), false)}</b><em>${L('بعد التكلفة والمصنعية', 'after costs')}</em></div></div>` : ''}
+        <div class="ph-k ${due.length ? 'warn' : ''}"><span>🧾</span><div><small>${L('متبقي عند العملاء', 'Outstanding')}</small><b class="num">${money(sum(due, (j) => CCTV.due(j)), false)}</b><em>${num(due.length)} ${L('عملية', 'jobs')}</em></div></div>
+        <div class="ph-k ${soon.length || visits.length ? 'warn' : ''}"><span>🛡️</span><div><small>${L('ضمان قرب يخلص / زيارات', 'Warranty / visits')}</small><b class="num">${num(soon.length)} / ${num(visits.length)}</b><em>${L('خلال 30 يوم / 7 أيام', 'next 30 / 7 days')}</em></div></div>
+      </div>
+      <div class="ph-bar">
+        <div class="ph-search">${icon('search')}<input id="cvQ" type="search" placeholder="${L('ابحث باسم العميل أو الموبايل أو رقم العملية أو سيريال جهاز…', 'Search customer, phone, job no. or serial…')}" value="${esc(this.q)}"></div>
+        <div class="row wrap" style="gap:8px">
+          ${Session.can('cctv.manage') ? `<button class="btn primary" id="cvQuote">${icon('receipt')}${L('عرض سعر جديد', 'New quote')}</button><button class="btn" id="cvJob">${icon('plus')}${L('عملية تركيب', 'New install')}</button>` : ''}
+          <button class="btn" id="cvWar">${icon('shield')}${L('استعلام ضمان', 'Warranty lookup')}</button>
+        </div>
+      </div>
+      <div class="tabs mb" id="cvTabs">${[['jobs', L('التركيبات', 'Installations'), 'cctv'], ['quotes', L('عروض الأسعار', 'Quotes'), 'receipt', quotes.length], ['stock', L('المخزون والأرباح', 'Stock & profit'), 'box'], ['care', L('الضمان والزيارات', 'Warranty & visits'), 'shield', soon.length + visits.length]].map(([k, l, ic, n]) => `<button data-t="${k}" class="${this.tab === k ? 'active' : ''}">${icon(ic)}${l}${n ? ` <span class="tag warn" style="padding:0 7px">${n}</span>` : ''}</button>`).join('')}</div>
+      <div id="cvBody"></div>`;
+    const body = $('#cvBody', el);
+    const draw = () => (this.tab === 'stock' ? this.stock(body) : this.tab === 'care' ? this.care(body) : this.list(body));
+    $('#cvQ', el).oninput = debounce((e) => { this.q = e.target.value; if (this.tab === 'stock' || this.tab === 'care') { this.tab = this.tab === 'stock' ? 'stock' : 'jobs'; } draw(); }, 150);
+    $('#cvQ', el).onkeydown = (e) => { if (e.key === 'Enter') { const j = CCTV.find(e.target.value); if (j) this.view(j); } };
+    $('#cvQuote', el) && ($('#cvQuote', el).onclick = () => this.form(null, { quote: true }));
+    $('#cvJob', el) && ($('#cvJob', el).onclick = () => this.form(null, { quote: false }));
+    $('#cvWar', el).onclick = () => this.lookup();
+    $$('#cvTabs [data-t]', el).forEach((b) => (b.onclick = () => { this.tab = b.dataset.t; $$('#cvTabs [data-t]', el).forEach((x) => x.classList.toggle('active', x === b)); draw(); }));
+    draw();
+  },
+  onScan(code) { const j = CCTV.find(code); if (j) this.view(j); },
+  match(j) { const q = this.q.trim().toLowerCase(); if (!q) return true; return [j.no, j.customerName, j.phone, j.address, CCTV.summary(j), ...(j.items || []).flatMap((i) => i.serials || [])].some((x) => x && String(x).toLowerCase().includes(q)); },
+
+  /* ---------- قائمة التركيبات / العروض ---------- */
+  list(box) {
+    const quotes = this.tab === 'quotes'; const canCost = Session.can('inventory.cost');
+    const FIL = quotes ? [['open', L('مفتوحة', 'Open')], ['all', L('كل العروض', 'All')]] : [['active', L('الجارية', 'Upcoming')], ['installed', L('تم التركيب', 'Installed')], ['due', L('عليها فلوس', 'With balance')], ['all', L('الكل', 'All')]];
+    let f = this.fil; if (!FIL.some(([k]) => k === f)) f = FIL[0][0];
+    const ls = CCTV.jobs().filter((j) => this.match(j) && (quotes ? (f === 'open' ? j.status === 'quote' : j.wasQuote || j.status === 'quote') : j.status !== 'quote' && (f === 'active' ? j.status === 'scheduled' : f === 'installed' ? j.status === 'installed' : f === 'due' ? CCTV.due(j) > 0.01 : true)))
+      .sort((a, b) => (f === 'active' ? String(a.scheduledAt || a.date).localeCompare(String(b.scheduledAt || b.date)) : a.date < b.date ? 1 : -1));
+    box.innerHTML = `<div class="seg mb" id="cvFil">${FIL.map(([k, l]) => `<button data-f="${k}" class="${f === k ? 'active' : ''}">${l}</button>`).join('')}</div>` + (ls.length ? `<div class="cv-grid">${ls.map((j) => this.card(j, canCost)).join('')}</div>` : UI.empty(quotes ? L('مفيش عروض أسعار — اضغط «عرض سعر جديد»', 'No quotes yet') : L('مفيش تركيبات هنا', 'No installations'), quotes ? 'receipt' : 'cctv'));
+    $$('#cvFil [data-f]', box).forEach((b) => (b.onclick = () => { this.fil = b.dataset.f; this.list(box); }));
+    $$('[data-cv]', box).forEach((c) => (c.onclick = (e) => { const j = DB.get('cctvJobs', c.dataset.cv); const a = e.target.closest('[data-a]')?.dataset.a; if (!a) return this.view(j); if (a === 'pay') this.payDialog(j); if (a === 'inst') this.install(j); if (a === 'print') this.print(j); if (a === 'wa') this.wa(j); if (a === 'conv') this.convert(j); }));
+  },
+  card(j, canCost) {
+    const s = CV_STATUS[j.status], tot = CCTV.total(j), paid = CCTV.paid(j), due = CCTV.due(j), w = CCTV.warrantyLeft(j);
+    const pct = tot ? Math.min(100, Math.round((paid / tot) * 100)) : 0;
+    const expired = j.status === 'quote' && j.quoteUntil && dayKey(j.quoteUntil) < dayKey();
+    const late = j.status === 'scheduled' && j.scheduledAt && dayKey(j.scheduledAt) < dayKey();
+    return `<div class="cv-card st-${j.status}" data-cv="${j.id}">
+      <div class="cv-top"><b class="mono">${esc(j.no)}</b><span class="tag ${s[2]}">${L(s[0], s[1])}</span>${expired ? `<span class="tag err">${L('العرض انتهى', 'Expired')}</span>` : ''}${late ? `<span class="tag err">${L('متأخر', 'Late')}</span>` : ''}<span class="spacer"></span><span class="faint" style="font-size:12px">${fmtDate(j.status === 'installed' ? j.installedAt : j.status === 'scheduled' && j.scheduledAt ? j.scheduledAt : j.date)}</span></div>
+      <div class="cv-cust"><span class="av">${esc((j.customerName || '?').trim()[0] || '?')}</span><div style="min-width:0"><b>${esc(j.customerName || '')}</b><small dir="ltr">${esc(j.phone || '')}</small></div></div>
+      ${j.address ? `<div class="cv-addr">📍 ${esc(j.address)}</div>` : ''}
+      <div class="cv-items">${esc(CCTV.summary(j) || '—')}</div>
+      <div class="cv-money"><div><small>${L('الإجمالي', 'Total')}</small><b class="num">${money(tot, false)}</b></div>${j.status !== 'quote' ? `<div><small>${L('اتدفع', 'Paid')}</small><b class="num pos">${money(paid, false)}</b></div><div><small>${L('الباقي', 'Due')}</small><b class="num ${due > 0.01 ? 'neg' : ''}">${money(Math.max(0, due), false)}</b></div>` : canCost ? `<div><small>${L('ربح متوقع', 'Exp. profit')}</small><b class="num pos">${money(CCTV.expProfit(j), false)}</b></div>` : ''}</div>
+      ${j.status !== 'quote' && j.status !== 'cancelled' ? `<div class="cv-bar"><i style="width:${pct}%"></i></div>` : ''}
+      <div class="cv-foot">${w != null ? `<span class="tag ${w > 30 ? 'ok' : w >= 0 ? 'warn' : 'err'}">🛡️ ${w >= 0 ? L(`ضمان ${w} يوم`, `${w}d warranty`) : L('الضمان انتهى', 'Warranty ended')}</span>` : ''}<span class="spacer"></span>
+        ${j.status === 'quote' ? `<button class="btn sm" data-a="wa">${icon('whatsapp')}</button><button class="btn sm" data-a="print">${icon('printer')}</button>${Session.can('cctv.manage') ? `<button class="btn primary sm" data-a="conv">${icon('check')}${L('موافقة', 'Accept')}</button>` : ''}` : ''}
+        ${j.status === 'scheduled' && Session.can('cctv.manage') ? `<button class="btn primary sm" data-a="inst">${icon('check')}${L('تم التركيب', 'Installed')}</button>` : ''}
+        ${due > 0.01 && j.status !== 'quote' ? `<button class="btn sm" data-a="pay">${icon('money')}${L('تحصيل', 'Collect')}</button>` : ''}</div>
+    </div>`;
+  },
+
+  /* ---------- شاشة المخزون والأرباح ---------- */
+  stock(box) {
+    const canCost = Session.can('inventory.cost'); const q = this.q.trim().toLowerCase();
+    const all = CCTV.stockRows(); const rows = all.filter((x) => (!q || (x.p.name + ' ' + (x.p.barcode || '')).toLowerCase().includes(q)) && (!this.lowOnly || x.low)).sort((a, b) => b.vPrice - a.vPrice);
+    const T = (k) => sum(all, (x) => x[k]);
+    const cats = DB.all('categories'); const selCats = CCTV.cfg().cats || [];
+    box.innerHTML = `<div class="cv-stock-k">
+        <div><small>${L('الأصناف', 'Items')}</small><b class="num">${num(all.length)}</b></div>
+        <div><small>${L('عدد القطع', 'Units')}</small><b class="num">${num(sum(all, (x) => Math.max(0, x.q)))}</b></div>
+        ${canCost ? `<div><small>${L('قيمة المخزون بالتكلفة', 'Value at cost')}</small><b class="num">${money(T('vCost'), false)}</b></div>` : ''}
+        <div><small>${L('قيمة المخزون بسعر البيع', 'Value at retail')}</small><b class="num">${money(T('vPrice'), false)}</b></div>
+        ${canCost ? `<div class="hl"><small>${L('الربح المتوقع لو اتباع كله', 'Expected profit')}</small><b class="num">${money(T('prof'), false)}</b><em>${T('vPrice') ? L('هامش', 'margin') + ' ' + Math.round((T('prof') / T('vPrice')) * 100) + '%' : ''}</em></div>` : ''}
+        <div class="${all.some((x) => x.low) ? 'bad' : ''}"><small>${L('نواقص (محتاجة طلب)', 'Low stock')}</small><b class="num">${num(all.filter((x) => x.low).length)}</b></div>
+      </div>
+      <div class="row wrap mb" style="gap:8px">
+        <label class="check"><input type="checkbox" id="cvLow" ${this.lowOnly ? 'checked' : ''}> ${L('النواقص بس', 'Low stock only')}</label><span class="spacer"></span>
+        ${Session.can('inventory') ? `<button class="btn primary sm" id="cvAddP">${icon('plus')}${L('إضافة صنف كاميرات', 'Add CCTV item')}</button>` : ''}
+        ${Session.can('purchases') ? `<button class="btn sm" id="cvBuy">${icon('truck')}${L('فاتورة شراء', 'Purchase invoice')}</button>` : ''}
+        ${Session.can('settings') ? `<button class="btn sm" id="cvCats">${icon('settings')}${L('أقسام الكاميرات', 'CCTV categories')}</button>` : ''}
+        <button class="btn ghost sm" id="cvXl">${icon('excel')}Excel</button>
+      </div>
+      ${rows.length ? `<div class="table-wrap card"><table class="tbl cv-tbl"><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('محجوز لتركيبات', 'Reserved')}</th><th>${L('المتاح', 'Free')}</th>${canCost ? `<th>${L('التكلفة', 'Cost')}</th>` : ''}<th>${L('سعر البيع', 'Price')}</th>${canCost ? `<th>${L('ربح القطعة', 'Unit profit')}</th><th>${L('الهامش', 'Margin')}</th><th>${L('القيمة بالتكلفة', 'At cost')}</th>` : ''}<th>${L('القيمة بالبيع', 'At retail')}</th>${canCost ? `<th>${L('الربح المتوقع', 'Exp. profit')}</th>` : ''}</tr></thead><tbody>
+        ${rows.map((x) => `<tr data-pid="${x.p.id}" class="${x.low ? 'low' : ''}"><td><div class="row" style="gap:8px"><span class="cv-pi">${icon(/DVR|NVR|XVR|جهاز تسجيل/i.test(x.p.name) ? 'pos' : /هارد|hdd|hard/i.test(x.p.name) ? 'layers' : 'cctv')}</span><div style="min-width:0"><b>${esc(x.p.name)}</b><div class="faint" style="font-size:11px">${esc(DB.get('categories', x.p.categoryId)?.name || '')}</div></div></div></td>
+          <td class="num"><b>${num(x.q, x.q % 1 ? 1 : 0)}</b> <small class="faint">${esc(x.p.unit || '')}</small></td><td class="num">${x.r ? `<span class="tag warn">${num(x.r)}</span>` : '—'}</td><td class="num">${x.low ? `<span class="tag err">${num(x.free)}</span>` : num(x.free)}</td>
+          ${canCost ? `<td class="num">${money(x.cost, false)}</td>` : ''}<td class="num">${money(x.price, false)}</td>${canCost ? `<td class="num pos">${money(x.price - x.cost, false)}</td><td><div class="cv-m"><i style="width:${Math.max(0, Math.min(100, x.margin))}%"></i><span>${x.margin}%</span></div></td><td class="num">${money(x.vCost, false)}</td>` : ''}<td class="num">${money(x.vPrice, false)}</td>${canCost ? `<td class="num"><b class="pos">${money(x.prof, false)}</b></td>` : ''}</tr>`).join('')}
+        </tbody><tfoot><tr><td>${L('الإجمالي', 'Total')}</td><td class="num">${num(sum(rows, (x) => x.q))}</td><td class="num">${num(sum(rows, (x) => x.r))}</td><td></td>${canCost ? '<td></td>' : ''}<td></td>${canCost ? `<td></td><td></td><td class="num">${money(sum(rows, (x) => x.vCost), false)}</td>` : ''}<td class="num">${money(sum(rows, (x) => x.vPrice), false)}</td>${canCost ? `<td class="num pos">${money(sum(rows, (x) => x.prof), false)}</td>` : ''}</tr></tfoot></table></div>`
+      : UI.empty(all.length ? L('مفيش أصناف مطابقة', 'No matching items') : L('مفيش أصناف كاميرات في المخزون — اضغط «إضافة صنف كاميرات» أو اختار أقسام الكاميرات', 'No CCTV items yet'), 'cctv')}
+      <p class="faint mt" style="font-size:12px">💡 ${L('الأصناف بتتسحب من المخزون العام (نوع «كاميرات مراقبة» أو أقسام فيها كلمة كاميرات / DVR / NVR) — تقدر تحدد الأقسام بنفسك من «أقسام الكاميرات». المحجوز = كميات في تركيبات مجدولة لسه متركبتش.', 'Items come from the main inventory.')}</p>`;
+    $('#cvLow', box).onchange = (e) => { this.lowOnly = e.target.checked; this.stock(box); };
+    $$('tr[data-pid]', box).forEach((r) => (r.onclick = () => Modules.inventory?.view(DB.get('products', r.dataset.pid))));
+    const camCat = DB.find('categories', (c) => CCTV.camRx.test(c.name));
+    $('#cvAddP', box) && ($('#cvAddP', box).onclick = () => Modules.inventory.edit(null, () => this.stock(box), { type: 'camera', categoryId: selCats[0] || camCat?.id || '', warranty: CCTV.cfg().warrantyMonths || 12 }));
+    $('#cvBuy', box) && ($('#cvBuy', box).onclick = () => { App.go('purchases'); setTimeout(() => Modules.purchases?.edit?.(), 250); });
+    $('#cvXl', box).onclick = () => exportExcel(rows.map((x) => ({ [L('الصنف', 'Item')]: x.p.name, [L('القسم', 'Category')]: DB.get('categories', x.p.categoryId)?.name || '', [L('الكمية', 'Qty')]: x.q, [L('محجوز', 'Reserved')]: x.r, [L('المتاح', 'Free')]: x.free, ...(canCost ? { [L('التكلفة', 'Cost')]: x.cost } : {}), [L('سعر البيع', 'Price')]: x.price, ...(canCost ? { [L('الهامش %', 'Margin %')]: x.margin, [L('القيمة بالتكلفة', 'At cost')]: x.vCost } : {}), [L('القيمة بالبيع', 'At retail')]: x.vPrice, ...(canCost ? { [L('الربح المتوقع', 'Expected profit')]: x.prof } : {}) })), 'cctv-stock', L('مخزون الكاميرات', 'CCTV stock'));
+    $('#cvCats', box) && ($('#cvCats', box).onclick = () => {
+      const m = UI.modal({ title: L('أقسام الكاميرات في المخزون', 'CCTV categories'), icon: 'settings', size: 'sm', body: `<p class="faint">${L('اختار الأقسام اللي أصنافها تظهر في مخزون الكاميرات. لو مختارتش حاجة، البرنامج بيختار تلقائياً.', 'Pick the categories that belong to CCTV. Leave empty for automatic.')}</p><div class="ph-chk">${cats.map((c) => `<label class="${selCats.includes(c.id) ? 'on' : ''}"><input type="checkbox" value="${c.id}" ${selCats.includes(c.id) ? 'checked' : ''}>${esc(c.name)}</label>`).join('')}</div>`,
+        actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { DB.saveSettings({ cctv: { cats: $$('input:checked', x.el).map((i) => i.value) } }); x.close(); this.stock(box); } }] });
+      $$('.ph-chk input', m.el).forEach((i) => (i.onchange = () => i.parentElement.classList.toggle('on', i.checked)));
+    });
+  },
+
+  /* ---------- الضمان والزيارات ---------- */
+  care(box) {
+    const inst = CCTV.jobs().filter((j) => j.status === 'installed' && this.match(j));
+    const visits = inst.filter((j) => j.nextVisit).sort((a, b) => String(a.nextVisit).localeCompare(String(b.nextVisit)));
+    const war = inst.filter((j) => j.warrantyUntil).sort((a, b) => String(a.warrantyUntil).localeCompare(String(b.warrantyUntil)));
+    const row = (j, right) => `<div class="cv-row" data-cv="${j.id}"><span class="av">${esc((j.customerName || '?').trim()[0] || '?')}</span><div style="min-width:0;flex:1"><b>${esc(j.customerName || '')}</b> <span class="faint mono" style="font-size:12px">${j.no}</span><div class="faint" style="font-size:12px">${esc(CCTV.summary(j))}${j.address ? ' · 📍 ' + esc(j.address) : ''}</div></div>${right}</div>`;
+    box.innerHTML = `<div class="grid g2" style="gap:14px;align-items:start">
+      <div class="card card-b"><h4 style="margin:0 0 10px">🗓️ ${L('زيارات الصيانة الجاية', 'Upcoming maintenance visits')}</h4>${visits.length ? visits.map((j) => { const d = Math.ceil((new Date(j.nextVisit) - Date.now()) / 864e5); return row(j, `<span class="tag ${d < 0 ? 'err' : d <= 7 ? 'warn' : 'ok'}">${d < 0 ? L(`متأخرة ${-d} يوم`, `${-d}d late`) : d === 0 ? L('النهارده', 'Today') : L(`بعد ${d} يوم`, `in ${d}d`)}</span>`); }).join('') : `<div class="faint">${L('مفيش زيارات مجدولة — حدد «صيانة دورية كل» في العملية', 'No scheduled visits')}</div>`}</div>
+      <div class="card card-b"><h4 style="margin:0 0 10px">🛡️ ${L('الضمانات', 'Warranties')}</h4>${war.length ? war.map((j) => { const w = CCTV.warrantyLeft(j); return row(j, `<span class="tag ${w > 30 ? 'ok' : w >= 0 ? 'warn' : 'err'}">${w >= 0 ? L(`باقي ${w} يوم`, `${w}d left`) : L('انتهى', 'Ended')}</span>`); }).join('') : `<div class="faint">${L('مفيش تركيبات بضمان لسه', 'No warranties yet')}</div>`}</div></div>`;
+    $$('[data-cv]', box).forEach((c) => (c.onclick = () => this.view(DB.get('cctvJobs', c.dataset.cv))));
+  },
+
+  /* ---------- نموذج عرض السعر / عملية التركيب ---------- */
+  form(j, { quote = false } = {}) {
+    if (!Session.can('cctv.manage')) return;
+    const c = CCTV.cfg(), isEdit = !!j, canCost = Session.can('inventory.cost'), secret = Session.can('cctv.secret');
+    const isQuote = isEdit ? j.status === 'quote' : quote;
+    const items = (j?.items || []).map((i) => ({ ...i, serials: [...(i.serials || [])] }));
+    const prods = DB.filter('products', (p) => p.active !== false).sort((a, b) => CCTV.isCam(b) - CCTV.isCam(a));
+    const custs = DB.all('customers');
+    const v0 = j || { warrantyMonths: c.warrantyMonths ?? 12, maintMonths: c.maintMonths || 0, quoteDays: c.quoteDays || 7, labor: 0, discount: 0, scheduledAt: dayKey(addDays(new Date(), 1)), dvrType: 'DVR' };
+    const m = UI.modal({ title: isEdit ? `${L('تعديل', 'Edit')} ${j.no}` : isQuote ? L('عرض سعر كاميرات مراقبة', 'CCTV quote') : L('عملية تركيب كاميرات', 'New CCTV installation'), icon: isQuote ? 'receipt' : 'cctv', size: 'xl', body: `<div class="ph-form">
+      <div class="ph-sec"><h4>👤 ${L('العميل', 'Customer')}</h4>${UI.form([
+        { name: 'phone', label: L('الموبايل (واتساب)', 'Mobile (WhatsApp)'), type: 'tel', required: true, col: 4, attrs: 'list="cvCusts" dir="ltr" autocomplete="off"' },
+        { name: 'customerName', label: L('اسم العميل', 'Customer name'), required: true, col: 4 },
+        { name: 'place', label: L('نوع المكان', 'Place type'), type: 'select', col: 4, options: [['', '—'], ...[L('شقة / منزل', 'Home'), L('محل', 'Shop'), L('شركة / مكتب', 'Office'), L('مصنع / مخزن', 'Factory'), L('عمارة', 'Building'), L('مدرسة / حضانة', 'School'), L('أخرى', 'Other')]] },
+        { name: 'address', label: L('العنوان بالتفصيل', 'Address'), col: 8 }, { name: 'location', label: L('لينك اللوكيشن (اختياري)', 'Location link'), col: 4, attrs: 'dir="ltr" placeholder="https://maps…"' }
+      ], v0)}<datalist id="cvCusts">${custs.filter((x) => x.phone).map((x) => `<option value="${esc(x.phone)}">${esc(x.name)}</option>`).join('')}</datalist></div>
+      <div class="ph-sec"><h4>📦 ${L('الأجهزة والمستلزمات', 'Devices & supplies')}</h4>
+        <div class="cv-pick"><div class="ph-search" style="flex:1">${icon('search')}<input id="cvP" list="cvProds" placeholder="${L('اكتب اسم الصنف أو امسح الباركود ثم Enter…', 'Type an item name or scan, then Enter…')}" autocomplete="off"></div><datalist id="cvProds">${prods.map((p) => `<option value="${esc(p.name)}">${money(p.price, false)} — ${L('متاح', 'stock')} ${num(p.qty)}</option>`).join('')}</datalist>
+          <button type="button" class="btn" id="cvPAdd">${icon('plus')}${L('إضافة', 'Add')}</button><button type="button" class="btn ghost" id="cvFree">${icon('edit')}${L('بند حر', 'Custom line')}</button></div>
+        <div class="cv-kits">${[['🏠', L('باكدج 4 كاميرات', '4-cam kit'), 4], ['🏪', L('باكدج 8 كاميرات', '8-cam kit'), 8]].map(([e, l, n]) => `<button type="button" class="chip" data-kit="${n}">${e} ${l}</button>`).join('')}<span class="faint" style="font-size:12px">${L('بيضيف كاميرات + جهاز تسجيل + هارد + باور من مخزونك تلقائياً لو موجودين', 'Adds cameras + recorder + HDD + power from your stock')}</span></div>
+        <div id="cvItems"></div></div>
+      <div class="ph-sec"><h4>🛠️ ${L('التركيب والضمان', 'Installation & warranty')}</h4>${UI.form([
+        { name: 'labor', label: L('مصنعية التركيب (للعميل)', 'Installation labor (charged)'), type: 'number', col: 3 },
+        ...(canCost ? [{ name: 'laborCost', label: L('تكلفة الفنيين عليك (اختياري)', 'Technician cost (optional)'), type: 'number', col: 3 }] : []),
+        { name: 'discount', label: L('خصم', 'Discount'), type: 'number', col: 3 },
+        { name: 'warrantyMonths', label: L('ضمان التركيب (شهور)', 'Warranty (months)'), type: 'select', col: 3, options: [[0, L('بدون', 'None')], [3, '3'], [6, '6'], [12, '12'], [18, '18'], [24, '24'], [36, '36']] },
+        { name: 'maintMonths', label: L('صيانة دورية كل', 'Maintenance every'), type: 'select', col: 3, options: [[0, L('بدون', 'None')], [1, L('شهر', '1 month')], [3, L('3 شهور', '3 months')], [6, L('6 شهور', '6 months')], [12, L('سنة', '1 year')]] },
+        ...(isQuote ? [{ name: 'quoteDays', label: L('العرض ساري لمدة (يوم)', 'Quote valid for (days)'), type: 'number', col: 3 }] : [{ name: 'scheduledAt', label: L('ميعاد التركيب', 'Install date'), type: 'date', col: 3, value: j?.scheduledAt ? dayKey(j.scheduledAt) : v0.scheduledAt }]),
+        { name: 'techId', label: L('الفني المسئول', 'Technician'), type: 'select', col: 3, options: [['', '—'], ...DB.filter('users', (u) => u.active !== false).map((u) => [u.id, u.name])] }
+      ], { ...v0, scheduledAt: j?.scheduledAt ? dayKey(j.scheduledAt) : v0.scheduledAt })}</div>
+      ${isQuote ? '' : `<div class="ph-sec"><h4>🔐 ${L('بيانات جهاز التسجيل والمشاهدة', 'Recorder & viewing access')} ${secret ? '' : `<small class="faint">(${L('مخفية — محتاجة صلاحية', 'hidden — needs permission')})</small>`}</h4>${secret ? UI.form([
+        { name: 'dvrType', label: L('النوع', 'Type'), type: 'select', col: 3, options: CV_DVR }, { name: 'dvrUser', label: L('اسم المستخدم', 'Username'), col: 3, attrs: 'dir="ltr" autocomplete="off"' }, { name: 'dvrPass', label: L('الباسورد', 'Password'), col: 3, attrs: 'dir="ltr" autocomplete="off"' },
+        { name: 'dvrApp', label: L('برنامج المشاهدة', 'Viewer app'), col: 3, placeholder: 'Hik-Connect / DMSS / XMEye' }, { name: 'dvrSn', label: L('سيريال الجهاز / Cloud ID', 'Device serial / Cloud ID'), col: 6, attrs: 'dir="ltr"' }, { name: 'dvrIp', label: 'IP / DDNS', col: 6, attrs: 'dir="ltr"' }
+      ], v0) : ''}</div>`}
+      ${!isEdit && !isQuote ? `<div class="ph-sec"><h4>💵 ${L('الدفع', 'Payment')}</h4><div class="seg big" id="cvPayMode"><button type="button" data-pm="deposit" class="active">${L('عربون والباقي بعدين', 'Deposit now, rest later')}</button><button type="button" data-pm="full">${L('تحصيل كامل دلوقتي', 'Full payment now')}</button><button type="button" data-pm="none">${L('بدون دفع دلوقتي', 'Nothing now')}</button></div>
+        <div id="cvPayBox" class="mt">${UI.form([{ name: 'payAmount', label: L('المبلغ', 'Amount'), type: 'number', col: 6 }, { name: 'paySrc', label: L('استلام في', 'Received in'), type: 'select', col: 6, options: CCTV.srcOpts(false) }])}</div></div>` : ''}
+      <div class="ph-sec">${UI.form([{ name: 'notes', label: isQuote ? L('ملاحظات تظهر في العرض', 'Notes shown on the quote') : L('ملاحظات', 'Notes'), type: 'textarea', col: 12 }], v0)}</div>
+      <div class="cv-sum" id="cvSum"></div></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: isEdit ? L('حفظ التعديلات', 'Save') : isQuote ? L('حفظ عرض السعر', 'Save quote') : L('حفظ العملية', 'Save installation'), cls: 'primary lg', icon: 'check', onClick: (x) => this.save(x, j, items, isQuote) }] });
+    const el = m.el;
+    const drawItems = () => {
+      $('#cvItems', el).innerHTML = items.length ? `<div class="table-wrap"><table class="tbl cv-it"><thead><tr><th>${L('الصنف', 'Item')}</th><th style="width:86px">${L('الكمية', 'Qty')}</th><th style="width:110px">${L('السعر', 'Price')}</th>${canCost ? `<th style="width:90px">${L('التكلفة', 'Cost')}</th>` : ''}<th style="width:100px">${L('الإجمالي', 'Total')}</th>${isQuote ? '' : `<th>${L('السيريالات', 'Serials')}</th>`}<th style="width:80px">${L('ضمان (ش)', 'Warr. (m)')}</th><th style="width:34px"></th></tr></thead><tbody>
+        ${items.map((i, k) => { const p = i.productId && DB.get('products', i.productId); const short = p && p.trackStock !== false && i.qty > (Number(p.qty) || 0); return `<tr><td><b>${esc(i.name)}</b>${short ? `<div class="neg" style="font-size:11px">⚠️ ${L('المتاح', 'In stock')} ${num(p.qty)}</div>` : ''}</td>
+          <td><input type="number" step="any" min="0" data-k="${k}" data-f="qty" value="${i.qty}"></td><td><input type="number" step="any" min="0" data-k="${k}" data-f="price" value="${i.price}"></td>${canCost ? `<td><input type="number" step="any" min="0" data-k="${k}" data-f="cost" value="${i.cost || 0}" ${i.productId ? 'readonly title="' + L('من المخزون', 'From stock') + '"' : ''}></td>` : ''}
+          <td class="num"><b>${money(i.qty * i.price, false)}</b></td>${isQuote ? '' : `<td><input data-k="${k}" data-f="serials" dir="ltr" value="${esc((i.serials || []).join(', '))}" placeholder="${L('افصل بفاصلة', 'comma separated')}"></td>`}
+          <td><input type="number" min="0" data-k="${k}" data-f="warrantyMonths" value="${i.warrantyMonths ?? ''}" placeholder="${$('[name=warrantyMonths]', el)?.value || ''}"></td><td><button type="button" class="btn ghost sm" data-del="${k}" style="color:var(--err)">${icon('x')}</button></td></tr>`; }).join('')}</tbody></table></div>` : `<div class="faint tc" style="padding:14px">${L('ضيف الكاميرات وجهاز التسجيل والهارد والسلك والباور…', 'Add cameras, recorder, HDD, cable, power…')}</div>`;
+      $$('[data-f]', $('#cvItems', el)).forEach((i) => (i.onchange = () => { const it = items[i.dataset.k], f = i.dataset.f; if (f === 'serials') it.serials = i.value.split(/[,،\n]/).map((x) => x.trim()).filter(Boolean); else if (f === 'warrantyMonths') it.warrantyMonths = i.value === '' ? undefined : Number(i.value); else it[f] = Math.max(0, Number(i.value) || 0); if (f !== 'serials') drawItems(); else sumUp(); }));
+      $$('[data-del]', $('#cvItems', el)).forEach((b) => (b.onclick = () => { items.splice(b.dataset.del, 1); drawItems(); }));
+      sumUp();
+    };
+    const sumUp = () => {
+      const v = UI.read(el); const tmp = { items, labor: v.labor, discount: v.discount, laborCost: canCost ? v.laborCost : j?.laborCost || 0 };
+      const tot = CCTV.jobTotal(tmp), prof = CCTV.expProfit(tmp);
+      $('#cvSum', el).innerHTML = `<div><small>${L('الأجهزة', 'Devices')}</small><b class="num">${money(CCTV.itemsTotal(tmp), false)}</b></div><div><small>${L('المصنعية', 'Labor')}</small><b class="num">${money(Number(v.labor) || 0, false)}</b></div>${Number(v.discount) ? `<div><small>${L('خصم', 'Discount')}</small><b class="num neg">− ${money(v.discount, false)}</b></div>` : ''}<div class="t"><small>${L('الإجمالي للعميل', 'Customer total')}</small><b class="num">${money(tot)}</b></div>${canCost ? `<div class="p"><small>${L('الربح المتوقع', 'Expected profit')}</small><b class="num">${money(prof, false)}</b><em>${tot ? Math.round((prof / tot) * 100) + '%' : ''}</em></div>` : ''}`;
+      const pm = $('#cvPayMode .active', el)?.dataset.pm; const pa = $('[name=payAmount]', el); if (pa && pm === 'full') pa.value = tot;
+    };
+    const addProd = (p, qty = 1) => { if (!p) return false; const ex = items.find((i) => i.productId === p.id); if (ex) ex.qty += qty; else items.push({ productId: p.id, name: p.name, qty, price: Number(p.price) || 0, cost: Number(p.cost) || 0, serials: [], warrantyMonths: p.warranty ? Number(p.warranty) : undefined }); return true; };
+    const addTyped = () => { const inp = $('#cvP', el); const t = inp.value.trim(); if (!t) return; const p = DB.find('products', (x) => x.name === t) || findProductByCode(t) || DB.find('products', (x) => x.name.toLowerCase().includes(t.toLowerCase())); if (addProd(p)) { inp.value = ''; drawItems(); } else UI.toast(L('الصنف مش موجود — استخدم «بند حر»', 'Not found — use a custom line'), 'warn'); };
+    $('#cvP', el).onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); addTyped(); } };
+    $('#cvP', el).oninput = (e) => { if (DB.find('products', (x) => x.name === e.target.value)) addTyped(); };
+    $('#cvPAdd', el).onclick = addTyped;
+    $('#cvFree', el).onclick = () => { items.push({ productId: null, name: L('بند', 'Item'), qty: 1, price: 0, cost: 0, serials: [] }); drawItems(); const r = $$('#cvItems tbody tr', el).pop(); if (r) { r.cells[0].innerHTML = `<input data-k="${items.length - 1}" data-f2="name" placeholder="${L('مثال: سلك كواكسيال (متر)', 'e.g. Coax cable (m)')}">`; const ni = $('[data-f2=name]', r); ni.focus(); ni.onchange = () => { items[ni.dataset.k].name = ni.value.trim() || L('بند', 'Item'); }; } };
+    $$('[data-kit]', el).forEach((b) => (b.onclick = () => {
+      const n = Number(b.dataset.kit), cams = CCTV.products().filter((p) => /كامير|camera/i.test(p.name) && !/DVR|NVR|XVR/i.test(p.name));
+      const pick = (rx) => CCTV.products().find((p) => rx.test(p.name));
+      const added = [addProd(cams[0], n), addProd(pick(n > 4 ? /(8|16).*(DVR|NVR|XVR)|(DVR|NVR|XVR).*(8|16)/i : /(4).*(DVR|NVR|XVR)|(DVR|NVR|XVR).*4/i) || pick(/DVR|NVR|XVR|جهاز تسجيل/i)), addProd(pick(/هارد|hdd|hard/i)), addProd(pick(/باور|power|محول/i))].filter(Boolean).length;
+      drawItems(); UI.toast(added ? L(`اتضاف ${added} صنف — راجع الأسعار والكميات`, `${added} items added`) : L('مفيش أصناف كاميرات في المخزون لسه', 'No CCTV items in stock'), added ? 'ok' : 'warn');
+    }));
+    ['labor', 'discount', 'laborCost'].forEach((n) => $(`[name=${n}]`, el)?.addEventListener('input', sumUp));
+    const ph = $('[name=phone]', el); ph.addEventListener('change', () => { const k = DB.find('customers', (x) => x.phone === ph.value.trim()); if (k) { const nm = $('[name=customerName]', el); if (!nm.value) nm.value = k.name; const ad = $('[name=address]', el); if (!ad.value && k.address) ad.value = k.address; } });
+    $$('#cvPayMode [data-pm]', el).forEach((b) => (b.onclick = () => { $$('#cvPayMode [data-pm]', el).forEach((x) => x.classList.toggle('active', x === b)); $('#cvPayBox', el).style.display = b.dataset.pm === 'none' ? 'none' : ''; sumUp(); }));
+    drawItems();
+  },
+  save(x, j, items, isQuote) {
+    if (!UI.validate(x.el)) return; const v = UI.read(x.el); const canCost = Session.can('inventory.cost');
+    const its = items.filter((i) => i.name && i.qty > 0);
+    if (!its.length && !(Number(v.labor) > 0)) return UI.toast(L('ضيف صنف واحد على الأقل', 'Add at least one item'), 'err');
+    const base = { customerName: v.customerName, phone: v.phone, place: v.place, address: v.address, location: v.location, items: its, labor: Number(v.labor) || 0, discount: Number(v.discount) || 0, warrantyMonths: Number(v.warrantyMonths) || 0, maintMonths: Number(v.maintMonths) || 0, techId: v.techId || '', techName: DB.get('users', v.techId)?.name || '', notes: v.notes || '' };
+    if (canCost) base.laborCost = Number(v.laborCost) || 0;
+    if (v.quoteDays !== undefined) { base.quoteDays = Number(v.quoteDays) || 0; }
+    if (v.scheduledAt !== undefined) base.scheduledAt = v.scheduledAt ? new Date(v.scheduledAt + 'T10:00:00').toISOString() : null;
+    if (v.dvrType !== undefined) Object.assign(base, { dvrType: v.dvrType, dvrUser: v.dvrUser, dvrPass: v.dvrPass, dvrApp: v.dvrApp, dvrSn: v.dvrSn, dvrIp: v.dvrIp });
+    const cust = DB.find('customers', (k) => k.phone && k.phone === v.phone); if (cust) base.customerId = cust.id;
+    if (j) {
+      if (j.status === 'installed') { // تعديل أجهزة بعد التركيب: رجّع القديم واسحب الجديد
+        const key = (a) => JSON.stringify((a || []).filter((i) => i.productId).map((i) => [i.productId, i.qty]));
+        if (key(j.items) !== key(its)) { CCTV.applyStock(j, +1); CCTV.applyStock({ ...j, items: its }, -1); }
+        base.warrantyUntil = base.warrantyMonths ? CCTV.addMonths(j.installedAt, base.warrantyMonths).toISOString() : null;
+      }
+      if (j.status === 'quote') base.quoteUntil = addDays(new Date(j.date), base.quoteDays || 0).toISOString();
+      DB.update('cctvJobs', j.id, { ...base, history: CCTV.hist(j, 'edit') }); audit('cctv.edit', j.no); x.close(); UI.toast(L('تم الحفظ', 'Saved')); return this.refresh(j.id);
+    }
+    const pm = $('#cvPayMode .active', x.el)?.dataset.pm; const amt = round2(Number(v.payAmount) || 0);
+    if (!isQuote && pm !== 'none' && amt > 0 && (v.paySrc || 'drawer') === 'drawer' && !App.needShift()) return;
+    const no = DB.nextNo('cctv', 'CV-');
+    const doc = DB.insert('cctvJobs', { ...base, no, date: nowISO(), status: isQuote ? 'quote' : 'scheduled', wasQuote: isQuote, quoteUntil: isQuote ? addDays(new Date(), base.quoteDays || 7).toISOString() : null, payments: [], visits: [], userId: Session.user.id, history: [{ at: nowISO(), action: isQuote ? 'quote' : 'create', note: '', by: Session.user.name }] });
+    if (!isQuote) { CCTV.ensureCustomer(doc); if (pm !== 'none' && amt > 0) CCTV.takePayment(doc, amt, v.paySrc, pm === 'full' ? L('تحصيل كامل', 'Full payment') : L('عربون', 'Deposit')); }
+    audit(isQuote ? 'cctv.quote' : 'cctv.create', `${no} ${v.customerName}`); x.close();
+    UI.toast(isQuote ? L(`تم حفظ عرض السعر ${no}`, `Quote ${no} saved`) : L(`تم تسجيل عملية التركيب ${no}`, `Installation ${no} saved`));
+    if (App.current === 'cctv') { this.tab = isQuote ? 'quotes' : 'jobs'; App.reload(); }
+    const fresh = DB.get('cctvJobs', doc.id); this.view(fresh);
+  },
+  refresh(id) { if (this._view && this._view.id === id) { this._view.m.close(); this.view(DB.get('cctvJobs', id)); } if (App.current === 'cctv') App.reload(); },
+
+  /* ---------- تفاصيل العملية ---------- */
+  view(j) {
+    if (!j) return; const s = CV_STATUS[j.status], canCost = Session.can('inventory.cost'), mng = Session.can('cctv.manage'), w = CCTV.warrantyLeft(j);
+    const tot = CCTV.total(j), paid = CCTV.paid(j), due = CCTV.due(j);
+    const steps = [['quote', L('عرض سعر', 'Quote')], ['scheduled', L('مجدول', 'Scheduled')], ['installed', L('تم التركيب', 'Installed')], ['care', L('ضمان وصيانة', 'Warranty')]];
+    const ix = j.status === 'quote' ? 0 : j.status === 'scheduled' ? 1 : j.status === 'installed' ? (w != null && w < 0 ? 3 : 2) : -1;
+    const ACT = { quote: '📝', create: '🆕', edit: '✏️', pay: '💵', convert: '🤝', install: '✅', visit: '🔧', cancel: '⛔', wa: '💬' };
+    const dvr = j.dvrUser || j.dvrPass || j.dvrSn || j.dvrIp;
+    const m = UI.modal({ title: `${j.no} — ${esc(j.customerName || '')}`, icon: 'cctv', size: 'xl', body: `<div class="cv-det">
+      ${j.status === 'cancelled' ? `<div class="tag err" style="padding:8px 12px;margin-bottom:10px">⛔ ${L('العملية ملغية', 'Cancelled')}</div>` : `<div class="rp-steps">${steps.map(([k, l], i) => `<div class="rp-step ${i <= ix ? 'on' : ''} ${i === ix ? 'cur' : ''}"><i>${i < ix ? icon('check') : i + 1}</i><span>${l}</span></div>`).join('')}</div>`}
+      <div class="grid g4 mb" style="gap:10px">
+        <div class="stat-mini"><span class="l">${L('الإجمالي', 'Total')}</span><span class="v num">${money(tot)}</span></div>
+        ${j.status === 'quote' ? `<div class="stat-mini"><span class="l">${L('ساري حتى', 'Valid until')}</span><span class="v">${j.quoteUntil ? fmtDate(j.quoteUntil) : '—'}</span></div>` : `<div class="stat-mini"><span class="l">${L('المدفوع', 'Paid')}</span><span class="v num pos">${money(paid)}</span></div><div class="stat-mini" ${due > 0.01 ? 'style="background:var(--err-bg)"' : ''}><span class="l">${L('المتبقي', 'Due')}</span><span class="v num ${due > 0.01 ? 'neg' : ''}">${money(Math.max(0, due))}</span></div>`}
+        ${canCost ? `<div class="stat-mini" style="background:var(--ok-bg)"><span class="l">${j.status === 'installed' ? L('الربح', 'Profit') : L('الربح المتوقع', 'Expected profit')}</span><span class="v num pos">${money(CCTV.expProfit(j) + CCTV.visitsFee(j))}</span></div>` : ''}
+        ${w != null ? `<div class="stat-mini"><span class="l">${L('الضمان', 'Warranty')}</span><span class="v"><span class="tag ${w > 30 ? 'ok' : w >= 0 ? 'warn' : 'err'}">${w >= 0 ? L(`باقي ${w} يوم`, `${w}d left`) : L('انتهى', 'Ended')}</span></span></div>` : ''}
+      </div>
+      <div class="grid g2" style="gap:12px">
+        <div class="card card-b"><div class="ph-dr"><span>${L('العميل', 'Customer')}</span><b>${esc(j.customerName || '')}</b></div><div class="ph-dr"><span>${L('الموبايل', 'Mobile')}</span><b dir="ltr">${esc(j.phone || '')}</b></div>${j.place ? `<div class="ph-dr"><span>${L('المكان', 'Place')}</span><b>${esc(j.place)}</b></div>` : ''}${j.address ? `<div class="ph-dr"><span>${L('العنوان', 'Address')}</span><b>${esc(j.address)}</b></div>` : ''}${j.location ? `<div class="ph-dr"><span>${L('اللوكيشن', 'Location')}</span><b><a href="#" id="cvLoc">${L('فتح الخريطة', 'Open map')} ↗</a></b></div>` : ''}</div>
+        <div class="card card-b"><div class="ph-dr"><span>${L('تاريخ الإنشاء', 'Created')}</span><b>${fmtDT(j.date)}</b></div>${j.scheduledAt && j.status !== 'quote' ? `<div class="ph-dr"><span>${L('ميعاد التركيب', 'Install date')}</span><b>${fmtDate(j.scheduledAt)}</b></div>` : ''}${j.installedAt ? `<div class="ph-dr"><span>${L('اتركب يوم', 'Installed on')}</span><b>${fmtDate(j.installedAt)}</b></div>` : ''}${j.warrantyUntil ? `<div class="ph-dr"><span>${L('الضمان لحد', 'Warranty until')}</span><b>${fmtDate(j.warrantyUntil)}</b></div>` : ''}${j.techName ? `<div class="ph-dr"><span>${L('الفني', 'Technician')}</span><b>${esc(j.techName)}</b></div>` : ''}${j.nextVisit ? `<div class="ph-dr"><span>${L('الزيارة الجاية', 'Next visit')}</span><b>${fmtDate(j.nextVisit)}</b></div>` : ''}</div>
+      </div>
+      <h4 class="mt" style="margin-bottom:6px">${L('الأجهزة والمستلزمات', 'Devices & supplies')}</h4>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('السعر', 'Price')}</th><th>${L('الإجمالي', 'Total')}</th>${canCost ? `<th>${L('التكلفة', 'Cost')}</th>` : ''}<th>${L('السيريالات', 'Serials')}</th><th>${L('الضمان', 'Warranty')}</th></tr></thead><tbody>
+        ${(j.items || []).map((i) => { const iw = CCTV.itemWarranty(j, i); return `<tr><td><b>${esc(i.name)}</b></td><td class="num">${num(i.qty, i.qty % 1 ? 1 : 0)}</td><td class="num">${money(i.price, false)}</td><td class="num">${money(i.qty * i.price, false)}</td>${canCost ? `<td class="num faint">${money(i.qty * (i.cost || 0), false)}</td>` : ''}<td dir="ltr" style="font-size:12px">${esc((i.serials || []).join(', ')) || '—'}</td><td>${iw == null ? `${Number(i.warrantyMonths ?? j.warrantyMonths) || 0} ${L('ش', 'm')}` : `<span class="tag ${iw > 30 ? 'ok' : iw >= 0 ? 'warn' : 'err'}">${iw >= 0 ? iw + ' ' + L('يوم', 'd') : L('انتهى', 'Ended')}</span>`}</td></tr>`; }).join('')}
+        ${j.labor ? `<tr><td>${L('مصنعية التركيب والتشغيل', 'Installation labor')}</td><td></td><td></td><td class="num">${money(j.labor, false)}</td>${canCost ? `<td class="num faint">${money(j.laborCost || 0, false)}</td>` : ''}<td></td><td></td></tr>` : ''}
+        ${j.discount ? `<tr><td>${L('خصم', 'Discount')}</td><td></td><td></td><td class="num neg">− ${money(j.discount, false)}</td>${canCost ? '<td></td>' : ''}<td></td><td></td></tr>` : ''}
+      </tbody></table></div>
+      ${dvr && j.status !== 'quote' ? `<div class="card card-b mt cv-dvr"><b>🔐 ${esc(j.dvrType || L('جهاز التسجيل', 'Recorder'))}</b>${Session.can('cctv.secret') ? `<span>${L('المستخدم', 'User')}: <code>${esc(j.dvrUser || '—')}</code></span><span>${L('الباسورد', 'Password')}: <code id="cvPw" data-pw="${esc(j.dvrPass || '')}">••••••</code> <a href="#" id="cvPwS">${L('إظهار', 'Show')}</a></span>${j.dvrApp ? `<span>${L('البرنامج', 'App')}: ${esc(j.dvrApp)}</span>` : ''}${j.dvrSn ? `<span>SN: <code>${esc(j.dvrSn)}</code></span>` : ''}${j.dvrIp ? `<span>IP: <code>${esc(j.dvrIp)}</code></span>` : ''}` : `<span class="faint">${L('البيانات مخفية — محتاجة صلاحية «رؤية باسوردات الأجهزة»', 'Hidden — needs permission')}</span>`}</div>` : ''}
+      ${j.notes ? `<div class="card card-b mt">📝 ${esc(j.notes)}</div>` : ''}
+      <div class="grid g2 mt" style="gap:12px;align-items:start">
+        <div><h4 style="margin:0 0 6px">${L('الدفعات', 'Payments')}</h4>${(j.payments || []).length ? `<div class="ph-tl">${j.payments.map((p) => `<div><i>💵</i><b class="num">${money(p.amount)}</b><span>${esc(p.note || '')} · ${esc(CCTV.srcName(p.src))}</span><small>${fmtDT(p.date)} · ${esc(p.by || '')}</small></div>`).join('')}</div>` : `<div class="faint">${L('مفيش دفعات', 'No payments')}</div>`}</div>
+        <div><h4 style="margin:0 0 6px">${L('الزيارات', 'Visits')}</h4>${(j.visits || []).length ? `<div class="ph-tl">${j.visits.slice().reverse().map((v) => `<div><i>🔧</i><b>${L(...(CV_VISIT[v.type] || CV_VISIT.maint))}</b><span>${esc(v.note || '')}${v.fee ? ` · ${money(v.fee)}` : ''}</span><small>${fmtDT(v.date)} · ${esc(v.by || '')}</small></div>`).join('')}</div>` : `<div class="faint">${L('مفيش زيارات', 'No visits')}</div>`}</div>
+      </div>
+      <details class="mt"><summary class="faint">${L('سجل العملية', 'Activity log')}</summary><div class="ph-tl mt">${(j.history || []).slice().reverse().map((h) => `<div><i>${ACT[h.action] || '•'}</i><b>${esc(h.note || h.action)}</b><small>${fmtDT(h.at)} · ${esc(h.by || '')}</small></div>`).join('')}</div></details></div>`,
+      actions: [
+        ...(j.status === 'quote' && mng ? [{ label: L('العميل وافق — حوّلها لتركيب', 'Accepted — convert'), cls: 'primary', icon: 'check', onClick: (x) => { x.close(); this.convert(j); } }] : []),
+        ...(j.status === 'scheduled' && mng ? [{ label: L('تم التركيب', 'Mark installed'), cls: 'primary', icon: 'check', onClick: (x) => { x.close(); this.install(j); } }] : []),
+        ...(due > 0.01 && j.status !== 'quote' ? [{ label: L('تحصيل دفعة', 'Collect payment'), icon: 'money', onClick: (x) => { x.close(); this.payDialog(j); } }] : []),
+        ...(j.status === 'installed' && mng ? [{ label: L('تسجيل زيارة', 'Log a visit'), icon: 'tool', onClick: (x) => { x.close(); this.visit(j); } }] : []),
+        { label: j.status === 'quote' ? L('طباعة العرض', 'Print quote') : j.status === 'installed' ? L('الفاتورة وشهادة الضمان', 'Invoice & warranty') : L('طباعة', 'Print'), icon: 'printer', onClick: () => { this.print(j); return false; } },
+        { label: L('واتساب', 'WhatsApp'), cls: 'wa', icon: 'whatsapp', onClick: () => { this.wa(j); return false; } },
+        ...(j.status === 'installed' && feat('repairs') ? [{ label: L('دخول صيانة', 'To repairs'), icon: 'tool', onClick: (x) => { x.close(); Modules.repairs.receive(null, null, { deviceType: 'كاميرا مراقبة', brand: '', model: CCTV.summary(j).slice(0, 60), serial: j.dvrSn || '', customerName: j.customerName, phone: j.phone, notes: L(`ضمان تركيب ${j.no}`, `Install warranty ${j.no}`) }); } }] : []),
+        ...(mng && j.status !== 'cancelled' ? [{ label: L('تعديل', 'Edit'), icon: 'edit', onClick: (x) => { x.close(); this.form(j); } }] : []),
+        ...(mng && j.status !== 'cancelled' ? [{ label: j.status === 'quote' ? L('رفض / إلغاء', 'Reject') : L('إلغاء العملية', 'Cancel job'), cls: 'danger', icon: 'x', onClick: (x) => this.cancel(j, x) }] : []),
+        { label: L('إغلاق', 'Close'), onClick: (x) => x.close() }] });
+    this._view = { id: j.id, m };
+    $('#cvLoc', m.el) && ($('#cvLoc', m.el).onclick = (e) => { e.preventDefault(); openExternal(/^https?:/.test(j.location) ? j.location : 'https://maps.google.com/?q=' + encodeURIComponent(j.location)); });
+    $('#cvPwS', m.el) && ($('#cvPwS', m.el).onclick = (e) => { e.preventDefault(); const c = $('#cvPw', m.el); c.textContent = c.textContent.startsWith('•') ? c.dataset.pw || '—' : '••••••'; audit('cctv.secret', j.no); });
+  },
+
+  /* ---------- الخطوات ---------- */
+  convert(j) {
+    const tot = CCTV.total(j);
+    const m = UI.modal({ title: L('العميل وافق على العرض', 'Quote accepted') + ' — ' + j.no, icon: 'check', size: 'sm', body: `<div class="stat-mini mb"><span class="l">${L('إجمالي العرض', 'Quote total')}</span><span class="v num">${money(tot)}</span></div>` + UI.form([
+      { name: 'scheduledAt', label: L('ميعاد التركيب', 'Install date'), type: 'date', col: 12, value: dayKey(addDays(new Date(), 1)) },
+      { type: 'html', col: 12, html: `<label class="lbl">${L('الدفع', 'Payment')}</label><div class="seg" id="cvPm"><button type="button" data-pm="deposit" class="active">${L('عربون', 'Deposit')}</button><button type="button" data-pm="full">${L('كامل', 'Full')}</button><button type="button" data-pm="none">${L('بعدين', 'Later')}</button></div>` },
+      { name: 'amount', label: L('المبلغ', 'Amount'), type: 'number', col: 6, value: round2(tot / 2) }, { name: 'src', label: L('استلام في', 'Received in'), type: 'select', col: 6, options: CCTV.srcOpts(false) }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد', 'Confirm'), cls: 'primary', icon: 'check', onClick: (x) => {
+        const v = UI.read(x.el); const pm = $('#cvPm .active', x.el).dataset.pm; const amt = pm === 'none' ? 0 : round2(Number(v.amount) || 0);
+        if (amt > 0 && v.src === 'drawer' && !App.needShift()) return;
+        DB.update('cctvJobs', j.id, { status: 'scheduled', convertedAt: nowISO(), scheduledAt: v.scheduledAt ? new Date(v.scheduledAt + 'T10:00:00').toISOString() : null, history: CCTV.hist(j, 'convert', L('العميل وافق على العرض', 'Quote accepted')) });
+        const fresh = DB.get('cctvJobs', j.id); CCTV.ensureCustomer(fresh); if (amt > 0) CCTV.takePayment(fresh, amt, v.src, pm === 'full' ? L('تحصيل كامل', 'Full payment') : L('عربون', 'Deposit'));
+        audit('cctv.convert', j.no); x.close(); UI.toast(L('اتحولت لعملية تركيب ✓', 'Converted ✓')); this.tab = 'jobs'; this.fil = 'active'; this.refresh(j.id); if (!this._view || this._view.id !== j.id) this.view(DB.get('cctvJobs', j.id));
+      } }] });
+    $$('#cvPm [data-pm]', m.el).forEach((b) => (b.onclick = () => { $$('#cvPm [data-pm]', m.el).forEach((x) => x.classList.toggle('active', x === b)); $('[name=amount]', m.el).value = b.dataset.pm === 'full' ? tot : b.dataset.pm === 'none' ? 0 : round2(tot / 2); }));
+  },
+  install(j) {
+    const short = (j.items || []).filter((i) => { const p = i.productId && DB.get('products', i.productId); return p && p.trackStock !== false && i.qty > (Number(p.qty) || 0); });
+    const s = DB.settings(); const due = CCTV.due(j);
+    const m = UI.modal({ title: L('تأكيد التركيب', 'Confirm installation') + ' — ' + j.no, icon: 'check', size: 'md', body: `${short.length ? `<div class="tag ${s.allowNegativeStock ? 'warn' : 'err'}" style="display:block;white-space:normal;padding:10px;margin-bottom:10px">⚠️ ${L('الكمية مش كفاية في المخزون:', 'Not enough stock:')} ${short.map((i) => esc(i.name)).join('، ')}${s.allowNegativeStock ? '' : '<br>' + L('زوّد المخزون (فاتورة شراء) أو عدّل الكميات الأول', 'Add stock first')}</div>` : ''}
+      <p class="faint">${L('هيتخصم كل الأجهزة والمستلزمات من المخزون ويبدأ الضمان من تاريخ التركيب.', 'Items will be deducted from stock and warranty starts now.')}</p>` + UI.form([
+        { name: 'installedAt', label: L('تاريخ التركيب', 'Installed on'), type: 'date', col: 6, value: dayKey() },
+        ...(due > 0.01 ? [{ type: 'html', col: 12, html: `<div class="stat-mini"><span class="l">${L('المتبقي على العميل', 'Remaining')}</span><span class="v num neg">${money(due)}</span></div>` }, { name: 'amount', label: L('تحصيل دلوقتي', 'Collect now'), type: 'number', col: 4, value: due }, { name: 'src', label: L('في', 'Into'), type: 'select', col: 4, options: CCTV.srcOpts(true) }, { name: 'rest', label: L('لو فاضل حاجة', 'If something remains'), type: 'select', col: 4, options: [['open', L('تفضل مفتوحة على العملية', 'Keep open on the job')], ['credit', L('تتسجل آجل على العميل', 'Move to customer credit')]] }] : [])
+      ]), actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد التركيب', 'Confirm'), cls: 'primary lg', icon: 'check', onClick: (x) => {
+        if (short.length && !s.allowNegativeStock) return UI.toast(L('المخزون مش كفاية', 'Not enough stock'), 'err');
+        const v = UI.read(x.el); const amt = round2(Math.min(Number(v.amount) || 0, due));
+        if (amt > 0 && (v.src || 'drawer') === 'drawer' && !App.needShift()) return;
+        const at = v.installedAt ? new Date(v.installedAt + 'T' + new Date().toTimeString().slice(0, 8)) : new Date();
+        CCTV.applyStock(j, -1);
+        DB.update('cctvJobs', j.id, { status: 'installed', installedAt: at.toISOString(), warrantyUntil: j.warrantyMonths ? CCTV.addMonths(at, j.warrantyMonths).toISOString() : null, nextVisit: j.maintMonths ? CCTV.addMonths(at, j.maintMonths).toISOString() : null, history: CCTV.hist(j, 'install', L('تم التركيب', 'Installed')) });
+        let fresh = DB.get('cctvJobs', j.id);
+        if (amt > 0) CCTV.takePayment(fresh, amt, v.src, L('تحصيل بعد التركيب', 'Collected after install'));
+        fresh = DB.get('cctvJobs', fresh.id); const rest = CCTV.due(fresh);
+        if (rest > 0.01 && v.rest === 'credit') CCTV.takePayment(fresh, rest, 'credit', L('الباقي آجل', 'Rest on credit'));
+        audit('cctv.install', j.no); x.close(); UI.toast(L('تم التركيب ✓ — الضمان بدأ', 'Installed ✓')); this.refresh(j.id); if (!this._view || this._view.id !== j.id) this.view(DB.get('cctvJobs', j.id));
+      } }] });
+  },
+  payDialog(j) {
+    const due = CCTV.due(j);
+    UI.modal({ title: L('تحصيل دفعة', 'Collect payment') + ' — ' + j.no, icon: 'money', size: 'sm', body: `<div class="stat-mini mb"><span class="l">${L('المتبقي', 'Remaining')}</span><span class="v num neg">${money(due)}</span></div>` + UI.form([{ name: 'amount', label: L('المبلغ', 'Amount'), type: 'number', required: true, col: 12, value: due }, { name: 'src', label: L('استلام في', 'Received in'), type: 'select', col: 12, options: CCTV.srcOpts(true) }, { name: 'note', label: L('ملاحظة', 'Note'), col: 12, value: L('دفعة', 'Installment') }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تحصيل', 'Collect'), cls: 'primary', icon: 'check', onClick: (x) => {
+        const v = UI.read(x.el); const a = round2(Number(v.amount) || 0); if (a <= 0) return UI.toast(L('اكتب المبلغ', 'Enter amount'), 'err'); if (a > due + 0.01) return UI.toast(L('المبلغ أكبر من المتبقي', 'More than remaining'), 'err');
+        if (v.src === 'drawer' && !App.needShift()) return;
+        CCTV.takePayment(j, a, v.src, v.note); x.close(); UI.toast(L('تم التحصيل ✓', 'Collected ✓')); this.refresh(j.id);
+      } }] });
+  },
+  visit(j) {
+    UI.modal({ title: L('تسجيل زيارة', 'Log a visit') + ' — ' + j.no, icon: 'tool', size: 'sm', body: UI.form([{ name: 'type', label: L('نوع الزيارة', 'Type'), type: 'select', col: 12, options: Object.entries(CV_VISIT).map(([k, v]) => [k, L(v[0], v[1])]) }, { name: 'note', label: L('اللي اتعمل', 'What was done'), type: 'textarea', col: 12, required: true }, { name: 'fee', label: L('مبلغ محصّل (لو بفلوس)', 'Fee (if paid)'), type: 'number', col: 6, value: 0 }, { name: 'src', label: L('في', 'Into'), type: 'select', col: 6, options: CCTV.srcOpts(true) }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); const fee = round2(Number(v.fee) || 0);
+        if (fee > 0 && v.src === 'drawer' && !App.needShift()) return;
+        DB.update('cctvJobs', j.id, { visits: [...(j.visits || []), { id: uid(), type: v.type, note: v.note, fee, date: nowISO(), by: Session.user.name }], nextVisit: j.maintMonths ? CCTV.addMonths(new Date(), j.maintMonths).toISOString() : j.nextVisit || null, history: CCTV.hist(j, 'visit', L(...(CV_VISIT[v.type] || CV_VISIT.maint))) });
+        if (fee > 0) CCTV.takePayment(DB.get('cctvJobs', j.id), fee, v.src, L('زيارة', 'Visit'));
+        x.close(); UI.toast(L('تم تسجيل الزيارة', 'Visit saved')); this.refresh(j.id);
+      } }] });
+  },
+  async cancel(j, x) {
+    const paid = CCTV.paid(j);
+    if (!(await UI.confirm(j.status === 'quote' ? L('إلغاء عرض السعر ده؟', 'Cancel this quote?') : L(`إلغاء العملية؟${j.status === 'installed' ? ' الأجهزة هترجع المخزون.' : ''}${paid ? ` واتدفع ${money(paid)} — هيترد للعميل من الدرج.` : ''}`, 'Cancel this job?')))) return;
+    if (paid && !App.needShift()) return;
+    if (j.status === 'installed') CCTV.applyStock(j, +1);
+    if (paid) { const cr = sum((j.payments || []).filter((p) => p.src === 'credit'), (p) => p.amount); if (cr) Customers.tx(CCTV.ensureCustomer(j), 'return', -cr, j.no, L('إلغاء تركيب', 'Install cancelled')); if (paid - cr) cashMove(-(paid - cr), 'cctv', j.no, L('رد مبلغ إلغاء تركيب', 'Refund')); }
+    DB.update('cctvJobs', j.id, { status: 'cancelled', cancelledAt: nowISO(), payments: [], refunded: paid, history: CCTV.hist(j, 'cancel', paid ? L(`ترد ${money(paid)}`, `refunded ${money(paid)}`) : '') });
+    audit('cctv.cancel', j.no); x.close(); UI.toast(L('تم الإلغاء', 'Cancelled')); if (App.current === 'cctv') App.reload();
+  },
+  lookup() {
+    const m = UI.modal({ title: L('استعلام ضمان / عملية تركيب', 'Warranty lookup'), icon: 'shield', size: 'sm', body: `<label class="lbl">${L('موبايل العميل أو رقم العملية أو سيريال جهاز', 'Customer phone, job no. or serial')}</label><input id="cvL" dir="ltr" style="font-size:17px;font-weight:700"><div id="cvLR" class="mt"></div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('بحث', 'Search'), cls: 'primary', icon: 'search', onClick: () => { go(); return false; } }] });
+    const go = () => { const q = $('#cvL', m.el).value.trim(); const d = q.replace(/\D/g, ''); const r = $('#cvLR', m.el);
+      const ls = CCTV.jobs().filter((j) => j.status !== 'quote' && (String(j.no).toLowerCase() === q.toLowerCase() || (d.length >= 7 && String(j.phone || '').replace(/\D/g, '').endsWith(d.slice(-10))) || (j.items || []).some((i) => (i.serials || []).some((s) => String(s).toLowerCase() === q.toLowerCase()))));
+      r.innerHTML = ls.length ? ls.map((j) => { const w = CCTV.warrantyLeft(j); return `<div class="cv-row" data-cv="${j.id}"><div style="flex:1;min-width:0"><b>${esc(j.customerName)}</b> <span class="mono faint">${j.no}</span><div class="faint" style="font-size:12px">${esc(CCTV.summary(j))}</div><div style="font-size:12px">${j.installedAt ? L('اتركب', 'Installed') + ' ' + fmtDate(j.installedAt) : L(...CV_STATUS[j.status].slice(0, 2))}</div></div>${w != null ? `<span class="tag ${w > 0 ? 'ok' : 'err'}">${w > 0 ? L(`في الضمان ${w} يوم`, `${w}d`) : L('الضمان انتهى', 'Ended')}</span>` : ''}</div>`; }).join('') : `<div class="tag err" style="padding:10px;white-space:normal">${L('مفيش عملية بالبيانات دي', 'Nothing found')}</div>`;
+      $$('[data-cv]', r).forEach((c) => (c.onclick = () => { m.close(); this.view(DB.get('cctvJobs', c.dataset.cv)); })); };
+    $('#cvL', m.el).onkeydown = (e) => e.key === 'Enter' && go();
+  },
+
+  /* ---------- طباعة: عرض سعر / فاتورة + شهادة ضمان ---------- */
+  print(j) {
+    const c = CCTV.cfg(), q = j.status === 'quote', tot = CCTV.total(j);
+    const rows = (j.items || []).map((i, k) => `<tr><td>${k + 1}</td><td><b>${esc(i.name)}</b>${!q && (i.serials || []).length ? `<div style="font-size:10px;color:#666" dir="ltr">S/N: ${esc(i.serials.join(', '))}</div>` : ''}</td><td class="num">${num(i.qty, i.qty % 1 ? 1 : 0)}</td><td class="num">${money(i.price, false)}</td><td class="num">${money(i.qty * i.price, false)}</td><td>${Number(i.warrantyMonths ?? j.warrantyMonths) || 0} ${L('شهر', 'mo')}</td></tr>`).join('');
+    const body = `<div class="grid2" style="margin-bottom:10px"><div><b>${L('السادة', 'To')}:</b> ${esc(j.customerName || '')}<br><b>${L('موبايل', 'Mobile')}:</b> <span dir="ltr">${esc(j.phone || '')}</span>${j.address ? `<br><b>${L('العنوان', 'Address')}:</b> ${esc(j.address)}` : ''}</div>
+      <div style="text-align:end"><b>${q ? L('رقم العرض', 'Quote no') : L('رقم العملية', 'Job no')}:</b> ${j.no}<br><b>${L('التاريخ', 'Date')}:</b> ${fmtDate(j.date)}${q && j.quoteUntil ? `<br><b>${L('ساري حتى', 'Valid until')}:</b> ${fmtDate(j.quoteUntil)}` : ''}${j.installedAt ? `<br><b>${L('تاريخ التركيب', 'Installed')}:</b> ${fmtDate(j.installedAt)}` : ''}</div></div>
+      <table><thead><tr><th>#</th><th>${L('البيان', 'Description')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('السعر', 'Price')}</th><th>${L('الإجمالي', 'Total')}</th><th>${L('الضمان', 'Warranty')}</th></tr></thead><tbody>${rows}
+      ${j.labor ? `<tr><td></td><td>${L('مصنعية التركيب والتشغيل وضبط المشاهدة على الموبايل', 'Installation & setup')}</td><td></td><td></td><td class="num">${money(j.labor, false)}</td><td></td></tr>` : ''}
+      ${(j.visits || []).filter((v) => v.fee).map((v) => `<tr><td></td><td>${L(...(CV_VISIT[v.type] || CV_VISIT.maint))} — ${fmtDate(v.date)}</td><td></td><td></td><td class="num">${money(v.fee, false)}</td><td></td></tr>`).join('')}</tbody>
+      <tfoot>${j.discount ? `<tr><td colspan="4">${L('خصم', 'Discount')}</td><td class="num">− ${money(j.discount, false)}</td><td></td></tr>` : ''}<tr><td colspan="4">${L('الإجمالي', 'Total')}</td><td class="num">${money(tot)}</td><td></td></tr>
+      ${!q ? `<tr><td colspan="4">${L('المدفوع', 'Paid')}</td><td class="num">${money(CCTV.paid(j))}</td><td></td></tr><tr><td colspan="4">${L('المتبقي', 'Remaining')}</td><td class="num">${money(Math.max(0, CCTV.due(j)))}</td><td></td></tr>` : ''}</tfoot></table>
+      ${q ? `<h2>${L('الشروط', 'Terms')}</h2><div style="white-space:pre-line;line-height:1.9">${esc(c.terms || '')}${j.warrantyMonths ? `\n${L(`ضمان ${j.warrantyMonths} شهر على الأجهزة والتركيب من تاريخ التركيب.`, `${j.warrantyMonths}-month warranty.`)}` : ''}</div>${j.notes ? `<p>${esc(j.notes)}</p>` : ''}<div class="netbox">${L('إجمالي العرض', 'Quote total')}: ${money(tot)}</div><div class="sig"><div>${L('توقيع العميل بالموافقة', 'Customer approval')}</div><div>${L('الختم والتوقيع', 'Stamp & signature')}</div></div>`
+      : `<div style="margin-top:16px;border:2px solid #8B1A2B;border-radius:12px;padding:12px 16px"><h2 style="margin-top:0">🛡️ ${L('شهادة ضمان', 'Warranty certificate')}</h2><p style="line-height:1.9">${L(`نقر بأن أجهزة المراقبة الموضحة أعلاه تم تركيبها للسيد/ ${esc(j.customerName || '')} بتاريخ ${j.installedAt ? fmtDate(j.installedAt) : '...'}، وهي مضمونة لمدة ${j.warrantyMonths || 0} شهر${j.warrantyUntil ? ` حتى ${fmtDate(j.warrantyUntil)}` : ''} ضد عيوب الصناعة والتركيب.`, `Installed on ${j.installedAt ? fmtDate(j.installedAt) : ''}, warranted for ${j.warrantyMonths || 0} months.`)}</p><div style="white-space:pre-line;font-size:10.5px;color:#555">${esc(c.terms || '')}</div></div><div class="sig"><div>${L('توقيع العميل بالاستلام', 'Customer signature')}</div><div>${L('الفني', 'Technician')}: ${esc(j.techName || '')}</div></div>`}`;
+    printHTML(reportDoc(q ? L('عرض سعر كاميرات مراقبة', 'CCTV quotation') : L('فاتورة تركيب كاميرات مراقبة', 'CCTV installation invoice'), body), { type: 'report' });
+  },
+  wa(j) {
+    const st = DB.settings().store; const q = j.status === 'quote', tot = CCTV.total(j);
+    const lines = (j.items || []).map((i) => `• ${i.qty > 1 ? i.qty + ' × ' : ''}${i.name} = ${money(i.qty * i.price)}`).join('\n');
+    const t = q ? `${L('أهلاً', 'Hello')} ${j.customerName} 👋\n${L('عرض سعر كاميرات مراقبة', 'CCTV quotation')} — ${j.no}\n\n${lines}${j.labor ? `\n• ${L('التركيب والتشغيل', 'Installation')} = ${money(j.labor)}` : ''}${j.discount ? `\n• ${L('خصم', 'Discount')} = − ${money(j.discount)}` : ''}\n\n*${L('الإجمالي', 'Total')}: ${money(tot)}*${j.warrantyMonths ? `\n🛡️ ${L(`ضمان ${j.warrantyMonths} شهر`, `${j.warrantyMonths}-month warranty`)}` : ''}${j.quoteUntil ? `\n${L('العرض ساري حتى', 'Valid until')} ${fmtDate(j.quoteUntil)}` : ''}\n\n${st.name}${st.phone ? ' — ' + st.phone : ''}`
+      : j.status === 'installed' ? `${L('أهلاً', 'Hello')} ${j.customerName} 👋\n${L('تم تركيب كاميرات المراقبة بنجاح ✅', 'Your CCTV is installed ✅')} — ${j.no}\n${L('تاريخ التركيب', 'Installed')}: ${fmtDate(j.installedAt)}${j.warrantyUntil ? `\n🛡️ ${L('الضمان حتى', 'Warranty until')}: ${fmtDate(j.warrantyUntil)}` : ''}\n${L('الإجمالي', 'Total')}: ${money(tot)} — ${L('المدفوع', 'Paid')}: ${money(CCTV.paid(j))}${CCTV.due(j) > 0.01 ? ` — ${L('المتبقي', 'Remaining')}: ${money(CCTV.due(j))}` : ''}\n${L('لأي مشكلة كلمنا وإحنا معاك', 'Call us anytime')}\n${st.name}${st.phone ? ' — ' + st.phone : ''}`
+      : `${L('أهلاً', 'Hello')} ${j.customerName} 👋\n${L('تأكيد ميعاد تركيب الكاميرات', 'Install appointment')} — ${j.no}${j.scheduledAt ? `\n📅 ${fmtDate(j.scheduledAt)}` : ''}\n${L('الإجمالي', 'Total')}: ${money(tot)} — ${L('المدفوع', 'Paid')}: ${money(CCTV.paid(j))}\n${st.name}${st.phone ? ' — ' + st.phone : ''}`;
+    sendWhatsApp(j.phone, t);
   }
 };
 
@@ -7355,7 +8289,7 @@ Modules.capital = {
     <div id="cpPartners" class="grid g4 mb"></div><div id="cpTbl"></div>`;
     Charts.donut($('#cpDonut'), [[L('نقدية الدرج', 'Drawer'), p.drawer], [L('المحافظ', 'Wallets'), p.wallets], [L('الماكينات', 'Machines'), p.machines], [L('المخزون (تكلفة)', 'Stock (cost)'), p.stock], [L('مخزون الخطوط', 'SIM lines stock'), p.lines], [L('مديونيات العملاء', 'Receivables'), p.recv]].map(([l, v], i) => ({ label: l, value: Math.max(0, v), color: PALETTE[i] })), { center: Charts.short(p.assets), sub: L('الأصول', 'assets') });
     const months = Array.from({ length: 6 }, (_, i) => monthKey(new Date(new Date().getFullYear(), new Date().getMonth() - 5 + i, 1)));
-    const prof = (mk) => { const s = DB.filter('sales', (x) => monthKey(x.date) === mk); const svc = sum(DB.filter('walletTx', (t) => monthKey(t.date) === mk), (t) => t.fee || 0) + sum(DB.filter('machineTx', (t) => monthKey(t.date) === mk), (t) => (t.fee || 0) + (t.commission || 0)); const ex = sum(DB.filter('expenses', (e) => monthKey(e.date) === mk), (e) => e.amount); const sal = sum(DB.filter('payroll', (x) => x.month === mk && x.status === 'paid'), (x) => x.net); return round2(sum(s, Sales.netProfit) + svc + Repairs.profitMonth(mk) + Lines.profitMonth(mk) - ex - sal); };
+    const prof = (mk) => { const s = DB.filter('sales', (x) => monthKey(x.date) === mk); const svc = sum(DB.filter('walletTx', (t) => monthKey(t.date) === mk), (t) => t.fee || 0) + sum(DB.filter('machineTx', (t) => monthKey(t.date) === mk), (t) => (t.fee || 0) + (t.commission || 0)); const ex = sum(DB.filter('expenses', (e) => monthKey(e.date) === mk), (e) => e.amount); const sal = sum(DB.filter('payroll', (x) => x.month === mk && x.status === 'paid'), (x) => x.net); return round2(sum(s, Sales.netProfit) + svc + Repairs.profitMonth(mk) + Lines.profitMonth(mk) + (typeof CCTV !== 'undefined' ? CCTV.profitIn(mk + '-01', mk + '-31') : 0) - ex - sal); };
     Charts.bar($('#cpBar'), { labels: months.map(monthLabel), series: [{ name: L('صافي الربح', 'Net profit'), color: '#16825D', values: months.map(prof) }], height: 230 });
     const partners = groupBy(DB.filter('capital', (e) => e.type !== 'loss'), (e) => e.partner || L('المالك', 'Owner'));
     $('#cpPartners').innerHTML = Object.entries(partners).map(([n, es]) => `<div class="card kpi"><div class="avatar" style="background:${avatarColor(n)}">${initials(n)}</div><div><div class="l">${esc(n)}</div><div class="v num" style="font-size:18px">${money(sum(es, (e) => (e.type === 'injection' ? e.amount : -e.amount)))}</div><div class="d faint">${L('حصة', 'Share')} ${p.invested ? Math.round((sum(es, (e) => (e.type === 'injection' ? e.amount : -e.amount)) / p.invested) * 100) : 0}%</div></div></div>`).join('');
@@ -7707,7 +8641,7 @@ function reportDoc(title, bodyHTML, landscape = false) {
 
 Modules.reports = {
   title: () => L('التقارير', 'Reports'), icon: 'chart', perm: 'reports', type: 'pl', st: { preset: 'month' },
-  types: () => [['pl', L('الأرباح والخسائر', 'Profit & loss'), 'trend'], ['sales', L('المبيعات', 'Sales'), 'cart'], ['products', L('الأصناف', 'Products'), 'box'], ['inventory', L('المخزون', 'Inventory'), 'layers'], ['cash', L('خدمات الكاش', 'Cash services'), 'wallet'], ['debts', L('العملاء والموردين', 'Customers & suppliers'), 'credit'], ['expenses', L('المصروفات', 'Expenses'), 'expense'], ['shifts', L('الورديات والكاشير', 'Shifts & cashiers'), 'clock'], ['hr', L('الموظفين', 'Employees'), 'users']],
+  types: () => [['pl', L('الأرباح والخسائر', 'Profit & loss'), 'trend'], ['sales', L('المبيعات', 'Sales'), 'cart'], ['products', L('الأصناف', 'Products'), 'box'], ['inventory', L('المخزون', 'Inventory'), 'layers'], ...(feat('phones') ? [['phones', L('الموبايلات', 'Phones'), 'phone']] : []), ...(feat('cctv') ? [['cctv', L('تركيبات الكاميرات', 'CCTV installations'), 'cctv']] : []), ['cash', L('خدمات الكاش', 'Cash services'), 'wallet'], ['debts', L('العملاء والموردين', 'Customers & suppliers'), 'credit'], ['expenses', L('المصروفات', 'Expenses'), 'expense'], ['shifts', L('الورديات والكاشير', 'Shifts & cashiers'), 'clock'], ['hr', L('الموظفين', 'Employees'), 'users']],
   render(el) {
     el.innerHTML = `<div class="grid" style="grid-template-columns:230px 1fr;gap:16px;align-items:start">
       <div class="card" style="padding:8px;position:sticky;top:0">${this.types().map(([k, l, ic]) => `<a class="btn ghost block" style="justify-content:flex-start;margin-bottom:2px;${k === this.type ? 'background:var(--p-50);color:var(--p)' : ''}" data-rt="${k}">${icon(ic)}${l}</a>`).join('')}</div>
@@ -7739,12 +8673,14 @@ Modules.reports = {
     const canCost = Session.can('inventory.cost');
     let r = { title: '', kpis: [], tables: [], chart: null };
     const days = (() => { const d = [...new Set([...sales, ...wtx, ...mtx, ...exps].map((x) => dayKey(x.date)))].sort(); return d; })();
-    if (this.type === 'pl') {
+    if (this.type === 'phones' && typeof Phones !== 'undefined') r = Phones.report(from, to, canCost);
+    else if (this.type === 'cctv' && typeof CCTV !== 'undefined') r = CCTV.report(from, to, canCost);
+    else if (this.type === 'pl') {
       const rev = sum(sales, Sales.net), cogs = sum(sales, (s) => (s.cost || 0) - (s.returnedCost || 0)), tax = sum(sales, (s) => s.tax || 0);
       const gp = rev - tax - cogs, wfee = sum(wtx, (t) => t.fee || 0), mfee = sum(mtx, (t) => (t.fee || 0) + (t.commission || 0)), ex = sum(exps, (e) => e.amount);
-      const sal = sum(DB.filter('payroll', (p) => p.status === 'paid' && inRange(p.paidAt, from, to)), (p) => p.net); const rprof = Repairs.profitIn(from, to), lprof = Lines.profitIn(from, to), waste = sum(DB.filter('losses', (x) => (x.kind === 'waste' || x.status === 'rejected') && inRange(x.date, from, to)), (x) => x.total); const net = gp + wfee + mfee + rprof + lprof - ex - sal;
-      r = { title: L('تقرير الأرباح والخسائر', 'Profit & loss report'), kpis: [[L('صافي المبيعات', 'Net sales'), money(rev)], [L('مجمل الربح', 'Gross profit'), money(gp)], [L('إيرادات الكاش والماكينات والصيانة', 'Cash, machines & repairs income'), money(wfee + mfee + rprof + lprof)], [L('صافي الربح', 'Net profit'), `<span class="${net >= 0 ? 'pos' : 'neg'}">${money(net)}</span>`]],
-        tables: [{ title: L('قائمة الدخل', 'Income statement'), cols: [L('البند', 'Item'), L('القيمة', 'Amount')], money: true, rows: [[L('صافي المبيعات (بعد المرتجعات)', 'Net sales (after returns)'), rev], [L('(−) ضريبة المبيعات', '(−) Sales tax'), tax], [L('(−) تكلفة البضاعة المباعة', '(−) COGS'), cogs], [`<b>${L('مجمل ربح المبيعات', 'Gross profit')}</b>`, gp], [L('(+) عمولات المحافظ', '(+) Wallet fees'), wfee], [L('(+) أرباح ماكينات الشحن والكروت', '(+) Machine & card income'), mfee], [L('(+) أرباح الصيانة', '(+) Repair profit'), rprof], [L('(+) أرباح خطوط الشركات والعمولات', '(+) SIM lines profit & commissions'), lprof], [L('(−) المصروفات', '(−) Expenses'), ex], [L('(−) المرتبات المصروفة', '(−) Salaries paid'), sal]], foot: [L('صافي الربح', 'Net profit'), net] },
+      const sal = sum(DB.filter('payroll', (p) => p.status === 'paid' && inRange(p.paidAt, from, to)), (p) => p.net); const rprof = Repairs.profitIn(from, to), lprof = Lines.profitIn(from, to), cprof = typeof CCTV !== 'undefined' ? CCTV.profitIn(from, to) : 0, waste = sum(DB.filter('losses', (x) => (x.kind === 'waste' || x.status === 'rejected') && inRange(x.date, from, to)), (x) => x.total); const net = gp + wfee + mfee + rprof + lprof + cprof - ex - sal;
+      r = { title: L('تقرير الأرباح والخسائر', 'Profit & loss report'), kpis: [[L('صافي المبيعات', 'Net sales'), money(rev)], [L('مجمل الربح', 'Gross profit'), money(gp)], [L('إيرادات الكاش والماكينات والصيانة', 'Cash, machines & repairs income'), money(wfee + mfee + rprof + lprof + cprof)], [L('صافي الربح', 'Net profit'), `<span class="${net >= 0 ? 'pos' : 'neg'}">${money(net)}</span>`]],
+        tables: [{ title: L('قائمة الدخل', 'Income statement'), cols: [L('البند', 'Item'), L('القيمة', 'Amount')], money: true, rows: [[L('صافي المبيعات (بعد المرتجعات)', 'Net sales (after returns)'), rev], [L('(−) ضريبة المبيعات', '(−) Sales tax'), tax], [L('(−) تكلفة البضاعة المباعة', '(−) COGS'), cogs], [`<b>${L('مجمل ربح المبيعات', 'Gross profit')}</b>`, gp], [L('(+) عمولات المحافظ', '(+) Wallet fees'), wfee], [L('(+) أرباح ماكينات الشحن والكروت', '(+) Machine & card income'), mfee], [L('(+) أرباح الصيانة', '(+) Repair profit'), rprof], [L('(+) أرباح خطوط الشركات والعمولات', '(+) SIM lines profit & commissions'), lprof], ...(cprof ? [[L('(+) أرباح تركيبات الكاميرات', '(+) CCTV installations profit'), cprof]] : []), [L('(−) المصروفات', '(−) Expenses'), ex], [L('(−) المرتبات المصروفة', '(−) Salaries paid'), sal]], foot: [L('صافي الربح', 'Net profit'), net] },
           { title: L('للعلم: الهوالك (تُخصم من رأس المال وليس من الربح التشغيلي)', 'FYI: waste (deducted from capital, not operating profit)'), cols: [L('البند', 'Item'), L('القيمة', 'Amount')], money: true, rows: [[L('هوالك ومرتجعات مرفوضة', 'Waste & rejected returns'), waste]] },
           { title: L('التفاصيل اليومية', 'Daily breakdown'), cols: [L('اليوم', 'Day'), L('المبيعات', 'Sales'), L('ربح المبيعات', 'Sales profit'), L('عمولات الكاش', 'Cash fees'), L('المصروفات', 'Expenses'), L('الصافي', 'Net')], money: true, rows: days.map((d) => { const s = sales.filter((x) => dayKey(x.date) === d), f = sum(wtx.filter((x) => dayKey(x.date) === d), (t) => t.fee || 0) + sum(mtx.filter((x) => dayKey(x.date) === d), (t) => (t.fee || 0) + (t.commission || 0)), e = sum(exps.filter((x) => dayKey(x.date) === d), (x) => x.amount); return [fmtDate(d), sum(s, Sales.net), sum(s, Sales.netProfit), f, e, sum(s, Sales.netProfit) + f - e]; }) }],
         chart: (el) => Charts.bar(el, { labels: days.map((d) => d.slice(5)), series: [{ name: L('ربح المبيعات', 'Sales profit'), color: 'var(--p)', values: days.map((d) => sum(sales.filter((x) => dayKey(x.date) === d), Sales.netProfit)) }, { name: L('عمولات الكاش', 'Cash fees'), color: '#1F5FA8', values: days.map((d) => sum(wtx.filter((x) => dayKey(x.date) === d), (t) => t.fee || 0) + sum(mtx.filter((x) => dayKey(x.date) === d), (t) => (t.fee || 0) + (t.commission || 0))) }, { name: L('المصروفات', 'Expenses'), color: '#D98E04', values: days.map((d) => sum(exps.filter((x) => dayKey(x.date) === d), (x) => x.amount)) }] }) };
@@ -8138,6 +9074,8 @@ Modules.settings = {
         ['machines', L('تمكين نظام مكن الدفع', 'Enable payment machines'), L('عند التفعيل تظهر إدارة مكن الدفع مع أنواعها وحساباتها', 'Shows payment machines with types and accounts')],
         ['lines', L('تمكين خطوط الشركات 📶', 'Enable mobile lines (SIM) 📶'), L('مخزون شرايح فودافون وأورانج واتصالات ووي بالأرقام، البيع ببيانات العميل، التفعيل وعمولات الشركات', 'SIM stock by number, sales with customer data, activation and commissions')],
         ['simSales', L('بيع وشراء الشرايح (مخزون الشرايح)', 'SIM card sales & stock'), L('يضيف لقسم خطوط الشركات تبويبات مخزون الشرايح والبيع وعمولات الشركات', 'Adds SIM stock, sales and commission tabs to the lines section')],
+        ['phones', L('تمكين قسم الموبايلات 📱', 'Enable phones section 📱'), L('بيع وشراء الموبايلات الجديدة والمستعملة بالـ IMEI، الاستبدال، الضمان وربح كل جهاز', 'New & used phones by IMEI, trade-ins, warranty and per-device profit')],
+        ['cctv', L('تمكين قسم كاميرات المراقبة 📹', 'Enable CCTV installations 📹'), L('عمليات تركيب الكاميرات: الأجهزة بالسيريال، المصنعية، العربون والدفعات، الضمان والزيارات', 'CCTV jobs: serials, labor, deposits, warranty and visits')],
         ['repairs', L('تمكين قسم الصيانة 🛠️', 'Enable repairs department 🛠️'), L('استلام الأجهزة للصيانة (كاميرات، كاميرات مراقبة، لابتوب...) مع مراحل الصيانة ورسائل واتساب للعميل', 'Receive devices for repair with stages and WhatsApp updates')],
         ['expenses', L('تمكين مصروفات المحل', 'Enable shop expenses'), L('عند التفعيل تظهر صفحة لتسجيل وإدارة مصروفات المحل مع تكامل الأدراج', 'Shows the expenses page integrated with drawers')],
         ['display', L('تمكين شاشة العرض المباشر 📺', 'Enable live display screen 📺'), L('عرض أرقام المحافظ المحددة على شاشة خارجية للزبائن', 'Shows chosen wallet numbers on a customer-facing screen')],

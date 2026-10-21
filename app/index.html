@@ -2943,18 +2943,20 @@ const ChargeCards = {
   profit(c) { return round2((Number(c.price) || 0) - (Number(c.cost) || 0)); },
   save(list) { DB.saveSettings({ chargeCards: list }); },
   /* كل فئات الكروت وقيم الشحن لكل الشبكات (أسعار المستهلك المعلنة — مايو 2026)
-     المخصوم من الماكينة تقديري (أقل من سعر البيع بحوالي 2.5٪ للكروت و1.5٪ للشحن) — عدّله بزرار «تعديل الأسعار بنسبة» حسب ماكينتك */
+     المخصوم من الماكينة = قيمة الفئة نفسها (كارت 13 بيتخصم 13) — والمحصّل من العميل هو اللي فيه ربح المحل */
   NETS: ['فودافون', 'أورانج', 'اتصالات', 'وي'],
   CARDS: [[13, 15], [16.5, 19], [19.5, 22.5], [26, 30], [38, 44], [100, 115], [200, 230], [300, 345]],
   TOPUPS: [5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200, 300, 500],
   defaults() {
     const out = [];
     this.NETS.forEach((n, ni) => {
-      this.CARDS.forEach(([v, p], i) => out.push({ id: `cd_${ni}_${i}`, network: n, kind: 'card', value: v, price: p, cost: round2(p * 0.975), active: true }));
-      this.TOPUPS.forEach((v, i) => out.push({ id: `tp_${ni}_${i}`, network: n, kind: 'topup', value: v, price: v, cost: round2(v * 0.985), active: true }));
+      this.CARDS.forEach(([v, p], i) => out.push({ id: `cd_${ni}_${i}`, network: n, kind: 'card', value: v, price: this.roundUp(p, 5), cost: v, active: true }));
+      this.TOPUPS.forEach((v, i) => out.push({ id: `tp_${ni}_${i}`, network: n, kind: 'topup', value: v, price: v, cost: v, active: true }));
     });
     return out;
   },
+  /* تقريب سعر البيع لأعلى مضاعف (5 مثلاً): 19 → 20 ، 22.5 → 25 ، 44 → 45 */
+  roundUp(x, step) { step = Number(step) || 5; return round2(Math.ceil(round2(x / step) - 1e-9) * step); },
   /* بيضيف الناقص بس — الفئات اللي عندك بأسعارك ما بتتغيرش */
   addDefaults() {
     const list = this.list(true); const key = (c) => `${c.network}|${c.kind}|${Number(c.value)}`; const have = new Set(list.map(key));
@@ -3253,6 +3255,10 @@ const App = {
       if (raw.length) ChargeCards.save(raw.map((c) => (OLD[c.id] === Number(c.value) ? { ...c, active: false } : c)));
       ChargeCards.addDefaults(); DB.saveSettings({ cardsMig: 1 });
     }
+    // المخصوم من الماكينة = قيمة الفئة (كارت 13 بيتخصم 13 والفرق في المحصّل من العميل)
+    if ((DB.settings().cardsMig || 0) < 2) { ChargeCards.save(ChargeCards.list(true).map((c) => (c.kind === 'card' || c.kind === 'topup') && Number(c.value) ? { ...c, cost: Number(c.value) } : c)); DB.saveSettings({ cardsMig: 2 }); }
+    // التحصيل من العميل متقرّب لأعلى مضاعف 5 (19 → 20 ، 22.5 → 25 ، 44 → 45 ، 115 تفضل 115) — وتقدر تعدّله
+    if ((DB.settings().cardsMig || 0) < 3) { ChargeCards.save(ChargeCards.list(true).map((c) => (c.kind === 'card' || c.kind === 'topup') && Number(c.price) ? { ...c, price: ChargeCards.roundUp(c.price, 5) } : c)); DB.saveSettings({ cardsMig: 3 }); }
     if (!DB.all('categories').length) Seed.basics();
     const demoMode = !DB.desktop && !window.MAH_MOBILE; // نسخة الموبايل تبدأ فاضية (بدون بيانات تجريبية)
     if (demoMode && !DB.all('products').length) Seed.demo(); if (demoMode && !DB.all('lines').length) try { Seed.lines(); } catch (_) {} if (demoMode && !DB.all('subLines').length) try { Seed.corp(); } catch (e) { console.warn(e); }
@@ -4956,9 +4962,9 @@ Modules.machines = {
       ${UI.kpi(L('أرباح الكروت هذا الشهر', 'Card profit this month'), money(sum(sales, mProfit)), 'trend', 'c-ok')}
       ${UI.kpi(L('متوسط ربح الكارت', 'Avg. profit per card'), money(all.length ? sum(all, (c) => ChargeCards.profit(c)) / all.length : 0), 'percent', 'c-warn')}</div>
       <div class="card card-b mb"><div class="row wrap"><div class="muted" style="flex:1;min-width:240px">${L('حدد لكل فئة: <b>المخصوم من الماكينة</b> و<b>المحصّل من العميل</b>. عند البيع تختار الفئة بضغطة والفرق يتحسب ربح تلقائياً. المسؤول يقدر يعدّل المحصّل وقت البيع.', 'For each value set the <b>machine cost</b> and the <b>customer price</b>. The difference is booked as profit automatically.')}</div>
-      <button class="btn" id="ccDef" title="${L('بيضيف الفئات الناقصة بس — أسعارك الحالية مش بتتغير', 'Adds missing values only')}">${icon('download')}${L('إضافة كل الفئات تلقائياً', 'Add all values')}</button><button class="btn" id="ccBulk">${icon('percent')}${L('تعديل الأسعار بنسبة', 'Adjust prices by %')}</button><button class="btn primary" id="ccAdd">${icon('plus')}${L('إضافة فئة', 'Add value')}</button></div></div><div id="ccTbl"></div>`;
+      <button class="btn" id="ccDef" title="${L('بيضيف الفئات الناقصة بس — أسعارك الحالية مش بتتغير', 'Adds missing values only')}">${icon('download')}${L('إضافة كل الفئات تلقائياً', 'Add all values')}</button><button class="btn" id="ccBulk">${icon('percent')}${L('ضبط الأسعار', 'Pricing')}</button><button class="btn primary" id="ccAdd">${icon('plus')}${L('إضافة فئة', 'Add value')}</button></div></div><div id="ccTbl"></div>`;
     $('#ccAdd').onclick = () => this.cardEdit(); $('#ccBulk').onclick = () => this.cardBulk();
-    $('#ccDef').onclick = () => { const n = ChargeCards.addDefaults(); audit('chargeCard.defaults', n); UI.toast(n ? L(`اتضاف ${n} فئة — راجع «المخصوم من الماكينة» حسب ماكينتك`, `${n} values added`) : L('كل الفئات موجودة بالفعل ✓', 'All values already exist ✓'), n ? 'ok' : 'info', 6000); App.reload(); };
+    $('#ccDef').onclick = () => { const n = ChargeCards.addDefaults(); audit('chargeCard.defaults', n); UI.toast(n ? L(`اتضاف ${n} فئة ✓`, `${n} values added`) : L('كل الفئات موجودة بالفعل ✓', 'All values already exist ✓'), n ? 'ok' : 'info', 6000); App.reload(); };
     UI.table($('#ccTbl'), {
       rows: all, exportName: 'charge-cards', searchText: (c) => `${c.network} ${c.value} ${ChargeCards.label(c)}`,
       filters: [{ label: L('الشبكة', 'Network'), options: [...new Set(all.map((c) => c.network))].map((n) => [n, n]), test: (c, v) => c.network === v }, { label: L('النوع', 'Kind'), options: Object.entries(CARD_KINDS).map(([k, v]) => [k, L(...v)]), test: (c, v) => c.kind === v }],
@@ -4994,9 +5000,42 @@ Modules.machines = {
     ['cost', 'price'].forEach((n) => ($(`[name=${n}]`, md.el).oninput = pr)); pr();
   },
   cardBulk() {
-    UI.modal({ title: L('تعديل أسعار الفئات بنسبة', 'Adjust prices by %'), icon: 'percent', size: 'sm', body: UI.form([{ name: 'net', label: L('الشبكة', 'Network'), type: 'select', col: 12, options: [['', L('كل الشبكات', 'All networks')], ...[...new Set(ChargeCards.list(true).map((c) => c.network))].map((n) => [n, n])] },
-      { name: 'field', label: L('الحقل', 'Field'), type: 'select', col: 12, options: [['price', L('المحصّل من العميل', 'Customer price')], ['cost', L('المخصوم من الماكينة', 'Machine cost')]] }, { name: 'pct', label: L('النسبة % (سالب للتخفيض)', 'Percent (negative to lower)'), type: 'number', required: true, col: 12 }]),
-      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تطبيق', 'Apply'), cls: 'primary', onClick: (x) => { const v = UI.read(x.el); const k = 1 + (Number(v.pct) || 0) / 100; ChargeCards.save(ChargeCards.list(true).map((c) => (!v.net || c.network === v.net ? { ...c, [v.field]: round2(c[v.field] * k) } : c))); x.close(); App.reload(); } }] });
+    const nets = [...new Set(ChargeCards.list(true).map((c) => c.network))];
+    const MODES = {
+      round: [L('تقريب سعر البيع لأعلى مضاعف لـ', 'Round customer price up to a multiple of'), 5, L('مثال: 5 ← كارت 19 يبقى 20، و22.5 يبقى 25، و44 يبقى 45', 'e.g. 5: 19→20, 22.5→25')],
+      profit: [L('ربح ثابت لكل فئة (جنيه)', 'Fixed profit per value (EGP)'), 2, L('سعر البيع = المخصوم من الماكينة + المبلغ ده. مفيد لشحن الرصيد (مثلاً شحن 10 تحصّل 11)', 'Price = machine cost + this amount')],
+      costval: [L('المخصوم من الماكينة = قيمة الفئة', 'Machine cost = face value'), null, L('كارت 13 بيتخصم 13 من الماكينة، وشحن 50 بيتخصم 50. سعر البيع مش بيتغير', 'Card 13 deducts 13; price unchanged')],
+      price: [L('سعر البيع للعميل — زيادة/تخفيض %', 'Customer price ± %'), 5, L('رقم موجب للزيادة أو سالب للتخفيض', 'Positive raises, negative lowers')],
+      cost: [L('المخصوم من الماكينة — زيادة/تخفيض %', 'Machine cost ± %'), -2, L('رقم موجب للزيادة أو سالب للتخفيض (لو ماكينتك بتديك خصم)', 'Positive raises, negative lowers')]
+    };
+    const md = UI.modal({ title: L('ضبط أسعار الكروت والشحن', 'Card & top-up pricing'), icon: 'percent', size: 'sm', body: UI.form([
+      { name: 'mode', label: L('عايز تعمل إيه؟', 'What to do?'), type: 'select', col: 12, options: Object.entries(MODES).map(([k, m]) => [k, m[0]]) },
+      { name: 'net', label: L('الشبكة', 'Network'), type: 'select', col: 6, options: [['', L('كل الشبكات', 'All networks')], ...nets.map((n) => [n, n])] },
+      { name: 'kind', label: L('النوع', 'Kind'), type: 'select', col: 6, options: [['', L('الكروت والشحن', 'Cards & top-ups')], ['card', L('كروت الشحن بس', 'Cards only')], ['topup', L('شحن الرصيد بس', 'Top-ups only')]] },
+      { type: 'html', col: 12, html: `<div id="cbNw"><label class="lbl" id="cbLbl"></label><input type="number" step="any" name="n" class="num"></div><div class="faint" id="cbHint" style="line-height:1.8;margin-top:6px"></div><div id="cbEx" style="margin-top:8px"></div>` }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تطبيق', 'Apply'), cls: 'primary', icon: 'check', onClick: (x) => { const v = get(); if (MODES[v.mode][1] !== null && !isFinite(v.n)) return UI.toast(L('اكتب الرقم', 'Enter a number'), 'err'); let n = 0; ChargeCards.save(ChargeCards.list(true).map((c) => { if (!match(c, v)) return c; n++; return { ...c, ...this.cardCalc(c, v.mode, v.n) }; })); audit('chargeCard.bulk', `${v.mode} ${v.n} ${v.net || '*'} ${v.kind || '*'}`); UI.toast(L(`اتعدّلت ${n} فئة ✓`, `${n} values updated ✓`)); x.close(); App.reload(); } }] });
+    const el = md.el; const q = (n) => $(`[name=${n}]`, el);
+    const get = () => ({ mode: q('mode').value, net: q('net').value, kind: q('kind').value, n: q('n').value === '' ? NaN : Number(q('n').value) });
+    const match = (c, v) => !(v.net && c.network !== v.net) && !(v.kind && (c.kind || 'card') !== v.kind);
+    let lastMode = '';
+    const upd = () => {
+      const v = get(); const m = MODES[v.mode];
+      if (v.mode !== lastMode) { lastMode = v.mode; q('n').value = m[1] === null ? '' : m[1]; v.n = m[1]; }
+      $('#cbNw', el).style.display = m[1] === null ? 'none' : ''; $('#cbLbl', el).textContent = m[0]; $('#cbHint', el).textContent = m[2];
+      const rows = ChargeCards.list(true).filter((c) => match(c, v)).slice(0, 6);
+      $('#cbEx', el).innerHTML = rows.length ? `<div class="faint" style="margin-bottom:4px">${L('معاينة', 'Preview')}:</div><table class="tbl" style="font-size:12.5px"><thead><tr><th>${L('الفئة', 'Value')}</th><th>${L('المخصوم', 'Cost')}</th><th>${L('التحصيل', 'Price')}</th><th>${L('الربح', 'Profit')}</th></tr></thead><tbody>${rows.map((c) => { const r = { ...c, ...this.cardCalc(c, v.mode, v.n) }; const pr = round2(r.price - r.cost); return `<tr><td>${esc(ChargeCards.label(c))}</td><td class="num">${round2(r.cost)}</td><td class="num"><b>${round2(r.price)}</b></td><td class="num ${pr > 0 ? 'pos' : 'neg'}">${pr}</td></tr>`; }).join('')}</tbody></table>` : '';
+    };
+    $$('select,input', el).forEach((i) => { i.oninput = upd; i.onchange = upd; }); upd();
+  },
+  cardCalc(c, mode, n) {
+    const cost = Number(c.cost) || 0, price = Number(c.price) || 0, val = Number(c.value) || 0; n = Number(n);
+    if (mode === 'costval') return { cost: val };
+    if (!isFinite(n)) return {};
+    if (mode === 'round') return { price: ChargeCards.roundUp(Math.max(price, cost), n || 5) };
+    if (mode === 'profit') return { price: round2(cost + n) };
+    if (mode === 'price') return { price: round2(price * (1 + n / 100)) };
+    if (mode === 'cost') return { cost: round2(cost * (1 + n / 100)) };
+    return {};
   },
 
   /* ---------------- أنواع وألوان الماكينات ---------------- */
@@ -9577,7 +9616,8 @@ const CHANGELOG = [
     ['info', L('صفحة «حول البرنامج» بتصميم جديد يناسب الموبايل والكمبيوتر، ورقم الإصدار بيتحدث تلقائي مع كل تحديث', 'Redesigned About page; version number updates automatically')],
     ['refresh', L('زرار «التحقق من التحديثات» ومعلومات النظام (المنصة، حجم البيانات، آخر نسخة احتياطية، الترخيص)', 'Update check button and system info')],
     ['send', L('«إرسال مشكلة للدعم» بيبعت وصف المشكلة ومعلومات الجهاز للمطور على واتساب', 'Report a problem to the developer via WhatsApp')],
-    ['sparkles', L('نافذة «ما الجديد» بتظهر مرة واحدة بعد كل تحديث', '"What\'s new" shows once after each update')]] },
+    ['sparkles', L('نافذة «ما الجديد» بتظهر مرة واحدة بعد كل تحديث', '"What\'s new" shows once after each update')],
+    ['percent', L('كروت الشحن: المخصوم من الماكينة = قيمة الكارت، والتحصيل من العميل متقرّب لأقرب مضاعف 5 لأعلى (وتقدر تعدّله من «ضبط الأسعار»)', 'Cards: cost = face value; pricing tool with round-up to 5 and preview')]] },
   { v: '1.3.5', d: '2026-10-20', items: [
     ['zap', L('إجمالي النقدية في لوحة التحكم = الدرج + الخزينة، مع فصلهم في فتح وغلق الوردية والتقارير', 'Dashboard total cash = drawer + safe; split kept in shifts and reports')],
     ['card', L('88 فئة كروت شحن وقيم شحن رصيد لكل الشبكات بتتضاف تلقائياً، مع فلتر كروت / شحن', '88 card & top-up values for all networks, auto-added')],

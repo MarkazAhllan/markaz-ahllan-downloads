@@ -1653,6 +1653,9 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
   .ab-dev-a .btn { flex: 1 1 140px; justify-content: center; }
   .ab-dev-a .btn.wa { flex-basis: 100%; }
 }
+
+.cc-grp { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; color: var(--cc); padding: 6px 2px 0; position: sticky; top: -2px; background: var(--surface); z-index: 1; }
+.cc-grp::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2937,30 +2940,45 @@ const provName = (n) => { const t = MTypes.get(n); return t ? (LANG === 'en' && 
 const CARD_KINDS = { card: ['كارت شحن', 'Scratch card'], topup: ['شحن رصيد', 'Balance top-up'], bundle: ['باقة', 'Bundle'], other: ['أخرى', 'Other'] };
 const NET_COLORS = { 'فودافون': '#E60000', 'أورانج': '#FF7900', 'اتصالات': '#2E9E44', 'وي': '#5B2D8E' };
 const ChargeCards = {
-  list(all) { return (DB.settings().chargeCards || []).filter((c) => all || c.active !== false); },
-  label(c) { return `${L(...(CARD_KINDS[c.kind] || CARD_KINDS.other))} ${c.network || ''} ${c.value || ''}`.replace(/\s+/g, ' ').trim(); },
+  list(all) { return this.sort((DB.settings().chargeCards || []).filter((c) => all || c.active !== false)); },
+  label(c) { return (c.name ? `${c.network || ''} — ${c.name}` : `${L(...(CARD_KINDS[c.kind] || CARD_KINDS.other))} ${c.network || ''} ${c.value || ''}`).replace(/\s+/g, ' ').trim(); },
   color(c) { return c.color || NET_COLORS[c.network] || 'var(--p)'; },
   profit(c) { return round2((Number(c.price) || 0) - (Number(c.cost) || 0)); },
   save(list) { DB.saveSettings({ chargeCards: list }); },
-  /* كل فئات الكروت وقيم الشحن لكل الشبكات (أسعار المستهلك المعلنة — مايو 2026)
-     المخصوم من الماكينة = قيمة الفئة نفسها (كارت 13 بيتخصم 13) — والمحصّل من العميل هو اللي فيه ربح المحل */
+  /* كل كروت الشحن المتاحة على الماكينة بأساميها (من قوائم ماكينة الشحن — أكتوبر 2026)
+     المخصوم من الماكينة = قيمة الكارت نفسها ، والمحصّل من العميل = القيمة متقرّبة لأعلى مضاعف 5 (19 → 20 ، 44 → 45 ، 100 تفضل 100) */
   NETS: ['فودافون', 'أورانج', 'اتصالات', 'وي'],
-  CARDS: [[13, 15], [16.5, 19], [19.5, 22.5], [26, 30], [38, 44], [100, 115], [200, 230], [300, 345]],
-  TOPUPS: [5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200, 300, 500],
+  CATALOG: {
+    'فودافون': [['فكة 5', 5, 'topup'], ['فكة 15', 15, 'topup'], ['فكة 19', 19, 'topup'], ['فكة 22.5', 22.5, 'topup'], ['كوبون 25', 25], ['كوبون فكة 29', 29, 'topup'], ['فكة 30', 30, 'topup'], ['كوبون 50', 50], ['فليكس 52', 52], ['فليكس 70', 70], ['فليكس 80', 80], ['كوبون 100', 100], ['فليكس 115', 115], ['فليكس 175', 175], ['كوبون 200', 200], ['فليكس 345', 345]],
+    'أورانج': [['كارت الكبير 5', 5], ['كارت الكبير 15', 15], ['كارت الكبير 19', 19], ['كارت الكبير 22.5', 22.5], ['كارت الصيف 26', 26], ['كارت الكبير 30', 30], ['كارت الكبير 44', 44], ['كارت الكبير 52', 52], ['فري ماكس 52', 52], ['فري ماكس الأسبوعي 58', 58], ['كارت الكبير 63', 63], ['كارت الكبير 75', 75], ['فري ماكس 80', 80], ['كارت الكبير 100', 100], ['كارت الـ 100', 100], ['فري ماكس 115', 115], ['فري ماكس 175', 175], ['فري ماكس 200', 200], ['فري ماكس 230', 230], ['فري ماكس 260', 260], ['فري ماكس 300', 300], ['فري ماكس 345', 345]],
+    'اتصالات': [['باقي ساعات 1', 1], ['باقي ساعات 2', 2], ['باقي ساعات 3', 3], ['باقي ساعات 4', 4], ['كارت 5', 5], ['كارت 15', 15], ['كارت 19', 19], ['كارت 22.5', 22.5], ['كارت الصيف 29', 29], ['كارت 30', 30], ['كارت 44', 44], ['كارت 45', 45], ['كارت 75', 75], ['كوبون 100', 100]],
+    'وي': [['اجدع شحنة 5', 5, 'topup'], ['كارت 15', 15], ['كارت 19', 19], ['كارت 22.5', 22.5], ['كارت 30', 30], ['كارت 40', 40], ['كارت 44', 44], ['كارت 50', 50], ['حكاية ميكسات 52', 52], ['كارت 60', 60], ['حكاية ميكسات 69', 69], ['كارت 75', 75], ['حكاية ميكسات 92', 92], ['كارت 100', 100], ['حكاية ميكسات 120', 120], ['كارت 150', 150], ['حكاية ميكسات 180', 180], ['حكاية ميكسات 270', 270]]
+  },
   defaults() {
     const out = [];
-    this.NETS.forEach((n, ni) => {
-      this.CARDS.forEach(([v, p], i) => out.push({ id: `cd_${ni}_${i}`, network: n, kind: 'card', value: v, price: this.roundUp(p, 5), cost: v, active: true }));
-      this.TOPUPS.forEach((v, i) => out.push({ id: `tp_${ni}_${i}`, network: n, kind: 'topup', value: v, price: v, cost: v, active: true }));
-    });
+    this.NETS.forEach((n, ni) => (this.CATALOG[n] || []).forEach(([name, v, kind], i) => out.push({ id: `ct_${ni}_${i}`, network: n, name, kind: kind || 'card', value: v, cost: v, price: this.roundUp(v, 5), active: true })));
     return out;
+  },
+  key(c) { return `${c.network}|${(c.name || '').replace(/\s+/g, ' ').trim()}|${Number(c.value)}`; },
+  /* ترتيب: الشبكة ← اسم الكارت (كارت الكبير ثم فري ماكس …) ← من الأقل قيمة للأكبر */
+  GROUPS: {
+    'فودافون': ['فكة', 'كوبون فكة', 'كوبون', 'فليكس'],
+    'أورانج': ['كارت الكبير', 'كارت الصيف', 'كارت الـ', 'فري ماكس', 'فري ماكس الأسبوعي'],
+    'اتصالات': ['باقي ساعات', 'كارت', 'كارت الصيف', 'كوبون'],
+    'وي': ['اجدع شحنة', 'كارت', 'حكاية ميكسات']
+  },
+  group(c) { return String(c.name || '').replace(/\s*[\d.]+\s*(جنيه|جم|EGP)?\s*$/i, '').replace(/\s+/g, ' ').trim(); },
+  sort(list) {
+    const ni = (n) => { const i = this.NETS.indexOf(n); return i < 0 ? 99 : i; };
+    const gi = (c) => { const i = (this.GROUPS[c.network] || []).indexOf(this.group(c)); return i < 0 ? 50 : i; };
+    return [...list].sort((a, b) => ni(a.network) - ni(b.network) || String(a.network || '').localeCompare(String(b.network || ''), 'ar') || gi(a) - gi(b) || this.group(a).localeCompare(this.group(b), 'ar') || (Number(a.value) || 0) - (Number(b.value) || 0));
   },
   /* تقريب سعر البيع لأعلى مضاعف (5 مثلاً): 19 → 20 ، 22.5 → 25 ، 44 → 45 */
   roundUp(x, step) { step = Number(step) || 5; return round2(Math.ceil(round2(x / step) - 1e-9) * step); },
   /* بيضيف الناقص بس — الفئات اللي عندك بأسعارك ما بتتغيرش */
   addDefaults() {
-    const list = this.list(true); const key = (c) => `${c.network}|${c.kind}|${Number(c.value)}`; const have = new Set(list.map(key));
-    const add = this.defaults().filter((c) => !have.has(key(c))); if (add.length) this.save([...list, ...add]); return add.length;
+    const list = this.list(true); const have = new Set(list.map((c) => this.key(c)));
+    const add = this.defaults().filter((c) => !have.has(this.key(c))); if (add.length) this.save([...list, ...add]); return add.length;
   }
 };
 const mProfit = (t) => (t.fee || 0) + (t.commission || 0);
@@ -3259,6 +3277,12 @@ const App = {
     if ((DB.settings().cardsMig || 0) < 2) { ChargeCards.save(ChargeCards.list(true).map((c) => (c.kind === 'card' || c.kind === 'topup') && Number(c.value) ? { ...c, cost: Number(c.value) } : c)); DB.saveSettings({ cardsMig: 2 }); }
     // التحصيل من العميل متقرّب لأعلى مضاعف 5 (19 → 20 ، 22.5 → 25 ، 44 → 45 ، 115 تفضل 115) — وتقدر تعدّله
     if ((DB.settings().cardsMig || 0) < 3) { ChargeCards.save(ChargeCards.list(true).map((c) => (c.kind === 'card' || c.kind === 'topup') && Number(c.price) ? { ...c, price: ChargeCards.roundUp(c.price, 5) } : c)); DB.saveSettings({ cardsMig: 3 }); }
+    // قائمة الكروت الحقيقية بأساميها من ماكينة الشحن — الفئات العامة القديمة بتتشال (ولو اتباع منها قبل كده بتتوقف بس)
+    if ((DB.settings().cardsMig || 0) < 4) {
+      const used = new Set(DB.all('machineTx').map((t) => t.cardId).filter(Boolean));
+      ChargeCards.save(ChargeCards.list(true).filter((c) => !/^(cd|tp)_/.test(c.id) || used.has(c.id)).map((c) => (/^(cd|tp)_/.test(c.id) ? { ...c, active: false } : c)));
+      ChargeCards.addDefaults(); DB.saveSettings({ cardsMig: 4 });
+    }
     if (!DB.all('categories').length) Seed.basics();
     const demoMode = !DB.desktop && !window.MAH_MOBILE; // نسخة الموبايل تبدأ فاضية (بدون بيانات تجريبية)
     if (demoMode && !DB.all('products').length) Seed.demo(); if (demoMode && !DB.all('lines').length) try { Seed.lines(); } catch (_) {} if (demoMode && !DB.all('subLines').length) try { Seed.corp(); } catch (e) { console.warn(e); }
@@ -4879,7 +4903,7 @@ Modules.machines = {
     const fromCard = () => { if (!card) return; const q = Math.max(1, Number(F('qty').value) || 1); F('amount').value = round2(card.cost * q); F('collect').value = round2(card.price * q); F('fee').value = round2((card.price - card.cost) * q); autoComm(); profit(); };
     const drawTiles = () => {
       const list = cards.filter((c) => (!net || c.network === net) && (!kind || c.kind === kind || (kind === 'topup' && c.kind !== 'card')));
-      $('#svTiles', md.el).innerHTML = list.length ? list.map((c) => `<button class="cc-tile ${card?.id === c.id ? 'active' : ''}" data-cc="${c.id}" style="--cc:${ChargeCards.color(c)}"><small>${esc(L(...(CARD_KINDS[c.kind] || CARD_KINDS.other)))} · ${esc(c.network || '')}</small><b class="num">${c.value}</b><span class="num">${money(c.price)}</span></button>`).join('')
+      let lastG = null; $('#svTiles', md.el).innerHTML = list.length ? list.map((c) => { const g = `${c.network || ''} · ${ChargeCards.group(c) || L(...(CARD_KINDS[c.kind] || CARD_KINDS.other))}`; const h = g !== lastG ? `<div class="cc-grp" style="--cc:${ChargeCards.color(c)}">${esc(g)}</div>` : ''; lastG = g; return h + `<button class="cc-tile ${card?.id === c.id ? 'active' : ''}" data-cc="${c.id}" style="--cc:${ChargeCards.color(c)}"><small>${c.name ? esc(c.network || '') + ' · ' + esc(String(c.name).replace(/\s*[\d.]+\s*(جنيه|جم|EGP)?\s*$/, '')) : esc(L(...(CARD_KINDS[c.kind] || CARD_KINDS.other))) + ' · ' + esc(c.network || '')}</small><b class="num">${c.value}</b><span class="num">${money(c.price)}</span></button>`; }).join('')
         : `<div class="faint">${L('لا توجد فئات — أضفها من تبويب "فئات الكروت وقيم الشحن"', 'No values — add them in the Cards tab')}</div>`;
       $$('[data-cc]', md.el).forEach((b) => (b.onclick = () => { card = cards.find((c) => c.id === b.dataset.cc); $$('[data-cc]', md.el).forEach((x) => x.classList.toggle('active', x === b)); fromCard(); }));
     };
@@ -4966,10 +4990,10 @@ Modules.machines = {
     $('#ccAdd').onclick = () => this.cardEdit(); $('#ccBulk').onclick = () => this.cardBulk();
     $('#ccDef').onclick = () => { const n = ChargeCards.addDefaults(); audit('chargeCard.defaults', n); UI.toast(n ? L(`اتضاف ${n} فئة ✓`, `${n} values added`) : L('كل الفئات موجودة بالفعل ✓', 'All values already exist ✓'), n ? 'ok' : 'info', 6000); App.reload(); };
     UI.table($('#ccTbl'), {
-      rows: all, exportName: 'charge-cards', searchText: (c) => `${c.network} ${c.value} ${ChargeCards.label(c)}`,
+      rows: all, exportName: 'charge-cards', searchText: (c) => `${c.network} ${c.name || ''} ${c.value} ${ChargeCards.label(c)}`,
       filters: [{ label: L('الشبكة', 'Network'), options: [...new Set(all.map((c) => c.network))].map((n) => [n, n]), test: (c, v) => c.network === v }, { label: L('النوع', 'Kind'), options: Object.entries(CARD_KINDS).map(([k, v]) => [k, L(...v)]), test: (c, v) => c.kind === v }],
       columns: [{ label: L('الشبكة', 'Network'), render: (c) => `<span class="mc-dot" style="--mc:${ChargeCards.color(c)}"></span><b>${esc(c.network || '—')}</b>`, exportVal: (c) => c.network },
-        { label: L('النوع', 'Kind'), render: (c) => esc(L(...(CARD_KINDS[c.kind] || CARD_KINDS.other))), exportVal: (c) => c.kind }, { key: 'value', label: L('الفئة', 'Value'), render: (c) => `<b class="num" style="font-size:16px">${c.value}</b>` },
+        { key: 'name', label: L('اسم الكارت', 'Card name'), render: (c) => `<b>${esc(c.name || ChargeCards.label(c))}</b>`, exportVal: (c) => c.name || ChargeCards.label(c) }, { label: L('النوع', 'Kind'), render: (c) => esc(L(...(CARD_KINDS[c.kind] || CARD_KINDS.other))), exportVal: (c) => c.kind }, { key: 'value', label: L('الفئة', 'Value'), render: (c) => `<b class="num" style="font-size:16px">${c.value}</b>` },
         { key: 'cost', label: L('المخصوم من الماكينة', 'Machine cost'), render: (c) => money(c.cost, false) }, { key: 'price', label: L('المحصّل من العميل', 'Customer price'), render: (c) => `<b class="num">${money(c.price, false)}</b>` },
         { label: L('الربح / كارت', 'Profit / card'), render: (c) => `<span class="tag ${ChargeCards.profit(c) >= 0 ? 'ok' : 'err'}">${money(ChargeCards.profit(c), false)}</span>`, exportVal: (c) => ChargeCards.profit(c) },
         { label: L('مباع هذا الشهر', 'Sold this month'), render: (c) => sum(sales.filter((t) => t.cardId === c.id), (t) => t.qty || 1) },
@@ -4987,13 +5011,13 @@ Modules.machines = {
   cardEdit(c) {
     const nets = [...new Set([...Object.keys(NET_COLORS), ...ChargeCards.list(true).map((x) => x.network)])];
     const md = UI.modal({ title: c ? L('تعديل فئة', 'Edit value') : L('إضافة فئة كارت / قيمة شحن', 'Add card / top-up value'), icon: 'card', body: UI.form([
-      { name: 'network', label: L('الشبكة / الشركة', 'Network'), required: true, col: 6, attrs: 'list="ccNets"' }, { name: 'kind', label: L('النوع', 'Kind'), type: 'select', col: 6, options: Object.entries(CARD_KINDS).map(([k, v]) => [k, L(...v)]) },
+      { name: 'network', label: L('الشبكة / الشركة', 'Network'), required: true, col: 4, attrs: 'list="ccNets"' }, { name: 'name', label: L('اسم الكارت (زي ما على الماكينة)', 'Card name'), col: 5, placeholder: L('مثال: فليكس 70', 'e.g. Flex 70') }, { name: 'kind', label: L('النوع', 'Kind'), type: 'select', col: 3, options: Object.entries(CARD_KINDS).map(([k, v]) => [k, L(...v)]) },
       { name: 'value', label: L('الفئة / القيمة', 'Face value'), type: 'number', required: true, col: 4, attrs: 'style="font-weight:800;font-size:18px"' }, { name: 'cost', label: L('المخصوم من الماكينة', 'Machine cost'), type: 'number', required: true, col: 4 },
       { name: 'price', label: L('المحصّل من العميل', 'Customer price'), type: 'number', required: true, col: 4 }, { type: 'html', col: 12, html: '<div class="mc-profit" id="ccPr"></div><datalist id="ccNets">' + nets.map((n) => `<option value="${esc(n)}">`).join('') + '</datalist>' },
       { name: 'color', label: L('لون مخصص (اختياري)', 'Custom color (optional)'), type: 'color', col: 4, value: c?.color || '#8B1A2B' }, { name: 'useColor', label: L('استخدام اللون المخصص', 'Use custom color'), type: 'checkbox', col: 4, value: !!c?.color },
       { name: 'active', label: L('مفعلة', 'Active'), type: 'checkbox', col: 4, value: c ? c.active !== false : true }], c || { kind: 'card' }),
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (x) => {
-        if (!UI.validate(x.el)) return; const v = UI.read(x.el); const rec = { id: c?.id || uid(), network: v.network.trim(), kind: v.kind, value: Number(v.value) || 0, cost: Number(v.cost) || 0, price: Number(v.price) || 0, color: v.useColor ? v.color : '', active: v.active };
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); const rec = { id: c?.id || uid(), network: v.network.trim(), name: (v.name || '').trim(), kind: v.kind, value: Number(v.value) || 0, cost: Number(v.cost) || 0, price: Number(v.price) || 0, color: v.useColor ? v.color : '', active: v.active };
         const list = ChargeCards.list(true); ChargeCards.save(c ? list.map((y) => (y.id === c.id ? rec : y)) : [...list, rec]); audit('chargeCard.save', ChargeCards.label(rec)); x.close(); App.reload();
       } }] });
     const pr = () => { const p = round2((Number($('[name=price]', md.el).value) || 0) - (Number($('[name=cost]', md.el).value) || 0)); $('#ccPr', md.el).innerHTML = `${L('الربح لكل كارت', 'Profit per card')}: <b class="num ${p >= 0 ? 'pos' : 'neg'}">${money(p)}</b>`; };
@@ -9617,7 +9641,7 @@ const CHANGELOG = [
     ['refresh', L('زرار «التحقق من التحديثات» ومعلومات النظام (المنصة، حجم البيانات، آخر نسخة احتياطية، الترخيص)', 'Update check button and system info')],
     ['send', L('«إرسال مشكلة للدعم» بيبعت وصف المشكلة ومعلومات الجهاز للمطور على واتساب', 'Report a problem to the developer via WhatsApp')],
     ['sparkles', L('نافذة «ما الجديد» بتظهر مرة واحدة بعد كل تحديث', '"What\'s new" shows once after each update')],
-    ['percent', L('كروت الشحن: المخصوم من الماكينة = قيمة الكارت، والتحصيل من العميل متقرّب لأقرب مضاعف 5 لأعلى (وتقدر تعدّله من «ضبط الأسعار»)', 'Cards: cost = face value; pricing tool with round-up to 5 and preview')]] },
+    ['percent', L('كل كروت الشحن بأساميها زي الماكينة (فليكس، كارت الكبير، فري ماكس، حكاية ميكسات، باقي ساعات…) مترتبة من الأقل للأكبر — المخصوم = قيمة الكارت والتحصيل متقرّب لأعلى مضاعف 5', 'Cards: cost = face value; pricing tool with round-up to 5 and preview')]] },
   { v: '1.3.5', d: '2026-10-20', items: [
     ['zap', L('إجمالي النقدية في لوحة التحكم = الدرج + الخزينة، مع فصلهم في فتح وغلق الوردية والتقارير', 'Dashboard total cash = drawer + safe; split kept in shifts and reports')],
     ['card', L('88 فئة كروت شحن وقيم شحن رصيد لكل الشبكات بتتضاف تلقائياً، مع فلتر كروت / شحن', '88 card & top-up values for all networks, auto-added')],

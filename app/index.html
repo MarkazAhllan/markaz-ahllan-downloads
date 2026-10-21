@@ -2022,12 +2022,7 @@ const DEFAULT_SETTINGS = {
     { id: 'other', name: 'أخرى', nameEn: 'Other', color: '#64748B' }
   ],
   /* فئات كروت الشحن وقيم الشحن: cost = المخصوم من الماكينة، price = المحصّل من العميل */
-  chargeCards: [
-    { id: 'cc1', network: 'فودافون', kind: 'card', value: 10, cost: 9.75, price: 11, active: true }, { id: 'cc2', network: 'فودافون', kind: 'card', value: 15, cost: 14.6, price: 16.5, active: true },
-    { id: 'cc3', network: 'فودافون', kind: 'card', value: 25, cost: 24.4, price: 27, active: true }, { id: 'cc4', network: 'أورانج', kind: 'card', value: 10, cost: 9.75, price: 11, active: true },
-    { id: 'cc5', network: 'اتصالات', kind: 'card', value: 10, cost: 9.75, price: 11, active: true }, { id: 'cc6', network: 'وي', kind: 'card', value: 10, cost: 9.75, price: 11, active: true },
-    { id: 'cc7', network: 'فودافون', kind: 'topup', value: 50, cost: 48.8, price: 52, active: true }, { id: 'cc8', network: 'أورانج', kind: 'topup', value: 50, cost: 48.8, price: 52, active: true }
-  ],
+  chargeCards: [], // بتتملى تلقائياً بكل الفئات عند أول تشغيل (ChargeCards.addDefaults)
   cctv: { cats: [], warrantyMonths: 12, quoteDays: 7, maintMonths: 0, terms: 'الأسعار شاملة التركيب والتشغيل وضبط المشاهدة على الموبايل.\nالضمان لا يشمل سوء الاستخدام أو الكهرباء أو الكسر.\nيتم دفع العربون عند الموافقة والباقي بعد التركيب.' },
   phones: { staleDays: 30 },
   repair: {
@@ -2180,6 +2175,14 @@ function cashMove(amount, source, ref, note = '') {
   const sh = Session.shift() || Session.anyOpenShift();
   DB.insert('cashMoves', { amount: round2(amount), source, ref, note, shiftId: sh?.id || null, userId: Session.user?.id, date: nowISO() });
 }
+// رصيد الخزينة: أثناء الوردية = اللي اتعدّ عند الفتح، وإلا آخر رصيد اتسجل عند تقفيل وردية
+function safeBalance() {
+  const open = DB.filter('shifts', (s) => s.status === 'open' && s.openingSafe != null).sort((a, b) => (a.openAt < b.openAt ? 1 : -1))[0];
+  if (open) return round2(Number(open.openingSafe) || 0);
+  const l = DB.filter('shifts', (s) => s.status === 'closed' && s.safeCash != null).sort((a, b) => (a.closeAt < b.closeAt ? 1 : -1))[0];
+  return l ? round2(Number(l.safeCash) || 0) : 0;
+}
+function cashTotal() { return round2(drawerBalance() + safeBalance()); }
 function drawerBalance(shiftId) { return round2(sum(DB.filter('cashMoves', (m) => !shiftId || m.shiftId === shiftId), (m) => m.amount)); }
 const CASH_SOURCES = {
   sale: ['مبيعات نقدي', 'Cash sales'], refund: ['مرتجعات', 'Refunds'], purchase: ['مشتريات', 'Purchases'], expense: ['مصروفات', 'Expenses'],
@@ -2874,7 +2877,25 @@ const ChargeCards = {
   label(c) { return `${L(...(CARD_KINDS[c.kind] || CARD_KINDS.other))} ${c.network || ''} ${c.value || ''}`.replace(/\s+/g, ' ').trim(); },
   color(c) { return c.color || NET_COLORS[c.network] || 'var(--p)'; },
   profit(c) { return round2((Number(c.price) || 0) - (Number(c.cost) || 0)); },
-  save(list) { DB.saveSettings({ chargeCards: list }); }
+  save(list) { DB.saveSettings({ chargeCards: list }); },
+  /* كل فئات الكروت وقيم الشحن لكل الشبكات (أسعار المستهلك المعلنة — مايو 2026)
+     المخصوم من الماكينة تقديري (أقل من سعر البيع بحوالي 2.5٪ للكروت و1.5٪ للشحن) — عدّله بزرار «تعديل الأسعار بنسبة» حسب ماكينتك */
+  NETS: ['فودافون', 'أورانج', 'اتصالات', 'وي'],
+  CARDS: [[13, 15], [16.5, 19], [19.5, 22.5], [26, 30], [38, 44], [100, 115], [200, 230], [300, 345]],
+  TOPUPS: [5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200, 300, 500],
+  defaults() {
+    const out = [];
+    this.NETS.forEach((n, ni) => {
+      this.CARDS.forEach(([v, p], i) => out.push({ id: `cd_${ni}_${i}`, network: n, kind: 'card', value: v, price: p, cost: round2(p * 0.975), active: true }));
+      this.TOPUPS.forEach((v, i) => out.push({ id: `tp_${ni}_${i}`, network: n, kind: 'topup', value: v, price: v, cost: round2(v * 0.985), active: true }));
+    });
+    return out;
+  },
+  /* بيضيف الناقص بس — الفئات اللي عندك بأسعارك ما بتتغيرش */
+  addDefaults() {
+    const list = this.list(true); const key = (c) => `${c.network}|${c.kind}|${Number(c.value)}`; const have = new Set(list.map(key));
+    const add = this.defaults().filter((c) => !have.has(key(c))); if (add.length) this.save([...list, ...add]); return add.length;
+  }
 };
 const mProfit = (t) => (t.fee || 0) + (t.commission || 0);
 const PRODUCT_TYPES = { accessory: ['إكسسوار محمول', 'Mobile accessory'], mobile: ['موبايل', 'Mobile phone'], camera: ['كاميرات مراقبة', 'CCTV'], computer: ['كمبيوتر ولابتوب', 'Computer'], service: ['خدمة / صيانة', 'Service'], other: ['أخرى', 'Other'] };
@@ -3161,6 +3182,13 @@ const App = {
     // ترحيل الصلاحيات: الكاشير يستعلم ويحصّل اشتراكات الخطوط، ومدير الفرع له التحكم الكامل
     if ((s.permMig || 0) < 2) { DB.all('users').forEach((u) => { if (u.role === 'admin') return; const p = new Set(u.perms || []); if (u.role === 'cashier' || u.role === 'manager') p.add('lines'); if (u.role === 'manager') p.add('lines.manage'); DB.update('users', u.id, { perms: [...p] }); }); DB.saveSettings({ permMig: 2 }); }
     if ((DB.settings().permMig || 0) < 3) { DB.all('users').forEach((u) => { if (u.role === 'admin') return; const p = new Set(u.perms || []); if (u.role === 'cashier' || u.role === 'manager') { p.add('phones'); p.add('cctv'); } if (u.role === 'manager') { p.add('phones.buy'); p.add('cctv.manage'); } DB.update('users', u.id, { perms: [...p] }); }); DB.saveSettings({ permMig: 3 }); }
+    // فئات الكروت وقيم الشحن لكل الشبكات (مرة واحدة) — الفئات التجريبية القديمة بتتوقف لو محدش عدّلها
+    if ((DB.settings().cardsMig || 0) < 1) {
+      const OLD = { cc1: 10, cc2: 15, cc3: 25, cc4: 10, cc5: 10, cc6: 10, cc7: 50, cc8: 50 };
+      const raw = (DB.maps.settings.get('main') || {}).chargeCards || [];
+      if (raw.length) ChargeCards.save(raw.map((c) => (OLD[c.id] === Number(c.value) ? { ...c, active: false } : c)));
+      ChargeCards.addDefaults(); DB.saveSettings({ cardsMig: 1 });
+    }
     if (!DB.all('categories').length) Seed.basics();
     const demoMode = !DB.desktop && !window.MAH_MOBILE; // نسخة الموبايل تبدأ فاضية (بدون بيانات تجريبية)
     if (demoMode && !DB.all('products').length) Seed.demo(); if (demoMode && !DB.all('lines').length) try { Seed.lines(); } catch (_) {} if (demoMode && !DB.all('subLines').length) try { Seed.corp(); } catch (e) { console.warn(e); }
@@ -3544,7 +3572,7 @@ Modules.dashboard = {
         ${UI.kpi(L('المصروفات', 'Expenses'), money(expenses), 'expense', 'c-err')}
       </div>
       <div class="grid g4 mt">
-        ${UI.kpi(L('نقدية الدرج الآن', 'Cash in drawer'), money(drawerBalance()), 'money', '', sh ? L('وردية مفتوحة', 'Shift open') : L('لا توجد وردية', 'No shift'))}
+        ${UI.kpi(L('إجمالي النقدية (الدرج + الخزينة)', 'Total cash (drawer + safe)'), money(cashTotal()), 'money', '', `${L('الدرج', 'Drawer')} ${money(drawerBalance(), false)} • ${L('الخزينة', 'Safe')} ${money(safeBalance(), false)}${sh ? '' : ' — ' + L('لا توجد وردية', 'No shift')}`)}
         ${UI.kpi(L('أرصدة المحافظ', 'Wallet balances'), money(Wallets.total()), 'wallet', 'c-info', `${DB.all('wallets').length} ${L('محفظة', 'wallets')}`)}
         ${UI.kpi(L('أرصدة الماكينات', 'Machine balances'), money(Machines.total()), 'zap', 'c-warn', `${DB.all('machines').length} ${L('ماكينة', 'machines')}`)}
         ${UI.kpi(L('مديونيات العملاء (آجل)', 'Receivables'), money(Customers.totalReceivable()), 'credit', 'c-err', `${L('للموردين', 'Payables')}: ${money(Suppliers.totalPayable())}`)}
@@ -4737,12 +4765,13 @@ Modules.machines = {
     const ms = DB.filter('machines', (m) => m.active !== false); if (!ms.length) return UI.toast(L('أضف ماكينة أولاً', 'Add a machine first'), 'warn');
     const types = DB.settings().serviceTypes; const cards = ChargeCards.list(); const nets = [...new Set(cards.map((c) => c.network).filter(Boolean))];
     const canPrice = Session.can('machines.price');
-    let mid = m0?.id || ms[0].id, stype = types[0], card = null, net = '';
+    let mid = m0?.id || ms[0].id, stype = types[0], card = null, net = '', kind = 'card';
     const md = UI.modal({ title: L('عملية على الماكينة', 'Machine operation'), icon: 'zap', size: 'lg', body: `
       <label class="lbl">${L('الماكينة', 'Machine')}</label><div class="mc-pick" id="svM">${ms.map((m) => `<button data-m="${m.id}" style="--mc:${MTypes.color(m.provider)}" class="${m.id === mid ? 'active' : ''}"><b>${esc(m.name)}</b><small class="num">${money(Machines.balance(m), false)}</small></button>`).join('')}</div>
       <div class="seg mt" id="svMode"><button data-mode="card">${icon('card')}${L('كروت وقيم شحن', 'Cards & top-ups')}</button><button data-mode="service">${icon('zap')}${L('خدمة / فاتورة', 'Service / bill')}</button></div>
       <div id="svCardBox" class="mt">
         <div class="row wrap" id="svNets" style="gap:6px"><button class="chip active" data-net="">${L('الكل', 'All')}</button>${nets.map((n) => `<button class="chip" data-net="${esc(n)}" style="--cc:${NET_COLORS[n] || 'var(--p)'}">${esc(n)}</button>`).join('')}</div>
+        <div class="seg mt" id="svKinds"><button data-kd="card" class="active">${icon('card')}${L('كروت شحن', 'Scratch cards')}</button><button data-kd="topup">${icon('zap')}${L('شحن رصيد (فكة)', 'Balance top-up')}</button><button data-kd="">${L('الكل', 'All')}</button></div>
         <div class="cc-tiles mt" id="svTiles"></div>
       </div>
       <div id="svSvcBox" class="mt"><label class="lbl">${L('نوع الخدمة', 'Service type')}</label><div class="row wrap" id="svT" style="gap:6px">${types.map((t, i) => `<button class="btn sm ${i === 0 ? 'primary' : ''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>
@@ -4778,11 +4807,12 @@ Modules.machines = {
     const autoComm = () => { const m = DB.get('machines', mid); const ci = F('commission'); if (!ci.dataset.touched) ci.value = round2(((Number(F('amount').value) || 0) * (m.commissionRate || 0)) / 100); };
     const fromCard = () => { if (!card) return; const q = Math.max(1, Number(F('qty').value) || 1); F('amount').value = round2(card.cost * q); F('collect').value = round2(card.price * q); F('fee').value = round2((card.price - card.cost) * q); autoComm(); profit(); };
     const drawTiles = () => {
-      const list = cards.filter((c) => !net || c.network === net);
+      const list = cards.filter((c) => (!net || c.network === net) && (!kind || c.kind === kind || (kind === 'topup' && c.kind !== 'card')));
       $('#svTiles', md.el).innerHTML = list.length ? list.map((c) => `<button class="cc-tile ${card?.id === c.id ? 'active' : ''}" data-cc="${c.id}" style="--cc:${ChargeCards.color(c)}"><small>${esc(L(...(CARD_KINDS[c.kind] || CARD_KINDS.other)))} · ${esc(c.network || '')}</small><b class="num">${c.value}</b><span class="num">${money(c.price)}</span></button>`).join('')
         : `<div class="faint">${L('لا توجد فئات — أضفها من تبويب "فئات الكروت وقيم الشحن"', 'No values — add them in the Cards tab')}</div>`;
       $$('[data-cc]', md.el).forEach((b) => (b.onclick = () => { card = cards.find((c) => c.id === b.dataset.cc); $$('[data-cc]', md.el).forEach((x) => x.classList.toggle('active', x === b)); fromCard(); }));
     };
+    $$('#svKinds [data-kd]', md.el).forEach((b) => (b.onclick = () => { kind = b.dataset.kd; $$('#svKinds [data-kd]', md.el).forEach((x) => x.classList.toggle('active', x === b)); drawTiles(); }));
     const setMode = (mm) => {
       mode = mm; $$('#svMode button', md.el).forEach((b) => b.classList.toggle('active', b.dataset.mode === mode));
       $('#svCardBox', md.el).hidden = mode !== 'card'; $('#svSvcBox', md.el).hidden = mode !== 'service';
@@ -4861,8 +4891,9 @@ Modules.machines = {
       ${UI.kpi(L('أرباح الكروت هذا الشهر', 'Card profit this month'), money(sum(sales, mProfit)), 'trend', 'c-ok')}
       ${UI.kpi(L('متوسط ربح الكارت', 'Avg. profit per card'), money(all.length ? sum(all, (c) => ChargeCards.profit(c)) / all.length : 0), 'percent', 'c-warn')}</div>
       <div class="card card-b mb"><div class="row wrap"><div class="muted" style="flex:1;min-width:240px">${L('حدد لكل فئة: <b>المخصوم من الماكينة</b> و<b>المحصّل من العميل</b>. عند البيع تختار الفئة بضغطة والفرق يتحسب ربح تلقائياً. المسؤول يقدر يعدّل المحصّل وقت البيع.', 'For each value set the <b>machine cost</b> and the <b>customer price</b>. The difference is booked as profit automatically.')}</div>
-      <button class="btn" id="ccBulk">${icon('percent')}${L('تعديل الأسعار بنسبة', 'Adjust prices by %')}</button><button class="btn primary" id="ccAdd">${icon('plus')}${L('إضافة فئة', 'Add value')}</button></div></div><div id="ccTbl"></div>`;
+      <button class="btn" id="ccDef" title="${L('بيضيف الفئات الناقصة بس — أسعارك الحالية مش بتتغير', 'Adds missing values only')}">${icon('download')}${L('إضافة كل الفئات تلقائياً', 'Add all values')}</button><button class="btn" id="ccBulk">${icon('percent')}${L('تعديل الأسعار بنسبة', 'Adjust prices by %')}</button><button class="btn primary" id="ccAdd">${icon('plus')}${L('إضافة فئة', 'Add value')}</button></div></div><div id="ccTbl"></div>`;
     $('#ccAdd').onclick = () => this.cardEdit(); $('#ccBulk').onclick = () => this.cardBulk();
+    $('#ccDef').onclick = () => { const n = ChargeCards.addDefaults(); audit('chargeCard.defaults', n); UI.toast(n ? L(`اتضاف ${n} فئة — راجع «المخصوم من الماكينة» حسب ماكينتك`, `${n} values added`) : L('كل الفئات موجودة بالفعل ✓', 'All values already exist ✓'), n ? 'ok' : 'info', 6000); App.reload(); };
     UI.table($('#ccTbl'), {
       rows: all, exportName: 'charge-cards', searchText: (c) => `${c.network} ${c.value} ${ChargeCards.label(c)}`,
       filters: [{ label: L('الشبكة', 'Network'), options: [...new Set(all.map((c) => c.network))].map((n) => [n, n]), test: (c, v) => c.network === v }, { label: L('النوع', 'Kind'), options: Object.entries(CARD_KINDS).map(([k, v]) => [k, L(...v)]), test: (c, v) => c.kind === v }],
@@ -8421,7 +8452,9 @@ Modules.shifts = {
   render(el) {
     const sh = Session.shift(); const other = DB.filter('shifts', (s) => s.status === 'open' && s.userId !== Session.user.id);
     el.innerHTML = `<div class="grid mb" style="grid-template-columns:1.2fr 1fr">${sh ? this.currentCard(sh) : `<div class="card card-b tc" style="padding:40px"><div style="width:80px;height:80px;border-radius:24px;background:var(--p-50);color:var(--p);display:grid;place-items:center;margin:0 auto 12px">${icon('clock')}</div><h2 style="margin:0 0 6px">${L('لا توجد وردية مفتوحة', 'No open shift')}</h2><p class="muted">${L('افتح وردية لبدء تسجيل المبيعات والعمليات النقدية', 'Open a shift to start recording sales and cash operations')}</p><button class="btn primary lg" id="shOpen">${icon('play')}${L('فتح وردية جديدة', 'Open a new shift')}</button></div>`}
-      <div class="card"><div class="card-h"><h3>${L('الدرج الآن', 'Drawer now')}</h3></div><div class="card-b"><div class="big-clock num">${money(drawerBalance(), false)} <small style="font-size:16px">${cur()}</small></div><p class="muted">${L('إجمالي النقدية المتوقعة في الدرج حسب كل الحركات المسجلة', 'Expected cash in drawer from all recorded movements')}</p>
+      <div class="card"><div class="card-h"><h3>${L('إجمالي النقدية الآن', 'Total cash now')}</h3></div><div class="card-b"><div class="big-clock num">${money(cashTotal(), false)} <small style="font-size:16px">${cur()}</small></div>
+      <div class="grid g2 mb" style="gap:8px"><div class="stat-mini"><span class="l">${L('الدرج (متوقع)', 'Drawer (expected)')}</span><span class="v num">${money(drawerBalance())}</span></div><div class="stat-mini"><span class="l">${L('الخزينة (آخر عدّ)', 'Safe (last count)')}</span><span class="v num">${money(safeBalance())}</span></div></div>
+      <p class="muted">${L('الدرج محسوب من كل الحركات المسجلة، والخزينة من آخر عدّ عند فتح أو تقفيل وردية', 'Drawer from recorded moves; safe from the last count')}</p>
       ${other.length ? `<div class="tag warn">${L('ورديات مفتوحة لمستخدمين آخرين', 'Other open shifts')}: ${other.map((s) => esc(DB.get('users', s.userId)?.name || '')).join('، ')}</div>` : ''}
       <div class="row mt"><button class="btn" id="shIn">${icon('plus')}${L('إيداع نقدية بالدرج', 'Cash in')}</button><button class="btn" id="shOut">${icon('minus')}${L('سحب نقدية من الدرج', 'Cash out')}</button></div></div></div></div>
       <h3>${L('سجل الورديات', 'Shifts history')}</h3><div id="shTbl"></div>`;
@@ -8480,7 +8513,7 @@ Modules.shifts = {
         if (dT && !note && !(await0())) return;
         if (dD) DB.insert('cashMoves', { amount: dD, source: first ? 'opening' : 'adjust', ref: '', note: first ? L('رصيد افتتاحي للدرج (أول وردية)', 'Drawer opening balance (first shift)') : dT ? (dT > 0 ? L('زيادة عند استلام الوردية', 'Over at takeover') : L('عجز عند استلام الوردية', 'Short at takeover')) : L('تحويل بين الدرج والخزينة', 'Drawer/safe transfer'), shiftId: null, userId: Session.user.id, date: nowISO() });
         DB.insert('shifts', { userId: Session.user.id, openAt: nowISO(), openingCash: oc, openingSafe: sv === '' ? null : os, prevDrawer: prevD, prevSafe: sb, prevShiftId: last?.id || null, firstShift: first || undefined, openDiff: first ? null : dT, openDiffDrawer: dD, openDiffSafe: dS, status: 'open', note });
-        audit('shift.open', `${oc} + ${os} (${dT})`); x.close();
+        audit('shift.open', `${oc} + ${os} (${dT})`); x.close(); if (typeof Attendance !== 'undefined') Attendance.fromShift('in');
         UI.toast(first ? L('تم فتح أول وردية وتسجيل الرصيد الافتتاحي ✓', 'First shift opened — opening balance recorded ✓') : dT ? `${L('تم فتح الوردية مع', 'Shift opened with')} ${dT > 0 ? L('زيادة', 'over') : L('عجز', 'short')} ${money(Math.abs(dT))}` : L('تم فتح الوردية — الرصيد مطابق للتقفيل السابق ✓', 'Shift opened — matches previous close ✓'), dT && !first ? 'warn' : 'ok'); App.reload();
       } }] });
     const await0 = () => { UI.toast(L('يوجد فرق — اكتب سبب العجز أو الزيادة في الملاحظة', 'There is a difference — write the reason in the note'), 'warn'); $('#osNote', m.el).focus(); return false; };
@@ -8527,7 +8560,7 @@ Modules.shifts = {
         if (hand) DB.insert('cashMoves', { amount: -hand, source: 'shift-close', note: L('تسليم نقدية', 'Handover'), shiftId: sh.id, userId: Session.user.id, date: nowISO() });
         const denoms = Object.fromEntries($$('[data-d]', x.el).filter((i) => i.value).map((i) => [i.dataset.d, Number(i.value)]));
         DB.update('shifts', sh.id, { status: 'closed', closeAt: nowISO(), expected: exp, expectedDrawer: expDrawer, expectedSafe: hasSafe ? lastSafe : safeCash, counted, drawerCash, safeCash, diff, handover: hand, denoms, closeNote: $('#csNote', x.el).value });
-        audit('shift.close', `${counted} / ${exp}`); x.close(); UI.toast(L('تم إغلاق الوردية', 'Shift closed')); this.printReport(DB.get('shifts', sh.id)); App.reload();
+        audit('shift.close', `${counted} / ${exp}`); x.close(); if (typeof Attendance !== 'undefined') Attendance.fromShift('out'); UI.toast(L('تم إغلاق الوردية', 'Shift closed')); this.printReport(DB.get('shifts', sh.id)); App.reload();
       } }] });
     const total = () => { const dv = $('#csDrawer', m.el).value, sv = $('#csSafe', m.el).value; const d = Number(dv) || 0, sf = Number(sv) || 0; $('#csSumD', m.el).textContent = money(d); $('#csSumS', m.el).textContent = money(sf); $('#csCount', m.el).value = dv === '' && sv === '' ? '' : round2(d + sf); diff(); };
     const upd = () => { let t = 0; $$('[data-d]', m.el).forEach((i) => { const v = (Number(i.value) || 0) * Number(i.dataset.d); t += v; $(`[data-dt="${i.dataset.d}"]`, m.el).textContent = num(v, 1).replace('.0', ''); }); $('#csDrawer', m.el).value = t ? round2(t) : ''; total(); };
@@ -8562,10 +8595,10 @@ Modules.shifts = {
 Modules.capital = {
   title: () => L('رأس المال والمركز المالي', 'Capital & financial position'), icon: 'bank', perm: 'capital',
   position() {
-    const drawer = drawerBalance(), wallets = Wallets.total(), machines = Machines.total(), stock = Stock.value(true), lines = Lines.stockValue(), recv = Customers.totalReceivable(), pay = Suppliers.totalPayable();
+    const drawer = cashTotal(), safe = safeBalance(), wallets = Wallets.total(), machines = Machines.total(), stock = Stock.value(true), lines = Lines.stockValue(), recv = Customers.totalReceivable(), pay = Suppliers.totalPayable();
     const assets = round2(drawer + wallets + machines + stock + lines + recv);
     const entries = DB.all('capital'); const invested = round2(sum(entries, (e) => (e.type === 'injection' ? e.amount : -e.amount)));
-    return { drawer, wallets, machines, stock, lines, recv, pay, assets, net: round2(assets - pay), invested, growth: round2(assets - pay - invested) };
+    return { drawer, safe, wallets, machines, stock, lines, recv, pay, assets, net: round2(assets - pay), invested, growth: round2(assets - pay - invested) };
   },
   render(el) {
     const p = this.position();
@@ -8579,7 +8612,7 @@ Modules.capital = {
     <div class="card"><div class="card-h"><h3>${L('الربح الشهري — آخر 6 شهور', 'Monthly profit — last 6 months')}</h3></div><div class="card-b" id="cpBar"></div></div></div>
     <div class="row mb"><h3 style="margin:0">${L('حركات رأس المال', 'Capital movements')}</h3><div class="spacer"></div><button class="btn" id="cpOut">${icon('minus')}${L('مسحوبات شريك', 'Partner withdrawal')}</button><button class="btn primary" id="cpIn">${icon('plus')}${L('إضافة رأس مال', 'Add capital')}</button></div>
     <div id="cpPartners" class="grid g4 mb"></div><div id="cpTbl"></div>`;
-    Charts.donut($('#cpDonut'), [[L('نقدية الدرج', 'Drawer'), p.drawer], [L('المحافظ', 'Wallets'), p.wallets], [L('الماكينات', 'Machines'), p.machines], [L('المخزون (تكلفة)', 'Stock (cost)'), p.stock], [L('مخزون الخطوط', 'SIM lines stock'), p.lines], [L('مديونيات العملاء', 'Receivables'), p.recv]].map(([l, v], i) => ({ label: l, value: Math.max(0, v), color: PALETTE[i] })), { center: Charts.short(p.assets), sub: L('الأصول', 'assets') });
+    Charts.donut($('#cpDonut'), [[L('النقدية (الدرج + الخزينة)', 'Cash (drawer + safe)'), p.drawer], [L('المحافظ', 'Wallets'), p.wallets], [L('الماكينات', 'Machines'), p.machines], [L('المخزون (تكلفة)', 'Stock (cost)'), p.stock], [L('مخزون الخطوط', 'SIM lines stock'), p.lines], [L('مديونيات العملاء', 'Receivables'), p.recv]].map(([l, v], i) => ({ label: l, value: Math.max(0, v), color: PALETTE[i] })), { center: Charts.short(p.assets), sub: L('الأصول', 'assets') });
     const months = Array.from({ length: 6 }, (_, i) => monthKey(new Date(new Date().getFullYear(), new Date().getMonth() - 5 + i, 1)));
     const prof = (mk) => { const s = DB.filter('sales', (x) => monthKey(x.date) === mk); const svc = sum(DB.filter('walletTx', (t) => monthKey(t.date) === mk), (t) => t.fee || 0) + sum(DB.filter('machineTx', (t) => monthKey(t.date) === mk), (t) => (t.fee || 0) + (t.commission || 0)); const ex = sum(DB.filter('expenses', (e) => monthKey(e.date) === mk), (e) => e.amount); const sal = sum(DB.filter('payroll', (x) => x.month === mk && x.status === 'paid'), (x) => x.net); return round2(sum(s, Sales.netProfit) + svc + Repairs.profitMonth(mk) + Lines.profitMonth(mk) + (typeof CCTV !== 'undefined' ? CCTV.profitIn(mk + '-01', mk + '-31') : 0) - ex - sal); };
     Charts.bar($('#cpBar'), { labels: months.map(monthLabel), series: [{ name: L('صافي الربح', 'Net profit'), color: '#16825D', values: months.map(prof) }], height: 230 });
@@ -8692,36 +8725,56 @@ const OffSched = {
 };
 const Attendance = {
   today(e) { return DB.find('attendance', (a) => a.employeeId === e.id && a.date === dayKey()); },
-  checkIn(e) {
-    if (this.today(e)?.checkIn) return UI.toast(L('تم تسجيل الحضور مسبقاً', 'Already checked in'), 'warn');
-    const now = new Date(); const late = Math.max(0, now.getHours() * 60 + now.getMinutes() - toMin(e.workStart || '10:00') - (Number(e.grace) || 15));
-    const ex = this.today(e); const doc = { employeeId: e.id, date: dayKey(), checkIn: nowISO(), lateMin: late, status: late > 0 ? 'late' : 'present' };
-    ex ? DB.update('attendance', ex.id, doc) : DB.insert('attendance', doc); audit('attendance.in', e.name);
-    UI.toast(`${e.name}: ${L('تم تسجيل الحضور', 'checked in')} ${fmtTime(now)}${late ? ' — ' + L('تأخير', 'late') + ' ' + late + ' ' + L('دقيقة', 'min') : ''}`, late ? 'warn' : 'ok');
+  /* الموظف المربوط بالمستخدم — ولو مش موجود بيتعمل تلقائياً من بيانات المستخدم ويتعلّم «بيانات ناقصة» */
+  forUser(u, create = true) {
+    if (!u) return null; const e = DB.find('employees', (x) => x.userId === u.id); if (e || !create) return e || null;
+    audit('employee.auto', u.name);
+    return DB.insert('employees', { name: u.name, phone: u.phone || '', userId: u.id, jobTitle: roleName(u.role), salaryType: 'monthly', baseSalary: 0, workStart: '10:00', workEnd: '22:00', grace: 15, hireDate: dayKey(), active: true, trackAttendance: false, leaveQuota: 0, offDays: [5], incomplete: true });
   },
-  checkOut(e) {
-    const a = this.today(e); if (!a?.checkIn) return UI.toast(L('لم يتم تسجيل الحضور', 'Not checked in'), 'err'); if (a.checkOut) return UI.toast(L('تم تسجيل الانصراف مسبقاً', 'Already checked out'), 'warn');
+  /* إضافة كل المستخدمين (غير مدير النظام) كموظفين — بيرجع عدد اللي اتضافوا */
+  syncUsers() { let n = 0; DB.filter('users', (u) => u.active !== false && u.role !== 'admin').forEach((u) => { if (!this.forUser(u, false)) { this.forUser(u, true); n++; } }); return n; },
+  /* ربط الحضور والانصراف بفتح وقفل الوردية (للكاشير وأي موظف غير مدير النظام) */
+  fromShift(kind) {
+    try {
+      const u = Session.user; if (!u || u.role === 'admin' || DB.settings().autoAttendance === false) return;
+      const e = this.forUser(u, true); if (!e || e.active === false) return; const a = this.today(e);
+      if (kind === 'in' && !a?.checkIn) this.checkIn(e, { silent: true, src: 'shift' });
+      if (kind === 'out' && a?.checkIn && !a.checkOut) this.checkOut(e, { silent: true, src: 'shift' });
+    } catch (err) { console.warn(err); }
+  },
+  checkIn(e, { silent = false, src = 'manual' } = {}) {
+    if (this.today(e)?.checkIn) return silent || UI.toast(L('تم تسجيل الحضور مسبقاً', 'Already checked in'), 'warn');
+    const now = new Date(); const late = Math.max(0, now.getHours() * 60 + now.getMinutes() - toMin(e.workStart || '10:00') - (Number(e.grace) || 15));
+    const ex = this.today(e); const doc = { employeeId: e.id, date: dayKey(), checkIn: nowISO(), lateMin: late, status: late > 0 ? 'late' : 'present', src };
+    ex ? DB.update('attendance', ex.id, doc) : DB.insert('attendance', doc); audit('attendance.in', e.name + (src === 'shift' ? ' (وردية)' : ''));
+    if (!silent) UI.toast(`${e.name}: ${L('تم تسجيل الحضور', 'checked in')} ${fmtTime(now)}${late ? ' — ' + L('تأخير', 'late') + ' ' + late + ' ' + L('دقيقة', 'min') : ''}`, late ? 'warn' : 'ok');
+  },
+  checkOut(e, { silent = false, src = 'manual' } = {}) {
+    const a = this.today(e); if (!a?.checkIn) return silent || UI.toast(L('لم يتم تسجيل الحضور', 'Not checked in'), 'err'); if (a.checkOut) return silent || UI.toast(L('تم تسجيل الانصراف مسبقاً', 'Already checked out'), 'warn');
     const now = new Date(); const worked = Math.round((now - new Date(a.checkIn)) / 60000);
     const ot = Math.max(0, now.getHours() * 60 + now.getMinutes() - toMin(e.workEnd || '22:00'));
     const early = Math.max(0, toMin(e.workEnd || '22:00') - (now.getHours() * 60 + now.getMinutes()));
-    DB.update('attendance', a.id, { checkOut: nowISO(), workedMin: worked, overtimeMin: ot, earlyMin: early }); audit('attendance.out', e.name);
-    UI.toast(`${e.name}: ${L('تم تسجيل الانصراف', 'checked out')} — ${Math.floor(worked / 60)}:${pad(worked % 60)} ${L('ساعة عمل', 'hours')}`);
+    DB.update('attendance', a.id, { checkOut: nowISO(), workedMin: worked, overtimeMin: ot, earlyMin: early, outSrc: src }); audit('attendance.out', e.name + (src === 'shift' ? ' (وردية)' : ''));
+    if (!silent) UI.toast(`${e.name}: ${L('تم تسجيل الانصراف', 'checked out')} — ${Math.floor(worked / 60)}:${pad(worked % 60)} ${L('ساعة عمل', 'hours')}`);
   }
 };
 Modules.attendance = {
   title: () => L('الحضور والانصراف', 'Attendance'), icon: 'fingerprint', perm: 'attendance', tab: 'today', month: monthKey(),
   render(el) {
     const emps = DB.filter('employees', (e) => e.active !== false); const today = DB.filter('attendance', (a) => a.date === dayKey());
-    el.innerHTML = `<div class="grid mb" style="grid-template-columns:1fr 2fr">
+    const freeUsers = DB.filter('users', (u) => u.active !== false && !DB.find('employees', (x) => x.userId === u.id));
+    el.innerHTML = `${DB.settings().autoAttendance !== false ? `<div class="tag info mb" style="display:flex;white-space:normal;padding:8px 12px;gap:8px">${icon('clock')} ${L('الحضور والانصراف بيتسجلوا تلقائياً مع فتح وقفل الوردية للكاشير (من الإعدادات ← المميزات)', 'Attendance is recorded automatically with shift open/close')}</div>` : ''}<div class="grid mb" style="grid-template-columns:1fr 2fr">
       <div class="card card-b tc"><div class="faint">${(LANG === 'en' ? DAYS_EN : DAYS_AR)[new Date().getDay()]} ${fmtDate(new Date())}</div><div class="big-clock" id="attClock">--:--</div>
-        <select id="attEmp" class="mt">${emps.map((e) => `<option value="${e.id}">${esc(e.name)}</option>`).join('') || `<option value="">${L('أضف موظفين من صفحة المرتبات', 'Add employees in Payroll')}</option>`}</select>
+        <select id="attEmp" class="mt">${emps.map((e) => `<option value="${e.id}">${esc(e.name)}${e.incomplete ? ' ⚠️' : ''}</option>`).join('')}${freeUsers.length ? `<optgroup label="${L('مستخدمين لسه مش موظفين', 'Users not yet employees')}">${freeUsers.map((u) => `<option value="u:${u.id}">${esc(u.name)} — ${esc(roleName(u.role))}</option>`).join('')}</optgroup>` : ''}${!emps.length && !freeUsers.length ? `<option value="">${L('أضف موظفين من صفحة المرتبات', 'Add employees in Payroll')}</option>` : ''}</select>
         <div class="row mt"><button class="btn ok lg" style="flex:1" id="attIn">${icon('play')}${L('حضور', 'Check in')}</button><button class="btn danger lg" style="flex:1" id="attOut">${icon('stop')}${L('انصراف', 'Check out')}</button></div></div>
       <div class="grid g4" style="align-content:start">${UI.kpi(L('الموظفين', 'Employees'), emps.length, 'users', 'hero')}${UI.kpi(L('حاضر', 'Present'), today.filter((a) => a.checkIn).length, 'check', 'c-ok')}${UI.kpi(L('متأخر', 'Late'), today.filter((a) => a.lateMin > 0).length, 'clock', 'c-warn')}${UI.kpi(L('غائب / لم يحضر', 'Absent'), emps.length - today.filter((a) => a.checkIn || a.status === 'leave' || a.status === 'off').length, 'x', 'c-err')}</div></div>
-      <div class="row mb"><div id="attTabs"></div><div class="spacer"></div><input type="month" id="attMonth" value="${this.month}" style="width:180px"><button class="btn" id="attManual">${icon('edit')}${L('تسجيل يدوي', 'Manual entry')}</button></div><div id="attBody"></div>`;
+      <div class="row mb"><div id="attTabs"></div><div class="spacer"></div><input type="month" id="attMonth" value="${this.month}" style="width:180px"><button class="btn" id="attManual">${icon('edit')}${L('تسجيل يدوي', 'Manual entry')}</button>${Session.can('payroll') && freeUsers.some((u) => u.role !== 'admin') ? `<button class="btn" id="attSync">${icon('users')}${L('إضافة المستخدمين كموظفين', 'Add users as employees')}</button>` : ''}</div><div id="attBody"></div>`;
     const tick = () => { const c = $('#attClock'); if (!c) return clearInterval(this._t); const n = new Date(); c.textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`; };
     clearInterval(this._t); this._t = setInterval(tick, 1000); tick();
-    $('#attIn').onclick = () => { const e = DB.get('employees', $('#attEmp').value); if (e) { Attendance.checkIn(e); App.reload(); } };
-    $('#attOut').onclick = () => { const e = DB.get('employees', $('#attEmp').value); if (e) { Attendance.checkOut(e); App.reload(); } };
+    const pick = () => { const v = $('#attEmp').value; if (v.startsWith('u:')) { const e = Attendance.forUser(DB.get('users', v.slice(2)), true); UI.toast(L(`اتضاف ${e.name} للموظفين من بيانات المستخدم — كمّل الراتب والمواعيد`, 'Employee created from user'), 'info', 5000); return e; } return DB.get('employees', v); };
+    $('#attIn').onclick = () => { const e = pick(); if (e) { Attendance.checkIn(e); App.reload(); } };
+    $('#attOut').onclick = () => { const e = pick(); if (e) { Attendance.checkOut(e); App.reload(); } };
+    $('#attSync') && ($('#attSync').onclick = () => { const n = Attendance.syncUsers(); UI.toast(n ? L(`اتضاف ${n} موظف من المستخدمين — كمّل بياناتهم`, `${n} employees added`) : L('كل المستخدمين موجودين كموظفين ✓', 'All users are employees ✓'), n ? 'ok' : 'info'); App.reload(); });
     $('#attMonth').onchange = (e) => { this.month = e.target.value; this.body(); };
     $('#attManual').onclick = () => this.manual();
     UI.tabs($('#attTabs'), [{ id: 'today', label: L('لوحة اليوم', 'Today board'), icon: 'clock' }, { id: 'sheet', label: L('كشف الشهر', 'Monthly sheet'), icon: 'calendar' }, { id: 'log', label: L('السجل', 'Log'), icon: 'history' }], this.tab, (t) => { this.tab = t; this.body(); });
@@ -8733,10 +8786,13 @@ Modules.attendance = {
       b.innerHTML = `<div class="grid g4">${emps.map((e) => { const a = Attendance.today(e); const st = a?.status === 'leave' || a?.status === 'off' ? a.status : a?.checkOut ? 'out' : a?.checkIn ? (a.lateMin ? 'late' : 'present') : OffSched.isOff(e, dayKey()) ? 'off' : 'none';
         const tag = { none: [L('لم يحضر', 'Not in'), 'err'], present: [L('حاضر', 'Present'), 'ok'], late: [L('متأخر', 'Late') + ` ${a?.lateMin}${L('د', 'm')}`, 'warn'], out: [L('انصرف', 'Left'), 'info'], leave: [L('إجازة', 'Leave'), 'info'], off: [L('راحة', 'Off'), ''] }[st];
         return `<div class="card" style="padding:16px"><div class="row"><div class="avatar" style="background:${avatarColor(e.name)}">${initials(e.name)}</div><div style="flex:1;min-width:0"><b>${esc(e.name)}</b><div class="faint">${esc(e.jobTitle || '')} · ${e.workStart || '10:00'} - ${e.workEnd || '22:00'}</div></div><span class="tag ${tag[1]}">${tag[0]}</span></div>
+          ${e.incomplete ? `<div class="row mt" style="gap:6px"><span class="tag warn">⚠️ ${L('بيانات ناقصة', 'Incomplete')}</span>${Session.can('payroll') ? `<button class="btn sm" data-cmp="${e.id}">${icon('edit')}${L('استكمال البيانات', 'Complete')}</button>` : ''}</div>` : ''}
+          ${a?.src === 'shift' ? `<div class="faint" style="font-size:11.5px;margin-top:6px">🔗 ${L('الحضور من فتح الوردية', 'From shift open')}${a.outSrc === 'shift' ? ' · ' + L('الانصراف من قفلها', 'out from close') : ''}</div>` : ''}
           <div class="grid g2 mt"><div class="stat-mini"><span class="l">${L('حضور', 'In')}</span><b>${a?.checkIn ? fmtTime(a.checkIn) : '—'}</b></div><div class="stat-mini"><span class="l">${L('انصراف', 'Out')}</span><b>${a?.checkOut ? fmtTime(a.checkOut) : '—'}</b></div></div>
           <div class="row mt" style="gap:6px">${!a?.checkIn ? `<button class="btn sm ok" data-in="${e.id}">${L('حضور', 'In')}</button>` : ''}${a?.checkIn && !a.checkOut ? `<button class="btn sm danger" data-out="${e.id}">${L('انصراف', 'Out')}</button>` : ''}${!a ? `<button class="btn sm" data-lv="${e.id}">${L('إجازة', 'Leave')}</button>` : ''}</div></div>`; }).join('') || `<div class="card span3">${UI.empty(L('أضف الموظفين من صفحة المرتبات أولاً', 'Add employees from Payroll first'), 'users')}</div>`}</div>`;
       $$('[data-in]', b).forEach((x) => (x.onclick = () => { Attendance.checkIn(DB.get('employees', x.dataset.in)); App.reload(); }));
       $$('[data-out]', b).forEach((x) => (x.onclick = () => { Attendance.checkOut(DB.get('employees', x.dataset.out)); App.reload(); }));
+      $$('[data-cmp]', b).forEach((x) => (x.onclick = () => Modules.payroll.editEmp(DB.get('employees', x.dataset.cmp))));
       $$('[data-lv]', b).forEach((x) => (x.onclick = () => { DB.insert('attendance', { employeeId: x.dataset.lv, date: dayKey(), status: 'leave' }); App.reload(); }));
     } else if (this.tab === 'sheet') {
       const [y, mo] = this.month.split('-').map(Number); const days = new Date(y, mo, 0).getDate();
@@ -8877,16 +8933,17 @@ Modules.payroll = {
   editEmp(e) {
     const days = (LANG === 'en' ? DAYS_EN : DAYS_AR);
     const m = UI.modal({ title: e ? L('تعديل موظف', 'Edit employee') : L('موظف جديد', 'New employee'), icon: 'user', size: 'lg', body: UI.form([
-      { name: 'name', label: L('الاسم', 'Name'), required: true, col: 4 }, { name: 'jobTitle', label: L('الوظيفة', 'Job title'), col: 4 }, { name: 'phone', label: L('الموبايل', 'Mobile'), type: 'tel', col: 4 },
+      { name: 'name', label: L('الاسم', 'Name'), required: true, col: 4, attrs: 'list="empUsers" autocomplete="off"' }, { name: 'jobTitle', label: L('الوظيفة', 'Job title'), col: 4 }, { name: 'phone', label: L('الموبايل', 'Mobile'), type: 'tel', col: 4 },
       { name: 'salaryType', label: L('نوع الراتب', 'Salary type'), type: 'select', options: [['monthly', L('شهري', 'Monthly')], ['daily', L('يومية', 'Daily')]], col: 3 }, { name: 'baseSalary', label: L('قيمة الراتب', 'Salary amount'), type: 'number', required: true, col: 3 }, { name: 'hireDate', label: L('تاريخ التعيين', 'Hire date'), type: 'date', col: 3 }, { name: 'commissionRate', label: L('عمولة مبيعات %', 'Sales commission %'), type: 'number', col: 3 },
       { name: 'workStart', label: L('بداية الدوام', 'Shift start'), type: 'time', col: 3 }, { name: 'workEnd', label: L('نهاية الدوام', 'Shift end'), type: 'time', col: 3 }, { name: 'grace', label: L('سماحية التأخير (دقيقة)', 'Late grace (min)'), type: 'number', col: 3 },
-      { name: 'userId', label: L('ربط بمستخدم (للعمولة)', 'Linked user (for commission)'), type: 'select', options: [['', '—'], ...DB.all('users').map((u) => [u.id, u.name])], col: 3 },
+      { name: 'userId', label: L('ربط بمستخدم (الحضور مع الوردية + العمولة)', 'Linked user (shift attendance + commission)'), type: 'select', options: [['', '—'], ...DB.all('users').map((u) => [u.id, u.name])], col: 3 },
+      { type: 'html', col: 12, html: `<datalist id="empUsers">${DB.filter('users', (u) => !DB.find('employees', (x) => x.userId === u.id && x.id !== e?.id)).map((u) => `<option value="${esc(u.name)}">${esc(roleName(u.role))}</option>`).join('')}</datalist>` },
       { type: 'html', col: 12, html: `<label class="lbl">${L('أيام الراحة الأسبوعية', 'Weekly days off')}</label><div class="row wrap">${days.map((d, i) => `<label class="check"><input type="checkbox" data-off="${i}" ${((e?.offDays) || [5]).includes(i) ? 'checked' : ''}>${d}</label>`).join('')}</div>` },
       { type: 'html', col: 12, html: `<div class="card" style="padding:12px;background:var(--p-50)"><div class="row wrap" style="gap:8px"><b>${icon('calendar')} ${L('راحة بالتناوب', 'Rotating day off')}</b><span class="faint">${L('مثال: الجمعة كل أسبوعين = جمعة عمل وجمعة أجازة، أو كل 3 أسابيع = أجازة ثم جمعتين عمل', 'e.g. Friday every 2 weeks = alternate; every 3 weeks = off then two working')}</span></div><div id="rotList" class="mt"></div><div class="row mt" style="gap:6px"><button type="button" class="btn sm" id="rotAdd">${icon('plus')}${L('إضافة يوم بالتناوب', 'Add rotating day')}</button><span class="spacer"></span><span class="faint" id="rotPrev"></span></div></div>` },
       { name: 'leaveQuota', label: L('أيام الأجازات المدفوعة شهرياً (الزيادة تُخصم)', 'Paid leave days / month (extra is deducted)'), type: 'number', col: 6 },
       { name: 'trackAttendance', label: L('احتساب الغياب تلقائياً من الحضور', 'Auto-count absence from attendance'), type: 'checkbox', col: 6 }, { name: 'active', label: L('نشط', 'Active'), type: 'checkbox', col: 6 }],
       e || { salaryType: 'monthly', workStart: '10:00', workEnd: '22:00', grace: 15, hireDate: dayKey(), active: true, trackAttendance: false, leaveQuota: 0 }),
-      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (x) => { if (!UI.validate(x.el)) return; const v = UI.read(x.el); v.offDays = $$('[data-off]:checked', x.el).map((c) => +c.dataset.off); v.rotOff = readRot(); delete v.rdow; delete v.revery; delete v.ranchor; ['baseSalary', 'commissionRate', 'grace', 'leaveQuota'].forEach((k) => (v[k] = Number(v[k]) || 0)); e ? DB.update('employees', e.id, v) : DB.insert('employees', v); x.close(); App.reload(); } }] });
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (x) => { if (!UI.validate(x.el)) return; const v = UI.read(x.el); v.offDays = $$('[data-off]:checked', x.el).map((c) => +c.dataset.off); v.rotOff = readRot(); delete v.rdow; delete v.revery; delete v.ranchor; ['baseSalary', 'commissionRate', 'grace', 'leaveQuota'].forEach((k) => (v[k] = Number(v[k]) || 0)); v.incomplete = false; e ? DB.update('employees', e.id, v) : DB.insert('employees', v); x.close(); App.reload(); } }] });
     const D = (LANG === 'en' ? DAYS_EN : DAYS_AR); const list = $('#rotList', m.el);
     const nextDow = (dow) => { const d = new Date(); while (d.getDay() !== dow) d.setDate(d.getDate() + 1); return dayKey(d); };
     const rowH = (r) => `<div class="row wrap rot-row" style="gap:6px;margin-bottom:6px"><select data-r="dow" style="width:130px">${D.map((d, i) => `<option value="${i}" ${Number(r.dow) === i ? 'selected' : ''}>${d}</option>`).join('')}</select>
@@ -8896,6 +8953,9 @@ Modules.payroll = {
     const prev = () => { const t = { ...(e || {}), offDays: $$('[data-off]:checked', m.el).map((c) => +c.dataset.off), rotOff: readRot() }; $('#rotPrev', m.el).textContent = L('الأجازات القادمة: ', 'Next days off: ') + OffSched.next(t, 6).map((d) => fmtDate(d).replace(/\/\d{4}$/, '')).join(' · '); };
     const draw = (arr) => { list.innerHTML = arr.map(rowH).join(''); $$('[data-rdel]', list).forEach((b) => (b.onclick = () => { b.closest('.rot-row').remove(); prev(); })); $$('select,input', list).forEach((i) => (i.onchange = () => { if (i.dataset.r === 'dow') { const an = $('[data-r=anchor]', i.closest('.rot-row')); const d = new Date((an.value || dayKey()) + 'T12:00:00'); d.setDate(d.getDate() - d.getDay() + Number(i.value)); an.value = dayKey(d); } prev(); })); prev(); };
     draw(e?.rotOff || []);
+    // اختيار اسم من المستخدمين بيملى الموبايل والوظيفة ويربطه تلقائياً
+    const nm = $('[name=name]', m.el); nm.addEventListener('change', () => { const u = DB.find('users', (x) => x.name === nm.value.trim()); if (!u) return; $('[name=userId]', m.el).value = u.id; const ph = $('[name=phone]', m.el); if (!ph.value) ph.value = u.phone || ''; const jt = $('[name=jobTitle]', m.el); if (!jt.value) jt.value = roleName(u.role); });
+    $('[name=userId]', m.el).addEventListener('change', (ev) => { const u = DB.get('users', ev.target.value); if (!u) return; if (!nm.value) nm.value = u.name; const ph = $('[name=phone]', m.el); if (!ph.value) ph.value = u.phone || ''; });
     $('#rotAdd', m.el).onclick = () => { const cur = readRot(); cur.push({ dow: 5, every: 2, anchor: nextDow(5) }); draw(cur); };
     $$('[data-off]', m.el).forEach((c) => (c.onchange = prev));
   },
@@ -9021,8 +9081,8 @@ Modules.reports = {
         chart: (el) => Charts.donut(el, Object.entries(by).map(([k, v], i) => ({ label: k, value: round2(sum(v, (e) => e.amount)), color: PALETTE[i % 10] })), { center: Charts.short(sum(exps, (e) => e.amount)), sub: cur() }) };
     } else if (this.type === 'shifts') {
       const sh = DB.filter('shifts', (s) => inRange(s.openAt, from, to));
-      r = { title: L('تقرير الورديات', 'Shifts report'), kpis: [[L('عدد الورديات', 'Shifts'), sh.length], [L('إجمالي العجز', 'Total short'), money(sum(sh.filter((s) => s.diff < 0), (s) => s.diff))], [L('إجمالي الزيادة', 'Total over'), money(sum(sh.filter((s) => s.diff > 0), (s) => s.diff))], [L('المسلّم', 'Handed over'), money(sum(sh, (s) => s.handover || 0))]],
-        tables: [{ title: L('الورديات', 'Shifts'), cols: [L('الكاشير', 'Cashier'), L('الفتح', 'Opened'), L('الإغلاق', 'Closed'), L('البداية', 'Opening'), L('المبيعات', 'Sales'), L('المتوقع', 'Expected'), L('الفعلي', 'Counted'), L('الفرق', 'Diff')], rows: sh.map((s) => [esc(DB.get('users', s.userId)?.name || ''), fmtDT(s.openAt), s.closeAt ? fmtDT(s.closeAt) : L('مفتوحة', 'Open'), s.openingCash, round2(sum(DB.filter('sales', (x) => x.shiftId === s.id), Sales.net)), s.expected ?? Modules.shifts.expected(s), s.counted ?? '—', s.diff ?? '—']) },
+      r = { title: L('تقرير الورديات', 'Shifts report'), landscape: true, kpis: [[L('عدد الورديات', 'Shifts'), sh.length], [L('إجمالي العجز', 'Total short'), money(sum(sh.filter((s) => s.diff < 0), (s) => s.diff))], [L('إجمالي الزيادة', 'Total over'), money(sum(sh.filter((s) => s.diff > 0), (s) => s.diff))], [L('المسلّم', 'Handed over'), money(sum(sh, (s) => s.handover || 0))], [L('النقدية الآن (الدرج + الخزينة)', 'Cash now (drawer + safe)'), `${money(cashTotal())} <small class="faint">(${money(drawerBalance(), false)} + ${money(safeBalance(), false)})</small>`]],
+        tables: [{ title: L('الورديات', 'Shifts'), cols: [L('الكاشير', 'Cashier'), L('الفتح', 'Opened'), L('الإغلاق', 'Closed'), L('درج البداية', 'Opening drawer'), L('خزينة البداية', 'Opening safe'), L('المبيعات', 'Sales'), L('المتوقع', 'Expected'), L('الدرج عند الغلق', 'Drawer at close'), L('الخزينة عند الغلق', 'Safe at close'), L('الإجمالي الفعلي', 'Total counted'), L('الفرق', 'Diff')], rows: sh.map((s) => [esc(DB.get('users', s.userId)?.name || ''), fmtDT(s.openAt), s.closeAt ? fmtDT(s.closeAt) : L('مفتوحة', 'Open'), s.openingCash, s.openingSafe ?? '—', round2(sum(DB.filter('sales', (x) => x.shiftId === s.id), Sales.net)), s.expected ?? Modules.shifts.expected(s), s.drawerCash ?? '—', s.safeCash ?? '—', s.counted ?? '—', s.diff ?? '—']) },
           { title: L('أداء الكاشير', 'Cashier performance'), cols: [L('المستخدم', 'User'), L('الفواتير', 'Invoices'), L('المبيعات', 'Sales'), L('عمليات الكاش', 'Cash ops'), L('عجز/زيادة', 'Over/short')], rows: DB.all('users').map((u) => [esc(u.name), `${sales.filter((s) => s.userId === u.id).length}`, round2(sum(sales.filter((s) => s.userId === u.id), Sales.net)), `${wtx.filter((t) => t.userId === u.id).length + mtx.filter((t) => t.userId === u.id).length}`, round2(sum(sh.filter((s) => s.userId === u.id), (s) => s.diff || 0))]) }] };
     } else if (this.type === 'hr') {
       const emps = DB.all('employees'); const att = DB.filter('attendance', (a) => inRange(a.date, from, to));
@@ -9377,13 +9437,14 @@ Modules.settings = {
         ['netFee', L('تفعيل رسوم تحويل الشبكة', 'Enable network transfer fees'), L('رسوم تحويل الشبكة تعني الخصم الذي تقوم به الشركة، مثل 1 جنيه في تحويل فودافون كاش', 'The fee the network deducts, e.g. 1 EGP on a Vodafone Cash transfer')],
         ['companyRef', L('تفعيل رقم عملية الشركة', 'Require company transaction ID'), L('عند التفعيل، سيظهر حقل "رقم عملية الشركة" في عمليات المحفظة ويكون إلزامياً', 'Shows a mandatory "company transaction ID" field on wallet operations')],
         '-',
+        ['__autoAtt', L('الحضور والانصراف مع الوردية', 'Attendance with shifts'), L('فتح الوردية بيسجل حضور الكاشير وقفلها بيسجل انصرافه تلقائياً — ولو مش متسجل موظف بيتعمل من بيانات المستخدم', 'Opening a shift checks the cashier in, closing checks out'), DB.settings().autoAttendance !== false],
         ['__autoPayroll', L('إصدار المرتبات تلقائياً يوم 1 من كل شهر', 'Auto-issue payroll on the 1st of each month'), L('أول دخول يوم 1 (أو بعده) يصدر مرتبات الشهر السابق بحساب أيام الراحة والأجازات بالتناوب', 'The first login on/after the 1st issues last month\'s payroll using rotating days off and leave'), s.autoPayroll !== false],
         '-',
         ['roundFee5', L('تقريب العمولة لأعلى مضاعف 5', 'Round fee up to a multiple of 5'), L('مثال: 11 ← 15، 17 ← 20', 'e.g. 11 → 15, 17 → 20')]
       ];
       b.innerHTML = `<div class="card ftr">${rows.map((r) => r === '-' ? '<div class="ftr-sep"></div>' : `<div class="ftr-row ${r[4] ? 'sub' : ''}"><div><b>${r[1]}</b><small>${r[2]}</small></div><label class="switch"><input type="checkbox" data-ft="${r[0]}" ${(r[0].startsWith('__') ? r[3] : F[r[0]]) ? 'checked' : ''}><span></span></label></div>`).join('')}</div>`;
       $$('[data-ft]', b).forEach((x) => (x.onchange = () => {
-        if (x.dataset.ft === '__shift') DB.saveSettings({ requireShift: x.checked }); else if (x.dataset.ft === '__autoPayroll') DB.saveSettings({ autoPayroll: x.checked }); else DB.saveSettings({ features: { [x.dataset.ft]: x.checked } });
+        if (x.dataset.ft === '__shift') DB.saveSettings({ requireShift: x.checked }); else if (x.dataset.ft === '__autoPayroll') DB.saveSettings({ autoPayroll: x.checked }); else if (x.dataset.ft === '__autoAtt') DB.saveSettings({ autoAttendance: x.checked }); else DB.saveSettings({ features: { [x.dataset.ft]: x.checked } });
         audit('feature.' + x.dataset.ft, x.checked); UI.toast(L('تم الحفظ', 'Saved')); App.shell(); Modules.settings.tab = 'features';
       }));
     } else if (t === 'receipt') {

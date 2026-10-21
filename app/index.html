@@ -1600,6 +1600,59 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .upd-bar { height: 14px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
 .upd-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--p), #D14660); border-radius: 99px; transition: width .3s; }
 .upd-p #updPct { font-size: 22px; color: var(--p); }
+
+/* ---------- حول البرنامج ---------- */
+.ab { max-width: 980px; display: flex; flex-direction: column; gap: 16px; }
+.ab-hero { position: relative; overflow: hidden; border-radius: var(--r); padding: 28px; display: flex; gap: 24px; align-items: center; color: #fff; background: radial-gradient(120% 140% at 100% 0%, var(--p) 0%, var(--p-800) 70%); box-shadow: var(--shadow); }
+.ab-hero::after { content: ''; position: absolute; inset-inline-start: -60px; bottom: -80px; width: 260px; height: 260px; border-radius: 50%; background: rgba(255,255,255,.06); pointer-events: none; }
+.ab-logo { flex: 0 0 auto; background: #fff; border-radius: 26px; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.ab-logo img { width: 112px; height: 112px; display: block; }
+.ab-t { min-width: 0; flex: 1; position: relative; z-index: 1; }
+.ab-t h2 { margin: 0 0 6px; font-size: 28px; line-height: 1.25; letter-spacing: .2px; }
+.ab-t p { margin: 0 0 14px; opacity: .88; line-height: 1.8; font-size: 14px; }
+.ab-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.ab-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 13px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); white-space: nowrap; }
+.ab-chip svg { width: 15px; height: 15px; }
+.ab-chip.strong { background: #fff; color: var(--p-800); border-color: #fff; }
+.ab-chip.strong b { font-size: 14px; }
+.ab-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.ab-acts .btn.ab-w { background: #fff; color: var(--p-800); border-color: #fff; font-weight: 700; }
+.ab-acts .btn.ab-g { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.35); }
+.ab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ab-grid .card-h h3 { display: flex; align-items: center; gap: 8px; }
+.ab-grid .card-h h3 svg { width: 18px; height: 18px; color: var(--p); }
+.ab-info { display: flex; flex-direction: column; }
+.ab-i { display: grid; grid-template-columns: 30px auto 1fr; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px; }
+.ab-i:last-child { border-bottom: 0; }
+.ab-i .l { color: var(--text-2); white-space: nowrap; }
+.ab-i b { text-align: end; font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.ab-ii { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--p-50); color: var(--p); }
+.ab-ii svg { width: 16px; height: 16px; }
+.ab-row2 { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.wn-ver + .wn-ver { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.wn-h { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.wn-h b { font-size: 15px; color: var(--p); }
+.wn-h .faint { margin-inline-start: auto; font-size: 12px; }
+.wn ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.wn li { display: flex; gap: 10px; align-items: flex-start; line-height: 1.7; font-size: 13.5px; }
+.wn-ic { flex: 0 0 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: var(--ok-bg); color: var(--ok); margin-top: 1px; }
+.wn-ic svg { width: 14px; height: 14px; }
+.ab-dev-h { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.ab-av { flex: 0 0 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; font-weight: 800; font-size: 20px; color: #fff; background: linear-gradient(135deg, var(--p), var(--p-800)); }
+.ab-dev-n { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ab-dev-n b { font-size: 17px; }
+.ab-dev-n .faint { font-size: 12.5px; }
+.ab-dev-a { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 760px) {
+  .ab-grid { grid-template-columns: 1fr; }
+  .ab-hero { flex-direction: column; text-align: center; padding: 24px 18px; gap: 16px; }
+  .ab-logo img { width: 92px; height: 92px; }
+  .ab-t h2 { font-size: 24px; }
+  .ab-chips, .ab-acts { justify-content: center; }
+  .ab-acts .btn { flex: 1 1 150px; justify-content: center; }
+  .ab-dev-a .btn { flex: 1 1 140px; justify-content: center; }
+  .ab-dev-a .btn.wa { flex-basis: 100%; }
+}
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -1947,7 +2000,18 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.0.0', trialHours: 72 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.3.6', build: '', trialHours: 72 };
+/* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
+APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
+APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
+APP.loadVersion = async () => {
+  try {
+    if (APP.platform() === 'android') { const i = await window.Capacitor.Plugins.App.getInfo(); const v = String(i.version || ''); const m = v.match(/^(\d+\.\d+\.\d+)(?:\.(\d+))?/); if (m) { APP.version = m[1]; APP.build = m[2] || String(i.build || ''); } }
+    else if (APP.platform() === 'windows' && window.api.sys.version) { const v = await window.api.sys.version(); if (v) APP.version = String(v); }
+  } catch (_) {}
+  return APP.version;
+};
+APP.fullVersion = () => APP.version + (APP.build ? ` (${APP.build})` : '');
 let LANG = 'ar';
 const L = (ar, en) => (LANG === 'en' ? (en ?? ar) : ar);
 
@@ -3173,7 +3237,7 @@ const App = {
 
   async boot() {
     if (location.hash === '#display') return Display.render();
-    await DB.init();
+    await DB.init(); await APP.loadVersion();
     const s = DB.settings();
     LANG = s.lang || 'ar'; this.applyLang(); this.applyTheme(s.theme); applySkin(s.skin); applyFontScale(); LiveSync.init();
     if (!DB.find('users', (u) => u.username === 'admin')) {
@@ -3207,7 +3271,7 @@ const App = {
     const st = this.licenseState;
     document.body.innerHTML = `<div class="login-wrap">
       <section class="login-hero">
-        <div class="brand-row"><div class="mark"><img src="${logoSrc()}"></div><div><b style="font-size:18px">${esc(DB.settings().appName)}</b><div style="opacity:.75;font-size:13px">${L('الإصدار', 'Version')} ${APP.version}</div></div></div>
+        <div class="brand-row"><div class="mark"><img src="${logoSrc()}"></div><div><b style="font-size:18px">${esc(DB.settings().appName)}</b><div style="opacity:.75;font-size:13px">${L('الإصدار', 'Version')} <span class="num" dir="ltr">${APP.fullVersion()}</span></div></div></div>
         <div>
           <h1>${L('إدارة متكاملة لمركزك<br>بلمسة احترافية', 'Run your whole store<br>from one place')}</h1>
           <p class="lead">${L('مبيعات وإكسسوار المحمول، كاميرات المراقبة، ماكينات الشحن، محافظ الكاش وإنستا باي، المخزون والموردين، الورديات والمرتبات — كل ده في برنامج واحد.', 'Mobile accessories, CCTV, charging machines, cash wallets & InstaPay, stock, suppliers, shifts and payroll — all in one app.')}</p>
@@ -3252,6 +3316,7 @@ const App = {
       OnlineLicense.watch();
       try { SmsLink.start(); } catch (e) { console.warn(e); }
       try { AppUpdate.auto(); } catch (e) { console.warn(e); }
+      try { WhatsNew.auto(); } catch (e) { console.warn(e); }
       if (this.licenseState.state === 'expired') License.lockScreen(async () => { this.licenseState = await License.status(); this.shell(); });
     };
     setTimeout(() => $('#loginForm input[name=p]')?.focus(), 50);
@@ -9367,6 +9432,7 @@ Modules.settings = {
   render(el) {
     el.innerHTML = `<div class="row mb"><div id="stTabs"></div></div><div id="stBody"></div>`;
     UI.tabs($('#stTabs'), [{ id: 'store', label: L('بيانات المحل', 'Store'), icon: 'factory' }, { id: 'general', label: L('عام', 'General'), icon: 'settings' }, { id: 'features', label: L('المميزات', 'Features'), icon: 'layers' }, ...(Session.can('owner') ? [{ id: 'admin', label: L('الإدارة والأمان', 'Admin & security'), icon: 'shield' }] : []), { id: 'display', label: L('شاشة العرض', 'Display'), icon: 'pos' }, { id: 'receipt', label: L('تصميم الإيصال', 'Receipt'), icon: 'receipt' }, { id: 'label', label: L('ملصق الباركود', 'Barcode label'), icon: 'barcode' }, { id: 'lists', label: L('القوائم', 'Lists'), icon: 'layers' }, { id: 'wa', label: L('واتساب', 'WhatsApp'), icon: 'whatsapp' }, { id: 'ai', label: L('المساعد الذكي', 'AI'), icon: 'sparkles' }, { id: 'license', label: L('الترخيص', 'License'), icon: 'key' }, { id: 'about', label: L('حول البرنامج', 'About'), icon: 'info' }], this.tab, (t) => { this.tab = t; this.body(); });
+    try { const a = $('#stTabs .active, #stTabs [aria-selected="true"]'); if (a) a.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (_) {}
     this.body();
   },
   saveBar(onSave) { return `<div class="row mt"><div class="spacer"></div><button class="btn primary lg" id="stSave">${icon('check')}${L('حفظ الإعدادات', 'Save settings')}</button></div>`; },
@@ -9496,12 +9562,96 @@ Modules.settings = {
         <label class="lbl">${L('كود الجهاز', 'Machine ID')}</label><div class="mid-box">${mid}</div><div class="row mt"><button class="btn primary" id="licAct">${icon('key')}${L('إدخال مفتاح الترخيص', 'Enter license key')}</button></div></div>`;
       $('#licAct').onclick = () => License.activationDialog(async () => { App.licenseState = await License.status(); this.body(); App.refreshTop(); });
     } else if (t === 'about') {
-      b.innerHTML = `<div class="card" style="max-width:760px;overflow:hidden"><div style="background:linear-gradient(135deg,var(--p),var(--p-800));color:#fff;padding:30px;display:flex;gap:20px;align-items:center"><div style="background:#fff;border-radius:24px;padding:8px"><img src="${logoSrc()}" style="width:110px;height:110px"></div><div><h2 style="margin:0;font-size:26px">${esc(s.appName)}</h2><div style="opacity:.85">${L('الإصدار', 'Version')} ${APP.version} · ${DB.engine()}</div><div style="opacity:.85;margin-top:6px">${L('نظام مبيعات متكامل لمراكز إكسسوار المحمول وكاميرات المراقبة وخدمات الكاش', 'Complete POS for mobile accessories, CCTV and cash services')}</div></div></div>
-        <div class="card-b"><h3>${L('المصمم والمطور', 'Designer & developer')}</h3><div class="row"><div class="avatar" style="width:54px;height:54px;border-radius:16px;font-size:18px">أب</div><div><b style="font-size:16px">${L('م/ أسامة حسن بدري', 'Eng. Osama Hassan Badry')}</b><div class="faint num" dir="ltr">01145060007</div></div><div class="spacer"></div><button class="btn wa" id="abWa">${icon('whatsapp')}${L('تواصل واتساب', 'WhatsApp')}</button><button class="btn" id="abCall">${icon('call')}</button></div>
-        <div class="page-footer">${copyrightHTML()}</div></div></div>`;
-      $('#abWa').onclick = () => sendWhatsApp(DEV_PHONE, L('السلام عليكم م/ أسامة، بخصوص برنامج Markaz Ahllan POS', 'Hello Eng. Osama, regarding Markaz Ahllan POS'));
-      $('#abCall').onclick = () => openExternal('tel:01145060007');
+      await APP.loadVersion(); b.innerHTML = About.html(); About.bind(b);
     }
+  }
+};
+
+
+/* =========================================================
+   حول البرنامج + ما الجديد
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const CHANGELOG = [
+  { v: '1.3.6', d: '2026-10-21', items: [
+    ['info', L('صفحة «حول البرنامج» بتصميم جديد يناسب الموبايل والكمبيوتر، ورقم الإصدار بيتحدث تلقائي مع كل تحديث', 'Redesigned About page; version number updates automatically')],
+    ['refresh', L('زرار «التحقق من التحديثات» ومعلومات النظام (المنصة، حجم البيانات، آخر نسخة احتياطية، الترخيص)', 'Update check button and system info')],
+    ['send', L('«إرسال مشكلة للدعم» بيبعت وصف المشكلة ومعلومات الجهاز للمطور على واتساب', 'Report a problem to the developer via WhatsApp')],
+    ['sparkles', L('نافذة «ما الجديد» بتظهر مرة واحدة بعد كل تحديث', '"What\'s new" shows once after each update')]] },
+  { v: '1.3.5', d: '2026-10-20', items: [
+    ['zap', L('إجمالي النقدية في لوحة التحكم = الدرج + الخزينة، مع فصلهم في فتح وغلق الوردية والتقارير', 'Dashboard total cash = drawer + safe; split kept in shifts and reports')],
+    ['card', L('88 فئة كروت شحن وقيم شحن رصيد لكل الشبكات بتتضاف تلقائياً، مع فلتر كروت / شحن', '88 card & top-up values for all networks, auto-added')],
+    ['fingerprint', L('الحضور والانصراف بيتسجلوا تلقائي مع فتح وغلق وردية الكاشير، وبيانات الموظف بتتسحب من المستخدمين', 'Attendance auto-linked to cashier shifts; employee data pulled from users')]] },
+  { v: '1.3.4', d: '2026-10', items: [
+    ['phone', L('الموبايلات: حجز بعربون، شهادة ضمان، مرتجع للمورد، شراء أكثر من IMEI، استيراد وتصدير Excel', 'Phones: deposits, warranty certificate, supplier return, multi-IMEI, Excel')],
+    ['cctv', L('كاميرات المراقبة: صور التركيب، تكرار الشغلانة، تذكير بالزيارة والضمان، إيصال دفعة', 'CCTV: photos, duplicate job, visit/warranty reminders, payment receipt')],
+    ['send', L('إشعار الرسائل بقى نافذة تتحرك داخل البرنامج مع ربط عميل الآجل', 'Draggable SMS popup with credit-customer link')]] },
+  { v: '1.3.2', d: '2026-10', items: [['download', L('إصلاح «تحديث الآن» مع شريط يوضح نسبة التحميل', 'Fixed “Update now” with a download progress bar')]] },
+  { v: '1.3.0', d: '2026-10', items: [['cctv', L('قسم كامل لكاميرات المراقبة: عروض أسعار، عربون وأقساط، مخزون وأرباح', 'Full CCTV section: quotes, deposits, stock & profit')], ['phone', L('قسم الموبايلات الجديد والمستعمل مع البدل (Trade-in)', 'New & used phones section with trade-in')]] }
+];
+const WhatsNew = {
+  list(n) { return CHANGELOG.slice(0, n || CHANGELOG.length).map((r, i) => `<div class="wn-ver"><div class="wn-h"><b class="num" dir="ltr">v${r.v}</b>${i === 0 ? `<span class="tag ok">${L('الأحدث', 'Latest')}</span>` : ''}<span class="faint num">${esc(r.d)}</span></div><ul>${r.items.map(([ic, t]) => `<li><span class="wn-ic">${icon(ic)}</span><span>${t}</span></li>`).join('')}</ul></div>`).join(''); },
+  show(n) { UI.modal({ title: L('ما الجديد في البرنامج ✨', "What's new ✨"), icon: 'sparkles', size: 'md', body: `<div class="wn">${this.list(n)}</div>`, actions: [{ label: L('تمام', 'OK'), cls: 'primary', icon: 'check', onClick: (m) => m.close() }] }); },
+  /* بتظهر مرة واحدة بعد كل تحديث (مش أول تشغيل) */
+  auto() {
+    let seen = ''; try { seen = localStorage.getItem('mah:seenVer') || ''; } catch (_) {}
+    try { localStorage.setItem('mah:seenVer', APP.version); } catch (_) {}
+    if (seen && seen !== APP.version && CHANGELOG[0].v === APP.version) setTimeout(() => this.show(1), 1500);
+  }
+};
+const About = {
+  site() { return (typeof LICENSE_SERVER !== 'undefined' && LICENSE_SERVER.site ? LICENSE_SERVER.site : '').replace(/\/$/, ''); },
+  size() { try { const n = JSON.stringify(DB.exportAll()).length; return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; } catch (_) { return '—'; } },
+  records() { try { return Object.values(DB.exportAll()).reduce((a, v) => a + (Array.isArray(v) ? v.length : 0), 0); } catch (_) { return 0; } },
+  async info() {
+    const st = App.licenseState || await License.status(); const s = DB.settings(); const lb = s.backup?.lastManual || s.backup?.lastAuto;
+    let mid = ''; try { mid = await License.machineId(); } catch (_) {}
+    return [
+      ['globe', L('المنصة', 'Platform'), APP.platformName()],
+      ['database', L('قاعدة البيانات', 'Database'), DB.engine()],
+      ['layers', L('حجم البيانات', 'Data size'), `${num(this.records())} ${L('سجل', 'records')} · <span dir="ltr">${this.size()}</span>`],
+      ['history', L('آخر نسخة احتياطية', 'Last backup'), lb ? fmtDT(lb) : `<span style="color:var(--err,#c0392b)">${L('لم تتم بعد', 'Never')}</span>`],
+      ['shield', L('الترخيص', 'License'), st.state === 'active' ? `${License.typeName(st.info.t)}${st.info.e ? ' — ' + L('حتى', 'until') + ' ' + fmtDate(st.info.e) : ''}` : st.state === 'trial' ? L('نسخة تجريبية', 'Trial') : L('منتهي', 'Expired')],
+      ['key', L('كود الجهاز', 'Machine ID'), `<span class="mono" dir="ltr">${esc(String(mid).slice(0, 19))}</span>`]
+    ];
+  },
+  html() {
+    const s = DB.settings(); const plat = APP.platform();
+    return `<div class="ab">
+      <div class="ab-hero">
+        <div class="ab-logo"><img src="${logoSrc()}" alt=""></div>
+        <div class="ab-t">
+          <h2>${esc(s.appName || APP.name)}</h2>
+          <p>${L('نظام مبيعات متكامل لمراكز إكسسوار المحمول وكاميرات المراقبة وخدمات الكاش', 'Complete POS for mobile accessories, CCTV and cash services')}</p>
+          <div class="ab-chips"><span class="ab-chip strong">${icon('award')}<span>${L('الإصدار', 'Version')}</span><b class="num" dir="ltr">${APP.fullVersion()}</b></span><span class="ab-chip">${icon(plat === 'android' ? 'phone' : plat === 'windows' ? 'dashboard' : 'globe')}${APP.platformName()}</span></div>
+          <div class="ab-acts"><button class="btn ab-w" id="abUpd">${icon('refresh')}${L('التحقق من التحديثات', 'Check for updates')}</button><button class="btn ab-g" id="abNew">${icon('sparkles')}${L('ما الجديد', "What's new")}</button></div>
+        </div>
+      </div>
+      <div class="ab-grid">
+        <div class="card"><div class="card-h"><h3>${icon('info')} ${L('معلومات النظام', 'System info')}</h3></div><div class="card-b"><div class="ab-info" id="abInfo"><div class="faint">…</div></div>
+          <div class="ab-row2"><button class="btn sm" id="abCopy">${icon('copy')}${L('نسخ معلومات النظام', 'Copy system info')}</button><button class="btn sm" id="abBk">${icon('download')}${L('نسخة احتياطية', 'Backup')}</button></div></div></div>
+        <div class="card"><div class="card-h"><h3>${icon('sparkles')} ${L('آخر التحديثات', 'Recent changes')}</h3><button class="btn sm ghost" id="abAll">${L('عرض الكل', 'View all')}</button></div><div class="card-b wn">${WhatsNew.list(1)}</div></div>
+      </div>
+      <div class="card ab-dev"><div class="card-b">
+        <div class="ab-dev-h"><div class="ab-av">أب</div><div class="ab-dev-n"><span class="faint">${L('المصمم والمطور', 'Designer & developer')}</span><b>${L('م/ أسامة حسن بدري', 'Eng. Osama Hassan Badry')}</b><span class="num faint" dir="ltr">01145060007</span></div></div>
+        <div class="ab-dev-a"><button class="btn wa" id="abWa">${icon('whatsapp')}${L('تواصل واتساب', 'WhatsApp')}</button><button class="btn" id="abSup">${icon('send')}${L('إرسال مشكلة للدعم', 'Report a problem')}</button><button class="btn" id="abCall">${icon('call')}${L('اتصال', 'Call')}</button>${navigator.share ? `<button class="btn" id="abShare">${icon('swap')}${L('مشاركة البرنامج', 'Share app')}</button>` : ''}</div>
+</div></div>
+    </div>`;
+  },
+  async text() { const rows = await this.info(); const strip = (h) => String(h).replace(/<[^>]+>/g, ''); return [`${APP.name} v${APP.fullVersion()}`, ...rows.map(([, k, v]) => `${k}: ${strip(v)}`), `${L('المستخدم', 'User')}: ${Session.user ? Session.user.name : ''}`, `${L('التاريخ', 'Date')}: ${fmtDT(nowISO())}`].join('\n'); },
+  async bind(b) {
+    const rows = await this.info();
+    $('#abInfo', b).innerHTML = rows.map(([ic, k, v]) => `<div class="ab-i"><span class="ab-ii">${icon(ic)}</span><span class="l">${k}</span><b>${v}</b></div>`).join('');
+    $('#abNew', b).onclick = () => WhatsNew.show(); $('#abAll', b).onclick = () => WhatsNew.show();
+    $('#abUpd', b).onclick = () => { const p = APP.platform(); if (p === 'android') return AppUpdate.check(true); if (p === 'windows' && this.site()) { UI.toast(L('هيفتح صفحة التحميل — قارن رقم الإصدار باللي عندك', 'Opening the download page'), 'info'); return openExternal(this.site() + '/'); } UI.toast(L('نسخة الويب بتتحدث لوحدها — اقفل الصفحة وافتحها تاني', 'The web version updates itself — reopen the page'), 'info', 5000); };
+    $('#abCopy', b).onclick = async () => { (await copyText(await this.text())) ? UI.toast(L('تم نسخ معلومات النظام', 'Copied')) : UI.toast(L('تعذر النسخ', 'Copy failed'), 'err'); };
+    $('#abBk', b).onclick = () => Backup.export();
+    $('#abWa', b).onclick = () => sendWhatsApp(DEV_PHONE, L('السلام عليكم م/ أسامة، بخصوص برنامج Markaz Ahllan POS', 'Hello Eng. Osama, regarding Markaz Ahllan POS'));
+    $('#abSup', b).onclick = () => UI.modal({ title: L('إرسال مشكلة للدعم', 'Report a problem'), icon: 'send', size: 'sm', body: `<label class="lbl">${L('اوصف المشكلة باختصار', 'Describe the problem')}</label><textarea id="supTx" style="min-height:120px" placeholder="${L('مثال: لما بدوس حفظ في شاشة...', 'e.g. when I press save in...')}"></textarea><div class="faint mt">${L('معلومات النظام بتتبعت مع الرسالة عشان المطور يعرف الإصدار والجهاز (من غير أي بيانات عملاء).', 'System info is attached (no customer data).')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('إرسال واتساب', 'Send via WhatsApp'), cls: 'primary', icon: 'whatsapp', onClick: async (m) => { const t = ($('#supTx') || {}).value || ''; if (!t.trim()) return UI.toast(L('اكتب المشكلة الأول', 'Write the problem first'), 'err'); sendWhatsApp(DEV_PHONE, `🛠️ ${L('بلاغ مشكلة', 'Problem report')}\n${t.trim()}\n\n— ${s0()}\n${await this.text()}`); m.close(); } }] });
+    const s0 = () => DB.settings().store?.name || DB.settings().appName || '';
+    $('#abCall', b).onclick = () => openExternal('tel:01145060007');
+    const sh = $('#abShare', b); if (sh) sh.onclick = () => navigator.share({ title: APP.name, text: L('برنامج Markaz Ahllan POS لإدارة محلات الموبايلات والكاميرات وخدمات الكاش', 'Markaz Ahllan POS'), url: this.site() || undefined }).catch(() => {});
   }
 };
 

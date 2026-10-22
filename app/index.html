@@ -2198,7 +2198,7 @@ const DEFAULT_SETTINGS = {
   inst: {},
   wa: { mode: 'auto', minGap: 25, dailyMax: 150, workFrom: '09:00', workTo: '22:00' },
   control: { maxDiscountPct: 10, approveReturns: true, approveDeletes: true, wasteApproveOver: 1000 },
-  ownerReport: { on: false, phone: '', auto: true, lowStock: true },
+  ownerReport: { on: false, phone: '', auto: true, autoSend: true, pdf: true, lowStock: true },
   cloud: { code: '', auto: true, everyHours: 24, keep: 7, lastAt: null, lastErr: '', lastSize: 0 },
   repair: {
     autoWA: true, warrantyDays: 30, inspectionFee: 0,
@@ -8284,8 +8284,7 @@ Modules.wallets = {
       { name: 'feeMin', label: L('أقل عمولة', 'Minimum fee'), type: 'number', col: 3, value: 5 }, { name: 'networkFeeMode', label: L('رسوم الشبكة على التحويل', 'Network send fee'), type: 'select', col: 3, options: [['pct', L('نسبة مئوية %', 'Percentage %')], ['fixed', L('مبلغ ثابت (ج.م)', 'Fixed amount')]] }, { name: 'networkFeePct', label: L('قيمة رسوم الشبكة', 'Network fee value'), type: 'number', col: 3, value: 0, attrs: 'step="any" min="0"' },
       ...(w && Session.can('wallets.manage') ? [{ name: 'openingBalance', label: L('الرصيد الافتتاحي (للمسؤول)', 'Opening balance (admin)'), type: 'number', col: 4 }] : []),
       { name: 'active', label: L('نشطة', 'Active'), type: 'checkbox', col: 4 }, { name: 'fav', label: L('مفضلة (تظهر أولاً)', 'Favorite'), type: 'checkbox', col: 4 },
-      { type: 'html', col: 12, html: `<div class="faint" style="border-top:1px dashed var(--line-2);padding-top:10px">${L('QR التحويل على شاشة العرض — العميل يمسحه فيفتحله الاتصال بالكود جاهز (من غير الرقم السري)', 'Transfer QR on the display — scanning opens the dialer with the code ready')}</div>` },
-      { name: 'qrOn', label: L('إظهار QR التحويل', 'Show transfer QR'), type: 'checkbox', col: 4 }, { name: 'qrCode', label: L('كود التحويل / رابط الدفع', 'Transfer code / link'), col: 8, attrs: 'dir="ltr" class="mono"' }], w ? { qrOn: w.qrOn !== false, ...w, qrCode: WalletQR.code(w) } : { active: true, network: 'vodafone', networkFeeMode: 'pct', ...NET_LIMITS.vodafone }) + `<datalist id="phoneBrands">${PHONE_BRANDS.map(([en, ar]) => `<option value="${en}">${ar}</option>`).join('')}</datalist>`,
+      { name: 'qrLink', label: L('رابط الدفع للـ QR على شاشة العرض (اختياري — من غيره الـ QR بيتعمل برقم المحفظة)', 'Payment link for the display QR (optional)'), col: 12, attrs: 'dir="ltr" placeholder="https://"' }], w || { active: true, network: 'vodafone', networkFeeMode: 'pct', ...NET_LIMITS.vodafone }) + `<datalist id="phoneBrands">${PHONE_BRANDS.map(([en, ar]) => `<option value="${en}">${ar}</option>`).join('')}</datalist>`,
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (x) => {
         if (!UI.validate(x.el)) return; const v = UI.read(x.el); if (!v.name) v.name = `${netName(v.network)} ${String(v.number).slice(-4)}`;
         ['openingBalance', 'txLimit', 'dailyLimit', 'monthlyLimit', 'dailyInLimit', 'monthlyInLimit', 'feeWithdraw', 'feeDeposit', 'feeMin', 'networkFeePct', 'lowBalance'].forEach((k) => { if (k in v) v[k] = Number(v[k]) || 0; });
@@ -8293,8 +8292,6 @@ Modules.wallets = {
       } }] });
     const fm = $('[name=networkFeeMode]', em.el), fv = $('[name=networkFeePct]', em.el); const feeLbl = () => { const l = fv.closest('.fld,.field,label,div')?.querySelector('label'); if (l) l.textContent = fm.value === 'fixed' ? L('رسوم الشبكة (ج.م لكل تحويل)', 'Network fee (EGP per transfer)') : L('رسوم الشبكة (% من المبلغ)', 'Network fee (% of amount)'); };
     if (fm) { if (!w?.networkFeeMode) fm.value = 'pct'; fm.onchange = feeLbl; feeLbl(); }
-    { const qc = $('[name=qrCode]', em.el), nn = $('[name=number]', em.el), nw = $('[name=network]', em.el); let touched = !!(w && w.qrCode); if (!w) { const q1 = $('[name=qrOn]', em.el); if (q1) q1.checked = true; }
-      if (qc) { qc.placeholder = WalletQR.hint(nw.value); qc.addEventListener('input', () => (touched = true)); const fill = () => { qc.placeholder = WalletQR.hint(nw.value); if (!touched) qc.value = WalletQR.auto(nw.value, nn.value); }; nn.addEventListener('input', fill); nw.addEventListener('change', fill); if (!qc.value) fill(); } }
     if (!w) { const touched = new Set(); Object.keys(NET_LIMITS.vodafone).forEach((k) => { const i = $(`[name=${k}]`, em.el); if (i) i.addEventListener('input', () => touched.add(k)); });
       $('[name=network]', em.el).addEventListener('change', (e) => { const d = NET_LIMITS[e.target.value]; Object.keys(NET_LIMITS.vodafone).forEach((k) => { const i = $(`[name=${k}]`, em.el); if (i && !touched.has(k)) i.value = d ? d[k] : ''; }); }); }
   },
@@ -10306,10 +10303,10 @@ const CHANGELOG = [
     ['whatsapp', L('ربط واتساب المحل بالبرنامج بالـ QR: الإيصالات والتذكيرات بتتبعت تلقائي بفاصل زمني آمن', 'Link WhatsApp by QR: receipts & reminders sent automatically with safe pacing')],
     ['printer', L('مركز طباعة جديد: معاينة + طباعة + PDF + واتساب، ولو مفيش طابعة تعمل PDF بضغطة', 'New print center: preview, print, PDF and WhatsApp')],
     ['receipt', L('تصميم الإيصال: 3 أشكال (عصري / كلاسيك / مختصر) ومعاينة لفاتورة المبيعات وإيصال المحافظ', 'Receipt designer with 3 styles and sales/wallet preview')],
-    ['qr', L('QR التحويل تحت كل رقم على شاشة العرض بلون المحفظة — العميل يمسحه يلاقي كود التحويل جاهز', 'Transfer QR under each wallet on the display')],
+    ['qr', L('«اعرضها على الشاشة الآن» بيظهر QR بلون المحفظة: برابط الدفع لو حطيته، أو برقم المحفظة', 'Show-now displays a QR (payment link or wallet number)')],
     ['cloud', L('نسخ احتياطي سحابي مشفّر تلقائي (كل يوم ومع غلق كل وردية) + Google Drive', 'Encrypted cloud backup daily and on every shift close + Google Drive')],
     ['shield', L('دخول آمن للأجهزة الجديدة بكود OTP، وموافقة المدير على الخصم الكبير والمرتجع والهالك', 'OTP login for new devices; manager approval for big discounts, returns and waste')],
-    ['eye', L('لوحة المالك المباشرة، تقرير غلق الوردية على واتساب، وخطة الشراء والنواقص', 'Owner live view, shift report on WhatsApp, purchase plan')],
+    ['eye', L('تقرير غلق الوردية بيوصل لصاحب المحل على واتساب تلقائي (ملخص + PDF احترافي)، ولوحة المالك المباشرة، وخطة الشراء', 'Shift report auto-sent to the owner (summary + PDF), owner live view, purchase plan')],
     ['calc', L('آلة حاسبة سريعة (F8) بتتحرك في أي مكان وتحط الناتج في الخانة', 'Floating calculator (F8)')],
     ['trash', L('صفحة التالف والهوالك مع تحليلات (حسب السبب، أكتر الأصناف، نسبة من المبيعات)', 'Damaged & waste page with insights')],
     ['sun', L('اللوجو بقى مناسب للوضع الداكن', 'Logo adapted for dark mode')]] },
@@ -10492,7 +10489,7 @@ const Security = {
  * - أثناء عملية سحب: المحفظة اللي العميل هيحوّل عليها بتظهر لوحدها كبيرة مع المبلغ
  * - التواصل بين البرنامج والشاشة: BroadcastChannel + localStorage (بيشتغل على الكمبيوتر والمتصفح)
  * ========================================================= */
-const DISPLAY_DEFAULT = { showQR: true, title: 'حوّل على أي رقم من دول', message: 'سعداء بزيارتكم — مركز أهلاً للخدمات الإلكترونية', ticker: '', showOwner: true, showAvail: true, showNetwork: true, hideFull: true, focusOnOp: true, focusSec: 90, showAmount: true, cols: 'auto', theme: 'brand', refreshSec: 15 };
+const DISPLAY_DEFAULT = { title: 'حوّل على أي رقم من دول', message: 'سعداء بزيارتكم — مركز أهلاً للخدمات الإلكترونية', ticker: '', showOwner: true, showAvail: true, showNetwork: true, hideFull: true, focusOnOp: true, focusSec: 90, showAmount: true, cols: 'auto', theme: 'brand', refreshSec: 15 };
 const Display = {
   KEY: 'mah:display:live',
   cfg() { return { ...DISPLAY_DEFAULT, ...(DB.settings().display || {}) }; },
@@ -10575,7 +10572,6 @@ const Display = {
           { name: 'showNetwork', label: L('إظهار اسم الشبكة', 'Show network'), type: 'checkbox', col: 6 }, { name: 'hideFull', label: L('إخفاء المحفظة لما توصل للحد اليومي', 'Hide wallets at daily limit'), type: 'checkbox', col: 6 },
           { name: 'focusOnOp', label: L('أثناء عملية السحب: اعرض المحفظة المختارة لوحدها كبيرة', 'During withdrawal: show the chosen wallet full-screen'), type: 'checkbox', col: 12 },
           { name: 'showAmount', label: L('إظهار المبلغ المطلوب تحويله', 'Show requested amount'), type: 'checkbox', col: 6 },
-          { name: 'showQR', label: L('إظهار QR التحويل تحت كل رقم (بلون المحفظة)', 'Show transfer QR under each number'), type: 'checkbox', col: 6 },
           { name: 'focusSec', label: L('مدة العرض الكبير (ثانية)', 'Focus duration (sec)'), type: 'select', options: [[30, '30'], [60, '60'], [90, '90'], [120, '120'], [180, '180']], col: 6 },
           { name: 'cols', label: L('عدد الكروت في الصف', 'Cards per row'), type: 'select', options: [['auto', L('تلقائي', 'Auto')], [1, '1'], [2, '2'], [3, '3'], [4, '4']], col: 6 },
           { name: 'theme', label: L('ألوان الشاشة', 'Screen theme'), type: 'select', options: [['brand', L('لون البرنامج', 'Brand')], ['dark', L('داكن', 'Dark')], ['light', L('فاتح', 'Light')]], col: 6 },
@@ -10754,68 +10750,126 @@ const Approve = {
   }
 };
 
-/* ---------------- 2) تقرير الوردية لصاحب المحل ---------------- */
+/* ---------------- 2) تقرير الوردية لصاحب المحل (واتساب تلقائي + PDF احترافي) ---------------- */
 const OwnerReport = {
-  cfg() { return DB.settings().ownerReport || {}; },
+  cfg() { return { on: false, phone: '', auto: true, autoSend: true, pdf: true, lowStock: true, ...(DB.settings().ownerReport || {}) }; },
   data(s) {
-    const sales = DB.filter('sales', (x) => x.shiftId === s.id && x.status !== 'cancelled');
-    const wt = DB.filter('walletTx', (t) => t.shiftId === s.id && t.type !== 'sale'), mt = DB.filter('machineTx', (t) => t.shiftId === s.id);
-    const ex = DB.filter('expenses', (e) => e.shiftId === s.id);
-    const top = {}; sales.forEach((x) => (x.items || []).forEach((i) => { if (i.tradeIn || i.reserveDep) return; const q = (Number(i.qty) || 0) - (Number(i.returned) || 0); if (q > 0) top[i.name] = (top[i.name] || 0) + q; }));
-    const best = Object.entries(top).sort((a, b) => b[1] - a[1])[0];
+    const inS = (x) => x.shiftId === s.id;
+    const sales = DB.filter('sales', (x) => inS(x) && x.status !== 'cancelled');
+    const wt = DB.filter('walletTx', (t) => inS(t) && t.type !== 'sale'), mt = DB.filter('machineTx', inS), ex = DB.filter('expenses', inS);
+    const ip = DB.filter('instPays', inS);
+    const pays = {}; sales.forEach((x) => (x.payments || []).forEach((p) => (pays[p.method] = round2((pays[p.method] || 0) + (Number(p.amount) || 0)))));
+    const items = {}; sales.forEach((x) => (x.items || []).forEach((i) => { if (i.tradeIn || i.reserveDep) return; const q = (Number(i.qty) || 0) - (Number(i.returned) || 0); if (q <= 0) return; const k = i.name; items[k] = items[k] || { q: 0, v: 0 }; items[k].q += q; items[k].v += q * (Number(i.price) || 0) - (Number(i.discount) || 0); }));
+    const top = Object.entries(items).sort((a, b) => b[1].v - a[1].v).slice(0, 5);
+    const byW = {}; wt.forEach((t) => { const n = DB.get('wallets', t.walletId)?.name || '—'; byW[n] = byW[n] || { n: 0, a: 0, f: 0 }; byW[n].n++; byW[n].a += Number(t.amount) || 0; byW[n].f += Number(t.fee) || 0; });
+    const exC = {}; ex.forEach((e) => (exC[e.category || L('أخرى', 'Other')] = (exC[e.category || L('أخرى', 'Other')] || 0) + (Number(e.amount) || 0)));
+    const prev = DB.filter('shifts', (x) => x.status === 'closed' && x.id !== s.id && x.closeAt && x.closeAt < (s.closeAt || nowISO())).sort((a, b) => (a.closeAt < b.closeAt ? 1 : -1)).slice(0, 7);
+    const avgPrev = prev.length ? sum(prev, (x) => sum(DB.filter('sales', (y) => y.shiftId === x.id && y.status !== 'cancelled'), Sales.net)) / prev.length : 0;
     const d = {
-      user: DB.get('users', s.userId)?.name || s.userName || '', open: s.openAt, close: s.closeAt,
-      n: sales.length, net: round2(sum(sales, Sales.net)), profit: round2(sum(sales, Sales.netProfit)), returns: round2(sum(sales, (x) => x.returnedTotal || 0)),
-      discount: round2(sum(sales, (x) => x.discount || 0)), wN: wt.length, wAmt: round2(sum(wt, (t) => t.amount)), fees: round2(sum(wt, (t) => t.fee || 0)),
-      mN: mt.length, mProfit: round2(sum(mt, mProfit)), exp: round2(sum(ex, (e) => e.amount)), best,
+      user: DB.get('users', s.userId)?.name || s.userName || '', open: s.openAt, close: s.closeAt, hours: s.closeAt ? (Date.parse(s.closeAt) - Date.parse(s.openAt)) / 36e5 : 0,
+      n: sales.length, net: round2(sum(sales, Sales.net)), profit: round2(sum(sales, Sales.netProfit)), returns: round2(sum(sales, (x) => x.returnedTotal || 0)), discount: round2(sum(sales, (x) => x.discount || 0)),
+      avgTicket: sales.length ? round2(sum(sales, Sales.net) / sales.length) : 0, pays, top, byW, exC,
+      wN: wt.length, wAmt: round2(sum(wt, (t) => t.amount)), fees: round2(sum(wt, (t) => t.fee || 0)), mN: mt.length, mAmt: round2(sum(mt, (t) => t.amount)), mProfit: round2(sum(mt, mProfit)),
+      exp: round2(sum(ex, (e) => e.amount)), instN: ip.length, inst: round2(sum(ip, (x) => x.amount + (x.lateFee || 0))), instProfit: round2(sum(ip, (x) => (x.interestPart || 0) + (x.lateFee || 0))),
       low: DB.filter('products', (p) => p.active !== false && p.trackStock !== false && Number(p.qty) <= Number(p.minQty || 0)).length,
-      approvals: DB.filter('auditLog', (a) => a.action === 'approve' && a.date >= s.openAt && (!s.closeAt || a.date <= s.closeAt)).length
+      approvals: DB.filter('auditLog', (a) => a.action === 'approve' && a.date >= s.openAt && (!s.closeAt || a.date <= s.closeAt)),
+      avgPrev: round2(avgPrev)
     };
-    d.total = round2(d.profit + d.fees + d.mProfit - d.exp);
+    d.total = round2(d.profit + d.fees + d.mProfit + d.instProfit - d.exp);
+    d.vsPrev = avgPrev ? Math.round(((d.net - avgPrev) / avgPrev) * 100) : null;
     return d;
   },
   text(s) {
-    const d = this.data(s); const st = DB.settings(); const store = st.store?.name || st.appName || APP.name; const M = (v) => money(v);
-    const diff = Number(s.diff) || 0;
+    const d = this.data(s); const st = DB.settings(); const store = st.store?.name || st.appName || APP.name; const M = (v) => money(v); const diff = Number(s.diff) || 0;
+    const hr = d.hours ? `${Math.floor(d.hours)}${L('س', 'h')} ${Math.round((d.hours % 1) * 60)}${L('د', 'm')}` : '';
+    const payLine = Object.entries(d.pays).filter(([, v]) => v).map(([k, v]) => `${payName(k)} ${M(v)}`).join(' • ');
     return [
-      `📊 *${L('تقرير وردية', 'Shift report')} — ${store}*`,
-      `👤 ${L('الكاشير', 'Cashier')}: ${d.user}`,
-      `🕘 ${fmtDT(d.open)} ← ${d.close ? fmtDT(d.close) : L('لسه مفتوحة', 'still open')}`,
-      '━━━━━━━━━━',
-      `🛒 ${L('المبيعات', 'Sales')}: ${d.n} ${L('فاتورة', 'invoices')} — *${M(d.net)}*`,
-      d.returns ? `↩️ ${L('مرتجعات', 'Returns')}: ${M(d.returns)}` : '',
-      d.discount ? `🏷️ ${L('خصومات', 'Discounts')}: ${M(d.discount)}` : '',
-      `💰 ${L('ربح المبيعات', 'Sales profit')}: ${M(d.profit)}`,
-      d.wN ? `📲 ${L('المحافظ', 'Wallets')}: ${d.wN} ${L('عملية', 'ops')} (${M(d.wAmt)}) — ${L('عمولة', 'fees')} ${M(d.fees)}` : '',
-      d.mN ? `⚡ ${L('الماكينات', 'Machines')}: ${d.mN} ${L('عملية', 'ops')} — ${L('ربح', 'profit')} ${M(d.mProfit)}` : '',
-      d.exp ? `🧾 ${L('المصروفات', 'Expenses')}: ${M(d.exp)}` : '',
-      `✅ *${L('صافي ربح الوردية', 'Shift net profit')}: ${M(d.total)}*`,
-      '━━━━━━━━━━',
-      s.counted != null ? `💵 ${L('النقدية', 'Cash')}: ${L('الدرج', 'drawer')} ${M(s.drawerCash || 0)} + ${L('الخزينة', 'safe')} ${M(s.safeCash || 0)} = *${M(s.counted)}*` : '',
-      s.counted != null ? `📌 ${L('المتوقع', 'Expected')} ${M(s.expected)} — ${!diff ? L('مطابق ✅', 'matched ✅') : diff > 0 ? `${L('زيادة', 'over')} ${M(diff)} ⬆️` : `${L('عجز', 'short')} ${M(-diff)} ⚠️`}` : '',
+      `📊 *${L('تقرير غلق الوردية', 'Shift close report')}*`, `🏪 ${store}`,
+      `👤 ${d.user}${hr ? ' • ⏱️ ' + hr : ''}`, `🕘 ${fmtDT(d.open)}${d.close ? ' ← ' + fmtTime(d.close) : ''}`,
+      '━━━━━━━━━━━━',
+      `✅ *${L('صافي ربح الوردية', 'Net profit')}: ${M(d.total)}*`,
+      '━━━━━━━━━━━━',
+      `🛒 *${L('المبيعات', 'Sales')}:* ${M(d.net)} (${d.n} ${L('فاتورة', 'inv.')})${d.vsPrev != null ? ` ${d.vsPrev >= 0 ? '📈 +' : '📉 '}${d.vsPrev}% ${L('عن المتوسط', 'vs avg')}` : ''}`,
+      d.n ? `   ${L('متوسط الفاتورة', 'Avg ticket')}: ${M(d.avgTicket)} • ${L('ربح', 'profit')}: ${M(d.profit)}` : '',
+      payLine ? `   💳 ${payLine}` : '',
+      d.discount || d.returns ? `   🏷️ ${L('خصومات', 'Discounts')} ${M(d.discount)} • ↩️ ${L('مرتجعات', 'Returns')} ${M(d.returns)}` : '',
+      d.wN ? `📲 *${L('المحافظ', 'Wallets')}:* ${d.wN} ${L('عملية', 'ops')} — ${M(d.wAmt)} • ${L('عمولة', 'fees')} ${M(d.fees)}` : '',
+      d.mN ? `⚡ *${L('الماكينات والكروت', 'Machines')}:* ${d.mN} ${L('عملية', 'ops')} — ${L('ربح', 'profit')} ${M(d.mProfit)}` : '',
+      d.instN ? `📅 *${L('أقساط اتحصّلت', 'Installments')}:* ${d.instN} — ${M(d.inst)}` : '',
+      d.exp ? `🧾 *${L('المصروفات', 'Expenses')}:* ${M(d.exp)}${Object.keys(d.exC).length ? ' (' + Object.entries(d.exC).slice(0, 3).map(([k, v]) => `${k} ${num(v)}`).join('، ') + ')' : ''}` : '',
+      '━━━━━━━━━━━━',
+      s.counted != null ? `💵 *${L('النقدية', 'Cash')}:* ${L('الدرج', 'drawer')} ${M(s.drawerCash || 0)} + ${L('الخزينة', 'safe')} ${M(s.safeCash || 0)} = *${M(s.counted)}*` : '',
+      s.counted != null ? `📌 ${L('المتوقع', 'Expected')} ${M(s.expected)} ← ${!diff ? L('مطابق ✅', 'matched ✅') : diff > 0 ? `${L('زيادة', 'over')} ${M(diff)} ⬆️` : `*${L('عجز', 'short')} ${M(-diff)}* ⚠️`}` : '',
       s.handover ? `🤝 ${L('تسليم لصاحب المحل', 'Handed to owner')}: ${M(s.handover)}` : '',
-      d.best ? `🏆 ${L('أكتر صنف اتباع', 'Best seller')}: ${d.best[0]} (${d.best[1]})` : '',
-      d.approvals ? `🛡️ ${L('موافقات المدير', 'Manager approvals')}: ${d.approvals}` : '',
-      this.cfg().lowStock !== false && d.low ? `⚠️ ${L('نواقص', 'Low stock')}: ${d.low} ${L('صنف', 'items')}` : '',
-      s.closeNote ? `📝 ${s.closeNote}` : ''
-    ].filter(Boolean).join('\n');
+      d.top.length ? `🏆 ${L('الأكتر مبيعاً', 'Top items')}: ${d.top.slice(0, 3).map(([k, v]) => `${k} (${v.q})`).join('، ')}` : '',
+      d.approvals.length ? `🛡️ ${L('موافقات المدير', 'Manager approvals')}: ${d.approvals.length}` : '',
+      this.cfg().lowStock !== false && d.low ? `⚠️ ${L('نواقص محتاجة تتطلب', 'Low stock items')}: ${d.low}` : '',
+      s.closeNote ? `📝 ${s.closeNote}` : '',
+      '', `_${L('تقرير تلقائي من برنامج', 'Automatic report from')} ${st.appName || APP.name}_`
+    ].filter((x) => x !== '').join('\n');
+  },
+  /* تقرير A4 احترافي (PDF) */
+  html(s) {
+    const d = this.data(s); const M = (v) => money(v); const diff = Number(s.diff) || 0;
+    const kp = [[L('صافي ربح الوردية', 'Net profit'), M(d.total)], [L('المبيعات', 'Sales'), M(d.net)], [L('عدد الفواتير', 'Invoices'), d.n], [L('النقدية الفعلية', 'Counted cash'), s.counted != null ? M(s.counted) : '—']];
+    const row = (a, b) => `<tr><td>${a}</td><td class="num"><b>${b}</b></td></tr>`;
+    return reportDoc(`${L('تقرير غلق الوردية', 'Shift close report')} — ${d.user}`, `
+      <div class="kp">${kp.map(([l, v]) => `<div><span>${l}</span><b>${v}</b></div>`).join('')}</div>
+      <p style="color:#666;margin:0 0 8px">${L('الكاشير', 'Cashier')}: <b>${esc(d.user)}</b> — ${L('من', 'from')} ${fmtDT(d.open)} ${d.close ? L('إلى', 'to') + ' ' + fmtDT(d.close) : ''}${d.vsPrev != null ? ` — ${L('المبيعات', 'sales')} ${d.vsPrev >= 0 ? '+' : ''}${d.vsPrev}% ${L('عن متوسط آخر الورديات', 'vs recent average')}` : ''}</p>
+      <div class="grid2"><div><h2>${L('ملخص الأرباح', 'Profit summary')}</h2><table><tbody>
+        ${row(L('ربح المبيعات', 'Sales profit'), M(d.profit))}${row(L('عمولات المحافظ', 'Wallet fees'), M(d.fees))}${row(L('أرباح الماكينات والكروت', 'Machines profit'), M(d.mProfit))}${d.instProfit ? row(L('فوايد وغرامات الأقساط', 'Installment interest'), M(d.instProfit)) : ''}${row(L('(−) المصروفات', '(−) Expenses'), M(d.exp))}${row(`<b>${L('صافي الربح', 'Net')}</b>`, M(d.total))}</tbody></table></div>
+      <div><h2>${L('النقدية', 'Cash')}</h2><table><tbody>
+        ${s.counted != null ? row(L('نقدية الدرج', 'Drawer'), M(s.drawerCash || 0)) + row(L('النقدية بالخزينة', 'Safe'), M(s.safeCash || 0)) + row(L('الإجمالي الفعلي', 'Counted'), M(s.counted)) + row(L('المتوقع', 'Expected'), M(s.expected)) + row(L('الفرق', 'Difference'), `<span style="color:${diff < 0 ? '#C62828' : diff > 0 ? '#0F7A4A' : '#333'}">${!diff ? L('مطابق', 'Matched') : (diff > 0 ? '+' : '') + M(diff)}</span>`) : row(L('الوردية', 'Shift'), L('لسه مفتوحة', 'Still open'))}
+        ${s.handover ? row(L('تسليم لصاحب المحل', 'Handover'), M(s.handover)) : ''}</tbody></table></div></div>
+      <div class="grid2"><div><h2>${L('طرق الدفع', 'Payments')}</h2><table><tbody>${Object.entries(d.pays).map(([k, v]) => row(payName(k), M(v))).join('') || row('—', '—')}${d.discount ? row(L('خصومات', 'Discounts'), M(d.discount)) : ''}${d.returns ? row(L('مرتجعات', 'Returns'), M(d.returns)) : ''}</tbody></table></div>
+      <div><h2>${L('الأكتر مبيعاً', 'Top items')}</h2><table><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('القيمة', 'Value')}</th></tr></thead><tbody>${d.top.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${v.q}</td><td class="num">${M(v.v)}</td></tr>`).join('') || '<tr><td colspan="3">—</td></tr>'}</tbody></table></div></div>
+      ${Object.keys(d.byW).length ? `<h2>${L('المحافظ', 'Wallets')}</h2><table><thead><tr><th>${L('المحفظة', 'Wallet')}</th><th>${L('العمليات', 'Ops')}</th><th>${L('المبلغ', 'Amount')}</th><th>${L('العمولة', 'Fees')}</th></tr></thead><tbody>${Object.entries(d.byW).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${v.n}</td><td class="num">${M(v.a)}</td><td class="num">${M(v.f)}</td></tr>`).join('')}</tbody></table>` : ''}
+      ${Object.keys(d.exC).length ? `<h2>${L('المصروفات', 'Expenses')}</h2><table><tbody>${Object.entries(d.exC).map(([k, v]) => row(esc(k), M(v))).join('')}</tbody></table>` : ''}
+      ${d.approvals.length ? `<h2>${L('موافقات المدير', 'Manager approvals')}</h2><table><tbody>${d.approvals.slice(0, 10).map((a) => `<tr><td>${fmtTime(a.date)}</td><td>${esc(a.details || '')}</td></tr>`).join('')}</tbody></table>` : ''}
+      ${s.closeNote ? `<h2>${L('ملاحظات', 'Notes')}</h2><p>${esc(s.closeNote)}</p>` : ''}
+      <div class="netbox">${L('صافي ربح الوردية', 'Shift net profit')}: <b>${M(d.total)}</b></div>`);
+  },
+  async pdf(s) {
+    const html = this.html(s); const name = 'Shift-' + dayKey(s.closeAt || nowISO()) + '-' + (DB.get('users', s.userId)?.username || 'x');
+    try {
+      if (DB.desktop && window.api.sys.printPdf) { const r = await window.api.sys.printPdf({ html: html.replace('<head>', `<head><base href="${location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '')}">`), name, widthMm: 'A4', save: false }); return r && r.data ? { data: r.data, name: name + '.pdf' } : null; }
+      if (typeof NativeFiles !== 'undefined' && NativeFiles.ok() && NativeFiles.plugin().pdf) { const r = await NativeFiles.plugin().pdf({ html: html.replace('<head>', '<head><base href="file:///android_asset/public/">'), name, widthMm: 210, base: 'file:///android_asset/public/' }); return r && r.data ? { data: r.data, name: name + '.pdf' } : null; }
+    } catch (e) { console.warn(e); }
+    return null;
+  },
+  /* إرسال تلقائي من واتساب المحل المربوط — من غير أي ضغطة */
+  async autoSend(s) {
+    const c = this.cfg(); const doc = c.pdf !== false ? await this.pdf(s) : null;
+    WaLink.queue(c.phone, this.text(s), { prio: 1, kind: 'shift', ref: s.id, doc: doc ? { ...doc, mime: 'application/pdf', caption: L('📄 التقرير الكامل', '📄 Full report') } : null });
+    DB.update('shifts', s.id, { reportSentAt: nowISO() }); audit('shift.report.auto', s.id);
+    UI.toast(L('📊 تقرير الوردية اتبعت لصاحب المحل على واتساب تلقائي', '📊 Shift report sent to the owner automatically'), 'ok', 5000);
   },
   send(s) {
     const c = this.cfg(); const txt = this.text(s);
     UI.modal({ title: L('تقرير الوردية لصاحب المحل', 'Shift report to owner'), icon: 'whatsapp', size: 'sm', body: `<label class="lbl">${L('رقم صاحب المحل', 'Owner number')}</label><input id="orPh" class="num" dir="ltr" value="${esc(c.phone || '')}" placeholder="01xxxxxxxxx"><label class="lbl mt">${L('الرسالة', 'Message')}</label><textarea id="orTx" style="min-height:300px;font-size:13px;line-height:1.7">${esc(txt)}</textarea>`,
-      actions: [{ label: L('إغلاق', 'Close'), onClick: (m) => m.close() }, { label: L('نسخ', 'Copy'), icon: 'copy', onClick: async (m) => { (await copyText($('#orTx', m.el).value)) && UI.toast(L('اتنسخ ✓', 'Copied ✓')); } }, { label: L('إرسال واتساب', 'Send WhatsApp'), cls: 'wa', icon: 'whatsapp', onClick: (m) => { const ph = $('#orPh', m.el).value.trim(); if (!ph) return UI.toast(L('اكتب رقم صاحب المحل', 'Enter the number'), 'err'); if (ph !== c.phone) DB.saveSettings({ ownerReport: { phone: ph } }); sendWhatsApp(ph, $('#orTx', m.el).value); audit('shift.report', s.id); m.close(); } }] });
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (m) => m.close() }, { label: L('التقرير PDF', 'PDF report'), icon: 'file', onClick: () => printHTML(this.html(s), { type: 'report', name: 'Shift-' + dayKey(s.closeAt || nowISO()) }) },
+        { label: L('إرسال واتساب', 'Send WhatsApp'), cls: 'wa', icon: 'whatsapp', onClick: async (m) => { const ph = $('#orPh', m.el).value.trim(); const tx = $('#orTx', m.el).value || txt; if (!ph) return UI.toast(L('اكتب رقم صاحب المحل', 'Enter the number'), 'err'); if (ph !== c.phone) DB.saveSettings({ ownerReport: { phone: ph } }); m.close();
+          if (typeof WaLink !== 'undefined' && WaLink.ready()) { const doc = c.pdf !== false ? await this.pdf(s) : null; WaLink.queue(ph, tx, { prio: 1, kind: 'shift', ref: s.id, doc: doc ? { ...doc, mime: 'application/pdf' } : null }); UI.toast(L('✓ هيتبعت تلقائي', '✓ Will be sent automatically'), 'ok'); }
+          else sendWhatsAppDirect(ph, tx);
+          audit('shift.report', s.id); } }] });
   },
-  afterClose(sh) { const c = this.cfg(); if (c.on && c.auto !== false) setTimeout(() => this.send(DB.get('shifts', sh.id) || sh), 700); },
+  afterClose(sh) {
+    const c = this.cfg(); if (!c.on || !c.phone) return; const s = DB.get('shifts', sh.id) || sh;
+    if (c.autoSend !== false && typeof WaLink !== 'undefined' && WaLink.ready()) return setTimeout(() => this.autoSend(s), 900);
+    if (c.auto !== false) setTimeout(() => this.send(s), 700);
+  },
   settings() {
-    const c = this.cfg();
-    UI.modal({ title: L('تقرير الوردية لصاحب المحل', 'Shift report to owner'), icon: 'whatsapp', size: 'sm', body: UI.form([
+    const c = this.cfg(); const linked = typeof WaLink !== 'undefined' && WaLink.ready();
+    UI.modal({ title: L('تقرير الوردية لصاحب المحل', 'Shift report to owner'), icon: 'whatsapp', size: 'sm', body: `<div class="tag ${linked ? 'ok' : 'warn'} mb" style="white-space:normal;padding:8px;line-height:1.8">${linked ? L('✓ واتساب مربوط — التقرير هيتبعت لوحده أول ما الوردية تتقفل، من غير أي ضغطة.', '✓ WhatsApp linked — sent automatically.') : L('واتساب مش مربوط: الرسالة هتتفتح جاهزة وتضغط إرسال. اربط واتساب من الإعدادات ← واتساب عشان يتبعت لوحده.', 'Not linked: the message opens ready to send.')}</div>` + UI.form([
       { name: 'on', label: L('تفعيل تقرير غلق الوردية', 'Enable shift-close report'), type: 'checkbox', col: 12 },
       { name: 'phone', label: L('رقم واتساب صاحب المحل', 'Owner WhatsApp number'), col: 12, attrs: 'dir="ltr" inputmode="tel"' },
-      { name: 'auto', label: L('افتح الرسالة لوحدها أول ما الوردية تتقفل', 'Open the message automatically on close'), type: 'checkbox', col: 12 },
+      { name: 'autoSend', label: L('إرسال تلقائي من واتساب المحل المربوط', 'Send automatically from linked WhatsApp'), type: 'checkbox', col: 12 },
+      { name: 'pdf', label: L('إرفاق التقرير الكامل PDF', 'Attach full PDF report'), type: 'checkbox', col: 12 },
+      { name: 'auto', label: L('لو مش مربوط: افتح الرسالة لوحدها بعد غلق الوردية', 'If not linked: open the message on close'), type: 'checkbox', col: 12 },
       { name: 'lowStock', label: L('ضيف عدد النواقص في التقرير', 'Include low-stock count'), type: 'checkbox', col: 12 },
-      { type: 'html', col: 12, html: `<div class="faint" style="line-height:1.9">${L('التقرير فيه: المبيعات والربح، المحافظ والماكينات، المصروفات، صافي ربح الوردية، النقدية (الدرج + الخزينة) والعجز أو الزيادة، وأكتر صنف اتباع.', 'Includes sales, profit, wallets, machines, expenses, cash and best seller.')}</div>` }], c),
-      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('تجربة على آخر وردية', 'Try with last shift'), icon: 'eye', onClick: () => { const l = DB.all('shifts').sort((a, b) => ((a.closeAt || a.openAt) < (b.closeAt || b.openAt) ? 1 : -1))[0]; l ? this.send(l) : UI.toast(L('مفيش ورديات لسه', 'No shifts yet'), 'warn'); } },
-        { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (m) => { const v = UI.read(m.el); if (v.on && !String(v.phone || '').trim()) return UI.toast(L('اكتب رقم صاحب المحل', 'Enter the number'), 'err'); DB.saveSettings({ ownerReport: { on: !!v.on, phone: String(v.phone || '').trim(), auto: !!v.auto, lowStock: !!v.lowStock } }); m.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } }] });
+      { type: 'html', col: 12, html: `<div class="faint" style="line-height:1.9">${L('التقرير فيه: صافي الربح، المبيعات ومقارنتها بالمتوسط، طرق الدفع، المحافظ والماكينات والأقساط، المصروفات، النقدية (الدرج + الخزينة) والعجز أو الزيادة، الأكتر مبيعاً، وموافقات المدير.', 'Includes profit, sales vs average, payments, wallets, machines, installments, expenses, cash and top items.')}</div>` }], c),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('معاينة على آخر وردية', 'Preview last shift'), icon: 'eye', onClick: () => { const l = DB.all('shifts').sort((a, b) => ((a.closeAt || a.openAt) < (b.closeAt || b.openAt) ? 1 : -1))[0]; l ? this.send(l) : UI.toast(L('مفيش ورديات لسه', 'No shifts yet'), 'warn'); } },
+        { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (m) => { const v = UI.read(m.el); if (v.on && !String(v.phone || '').trim()) return UI.toast(L('اكتب رقم صاحب المحل', 'Enter the number'), 'err'); DB.saveSettings({ ownerReport: { on: !!v.on, phone: String(v.phone || '').trim(), auto: !!v.auto, autoSend: !!v.autoSend, pdf: !!v.pdf, lowStock: !!v.lowStock } }); m.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } }] });
   }
 };
 
@@ -11344,52 +11398,39 @@ const Otp = {
   }
 };
 
-/* ---------------- 10) QR التحويل للمحافظ على شاشة العرض ---------------- */
+/* ---------------- 10) QR المحفظة على شاشة العرض (عند «اعرضها على الشاشة الآن») ---------------- */
 const WalletQR = {
   COLORS: { vodafone: '#B8303E', etisalat: '#3F7A19', orange: '#B85F0E', we: '#6A3190', instapay: '#3B2BA0', bank: '#1D4E9E', other: '#4a3d40' },
-  /* الكود الافتراضي حسب الشبكة — العميل بيمسح فيفتحله الاتصال والكود جاهز (من غير الرقم السري) */
-  auto(network, number) {
-    const n = String(number || '').replace(/\D/g, ''); if (!n) return '';
-    if (network === 'vodafone') return `*9*7*${n}*`;
-    if (network === 'etisalat') return `*777*1*0000*00*${n}*${n}#`;
-    return '';
-  },
-  code(w) { return (w.qrCode != null && w.qrCode !== '' ? String(w.qrCode) : this.auto(w.network, walletNo(w))).trim(); },
-  content(code) { code = String(code || '').trim(); if (!code) return ''; if (/^https?:\/\//i.test(code) || /^[a-z]+:/i.test(code)) return code; return 'tel:' + code.replace(/#/g, '%23').replace(/\s+/g, ''); },
   color(w) { return w.qrColor || this.COLORS[w.network] || this.COLORS.other; },
-  svg(w, code) { const c = this.content(code ?? this.code(w)); return c ? QR.svg(c, { color: this.color(w), ecl: 'M', border: 2 }) : ''; },
-  hint(network) { return network === 'instapay' ? L('الصق رابط الدفع بتاع إنستا باي (أو رابط IPA)', 'Paste your InstaPay payment link') : network === 'vodafone' || network === 'etisalat' ? L('بيتملى تلقائي من رقم المحفظة — تقدر تعدّله', 'Auto-filled from the number — editable') : L('اكتب كود التحويل أو رابط الدفع (اختياري)', 'Transfer code or payment link (optional)'); },
-  /* «اعرضها على الشاشة الآن» مع كود التحويل */
+  /* لو فيه رابط بيتعمل بيه، غير كده برقم المحفظة بس */
+  content(w, link) { link = String(link || '').trim(); if (link) return link; return String(walletNo(w) || '').replace(/\s+/g, ''); },
+  svg(w, link) { const c = this.content(w, link); return c ? QR.svg(c, { color: this.color(w), ecl: 'M', border: 2 }) : ''; },
+  _show: null,
   showNow(w) {
-    const code = this.code(w);
     const m = UI.modal({ title: L('عرض المحفظة على الشاشة', 'Show wallet on display'), icon: 'send', size: 'sm', body: `
       <div class="wq-head wnet-${w.network}"><b dir="ltr">${esc(fmtWalletNo(walletNo(w)))}</b><small>${esc(netName(w.network))}${w.owner ? ' · ' + esc(w.owner) : ''}</small></div>
-      <label class="check mt"><input type="checkbox" id="wqOn" ${w.qrOn !== false ? 'checked' : ''}>${L('إظهار QR التحويل للعميل', 'Show the transfer QR')}</label>
-      <div id="wqBox"><label class="lbl mt">${L('كود التحويل / رابط الدفع', 'Transfer code / payment link')}</label><input id="wqCode" dir="ltr" class="mono" value="${esc(code)}" placeholder="${w.network === 'instapay' ? 'https://ipn.eg/...' : '*9*7*01xxxxxxxxx*'}"><small class="faint">${this.hint(w.network)}</small>
-        <div class="wq-prev" id="wqPrev"></div></div>`,
-      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('اعرض الآن', 'Show now'), cls: 'primary', icon: 'send', onClick: (x) => {
-        const on = $('#wqOn', x.el).checked, c = $('#wqCode', x.el).value.trim();
-        if (c !== code || on !== (w.qrOn !== false)) DB.update('wallets', w.id, { qrCode: c, qrOn: on });
-        Display.focus(DB.get('wallets', w.id), 0, 'show'); x.close(); UI.toast(L('ظهرت على شاشة العرض ✓', 'Shown on the display ✓'));
+      <label class="lbl mt">${L('رابط الدفع (اختياري)', 'Payment link (optional)')}</label><input id="wqLink" dir="ltr" class="mono" value="${esc(w.qrLink || '')}" placeholder="https://ipn.eg/...">
+      <small class="faint">${L('لو حطيت رابط، الـ QR هيفتح الرابط. لو سبته فاضي كمّل عادي والـ QR هيتعمل برقم المحفظة بس.', 'With a link the QR opens it; empty = QR of the wallet number.')}</small>
+      <div class="wq-prev" id="wqPrev"></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('اعرض على الشاشة', 'Show on display'), cls: 'primary', icon: 'send', onClick: (x) => {
+        const link = $('#wqLink', x.el).value.trim(); if (link !== (w.qrLink || '')) DB.update('wallets', w.id, { qrLink: link });
+        this._show = { id: w.id, qr: this.content(w, link), color: this.color(w) };
+        Display.focus(DB.get('wallets', w.id), 0, 'show'); this._show = null; x.close(); UI.toast(L('ظهرت على شاشة العرض ✓', 'Shown on the display ✓'));
       } }] });
-    const upd = () => { const on = $('#wqOn', m.el).checked; $('#wqBox', m.el).style.display = on ? '' : 'none'; const s = this.svg(w, $('#wqCode', m.el).value); $('#wqPrev', m.el).innerHTML = s ? `<div class="wq-qr">${s}</div><small class="faint" dir="ltr">${esc(this.content($('#wqCode', m.el).value))}</small>` : ''; };
-    $('#wqOn', m.el).onchange = upd; $('#wqCode', m.el).oninput = upd; upd();
+    const upd = () => { const v = $('#wqLink', m.el).value; const sv = this.svg(w, v); $('#wqPrev', m.el).innerHTML = sv ? `<div class="wq-qr">${sv}</div><small class="faint" dir="ltr">${esc(this.content(w, v))}</small>` : ''; };
+    $('#wqLink', m.el).oninput = upd; upd();
   }
 };
 (() => {
+  /* الـ QR بيتبعت للشاشة بس مع «اعرضها على الشاشة الآن» — الأرقام على الشاشة بتفضل زي ما هي */
   const baseInfo = Display.info.bind(Display);
-  Display.info = function (w) { const i = baseInfo(w); try { if (w.qrOn !== false) { const code = WalletQR.code(w); if (code) { i.qr = WalletQR.content(code); i.qrColor = WalletQR.color(w); } } } catch (_) {} return i; };
-  const qrHTML = (i, big) => (i.qr && Display.cfg().showQR !== false ? `<div class="d-qr ${big ? 'big' : ''}"><div class="d-qr-c">${QR.svg(i.qr, { color: i.qrColor || '#000', ecl: 'M', border: 2 })}</div><small>${i.qr.startsWith('tel:') ? L('امسح الكود من موبايلك — هيفتحلك التحويل جاهز', 'Scan to open the transfer ready') : L('امسح الكود للدفع', 'Scan to pay')}</small></div>` : '');
-  const baseGrid = Display.grid.bind(Display);
-  Display.grid = function () {
-    baseGrid(); const c = this.cfg(); if (c.showQR === false) return;
-    let ws = Wallets.ordered().filter((w) => w.onDisplay && w.active !== false && !w.hidden).map((w) => this.info(w)); if (c.hideFull) ws = ws.filter((i) => i.availIn == null || i.availIn > 0);
-    $$('#dMain .disp-card').forEach((card, k) => { const i = ws[k]; if (i && i.qr) card.insertAdjacentHTML('beforeend', qrHTML(i)); });
-  };
+  Display.info = function (w) { const i = baseInfo(w); const s = WalletQR._show; if (s && s.id === w.id && s.qr) { i.qr = s.qr; i.qrColor = s.color; } return i; };
   const baseFocus = Display.showFocus.bind(Display);
-  Display.showFocus = function (m) { baseFocus(m); try { const el = $('#dFocus .dfc'); if (el && m.w && m.w.qr) el.querySelector('.dfc-bar')?.insertAdjacentHTML('beforebegin', qrHTML(m.w, true)); } catch (_) {} };
+  Display.showFocus = function (m) {
+    baseFocus(m);
+    try { const el = $('#dFocus .dfc'); const i = m.w; if (el && i && i.qr) el.querySelector('.dfc-bar')?.insertAdjacentHTML('beforebegin', `<div class="d-qr big"><div class="d-qr-c">${QR.svg(i.qr, { color: i.qrColor || '#000', ecl: 'M', border: 2 })}</div><small>${/^https?:/i.test(i.qr) ? L('امسح الكود للدفع', 'Scan to pay') : L('امسح الكود — رقم المحفظة هيظهرلك جاهز', 'Scan to get the wallet number')}</small></div>`); } catch (_) {}
+  };
 })();
-
 /* اللوجو في الوضع الداكن (المسار بيتحسب وقت التشغيل عشان يشتغل على الكمبيوتر والموبايل) */
 (() => { try { const u = new URL('assets/logo-dark.png', location.href.replace(/#.*$/, '')).href; const st = document.createElement('style'); st.textContent = `:root[data-theme="dark"] img[src="assets/logo.png"]{content:url("${u}")}`; document.head.appendChild(st); } catch (_) {} })();
 
@@ -11420,7 +11461,7 @@ const WaLink = {
   heartbeat() { if (!this.desk() || !Session.user) return; const on = this.st.state === 'open'; const h = DB.settings().waHost || {}; if (h.online !== on || Date.now() - Date.parse(h.at || 0) > 5 * 60e3) DB.saveSettings({ waHost: { online: on, at: nowISO(), me: this.st.me?.id || '' } }); },
   queue(to, text, meta = {}) {
     const p = waPhone(to); if (!p || !text) return null;
-    return DB.insert('waQueue', { to: p, text: String(text).slice(0, 4000), status: 'pending', kind: meta.kind || 'manual', ref: meta.ref || '', prio: meta.prio || 0, at: nowISO(), tries: 0, by: Session.user?.name || '' });
+    return DB.insert('waQueue', { to: p, text: String(text).slice(0, 4000), status: 'pending', kind: meta.kind || 'manual', ref: meta.ref || '', prio: meta.prio || 0, at: nowISO(), tries: 0, by: Session.user?.name || '', ...(meta.doc && meta.doc.data && meta.doc.data.length < 1400000 ? { doc: meta.doc } : {}) });
   },
   sentToday() { const k = dayKey(); return DB.filter('waQueue', (m) => m.status === 'sent' && m.sentAt && dayKey(m.sentAt) === k).length; },
   inHours() { const c = this.cfg(); const n = new Date(); const hm = pad(n.getHours()) + ':' + pad(n.getMinutes()); return (!c.workFrom || hm >= c.workFrom) && (!c.workTo || hm <= c.workTo); },
@@ -11435,7 +11476,8 @@ const WaLink = {
     if (now - this.last < gap) return;
     this.busy = true; this.last = now;
     try {
-      const r = await window.api.wa.send({ to: cand.to, text: cand.text });
+      const r = await window.api.wa.send({ to: cand.to, text: cand.text, doc: cand.doc || null });
+      if (r && r.ok && cand.doc) DB.update('waQueue', cand.id, { doc: null });
       if (r && r.ok) DB.update('waQueue', cand.id, { status: 'sent', sentAt: nowISO(), msgId: r.id || '' });
       else { const t = (cand.tries || 0) + 1; const perm = /not on whatsapp|bad number/.test(r?.error || ''); DB.update('waQueue', cand.id, { tries: t, error: r?.error || '', status: perm || t >= 3 ? 'failed' : 'pending', retryAt: new Date(Date.now() + t * 120e3).toISOString() }); }
     } catch (e) { DB.update('waQueue', cand.id, { tries: (cand.tries || 0) + 1, error: String(e.message || e), retryAt: new Date(Date.now() + 120e3).toISOString() }); }

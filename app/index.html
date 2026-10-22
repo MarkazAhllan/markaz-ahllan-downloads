@@ -8284,7 +8284,7 @@ Modules.wallets = {
       { name: 'feeMin', label: L('أقل عمولة', 'Minimum fee'), type: 'number', col: 3, value: 5 }, { name: 'networkFeeMode', label: L('رسوم الشبكة على التحويل', 'Network send fee'), type: 'select', col: 3, options: [['pct', L('نسبة مئوية %', 'Percentage %')], ['fixed', L('مبلغ ثابت (ج.م)', 'Fixed amount')]] }, { name: 'networkFeePct', label: L('قيمة رسوم الشبكة', 'Network fee value'), type: 'number', col: 3, value: 0, attrs: 'step="any" min="0"' },
       ...(w && Session.can('wallets.manage') ? [{ name: 'openingBalance', label: L('الرصيد الافتتاحي (للمسؤول)', 'Opening balance (admin)'), type: 'number', col: 4 }] : []),
       { name: 'active', label: L('نشطة', 'Active'), type: 'checkbox', col: 4 }, { name: 'fav', label: L('مفضلة (تظهر أولاً)', 'Favorite'), type: 'checkbox', col: 4 },
-      { name: 'qrLink', label: L('رابط الدفع للـ QR على شاشة العرض (اختياري — من غيره الـ QR بيتعمل برقم المحفظة)', 'Payment link for the display QR (optional)'), col: 12, attrs: 'dir="ltr" placeholder="https://"' }], w || { active: true, network: 'vodafone', networkFeeMode: 'pct', ...NET_LIMITS.vodafone }) + `<datalist id="phoneBrands">${PHONE_BRANDS.map(([en, ar]) => `<option value="${en}">${ar}</option>`).join('')}</datalist>`,
+      { name: 'qrOn', label: L('QR على شاشة العرض', 'QR on display'), type: 'checkbox', col: 4 }, { name: 'qrCode', label: L('كود التحويل / رابط الدفع (للـ QR)', 'Transfer code / payment link (QR)'), col: 8, attrs: 'dir="ltr" class="mono"' }], w ? { ...w, qrOn: w.qrOn !== false, qrCode: w.network === 'instapay' ? (w.qrCode || w.qrLink || '') : WalletQR.stored(w) } : { active: true, network: 'vodafone', networkFeeMode: 'pct', ...NET_LIMITS.vodafone }) + `<datalist id="phoneBrands">${PHONE_BRANDS.map(([en, ar]) => `<option value="${en}">${ar}</option>`).join('')}</datalist>`,
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (x) => {
         if (!UI.validate(x.el)) return; const v = UI.read(x.el); if (!v.name) v.name = `${netName(v.network)} ${String(v.number).slice(-4)}`;
         ['openingBalance', 'txLimit', 'dailyLimit', 'monthlyLimit', 'dailyInLimit', 'monthlyInLimit', 'feeWithdraw', 'feeDeposit', 'feeMin', 'networkFeePct', 'lowBalance'].forEach((k) => { if (k in v) v[k] = Number(v[k]) || 0; });
@@ -8292,6 +8292,8 @@ Modules.wallets = {
       } }] });
     const fm = $('[name=networkFeeMode]', em.el), fv = $('[name=networkFeePct]', em.el); const feeLbl = () => { const l = fv.closest('.fld,.field,label,div')?.querySelector('label'); if (l) l.textContent = fm.value === 'fixed' ? L('رسوم الشبكة (ج.م لكل تحويل)', 'Network fee (EGP per transfer)') : L('رسوم الشبكة (% من المبلغ)', 'Network fee (% of amount)'); };
     if (fm) { if (!w?.networkFeeMode) fm.value = 'pct'; fm.onchange = feeLbl; feeLbl(); }
+    { const qc = $('[name=qrCode]', em.el), nn = $('[name=number]', em.el), nw = $('[name=network]', em.el); const q1 = $('[name=qrOn]', em.el); if (!w && q1) q1.checked = true;
+      if (qc) { let touched = !!(w && (w.qrCode || w.qrLink)); qc.addEventListener('input', () => (touched = true)); const fill = () => { qc.placeholder = WalletQR.field({ network: nw.value }).ph; if (!touched) qc.value = WalletQR.auto(nw.value, nn.value); }; nn.addEventListener('input', fill); nw.addEventListener('change', fill); fill(); } }
     if (!w) { const touched = new Set(); Object.keys(NET_LIMITS.vodafone).forEach((k) => { const i = $(`[name=${k}]`, em.el); if (i) i.addEventListener('input', () => touched.add(k)); });
       $('[name=network]', em.el).addEventListener('change', (e) => { const d = NET_LIMITS[e.target.value]; Object.keys(NET_LIMITS.vodafone).forEach((k) => { const i = $(`[name=${k}]`, em.el); if (i && !touched.has(k)) i.value = d ? d[k] : ''; }); }); }
   },
@@ -10303,7 +10305,7 @@ const CHANGELOG = [
     ['whatsapp', L('ربط واتساب المحل بالبرنامج بالـ QR: الإيصالات والتذكيرات بتتبعت تلقائي بفاصل زمني آمن', 'Link WhatsApp by QR: receipts & reminders sent automatically with safe pacing')],
     ['printer', L('مركز طباعة جديد: معاينة + طباعة + PDF + واتساب، ولو مفيش طابعة تعمل PDF بضغطة', 'New print center: preview, print, PDF and WhatsApp')],
     ['receipt', L('تصميم الإيصال: 3 أشكال (عصري / كلاسيك / مختصر) ومعاينة لفاتورة المبيعات وإيصال المحافظ', 'Receipt designer with 3 styles and sales/wallet preview')],
-    ['qr', L('«اعرضها على الشاشة الآن» بيظهر QR بلون المحفظة: برابط الدفع لو حطيته، أو برقم المحفظة', 'Show-now displays a QR (payment link or wallet number)')],
+    ['qr', L('«اعرضها على الشاشة الآن» بيظهر QR بلون المحفظة: فودافون واتصالات بكود التحويل الجاهز، وإنستا باي برابط الدفع أو برقم محفظة إنستا باي', 'Show-now displays a QR: Vodafone/Etisalat transfer code, InstaPay link or number')],
     ['cloud', L('نسخ احتياطي سحابي مشفّر تلقائي (كل يوم ومع غلق كل وردية) + Google Drive', 'Encrypted cloud backup daily and on every shift close + Google Drive')],
     ['shield', L('دخول آمن للأجهزة الجديدة بكود OTP، وموافقة المدير على الخصم الكبير والمرتجع والهالك', 'OTP login for new devices; manager approval for big discounts, returns and waste')],
     ['eye', L('تقرير غلق الوردية بيوصل لصاحب المحل على واتساب تلقائي (ملخص + PDF احترافي)، ولوحة المالك المباشرة، وخطة الشراء', 'Shift report auto-sent to the owner (summary + PDF), owner live view, purchase plan')],
@@ -10572,6 +10574,7 @@ const Display = {
           { name: 'showNetwork', label: L('إظهار اسم الشبكة', 'Show network'), type: 'checkbox', col: 6 }, { name: 'hideFull', label: L('إخفاء المحفظة لما توصل للحد اليومي', 'Hide wallets at daily limit'), type: 'checkbox', col: 6 },
           { name: 'focusOnOp', label: L('أثناء عملية السحب: اعرض المحفظة المختارة لوحدها كبيرة', 'During withdrawal: show the chosen wallet full-screen'), type: 'checkbox', col: 12 },
           { name: 'showAmount', label: L('إظهار المبلغ المطلوب تحويله', 'Show requested amount'), type: 'checkbox', col: 6 },
+          { name: 'gridQR', label: L('QR صغير تحت كل رقم كمان (بلون المحفظة)', 'Small QR under every number too'), type: 'checkbox', col: 6 },
           { name: 'focusSec', label: L('مدة العرض الكبير (ثانية)', 'Focus duration (sec)'), type: 'select', options: [[30, '30'], [60, '60'], [90, '90'], [120, '120'], [180, '180']], col: 6 },
           { name: 'cols', label: L('عدد الكروت في الصف', 'Cards per row'), type: 'select', options: [['auto', L('تلقائي', 'Auto')], [1, '1'], [2, '2'], [3, '3'], [4, '4']], col: 6 },
           { name: 'theme', label: L('ألوان الشاشة', 'Screen theme'), type: 'select', options: [['brand', L('لون البرنامج', 'Brand')], ['dark', L('داكن', 'Dark')], ['light', L('فاتح', 'Light')]], col: 6 },
@@ -11398,38 +11401,60 @@ const Otp = {
   }
 };
 
-/* ---------------- 10) QR المحفظة على شاشة العرض (عند «اعرضها على الشاشة الآن») ---------------- */
+/* ---------------- 10) QR المحفظة على شاشة العرض ----------------
+   فودافون: *9*7*الرقم*   •   اتصالات: *777*1*0000*00*الرقم*الرقم#   (بيتكتبوا تلقائي والعميل بيمسح يلاقي الكود جاهز في الاتصال)
+   إنستا باي: رابط الدفع (اختياري) — لو فاضي الـ QR بيتعمل برقم محفظة إنستا باي
+   باقي المحافظ: كود أو رابط اختياري — لو فاضي بيتعمل برقم المحفظة */
 const WalletQR = {
   COLORS: { vodafone: '#B8303E', etisalat: '#3F7A19', orange: '#B85F0E', we: '#6A3190', instapay: '#3B2BA0', bank: '#1D4E9E', other: '#4a3d40' },
   color(w) { return w.qrColor || this.COLORS[w.network] || this.COLORS.other; },
-  /* لو فيه رابط بيتعمل بيه، غير كده برقم المحفظة بس */
-  content(w, link) { link = String(link || '').trim(); if (link) return link; return String(walletNo(w) || '').replace(/\s+/g, ''); },
-  svg(w, link) { const c = this.content(w, link); return c ? QR.svg(c, { color: this.color(w), ecl: 'M', border: 2 }) : ''; },
+  digits(w) { return String(walletNo(w) || '').replace(/\D/g, ''); },
+  auto(network, number) { const n = String(number || '').replace(/\D/g, ''); if (!n) return ''; if (network === 'vodafone') return `*9*7*${n}*`; if (network === 'etisalat') return `*777*1*0000*00*${n}*${n}#`; return ''; },
+  isUssd(w) { return w.network === 'vodafone' || w.network === 'etisalat'; },
+  /* القيمة المحفوظة: كود التحويل أو الرابط */
+  stored(w) { const v = String(w.qrCode || (w.network === 'instapay' ? w.qrLink : '') || '').trim(); return v || this.auto(w.network, walletNo(w)); },
+  content(w, v) {
+    v = String(v ?? this.stored(w)).trim();
+    if (/^https?:\/\//i.test(v) || /^[a-z]+:\/\//i.test(v)) return v;
+    if (/[*#]/.test(v)) return 'tel:' + v.replace(/\s+/g, '').replace(/#/g, '%23');
+    if (v) return v;
+    const d = this.digits(w); return d.length >= 8 ? d : String(walletNo(w) || '').trim();
+  },
+  kindOf(c) { return /^tel:/.test(c) ? 'ussd' : /^https?:/i.test(c) ? 'link' : 'number'; },
+  scanText(c) { const k = this.kindOf(c); return k === 'ussd' ? L('امسح الكود — هيفتحلك الاتصال وكود التحويل جاهز', 'Scan — the transfer code opens ready to dial') : k === 'link' ? L('امسح الكود للدفع', 'Scan to pay') : L('امسح الكود — رقم المحفظة هيظهرلك جاهز', 'Scan to get the wallet number'); },
+  svg(w, v) { const c = this.content(w, v); return c ? QR.svg(c, { color: this.color(w), ecl: 'M', border: 2 }) : ''; },
+  field(w) {
+    if (this.isUssd(w)) return { label: L('كود التحويل (بيتكتب تلقائي — تقدر تعدّله)', 'Transfer code (auto — editable)'), ph: this.auto(w.network, '01xxxxxxxxx'), hint: L('العميل يمسح الـ QR فيفتحله الاتصال والكود مكتوب جاهز (من غير الرقم السري).', 'Scanning opens the dialer with the code ready (no PIN).') };
+    if (w.network === 'instapay') return { label: L('رابط الدفع (اختياري)', 'Payment link (optional)'), ph: 'https://ipn.eg/...', hint: L('لو حطيت رابط الدفع الـ QR بيفتحه. لو سبته فاضي كمّل عادي والـ QR بيتعمل برقم محفظة إنستا باي اللي فوق.', 'With a link the QR opens it; empty = the InstaPay wallet number.') };
+    return { label: L('كود التحويل أو رابط (اختياري)', 'Code or link (optional)'), ph: '*...# / https://', hint: L('لو سبته فاضي الـ QR بيتعمل برقم المحفظة.', 'Empty = wallet number.') };
+  },
   _show: null,
   showNow(w) {
+    const f = this.field(w); const cur = this.isUssd(w) ? this.stored(w) : String(w.qrCode || w.qrLink || '');
     const m = UI.modal({ title: L('عرض المحفظة على الشاشة', 'Show wallet on display'), icon: 'send', size: 'sm', body: `
       <div class="wq-head wnet-${w.network}"><b dir="ltr">${esc(fmtWalletNo(walletNo(w)))}</b><small>${esc(netName(w.network))}${w.owner ? ' · ' + esc(w.owner) : ''}</small></div>
-      <label class="lbl mt">${L('رابط الدفع (اختياري)', 'Payment link (optional)')}</label><input id="wqLink" dir="ltr" class="mono" value="${esc(w.qrLink || '')}" placeholder="https://ipn.eg/...">
-      <small class="faint">${L('لو حطيت رابط، الـ QR هيفتح الرابط. لو سبته فاضي كمّل عادي والـ QR هيتعمل برقم المحفظة بس.', 'With a link the QR opens it; empty = QR of the wallet number.')}</small>
-      <div class="wq-prev" id="wqPrev"></div>`,
+      <label class="check mt"><input type="checkbox" id="wqOn" ${w.qrOn !== false ? 'checked' : ''}>${L('إظهار QR للعميل مع الرقم', 'Show a QR with the number')}</label>
+      <div id="wqBox"><label class="lbl mt">${f.label}</label><input id="wqV" dir="ltr" class="mono" value="${esc(cur)}" placeholder="${esc(f.ph)}"><small class="faint">${f.hint}</small><div class="wq-prev" id="wqPrev"></div></div>`,
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('اعرض على الشاشة', 'Show on display'), cls: 'primary', icon: 'send', onClick: (x) => {
-        const link = $('#wqLink', x.el).value.trim(); if (link !== (w.qrLink || '')) DB.update('wallets', w.id, { qrLink: link });
-        this._show = { id: w.id, qr: this.content(w, link), color: this.color(w) };
+        const on = $('#wqOn', x.el).checked; const v = $('#wqV', x.el).value.trim();
+        const patch = { qrOn: on }; if (w.network === 'instapay') { patch.qrLink = v; patch.qrCode = ''; } else patch.qrCode = this.isUssd(w) && v === this.auto(w.network, walletNo(w)) ? '' : v;
+        DB.update('wallets', w.id, patch);
+        this._show = on ? { id: w.id, qr: this.content(w, v), color: this.color(w) } : null;
         Display.focus(DB.get('wallets', w.id), 0, 'show'); this._show = null; x.close(); UI.toast(L('ظهرت على شاشة العرض ✓', 'Shown on the display ✓'));
       } }] });
-    const upd = () => { const v = $('#wqLink', m.el).value; const sv = this.svg(w, v); $('#wqPrev', m.el).innerHTML = sv ? `<div class="wq-qr">${sv}</div><small class="faint" dir="ltr">${esc(this.content(w, v))}</small>` : ''; };
-    $('#wqLink', m.el).oninput = upd; upd();
+    const upd = () => { const on = $('#wqOn', m.el).checked; $('#wqBox', m.el).style.display = on ? '' : 'none'; const v = $('#wqV', m.el).value; const c = this.content(w, v); $('#wqPrev', m.el).innerHTML = c ? `<div class="wq-qr">${this.svg(w, v)}</div><small class="faint" dir="ltr">${esc(c)}</small><small class="faint">${this.scanText(c)}</small>` : ''; };
+    $('#wqOn', m.el).onchange = upd; $('#wqV', m.el).oninput = upd; upd();
   }
 };
 (() => {
-  /* الـ QR بيتبعت للشاشة بس مع «اعرضها على الشاشة الآن» — الأرقام على الشاشة بتفضل زي ما هي */
+  const qrHTML = (c, color, big) => `<div class="d-qr ${big ? 'big' : ''}"><div class="d-qr-c">${QR.svg(c, { color: color || '#000', ecl: 'M', border: 2 })}</div><small>${WalletQR.scanText(c)}</small></div>`;
   const baseInfo = Display.info.bind(Display);
-  Display.info = function (w) { const i = baseInfo(w); const s = WalletQR._show; if (s && s.id === w.id && s.qr) { i.qr = s.qr; i.qrColor = s.color; } return i; };
+  Display.info = function (w) { const i = baseInfo(w); const s = WalletQR._show; if (s && s.id === w.id && s.qr) { i.qr = s.qr; i.qrColor = s.color; } else if (w.qrOn !== false && Display.cfg().gridQR) { i.qr = WalletQR.content(w); i.qrColor = WalletQR.color(w); } return i; };
+  /* الأرقام على الشاشة بتفضل في مكانها — الـ QR تحت الرقم في الشبكة اختياري من إعدادات شاشة العرض */
+  const baseGrid = Display.grid.bind(Display);
+  Display.grid = function () { baseGrid(); const c = this.cfg(); if (!c.gridQR) return; let ws = Wallets.ordered().filter((w) => w.onDisplay && w.active !== false && !w.hidden).map((w) => this.info(w)); if (c.hideFull) ws = ws.filter((i) => i.availIn == null || i.availIn > 0); $$('#dMain .disp-card').forEach((card, k) => { const i = ws[k]; if (i && i.qr) card.insertAdjacentHTML('beforeend', qrHTML(i.qr, i.qrColor)); }); };
   const baseFocus = Display.showFocus.bind(Display);
-  Display.showFocus = function (m) {
-    baseFocus(m);
-    try { const el = $('#dFocus .dfc'); const i = m.w; if (el && i && i.qr) el.querySelector('.dfc-bar')?.insertAdjacentHTML('beforebegin', `<div class="d-qr big"><div class="d-qr-c">${QR.svg(i.qr, { color: i.qrColor || '#000', ecl: 'M', border: 2 })}</div><small>${/^https?:/i.test(i.qr) ? L('امسح الكود للدفع', 'Scan to pay') : L('امسح الكود — رقم المحفظة هيظهرلك جاهز', 'Scan to get the wallet number')}</small></div>`); } catch (_) {}
-  };
+  Display.showFocus = function (m) { baseFocus(m); try { const el = $('#dFocus .dfc'); const i = m.w; if (el && i && i.qr) el.querySelector('.dfc-bar')?.insertAdjacentHTML('beforebegin', qrHTML(i.qr, i.qrColor, true)); } catch (_) {} };
 })();
 /* اللوجو في الوضع الداكن (المسار بيتحسب وقت التشغيل عشان يشتغل على الكمبيوتر والموبايل) */
 (() => { try { const u = new URL('assets/logo-dark.png', location.href.replace(/#.*$/, '')).href; const st = document.createElement('style'); st.textContent = `:root[data-theme="dark"] img[src="assets/logo.png"]{content:url("${u}")}`; document.head.appendChild(st); } catch (_) {} })();
@@ -12732,7 +12757,7 @@ const Seed = {
     const sups = [['شركة النور للإكسسوارات', '01001234567'], ['المصرية لأنظمة المراقبة', '01112223334'], ['مؤسسة الفتح للكمبيوتر', '01223334445']].map(([name, phone]) => DB.insert('suppliers', { name, phone, company: name }));
     Suppliers.tx(sups[1].id, 'opening', 3500, '', 'رصيد افتتاحي');
     const custs = [['محمد عبد الله', '01012345678', 3000], ['أحمد السيد', '01123456789', 2000], ['محمود حسن', '01234567890', 5000], ['شركة الأمل للمقاولات', '01098765432', 20000], ['سارة إبراهيم', '01511122233', 1500]].map(([name, phone, creditLimit]) => DB.insert('customers', { name, phone, creditLimit }));
-    const W = [['فودافون كاش 1', 'vodafone', '01011112222', 25000], ['فودافون كاش 2', 'vodafone', '01033334444', 12000], ['أورنج كاش', 'orange', '01244445555', 8000], ['اتصالات كاش', 'etisalat', '01166667777', 6000], ['إنستا باي - بنك مصر', 'instapay', 'markaz@instapay', 40000]]
+    const W = [['فودافون كاش 1', 'vodafone', '01011112222', 25000], ['فودافون كاش 2', 'vodafone', '01033334444', 12000], ['أورنج كاش', 'orange', '01244445555', 8000], ['اتصالات كاش', 'etisalat', '01166667777', 6000], ['إنستا باي - بنك مصر', 'instapay', '01001234567', 40000]]
       .map(([name, network, number, ob], i) => DB.insert('wallets', { name, network, number, owner: ['محمد أحمد علي', 'أحمد كمال', 'محمود حسن', 'مصطفى سعيد', 'مركز أهلاً'][i], fav: i === 0, openingBalance: ob, dailyLimit: network === 'instapay' ? 120000 : 60000, monthlyLimit: network === 'instapay' ? 400000 : 200000, dailyInLimit: network === 'instapay' ? 120000 : 60000, monthlyInLimit: network === 'instapay' ? 400000 : 200000, feeWithdraw: 1, feeDeposit: 1, feeMin: 5, networkFeePct: 0, active: true }));
     const M = [['فوري الرئيسية', 'fawry', '102938', 15000, 1.5], ['أمان', 'aman', '556677', 8000, 1.2], ['مصاري', 'masary', '889900', 5000, 1]].map(([name, provider, code, ob, cr]) => DB.insert('machines', { name, provider, code, openingBalance: ob, commissionRate: cr, minBalance: 2000, active: true }));
     const emps = [['أحمد كمال', 'كاشير', 5500], ['يوسف علي', 'فني كاميرات', 7000], ['منى سمير', 'مبيعات', 5000]].map(([name, jobTitle, baseSalary]) => DB.insert('employees', { name, jobTitle, baseSalary, ...(name === 'أحمد كمال' ? { rotOff: [{ dow: 5, every: 2, anchor: (() => { const d = new Date(); while (d.getDay() !== 5) d.setDate(d.getDate() + 1); return dayKey(d); })() }], leaveQuota: 2 } : name === 'يوسف علي' ? { rotOff: [{ dow: 5, every: 3, anchor: (() => { const d = new Date(); while (d.getDay() !== 5) d.setDate(d.getDate() + 1); return dayKey(d); })() }] } : {}), salaryType: 'monthly', workStart: '10:00', workEnd: '22:00', grace: 15, offDays: [5], hireDate: dayKey(addDays(new Date(), -200)), active: true, phone: '0100000000' + Math.floor(Math.random() * 10) }));

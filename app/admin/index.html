@@ -132,7 +132,7 @@ main{flex:1;min-width:0;padding:22px 24px 110px}
   <div class="card mt" style="margin-top:16px">
     <div class="f"><label>رابط Supabase (Project URL)</label><input id="sUrl" class="mono" value="https://inxlleknypxzegzgzmfl.supabase.co"></div>
     <div class="f"><label>مفتاح service_role</label><input id="sKey" class="mono" type="password" autocomplete="off" placeholder="eyJhbGciOi…"><small>Supabase ← Project Settings ← API Keys ← service_role (Reveal ← Copy)</small></div>
-    <div class="f"><label>مفتاح التوقيع الخاص (محتوى private-key.jwk.json)</label><textarea id="sJwk" class="mono" rows="3" placeholder='{"kty":"EC","crv":"P-256",...}'></textarea><small>من غيره تقدر تتابع وتوقف بس — التفعيل محتاجه</small></div>
+    <div class="f"><label>مفتاح التوقيع الخاص (محتوى private-key.jwk.json)</label><textarea id="sJwk" class="mono" rows="3" placeholder='{"kty":"EC","crv":"P-256",...}'></textarea><button type="button" class="btn sm" id="sJwkF" style="margin-top:6px">📂 اختيار ملف المفتاح من الموبايل</button><small>اختار <b>private-key.jwk.json</b> أو <b>MarkazAdmin-Activation.html</b> — من غيره تقدر تتابع وتوقف بس، والتفعيل محتاجه</small></div>
     <div class="f"><label>رقم سري للوحة (4 لـ 8 أرقام)</label><input id="sPin" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password"></div>
     <div class="f"><label>تأكيد الرقم السري</label><input id="sPin2" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password"></div>
     <button class="btn p block" id="sSave">🔐 حفظ وتشغيل</button>
@@ -189,7 +189,16 @@ async function sign(payload) {
   const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, k, new TextEncoder().encode(p));
   return 'MAH1-' + p + '.' + b64u(sig);
 }
-function checkJwk(t) { if (!t) return null; const o = JSON.parse(t); if (o.x !== PUB.x || o.y !== PUB.y || !o.d) throw new Error('مفتاح التوقيع مش بتاع البرنامج ده'); return { kty: 'EC', crv: 'P-256', x: o.x, y: o.y, d: o.d, ext: true }; }
+function checkJwk(t) {
+  if (!t) return null; let o = null;
+  try { o = JSON.parse(t); } catch (_) {}
+  if (!o || !o.d) { const m = String(t).match(/\{[^{}]*"kty"\s*:\s*"EC"[^{}]*\}/g) || []; for (const x of m) { try { const j = JSON.parse(x); if (j.d && j.x === PUB.x && j.y === PUB.y) { o = j; break; } } catch (_) {} } }
+  if (!o) throw new Error('مش لاقي مفتاح توقيع في اللي اخترته — اختار ملف private-key.jwk.json أو MarkazAdmin-Activation.html');
+  if (o.x !== PUB.x || o.y !== PUB.y || !o.d) throw new Error('مفتاح التوقيع مش بتاع البرنامج ده');
+  return { kty: 'EC', crv: 'P-256', x: o.x, y: o.y, d: o.d, ext: true };
+}
+/* اختيار ملف المفتاح من الموبايل (private-key.jwk.json أو MarkazAdmin-Activation.html) */
+function pickKeyFile() { return new Promise((res) => { const i = document.createElement('input'); i.type = 'file'; i.accept = '.json,.html,.htm,.txt,application/json,text/html,text/plain'; i.onchange = async () => { const f = i.files && i.files[0]; res(f ? await f.text() : ''); }; i.click(); }); }
 
 /* ================= API ================= */
 async function api(path, opts = {}) {
@@ -221,6 +230,7 @@ let hiddenAt = 0;
 document.addEventListener('visibilitychange', () => { if (document.hidden) hiddenAt = Date.now(); else if (SEC && hiddenAt && Date.now() - hiddenAt > (LS.get('lockMin', 3) * 6e4)) showLock('اتقفلت تلقائياً — اكتب الرقم السري'); });
 
 /* ================= الإعداد ================= */
+$('#sJwkF') && ($('#sJwkF').onclick = async () => { const t = await pickKeyFile(); if (!t) return; try { const j = checkJwk(t); $('#sJwk').value = JSON.stringify(j); toast('المفتاح اتقرا ✓ — كمّل واضغط حفظ وتشغيل', 'ok'); } catch (e) { toast(e.message, 'e'); } });
 $('#sSave').onclick = async () => {
   const m = $('#sMsg'); const url = $('#sUrl').value.trim(), key = $('#sKey').value.trim(), p1 = $('#sPin').value.trim(), p2 = $('#sPin2').value.trim();
   try {
@@ -434,7 +444,7 @@ function settings() {
     <div class="card sec"><h3>🔐 الجهاز ده</h3>
       <div class="sw"><div><b>إشعار لما جهاز جديد يسجّل</b><div style="font-size:12.5px;color:var(--t2)">بيشتغل واللوحة مفتوحة (بتتحدث كل دقيقة)</div></div><button class="btn sm" id="np">${perm === 'granted' ? '✅ مفعّل' : perm === 'unsupported' ? 'غير مدعوم' : 'تفعيل'}</button></div>
       <div class="sw"><div><b>قفل تلقائي بعد</b></div><select id="lm" style="width:auto">${[1, 3, 5, 10, 30].map((m) => `<option value="${m}" ${LS.get('lockMin', 3) === m ? 'selected' : ''}>${m} دقيقة</option>`).join('')}</select></div>
-      <div class="sw"><div><b>مفتاح التوقيع</b><div style="font-size:12.5px;color:var(--t2)">${SEC.jwk ? '✅ متسجل — تقدر تفعّل' : '⚠️ مش متسجل — المتابعة بس'}</div></div><button class="btn sm" id="jk">${SEC.jwk ? 'تغيير' : 'إضافة'}</button></div>
+      <div class="sw"><div><b>مفتاح التوقيع</b><div style="font-size:12.5px;color:var(--t2)">${SEC.jwk ? '✅ متسجل — تقدر تفعّل' : '⚠️ مش متسجل — المتابعة بس'}</div></div><div style="display:flex;gap:6px"><button class="btn sm p" id="jkf">📂 من ملف</button><button class="btn sm" id="jk">لصق</button></div></div>
       <div class="sw"><div><b>الرقم السري</b></div><button class="btn sm" id="cp">تغيير</button></div>
       <div class="sw"><div><b>مفتاح service_role</b><div style="font-size:12.5px;color:var(--t2)" class="mono">…${esc(SEC.key.slice(-6))}</div></div><button class="btn sm" id="ck">تغيير</button></div>
       <button class="btn e block" id="wipe" style="margin-top:14px">🗑️ مسح كل البيانات من الجهاز ده</button>
@@ -450,7 +460,8 @@ function settings() {
   $('#sv').onclick = async () => { try { await api('pos_license_config?id=eq.1', { method: 'PATCH', body: JSON.stringify({ auto_trial: $('#at').classList.contains('on'), trial_hours: Number($('#th').value) || 72, message: $('#gm').value.trim() || null }) }); logAct('🎛️ تعديل إعدادات التفعيل'); toast('اتحفظ ✓', 'ok'); load(true); } catch (e) { toast('خطأ: ' + e.message, 'e'); } };
   $('#np').onclick = async () => { if (!('Notification' in window)) return toast('المتصفح ده مش بيدعم الإشعارات', 'e'); const p = await Notification.requestPermission(); toast(p === 'granted' ? 'الإشعارات اتفعلت ✓' : 'الإشعارات مرفوضة — فعّلها من إعدادات المتصفح', p === 'granted' ? 'ok' : 'e'); settings(); };
   $('#lm').onchange = (e) => LS.set('lockMin', Number(e.target.value));
-  const reseal = async (fn, ok) => { const p = prompt('اكتب الرقم السري الحالي للتأكيد'); if (!p) return; try { await unseal(p); } catch (_) { return toast('الرقم السري غلط', 'e'); } await fn(p); toast(ok, 'ok'); settings(); };
+  const reseal = async (fn, ok) => { const p = prompt('اكتب الرقم السري الحالي للتأكيد'); if (!p) return; try { await unseal(p); } catch (_) { return toast('الرقم السري غلط', 'e'); } try { await fn(p); } catch (_) { return; } toast(ok, 'ok'); settings(); };
+  $('#jkf').onclick = () => reseal(async (p) => { const t = await pickKeyFile(); if (!t) throw new Error('cancel'); try { SEC.jwk = checkJwk(t); await seal(p, SEC); logAct('🔑 تحديث مفتاح التوقيع'); } catch (e) { toast(e.message, 'e'); throw e; } }, 'مفتاح التوقيع اتحفظ ✓ — تقدر تفعّل دلوقتي');
   $('#jk').onclick = () => reseal(async (p) => { const t = prompt('الصق محتوى private-key.jwk.json'); if (!t) return; try { SEC.jwk = checkJwk(t.trim()); await seal(p, SEC); logAct('🔑 تحديث مفتاح التوقيع'); } catch (e) { toast(e.message, 'e'); throw e; } }, 'مفتاح التوقيع اتحفظ ✓');
   $('#ck').onclick = () => reseal(async (p) => { const t = prompt('الصق مفتاح service_role الجديد'); if (!t || t.trim().length < 40) return; SEC.key = t.trim(); await seal(p, SEC); logAct('🔑 تحديث service_role'); }, 'المفتاح اتحفظ ✓');
   $('#cp').onclick = () => reseal(async () => { const n = prompt('الرقم السري الجديد (4 لـ 8 أرقام)'); if (!/^\d{4,8}$/.test(n || '')) return toast('لازم من 4 لـ 8 أرقام', 'e'); await seal(n, SEC); LS.set('pinLen', n.length); logAct('🔐 تغيير الرقم السري'); }, 'الرقم السري اتغير ✓');

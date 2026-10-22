@@ -113,6 +113,7 @@ main{flex:1;min-width:0;padding:22px 24px 110px}
 .tg.on{background:var(--ok)}.tg.on::after{inset-inline-start:25px}
 .ban{padding:12px 14px;border-radius:14px;font-weight:700;font-size:13.5px;margin-bottom:14px}.ban.w{background:var(--wb);color:var(--w)}.ban.e{background:var(--eb);color:var(--e)}.ban.i{background:var(--ib);color:var(--i)}
 .sig{text-align:center;color:var(--t3);font-size:12px;margin-top:24px}
+.lim{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.lim small{grid-column:1/-1;color:var(--t2);font-size:12px;margin-top:-6px}
 </style>
 </head>
 <body>
@@ -189,6 +190,8 @@ async function sign(payload) {
   const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, k, new TextEncoder().encode(p));
   return 'MAH1-' + p + '.' + b64u(sig);
 }
+/* قراءة بيانات الترخيص الحالي (عشان التجديد يفتكر الحدود) */
+function lic(r) { try { const p = String(r.license_key || '').replace(/^MAH1-/, '').split('.')[0].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(p + '==='.slice((p.length + 3) % 4)), (c) => c.charCodeAt(0)))) || {}; } catch (_) { return {}; } }
 function checkJwk(t) {
   if (!t) return null; let o = null;
   try { o = JSON.parse(t); } catch (_) {}
@@ -267,14 +270,14 @@ const trialLeft = (r) => (r.status === 'trial' && r.trial_start ? Date.parse(r.t
 const need = () => ROWS.filter((r) => r.status === 'pending' || isExp(r) || (trialLeft(r) != null && trialLeft(r) < 24 * 36e5));
 
 /* ================= الواجهة ================= */
-const TABS = [['home', '🏠', 'الرئيسية'], ['devices', '📱', 'الأجهزة'], ['settings', '⚙️', 'الإعدادات'], ['server', '🗄️', 'السيرفر'], ['log', '📜', 'السجل']];
+const TABS = [['home', '🏠', 'الرئيسية'], ['devices', '📱', 'الأجهزة'], ['renew', '🔁', 'التجديدات'], ['settings', '⚙️', 'الإعدادات'], ['server', '🗄️', 'السيرفر'], ['log', '📜', 'السجل']];
 function nav() {
   const p = ROWS.filter((r) => r.status === 'pending').length;
-  const h = (cls) => TABS.map(([k, e, l]) => `<a data-t="${k}" class="${TAB === k ? 'on' : ''}">${cls === 's' ? `<span>${e}</span><span>${l}</span>` : `<i>${e}</i>${l}`}${k === 'devices' && p ? `<span class="bd">${p}</span>` : ''}</a>`).join('');
+  const h = (cls) => TABS.map(([k, e, l]) => `<a data-t="${k}" class="${TAB === k ? 'on' : ''}">${cls === 's' ? `<span>${e}</span><span>${l}</span>` : `<i>${e}</i>${l}`}${k === 'devices' && p ? `<span class="bd">${p}</span>` : ''}${k === 'renew' && renewDue() ? `<span class="bd">${renewDue()}</span>` : ''}</a>`).join('');
   $('#sideNav').innerHTML = h('s'); $('#botNav').innerHTML = h('b');
   $$('[data-t]').forEach((a) => (a.onclick = () => { TAB = a.dataset.t; LS.set('tab', TAB); draw(); window.scrollTo(0, 0); }));
 }
-function draw() { nav(); $('#pTitle').textContent = (TABS.find((t) => t[0] === TAB) || TABS[0])[2]; ({ home, devices, settings, server, log })[TAB](); }
+function draw() { nav(); $('#pTitle').textContent = (TABS.find((t) => t[0] === TAB) || TABS[0])[2]; (({ home, devices, renew, settings, server, log })[TAB] || home)(); }
 function item(r, right = '') { return `<div class="it" data-m="${esc(r.mid)}"><span class="av">${esc((r.store_name || '?').trim()[0] || '?')}<i class="dot ${online(r) ? 'on' : ''}"></i></span><div class="n"><b>${esc(r.store_name || '—')}</b><small>${esc(r.owner_name || '')} · <span class="mono">${esc(r.phone || '')}</span></small></div>${right || `<span class="tag ${r.status}">${ST[r.status]}</span>`}</div>`; }
 function bindItems() { $$('[data-m]').forEach((d) => (d.onclick = (e) => { if (e.target.closest('button')) return; openDev(d.dataset.m); })); }
 
@@ -325,6 +328,32 @@ function devices() {
   $$('.dc').forEach((d) => (d.onclick = (e) => { const b = e.target.closest('[data-a]'); const r = ROWS.find((x) => x.mid === d.dataset.m); if (!b) return openDev(r.mid); act(b.dataset.a, r); }));
 }
 
+/* ================= التجديدات ================= */
+const daysLeft = (r) => Math.ceil((Date.parse(r.expires_at) - Date.now()) / 864e5);
+const renewDue = () => ROWS.filter((r) => r.status === 'active' && r.expires_at && daysLeft(r) <= 7).length;
+function markReminded(mid) { const m = LS.get('reminded', {}); m[mid] = Date.now(); LS.set('reminded', m); }
+function renew() {
+  const rem = LS.get('reminded', {}); const act = ROWS.filter((r) => r.status === 'active');
+  const timed = act.filter((r) => r.expires_at).sort((a, b) => Date.parse(a.expires_at) - Date.parse(b.expires_at));
+  const G = [['⛔ خلص ومحتاج تجديد', 'e', (r) => daysLeft(r) <= 0], ['⚠️ بيخلص خلال 7 أيام', 'w', (r) => daysLeft(r) > 0 && daysLeft(r) <= 7], ['📅 بيخلص خلال 30 يوم', 'i', (r) => daysLeft(r) > 7 && daysLeft(r) <= 30]];
+  const trials = ROWS.filter((r) => trialLeft(r) != null).sort((a, b) => trialLeft(a) - trialLeft(b));
+  const mk = new Date(); const month = timed.filter((r) => { const d = new Date(r.expires_at); return d.getMonth() === mk.getMonth() && d.getFullYear() === mk.getFullYear(); }).length;
+  const row = (r, tag) => { const d = rem[r.mid]; return `<div class="it" data-m="${esc(r.mid)}"><span class="av">${esc((r.store_name || '?').trim()[0] || '?')}<i class="dot ${online(r) ? 'on' : ''}"></i></span><div class="n"><b>${esc(r.store_name || '—')}</b><small>${esc(r.owner_name || '')} · <span class="mono">${esc(r.phone || '')}</span>${d ? ` · ✅ اتبعتله تذكير ${ago(new Date(d).toISOString())}` : ''}</small></div>${tag}<div style="display:flex;gap:6px"><button class="btn wa sm" data-rw="${esc(r.mid)}">💬</button><button class="btn sm p" data-rn="${esc(r.mid)}">🔁</button></div></div>`; };
+  $('#view').innerHTML = `<div class="kpis">
+      <div class="k e"><small>⛔ خلص</small><b class="num">${timed.filter(G[0][2]).length}</b></div>
+      <div class="k w"><small>⚠️ خلال أسبوع</small><b class="num">${timed.filter(G[1][2]).length}</b></div>
+      <div class="k i"><small>📅 خلال شهر</small><b class="num">${timed.filter(G[2][2]).length}</b></div>
+      <div class="k ok"><small>🗓️ تجديدات الشهر ده</small><b class="num">${month}</b><em>♾️ ${act.filter((r) => !r.expires_at).length} ترخيص دائم</em></div></div>
+    <div class="ban i">💡 ابعت التذكير قبل الانتهاء بأسبوع — العميل بيجدد أسهل والبرنامج مايقفش عنده. التذكير بيتعلّم عليه ✅ عشان ماتبعتش مرتين.</div>
+    ${G.map(([t, c, f]) => { const ls = timed.filter(f); return ls.length ? `<div class="card sec"><h3>${t} <span class="tag">${ls.length}</span></h3>${ls.map((r) => row(r, `<span class="tag ${c === 'e' ? 'blocked' : c === 'w' ? 'pending' : 'trial'}">${daysLeft(r) <= 0 ? 'خلص ' + fdate(r.expires_at) : 'باقي ' + daysLeft(r) + ' يوم'}</span>`)).join('')}</div>` : ''; }).join('')}
+    ${trials.length ? `<div class="card sec"><h3>🧪 تجارب شغالة — حوّلها لاشتراك <span class="tag">${trials.length}</span></h3>${trials.map((r) => row(r, `<span class="tag trial">${trialLeft(r) > 0 ? 'باقي ' + Math.max(1, Math.round(trialLeft(r) / 36e5)) + ' ساعة' : 'التجربة خلصت'}</span>`)).join('')}</div>` : ''}
+    ${!timed.some((r) => daysLeft(r) <= 30) && !trials.length ? '<div class="empty">🎉 مفيش تجديدات قريبة</div>' : ''}
+    <p class="sig">جميع الحقوق محفوظة للمصمم والمطور — م/ أسامة حسن بدري — 01145060007</p>`;
+  $$('[data-rw]').forEach((b) => (b.onclick = (e) => { e.stopPropagation(); const r = ROWS.find((x) => x.mid === b.dataset.rw); waDlg(r, r.status === 'trial' ? 'trial2' : 'exp'); }));
+  $$('[data-rn]').forEach((b) => (b.onclick = (e) => { e.stopPropagation(); activate(ROWS.find((x) => x.mid === b.dataset.rn)); }));
+  bindItems();
+}
+
 function exportCsv(ls) {
   const cols = [['store_name', 'المحل'], ['owner_name', 'المالك'], ['phone', 'الموبايل'], ['mid', 'كود الجهاز'], ['platform', 'النظام'], ['app_version', 'الإصدار'], ['status', 'الحالة'], ['license_type', 'الترخيص'], ['expires_at', 'ينتهي'], ['created_at', 'سجّل'], ['last_seen', 'آخر ظهور'], ['note', 'ملاحظة']];
   const csv = '﻿' + [cols.map((c) => c[1]).join(','), ...ls.map((r) => cols.map(([k]) => `"${String((k === 'status' ? ST[r[k]] : r[k]) ?? '').replace(/"/g, '""')}"`).join(','))].join('\n');
@@ -345,6 +374,7 @@ function openDev(mid) {
     <div class="kv"><span>المالك</span><b>${esc(r.owner_name || '—')}</b><span>الموبايل</span><b class="mono">${esc(r.phone || '—')}</b><span>كود الجهاز</span><b class="mono" id="cpMid" style="cursor:pointer">${esc(r.mid)} 📋</b>
       <span>النظام</span><b>${PL[r.platform] || esc(r.platform || '—')} ${r.app_version ? `<span class="mono">${esc(r.app_version)}</span>` : ''}</b>
       <span>الحالة</span><b>${r.status === 'active' ? `${TN[r.license_type] || ''} — ${r.expires_at ? 'لحد ' + fdate(r.expires_at) : 'دائم'}` : tl != null ? (tl > 0 ? `تجربة — باقي ${Math.round(tl / 36e5)} ساعة` : 'التجربة خلصت') : ST[r.status]}</b>
+      ${lic(r).b || lic(r).u ? `<span>الحدود</span><b>${lic(r).b ? '🏢 ' + lic(r).b + ' فرع ' : ''}${lic(r).u ? '👥 ' + lic(r).u + ' مستخدم' : ''}</b>` : ''}
       <span>سجّل</span><b>${fmt(r.created_at)}</b><span>آخر ظهور</span><b>${online(r) ? '🟢 ' : ''}${fmt(r.last_seen)} (${ago(r.last_seen)})</b><span>مرات الفحص</span><b class="num">${r.checks ?? 0}</b>
       ${r.note ? `<span>ملاحظة</span><b>${esc(r.note)}</b>` : ''}</div>
     <div class="ag">
@@ -382,6 +412,7 @@ function activate(r) {
     ${!SEC.jwk ? '<div class="ban e">⚠️ مفتاح التوقيع مش متسجل على الجهاز ده — ضيفه من الإعدادات الأول</div>' : ''}
     <div class="types">${[['month', 'شهري', '30 يوم'], ['half', '6 شهور', '182 يوم'], ['year', 'سنوي', '365 يوم'], ['full', 'دائم', 'من غير انتهاء'], ['custom', 'مخصص', 'عدد أيام']].map(([k, l, s]) => `<button data-ty="${k}" class="${type === k ? 'on' : ''}">${l}<small>${s}</small></button>`).join('')}</div>
     <div class="f ${type === 'custom' ? '' : 'hidden'}" id="cd"><label>عدد الأيام</label><input id="days" type="number" inputmode="numeric" value="15"></div>
+    <div class="lim"><div class="f"><label>🏢 عدد الفروع</label><input id="lb" type="number" inputmode="numeric" min="0" value="${lic(r).b || 0}"></div><div class="f"><label>👥 المستخدمين / الموظفين</label><input id="lu" type="number" inputmode="numeric" min="0" value="${lic(r).u || 0}"></div><small>0 = من غير حد — تقدر تغيّرهم في أي تجديد</small></div>
     <div class="f"><label>اسم المحل (بيظهر في البرنامج)</label><input id="nm" value="${esc(r.store_name || '')}"></div>
     <div class="f"><label>ملاحظة (اختياري) — مثلاً: دفع 300 فودافون كاش</label><input id="nt" value="${esc(r.note || '')}"></div>
     <div id="pv" class="ban i"></div>
@@ -395,9 +426,10 @@ function activate(r) {
       const b = $('#go', ov); b.disabled = true; b.textContent = '⏳ جاري التفعيل…';
       try {
         const d = days(); const e = d ? base() + d * 864e5 : 0;
-        const key = await sign({ n: $('#nm', ov).value.trim() || r.store_name, m: r.mid, t: type === 'custom' ? 'month' : type, e, i: Date.now() });
+        const lb = Math.max(0, Math.round(Number($('#lb', ov).value) || 0)), lu = Math.max(0, Math.round(Number($('#lu', ov).value) || 0));
+        const key = await sign({ n: $('#nm', ov).value.trim() || r.store_name, m: r.mid, t: type === 'custom' ? 'month' : type, e, i: Date.now(), ...(lb ? { b: lb } : {}), ...(lu ? { u: lu } : {}) });
         await patch(r.mid, { status: 'active', license_key: key, license_type: type, expires_at: e ? new Date(e).toISOString() : null, note: $('#nt', ov).value.trim() || null, store_name: $('#nm', ov).value.trim() || r.store_name });
-        logAct(`✅ ${cur ? 'تجديد' : 'تفعيل'} ${r.store_name} — ${TN[type]}${e ? ' لحد ' + fdate(e) : ''}`); close(); toast('اتفعّل ✓ — الجهاز هيتفعّل لوحده', 'ok');
+        logAct(`✅ ${cur ? 'تجديد' : 'تفعيل'} ${r.store_name} — ${TN[type]}${e ? ' لحد ' + fdate(e) : ''}${lb ? ' · فروع ' + lb : ''}${lu ? ' · مستخدمين ' + lu : ''}`); close(); toast('اتفعّل ✓ — الجهاز هيتفعّل لوحده', 'ok');
         await load(); const fr = ROWS.find((x) => x.mid === r.mid) || r; waDlg(fr, 'act');
       } catch (er) { b.disabled = false; b.textContent = '🔑 حاول تاني'; toast('خطأ: ' + er.message.slice(0, 140), 'e'); }
     };
@@ -419,16 +451,17 @@ function waDlg(r, pre) {
   const T = {
     act: `أهلاً ${n} 👋\nتم تفعيل برنامج *مركز أهلاً POS* على جهازك ✅${r.expires_at ? `\nالاشتراك ساري لحد ${fdate(r.expires_at)}` : '\nترخيص دائم'}\nافتح البرنامج واضغط «تحقق الآن» لو لسه مفتحش.\nلأي استفسار أنا معاك 🙏\nم/ أسامة حسن بدري — 01145060007`,
     trial: `أهلاً ${n} 👋\nفعّلتلك *نسخة تجريبية* من برنامج مركز أهلاً POS 🎁\nجرّب كل حاجة براحتك، ولو احتجت أي شرح كلمني.\nم/ أسامة حسن بدري — 01145060007`,
-    exp: `أهلاً ${n} 👋\nحبيت أفكّرك إن اشتراك برنامج مركز أهلاً POS هيخلص يوم ${fdate(r.expires_at)}.\nابعتلي عشان أجددهولك والشغل مايقفش 🙏\nم/ أسامة حسن بدري — 01145060007`,
+    exp: `أهلاً ${n} 👋\nحبيت أفكّرك إن اشتراك برنامج مركز أهلاً POS ${r.expires_at && Date.parse(r.expires_at) < Date.now() ? 'خلص يوم' : 'هيخلص يوم'} ${fdate(r.expires_at)}.\nابعتلي عشان أجددهولك والشغل مايقفش 🙏\nم/ أسامة حسن بدري — 01145060007`,
+    trial2: `أهلاً ${n} 👋\nإيه رأيك في برنامج مركز أهلاً POS لحد دلوقتي؟ 😊\nالتجربة قربت تخلص — ابعتلي وأنا أفعّلك الاشتراك المناسب ليك (شهري / 6 شهور / سنوي) وبياناتك كلها هتفضل زي ما هي.\nم/ أسامة حسن بدري — 01145060007`,
     welcome: `أهلاً ${n} 👋 نورت برنامج مركز أهلاً POS.\nطلبك وصلني ✅ وهفعّلك خلال دقايق.\nم/ أسامة حسن بدري — 01145060007`,
     upd: `أهلاً ${n} 👋\nنزل تحديث جديد لبرنامج مركز أهلاً POS 🎉\nافتح البرنامج ← اضغط على اسمك فوق ← «تحقق من التحديثات» ← «تحديث الآن».\nبياناتك هتفضل زي ما هي.`,
     blocked: `أهلاً ${n}،\nتم إيقاف البرنامج مؤقتاً على جهازك. كلمني على الرقم ده عشان نحل الموضوع 🙏\nم/ أسامة حسن بدري — 01145060007`
   };
-  const L = [['act', '✅ تم التفعيل'], ['trial', '🧪 تجربة'], ['exp', '⏰ تذكير بالتجديد'], ['welcome', '👋 ترحيب'], ['upd', '⬆️ تحديث جديد'], ['blocked', '⛔ إيقاف']];
+  const L = [['act', '✅ تم التفعيل'], ['trial', '🧪 تجربة'], ['trial2', '💡 حوّل التجربة لاشتراك'], ['exp', '⏰ تذكير بالتجديد'], ['welcome', '👋 ترحيب'], ['upd', '⬆️ تحديث جديد'], ['blocked', '⛔ إيقاف']];
   let k = pre || (r.status === 'pending' ? 'welcome' : isExp(r) ? 'exp' : r.status === 'trial' ? 'trial' : r.status === 'blocked' ? 'blocked' : 'act');
   sheet(`<h3>💬 رسالة لـ ${esc(n)}</h3><div class="chips">${L.map(([x, l]) => `<button class="chip ${x === k ? 'on' : ''}" data-k="${x}">${l}</button>`).join('')}</div><div class="f"><textarea id="tx" rows="7">${esc(T[k])}</textarea></div><button class="btn wa block" id="go">💬 فتح واتساب</button>`, (ov, close) => {
     $$('[data-k]', ov).forEach((b) => (b.onclick = () => { k = b.dataset.k; $$('[data-k]', ov).forEach((x) => x.classList.toggle('on', x === b)); $('#tx', ov).value = T[k]; }));
-    $('#go', ov).onclick = () => { window.open('https://wa.me/' + waNum(r.phone) + '?text=' + encodeURIComponent($('#tx', ov).value), '_blank'); close(); };
+    $('#go', ov).onclick = () => { if (k === 'exp' || k === 'trial2') markReminded(r.mid); window.open('https://wa.me/' + waNum(r.phone) + '?text=' + encodeURIComponent($('#tx', ov).value), '_blank'); close(); };
   });
 }
 

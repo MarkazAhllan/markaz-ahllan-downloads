@@ -1758,6 +1758,26 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .d-qr.big .d-qr-c { width: clamp(110px, 17vh, 220px); }
 .wq-head { border-radius: 14px; padding: 12px; background: var(--wc, var(--p)); color: #fff; display: flex; flex-direction: column; } .wq-head b { font-size: 20px; } .wq-head small { opacity: .9; }
 .wq-prev { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 10px; } .wq-qr { width: 170px; background: #fff; padding: 8px; border-radius: 12px; box-shadow: var(--shadow); }
+
+/* ===== الباقات ===== */
+.pl-lock { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.pl-lock .pl-ic { width: 64px; height: 64px; border-radius: 20px; background: var(--p-50); color: var(--p); display: grid; place-items: center; margin-bottom: 6px; position: relative; }
+.pl-lock .pl-ic svg { width: 30px; height: 30px; }
+.pl-lock .pl-ic::after { content: '🔒'; position: absolute; bottom: -6px; inset-inline-end: -6px; font-size: 18px; }
+.pl-lock b { font-size: 17px; } .pl-lock small { color: var(--text-2); }
+.pl-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 16px; background: linear-gradient(135deg, var(--p), var(--p-700)); color: #fff; margin-bottom: 12px; flex-wrap: wrap; }
+.pl-head b { display: block; font-size: 22px; } .pl-head small { color: rgba(255,255,255,.8) !important; } .pl-head .tag { background: rgba(255,255,255,.18); color: #fff; }
+.pl-core { padding: 10px 12px; border: 1px dashed var(--line); border-radius: 12px; margin-bottom: 12px; }
+.pl-core > div { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.pl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+.pl-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
+.pl-row > div { flex: 1; min-width: 0; } .pl-row b { display: block; font-size: 14px; } .pl-row small { color: var(--text-3); font-size: 12px; }
+.pl-row .pl-i { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--ok-bg); color: var(--ok); flex: none; }
+.pl-row .pl-i svg { width: 18px; height: 18px; }
+.pl-row.off { background: var(--surface-2); } .pl-row.off .pl-i { background: var(--surface); color: var(--text-3); } .pl-row.off b { color: var(--text-2); }
+.pl-mini { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: var(--p-50); }
+.pl-mini b { display: block; font-size: 17px; }
+.ftr-row.locked { opacity: .75; } .ftr-row.locked .btn { flex: none; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -10232,7 +10252,8 @@ Modules.settings = {
         '-',
         ['roundFee5', L('تقريب العمولة لأعلى مضاعف 5', 'Round fee up to a multiple of 5'), L('مثال: 11 ← 15، 17 ← 20', 'e.g. 11 → 15, 17 → 20')]
       ];
-      b.innerHTML = `<div class="card ftr">${rows.map((r) => r === '-' ? '<div class="ftr-sep"></div>' : `<div class="ftr-row ${r[4] ? 'sub' : ''}"><div><b>${r[1]}</b><small>${r[2]}</small></div><label class="switch"><input type="checkbox" data-ft="${r[0]}" ${(r[0].startsWith('__') ? r[3] : F[r[0]]) ? 'checked' : ''}><span></span></label></div>`).join('')}</div>`;
+      b.innerHTML = `<div class="card ftr">${rows.map((r) => r === '-' ? '<div class="ftr-sep"></div>' : (() => { const lk = typeof Plan !== 'undefined' && !r[0].startsWith('__') && Plan.lockedFeat(r[0]); return `<div class="ftr-row ${r[4] ? 'sub' : ''} ${lk ? 'locked' : ''}"><div><b>${r[1]}</b><small>${r[2]}</small></div>${lk ? `<button class="btn sm" data-ftlock="${lk.k}">${icon('lock')}${L('مش ضمن باقتك', 'Not in plan')}</button>` : `<label class="switch"><input type="checkbox" data-ft="${r[0]}" ${(r[0].startsWith('__') ? r[3] : F[r[0]]) ? 'checked' : ''}><span></span></label>`}</div>`; })()).join('')}</div>`;
+      $$('[data-ftlock]', b).forEach((x) => (x.onclick = () => Plan.deny(x.dataset.ftlock)));
       $$('[data-ft]', b).forEach((x) => (x.onchange = () => {
         if (x.dataset.ft === '__shift') DB.saveSettings({ requireShift: x.checked }); else if (x.dataset.ft === '__autoPayroll') DB.saveSettings({ autoPayroll: x.checked }); else if (x.dataset.ft === '__autoAtt') DB.saveSettings({ autoAttendance: x.checked }); else DB.saveSettings({ features: { [x.dataset.ft]: x.checked } });
         audit('feature.' + x.dataset.ft, x.checked); UI.toast(L('تم الحفظ', 'Saved')); App.shell(); Modules.settings.tab = 'features';
@@ -10300,8 +10321,9 @@ Modules.settings = {
     } else if (t === 'license') {
       const st = await License.status(); const mid = await License.machineId();
       b.innerHTML = `<div class="card card-b" style="max-width:720px"><div class="row mb">${st.state === 'active' ? `<span class="tag ok" style="font-size:14px;padding:8px 14px">${icon('shield')} ${L('البرنامج مفعل', 'Activated')}</span>` : st.state === 'trial' ? `<span class="trial-badge" style="font-size:14px">${icon('clock')} ${L('نسخة تجريبية — متبقي', 'Trial — left')} ${License.fmtLeft(st.left)}</span>` : `<span class="tag err">${L('منتهي', 'Expired')}</span>`}</div>
-        ${st.state === 'active' ? `<div class="grid g3 mb"><div class="stat-mini"><span class="l">${L('مرخص لـ', 'Licensed to')}</span><b>${esc(st.info.n)}</b></div><div class="stat-mini"><span class="l">${L('النوع', 'Type')}</span><b>${License.typeName(st.info.t)}</b></div><div class="stat-mini"><span class="l">${L('ينتهي', 'Expires')}</span><b>${st.info.e ? fmtDate(st.info.e) : L('لا ينتهي', 'Never')}</b></div></div>` : ''}${st.state === 'active' ? Limits.html() : ''}
+        ${st.state === 'active' ? `<div class="grid g3 mb"><div class="stat-mini"><span class="l">${L('مرخص لـ', 'Licensed to')}</span><b>${esc(st.info.n)}</b></div><div class="stat-mini"><span class="l">${L('النوع', 'Type')}</span><b>${License.typeName(st.info.t)}</b></div><div class="stat-mini"><span class="l">${L('ينتهي', 'Expires')}</span><b>${st.info.e ? fmtDate(st.info.e) : L('لا ينتهي', 'Never')}</b></div></div>` : ''}${st.state === 'active' ? Limits.html() : ''}${typeof Plan !== 'undefined' ? `<div class="pl-mini mb"><div><small class="faint">${L('الباقة', 'Plan')}</small><b>${Plan.name()}</b></div><button class="btn" id="plView">${icon('award')}${L('تفاصيل باقتي', 'My plan')}</button></div>` : ''}
         <label class="lbl">${L('كود الجهاز', 'Machine ID')}</label><div class="mid-box">${mid}</div><div class="row mt"><button class="btn primary" id="licAct">${icon('key')}${L('إدخال مفتاح الترخيص', 'Enter license key')}</button></div></div>`;
+      $('#plView') && ($('#plView').onclick = () => Plan.view());
       $('#licAct').onclick = () => License.activationDialog(async () => { App.licenseState = await License.status(); this.body(); App.refreshTop(); });
     } else if (t === 'about') {
       await APP.loadVersion(); b.innerHTML = About.html(); About.bind(b);
@@ -10318,6 +10340,7 @@ const CHANGELOG = [
   { v: '1.4.1', d: '2026-10-23', items: [
     ['award', L('نقاط الولاء: العميل بيكسب نقاط على كل فاتورة ويستبدلها خصم من نقطة البيع بضغطة، ورصيده بيوصله على واتساب بعد كل فاتورة', 'Loyalty points: earn on every invoice, redeem at the POS, balance sent on WhatsApp')],
     ['tool', L('الصيانة: تذكير تلقائي على واتساب للعميل اللي جهازه جاهز ومجاش ياخده (كل كام يوم تحدده، وبحد أقصى للتذكيرات)', 'Repairs: automatic WhatsApp pickup reminders for ready devices')],
+    ['layers', L('باقات البرنامج: «باقتي» في الإعدادات ← الترخيص بتوضح الأقسام المفتوحة عندك، وتقدر تطلب أي قسم جديد بضغطة', 'Plans: see your unlocked modules under Settings → License and request upgrades in one tap')],
     ['qr', L('QR شاشة العرض: إنستا باي من غير رابط بيتعمل برقم المحفظة نفسه', 'Display QR: InstaPay without a link uses the wallet number')]
   ] },
   { v: '1.4.0', d: '2026-10-23', items: [
@@ -12934,6 +12957,144 @@ const AI = {
     return `💡 ${L('تحليل ونصائح', 'Insights')}:\n` + (tips.join('\n') || L('البيانات لسه قليلة للتحليل — سجّل مبيعات أكتر.', 'Not enough data yet.'));
   }
 };
+
+</script>
+  <script>
+/* =========================================================
+   الباقات — الأقسام المسموحة جوّه الترخيص الموقّع
+   - الترخيص فيه p (اسم الباقة) و f (الأقسام المسموحة) — موقّعين بمفتاح المطور فمحدش يقدر يعدّلهم
+   - ترخيص من غير f (العملاء القدام) أو فترة التجربة = كل الأقسام
+   - القسم المقفول: بيختفي من القائمة، ومفتاحه في الإعدادات بيتقفل، وبياناته القديمة بتفضل في التقارير
+   - الكتالوج ده لازم يفضل مطابق للي في لوحة المطور (mobile/admin/index.html)
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const PLAN_MODS = [
+  { k: 'wallets', ic: 'wallet', ar: 'المحافظ الإلكترونية والكاش', en: 'E-wallets & cash', d: 'سحب وإيداع وتحويل، ليمتات، رسائل SMS', mods: ['wallets'], perms: ['wallets', 'wallets.manage'] },
+  { k: 'machines', ic: 'zap', ar: 'ماكينات الشحن والكروت', en: 'Payment machines & cards', d: 'فوري وأمان ومصاري، فئات الكروت', mods: ['machines'], perms: ['machines', 'machines.price'], feats: ['machines'] },
+  { k: 'display', ic: 'eye', ar: 'شاشة العرض للعملاء', en: 'Customer display', d: 'أرقام المحافظ و QR على شاشة', feats: ['display'] },
+  { k: 'credit', ic: 'credit', ar: 'عملاء الآجل', en: 'Credit customers', d: 'مديونيات وتحصيل وأعمار ديون', mods: ['customers'], feats: ['credit'] },
+  { k: 'installments', ic: 'calendar', ar: 'البيع بالتقسيط', en: 'Installments', d: 'خطط أقساط وعقود وغرامات', mods: ['installments'], perms: ['installments'] },
+  { k: 'loyalty', ic: 'award', ar: 'نقاط الولاء', en: 'Loyalty points', d: 'نقاط على الفواتير واستبدالها خصم', mods: ['loyalty'] },
+  { k: 'phones', ic: 'phone', ar: 'قسم الموبايلات', en: 'Phones', d: 'بيع وشراء بالـ IMEI واستبدال وضمان', mods: ['phones'], perms: ['phones', 'phones.buy'], feats: ['phones'] },
+  { k: 'repairs', ic: 'tool', ar: 'قسم الصيانة', en: 'Repairs', d: 'استلام أجهزة ومراحل ورسائل للعميل', mods: ['repairs'], perms: ['repairs'], feats: ['repairs'] },
+  { k: 'lines', ic: 'sim', ar: 'خطوط الشركات', en: 'Mobile lines', d: 'خطوط المفوض والتحصيل والشرايح', mods: ['lines'], perms: ['lines', 'lines.manage'], feats: ['lines', 'simSales'] },
+  { k: 'cctv', ic: 'cctv', ar: 'كاميرات المراقبة', en: 'CCTV installs', d: 'تركيبات وعرابين وضمان وزيارات', mods: ['cctv'], perms: ['cctv', 'cctv.manage'], feats: ['cctv'] },
+  { k: 'hr', ic: 'users', ar: 'الموارد البشرية', en: 'HR & payroll', d: 'حضور وانصراف ومرتبات تلقائي', mods: ['attendance', 'payroll'], perms: ['attendance', 'payroll'], keys: { autoAttendance: false, autoPayroll: false } },
+  { k: 'whatsapp', ic: 'whatsapp', ar: 'واتساب التلقائي', en: 'Automatic WhatsApp', d: 'ربط رقم المحل بالـ QR وتذكيرات لوحدها' },
+  { k: 'cloud', ic: 'cloud', ar: 'النسخ الاحتياطي السحابي', en: 'Cloud backup', d: 'نسخة مشفّرة يومية ومع كل وردية' },
+  { k: 'owner', ic: 'eye', ar: 'لوحة المالك وتقرير الوردية', en: 'Owner live view & reports', d: 'أرقام لحظية وتقرير واتساب عند الغلق', mods: ['ownerLive'] },
+  { k: 'ai', ic: 'sparkles', ar: 'المساعد الذكي', en: 'AI assistant', d: 'اسأل عن أرقام محلك بالعربي', perms: ['ai'] }
+];
+const PLAN_ALL = PLAN_MODS.map((m) => m.k);
+const PLANS = [
+  { id: 'start', ar: 'الأساسية', en: 'Start', emoji: '🟢', d: 'نقطة بيع ومخزون ومشتريات ومصروفات وورديات وتقارير', f: [] },
+  { id: 'cash', ar: 'الكاش', en: 'Cash', emoji: '🔵', d: 'الأساسية + المحافظ والماكينات وشاشة العرض والآجل', f: ['wallets', 'machines', 'display', 'credit'] },
+  { id: 'business', ar: 'البيزنس', en: 'Business', emoji: '🟣', d: 'الكاش + الموبايلات والصيانة والخطوط والتقسيط والولاء والموظفين وواتساب', f: ['wallets', 'machines', 'display', 'credit', 'phones', 'repairs', 'lines', 'installments', 'loyalty', 'hr', 'whatsapp'] },
+  { id: 'premium', ar: 'البريميوم', en: 'Premium', emoji: '👑', d: 'كل الأقسام', f: PLAN_ALL }
+];
+const PLAN_CORE = ['نقطة البيع', 'المبيعات والمرتجعات', 'المخزون والباركود', 'المشتريات والموردين', 'التالف والهوالك', 'المصروفات ورأس المال', 'الورديات والدرج', 'التقارير والأرباح', 'المستخدمين والصلاحيات', 'النسخ الاحتياطي المحلي'];
+
+const Plan = {
+  info() { const s = App.licenseState; return s && s.state === 'active' && s.info ? s.info : null; },
+  /* null = كل حاجة مفتوحة (تجربة أو ترخيص قديم من غير أقسام) */
+  list() { const i = this.info(); return i && Array.isArray(i.f) ? i.f : null; },
+  full() { return !this.list(); },
+  key() { const l = this.list(); return l ? l.join(',') : '*'; },
+  allowed(k) { const l = this.list(); return !l || l.includes(k); },
+  mod(k) { return PLAN_MODS.find((m) => m.k === k); },
+  byModule(id) { return PLAN_MODS.find((m) => (m.mods || []).includes(id)); },
+  byPerm(p) { return PLAN_MODS.find((m) => (m.perms || []).includes(p)); },
+  byFeat(f) { return PLAN_MODS.find((m) => (m.feats || []).includes(f)); },
+  lockedModule(id) { const m = this.byModule(id); return m && !this.allowed(m.k) ? m : null; },
+  lockedFeat(f) { const m = this.byFeat(f); return m && !this.allowed(m.k) ? m : null; },
+  plan() { const i = this.info(); if (!i) return null; return PLANS.find((p) => p.id === i.p) || null; },
+  name() { if (this.full()) { const p = this.plan(); return p ? `${p.emoji} ${L(p.ar, p.en)}` : (this.info() ? L('كل الأقسام', 'All modules') : L('تجربة — كل الأقسام', 'Trial — all modules')); } const p = this.plan(); return p ? `${p.emoji} ${L(p.ar, p.en)}${this.custom() ? ' ' + L('(مخصصة)', '(custom)') : ''}` : L('باقة مخصصة', 'Custom plan'); },
+  custom() { const p = this.plan(); const l = this.list(); if (!p || !l) return false; return p.f.length !== l.length || p.f.some((k) => !l.includes(k)); },
+  /* رسالة القسم المقفول */
+  deny(k) {
+    const m = typeof k === 'string' ? this.mod(k) : k; if (!m) return false;
+    UI.modal({ title: L('القسم ده مش ضمن باقتك', 'Not in your plan'), icon: 'lock', size: 'sm', body: `<div class="pl-lock"><div class="pl-ic">${icon(m.ic)}</div><b>${L(m.ar, m.en)}</b><small>${m.d}</small>
+      <div class="tag mt">${L('باقتك الحالية', 'Your plan')}: ${this.name()}</div><p class="faint" style="margin:10px 0 0">${L('اطلب الترقية من المطور والقسم هيتفتح عندك لوحده من غير ما تعيد تثبيت أو تفقد أي بيانات.', 'Ask the developer to upgrade; it unlocks automatically with no data loss.')}</p></div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('اطلب الترقية', 'Request upgrade'), cls: 'wa', icon: 'whatsapp', onClick: (x) => { this.request(m); x.close(); } }] });
+    return false;
+  },
+  async request(m) {
+    let mid = ''; try { mid = await License.machineId(); } catch (_) {}
+    const st = DB.settings().store; const txt = `${L('السلام عليكم م/ أسامة', 'Hello')} 👋\n${L('عايز أضيف لباقتي', 'I want to add to my plan')}: *${m ? L(m.ar, m.en) : ''}*\n${L('المحل', 'Store')}: ${st.name || ''}\n${L('الباقة الحالية', 'Current plan')}: ${this.name()}\n${L('كود الجهاز', 'Device ID')}: ${mid}`;
+    try { if (typeof sendWhatsAppDirect === 'function') return sendWhatsAppDirect('01145060007', txt); } catch (_) {}
+    sendWhatsApp('01145060007', txt);
+  },
+  /* صفحة «باقتي» */
+  view() {
+    const row = (m) => { const on = this.allowed(m.k); return `<div class="pl-row ${on ? 'on' : 'off'}"><span class="pl-i">${icon(m.ic)}</span><div><b>${L(m.ar, m.en)}</b><small>${m.d}</small></div>${on ? `<span class="tag ok">✓</span>` : `<button class="btn sm" data-plreq="${m.k}">${icon('lock')}${L('اطلب', 'Request')}</button>`}</div>`; };
+    const md = UI.modal({ title: L('باقتي', 'My plan'), icon: 'award', body: `<div class="pl-head"><div><small class="faint">${L('الباقة الحالية', 'Current plan')}</small><b>${this.name()}</b></div><span class="tag ${this.full() ? 'ok' : 'info'}">${this.full() ? L('كل الأقسام مفتوحة', 'Everything unlocked') : `${this.list().length} / ${PLAN_MODS.length} ${L('قسم إضافي', 'add-ons')}`}</span></div>
+      <div class="pl-core"><b>${L('أساسي في كل الباقات', 'Included in every plan')}</b><div>${PLAN_CORE.map((c) => `<span class="tag">${c}</span>`).join('')}</div></div>
+      <div class="pl-grid">${PLAN_MODS.map(row).join('')}</div>` });
+    $$('[data-plreq]', md.el).forEach((b) => (b.onclick = () => this.request(this.mod(b.dataset.plreq))));
+  }
+};
+
+/* ---------- تطبيق الباقة على البرنامج ---------- */
+(() => {
+  /* الإعدادات: المفاتيح المقفولة بتتقري false — لكن الحفظ بيتم على القيم الأصلية عشان الترقية ترجّع كل حاجة زي ما كانت */
+  const baseSettings = DB.settings.bind(DB); let mc = null, raw = false;
+  DB.settings = function () {
+    const s = baseSettings(); if (raw || Plan.full()) return s;
+    const k = Plan.key(); if (mc && mc.src === s && mc.k === k) return mc.v;
+    const v = { ...s, features: { ...s.features } };
+    PLAN_MODS.filter((m) => !Plan.allowed(m.k)).forEach((m) => { (m.feats || []).forEach((f) => (v.features[f] = false)); Object.assign(v, m.keys || {}); });
+    mc = { src: s, k, v }; return v;
+  };
+  const baseSave = DB.saveSettings.bind(DB);
+  DB.saveSettings = function (p) { raw = true; try { return baseSave(p); } finally { raw = false; mc = null; } };
+
+  /* الصلاحيات المرتبطة بقسم مقفول بتتقفل حتى للمدير */
+  const baseCan = Session.can.bind(Session);
+  Session.can = function (p) { const m = Plan.byPerm(p); if (m && !Plan.allowed(m.k)) return false; return baseCan(p); };
+
+  /* الأقسام: بتختفي من القائمة، ولو اتفتحت بأي طريقة بتظهر رسالة الترقية */
+  Object.keys(Modules).forEach((id) => {
+    const m = Plan.byModule(id); if (!m) return; const md = Modules[id]; const base = md.enabled;
+    md.enabled = () => Plan.allowed(m.k) && (!base || base());
+  });
+  const baseGo = App.go.bind(App);
+  App.go = function (id) { const m = Plan.lockedModule(id); if (m) return Plan.deny(m); return baseGo(id); };
+
+  /* واتساب التلقائي */
+  if (typeof WaLink !== 'undefined') {
+    const r = WaLink.ready.bind(WaLink); WaLink.ready = () => Plan.allowed('whatsapp') && r();
+    ['connect', 'daily', 'tick'].forEach((fn) => { if (typeof WaLink[fn] !== 'function') return; const b = WaLink[fn].bind(WaLink); WaLink[fn] = function (...a) { if (!Plan.allowed('whatsapp')) return fn === 'connect' ? Plan.deny('whatsapp') : undefined; return b(...a); }; });
+    if (typeof WaLink.panel === 'function') { const b = WaLink.panel.bind(WaLink); WaLink.panel = (...a) => (Plan.allowed('whatsapp') ? b(...a) : Plan.deny('whatsapp')); }
+  }
+  /* قراءة رسائل المحافظ (SMS) جزء من قسم المحافظ */
+  if (typeof SmsLink !== 'undefined' && SmsLink.start) { const b = SmsLink.start.bind(SmsLink); SmsLink.start = (...a) => (Plan.allowed('wallets') ? b(...a) : undefined); }
+  /* النسخ السحابي */
+  if (typeof CloudBackup !== 'undefined') {
+    ['run', 'auto'].forEach((fn) => { const b = CloudBackup[fn].bind(CloudBackup); CloudBackup[fn] = function (silent, ...a) { if (!Plan.allowed('cloud')) { if (fn === 'run' && !silent) Plan.deny('cloud'); return fn === 'run' ? Promise.resolve(false) : undefined; } return b(silent, ...a); }; });
+    if (CloudBackup.setup) { const b = CloudBackup.setup.bind(CloudBackup); CloudBackup.setup = (...a) => (Plan.allowed('cloud') ? b(...a) : Plan.deny('cloud')); }
+  }
+  /* تقرير الوردية للمالك */
+  if (typeof OwnerReport !== 'undefined') {
+    ['afterClose', 'autoSend'].forEach((fn) => { if (!OwnerReport[fn]) return; const b = OwnerReport[fn].bind(OwnerReport); OwnerReport[fn] = (...a) => (Plan.allowed('owner') ? b(...a) : undefined); });
+    if (OwnerReport.settings) { const b = OwnerReport.settings.bind(OwnerReport); OwnerReport.settings = (...a) => (Plan.allowed('owner') ? b(...a) : Plan.deny('owner')); }
+  }
+  /* المساعد الذكي */
+  if (typeof AI !== 'undefined') {
+    const bm = AI.mount.bind(AI); AI.mount = (...a) => { if (!Plan.allowed('ai')) { $$('.ai-fab').forEach((x) => x.remove()); return; } return bm(...a); };
+    const bt = AI.toggle.bind(AI); AI.toggle = (...a) => (Plan.allowed('ai') ? bt(...a) : Plan.deny('ai'));
+  }
+})();
+
+/* لما المطور يغيّر الباقة، الترخيص الجديد بيوصل مع التحقق الأونلاين — القائمة بتتحدث لوحدها */
+(() => {
+  let last = null;
+  setInterval(() => {
+    try {
+      const k = Plan.key(); if (last === null) { last = k; return; } if (k === last) return; last = k;
+      if (Session.user && !$('.lock-screen')) { App.shell(); UI.toast(L(`باقتك اتحدثت: ${Plan.name()}`, `Plan updated: ${Plan.name()}`), 'ok', 5000); }
+    } catch (_) {}
+  }, 15000);
+})();
 
 </script>
   <script>

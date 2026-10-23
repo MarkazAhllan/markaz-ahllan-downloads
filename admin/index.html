@@ -102,6 +102,11 @@ main{flex:1;min-width:0;padding:22px 24px 110px}
 .ag{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.types button{padding:12px 6px;border-radius:14px;border:1.5px solid var(--l);background:var(--s2);font-weight:800;cursor:pointer}.types button.on{border-color:var(--p);background:var(--p50);color:var(--p)}
 .types button small{display:block;font-size:11px;color:var(--t3);font-weight:700}
+.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 10px}.plans button{padding:10px 4px;border-radius:14px;border:1.5px solid var(--l);background:var(--s2);font-weight:900;cursor:pointer;font-size:13.5px}.plans button i{display:block;font-style:normal;font-size:20px}.plans button small{display:block;font-size:10.5px;color:var(--t3);font-weight:700}.plans button.on{border-color:var(--p);background:var(--p50);color:var(--p)}
+@media (max-width:520px){.plans{grid-template-columns:repeat(2,1fr)}}
+.mods{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}.mods label{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:12px;border:1.5px solid var(--l);background:var(--s);font-weight:800;font-size:13px;cursor:pointer;user-select:none}.mods label input{width:18px;height:18px;accent-color:var(--p);flex:none}.mods label.on{border-color:var(--p);background:var(--p50)}
+.plh{display:flex;justify-content:space-between;align-items:center;margin-top:12px}.plh b{font-size:15px}.plh small{color:var(--t2);font-weight:800}
+.plcore{font-size:12px;color:var(--t2);margin:-2px 0 8px;line-height:1.7}
 /* toast */
 #toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:8px;width:min(92vw,420px)}
 .toast{background:#231719;color:#fff;border-radius:14px;padding:12px 16px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:tin .25s}.toast.e{background:var(--e)}.toast.ok{background:var(--ok)}
@@ -165,6 +170,11 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 const LS = { get(k, d = null) { try { const v = localStorage.getItem('mahdev:' + k); return v == null ? d : JSON.parse(v); } catch (_) { return d; } }, set(k, v) { try { localStorage.setItem('mahdev:' + k, JSON.stringify(v)); } catch (_) {} }, del(k) { try { localStorage.removeItem('mahdev:' + k); } catch (_) {} } };
 const ST = { pending: 'بانتظار موافقتك', trial: 'تجربة', active: 'مفعّل', blocked: 'موقوف' };
 const TN = { full: 'دائم', year: 'سنوي', half: '6 شهور', month: 'شهري', custom: 'مخصص' };
+/* الباقات — لازم تفضل مطابقة لـ renderer/js/plan.js في البرنامج */
+const PMODS = [['wallets', '💳', 'المحافظ والكاش'], ['machines', '⚡', 'الماكينات والكروت'], ['display', '📺', 'شاشة العرض'], ['credit', '📒', 'عملاء الآجل'], ['installments', '📅', 'التقسيط'], ['loyalty', '⭐', 'نقاط الولاء'], ['phones', '📱', 'الموبايلات'], ['repairs', '🛠️', 'الصيانة'], ['lines', '📶', 'خطوط الشركات'], ['cctv', '📹', 'كاميرات المراقبة'], ['hr', '👥', 'الموارد البشرية'], ['whatsapp', '💬', 'واتساب التلقائي'], ['cloud', '☁️', 'النسخ السحابي'], ['owner', '👁️', 'لوحة المالك والتقارير'], ['ai', '✨', 'المساعد الذكي']];
+const PALL = PMODS.map((m) => m[0]);
+const PLANS = [['start', '🟢', 'الأساسية', []], ['cash', '🔵', 'الكاش', ['wallets', 'machines', 'display', 'credit']], ['business', '🟣', 'البيزنس', ['wallets', 'machines', 'display', 'credit', 'phones', 'repairs', 'lines', 'installments', 'loyalty', 'hr', 'whatsapp']], ['premium', '👑', 'البريميوم', PALL]];
+const planOf = (l) => { const p = PLANS.find((x) => x[0] === l.p); if (!p) return Array.isArray(l.f) ? '🧩 مخصصة' : '👑 كل الأقسام'; const f = Array.isArray(l.f) ? l.f : PALL; const custom = f.length !== p[3].length || p[3].some((k) => !f.includes(k)); return `${p[1]} ${p[2]}${custom ? ' (مخصصة)' : ''}`; };
 const PL = { android: 'أندرويد', pwa: 'تطبيق ويب', web: 'متصفح', desktop: 'كمبيوتر' };
 const fmt = (d) => (d ? new Date(d).toLocaleString('ar-EG-u-nu-latn', { dateStyle: 'medium', timeStyle: 'short' }) : '—');
 const fdate = (d) => (d ? new Date(d).toLocaleDateString('ar-EG-u-nu-latn', { dateStyle: 'medium' }) : '—');
@@ -374,6 +384,7 @@ function openDev(mid) {
     <div class="kv"><span>المالك</span><b>${esc(r.owner_name || '—')}</b><span>الموبايل</span><b class="mono">${esc(r.phone || '—')}</b><span>كود الجهاز</span><b class="mono" id="cpMid" style="cursor:pointer">${esc(r.mid)} 📋</b>
       <span>النظام</span><b>${PL[r.platform] || esc(r.platform || '—')} ${r.app_version ? `<span class="mono">${esc(r.app_version)}</span>` : ''}</b>
       <span>الحالة</span><b>${r.status === 'active' ? `${TN[r.license_type] || ''} — ${r.expires_at ? 'لحد ' + fdate(r.expires_at) : 'دائم'}` : tl != null ? (tl > 0 ? `تجربة — باقي ${Math.round(tl / 36e5)} ساعة` : 'التجربة خلصت') : ST[r.status]}</b>
+      ${r.license_key ? `<span>الباقة</span><b>${planOf(lic(r))}${Array.isArray(lic(r).f) ? ` <small class="mono">(${lic(r).f.length}/${PALL.length})</small>` : ''}</b>` : ''}
       ${lic(r).b || lic(r).u ? `<span>الحدود</span><b>${lic(r).b ? '🏢 ' + lic(r).b + ' فرع ' : ''}${lic(r).u ? '👥 ' + lic(r).u + ' مستخدم' : ''}</b>` : ''}
       <span>سجّل</span><b>${fmt(r.created_at)}</b><span>آخر ظهور</span><b>${online(r) ? '🟢 ' : ''}${fmt(r.last_seen)} (${ago(r.last_seen)})</b><span>مرات الفحص</span><b class="num">${r.checks ?? 0}</b>
       ${r.note ? `<span>ملاحظة</span><b>${esc(r.note)}</b>` : ''}</div>
@@ -413,6 +424,10 @@ function activate(r) {
     <div class="types">${[['month', 'شهري', '30 يوم'], ['half', '6 شهور', '182 يوم'], ['year', 'سنوي', '365 يوم'], ['full', 'دائم', 'من غير انتهاء'], ['custom', 'مخصص', 'عدد أيام']].map(([k, l, s]) => `<button data-ty="${k}" class="${type === k ? 'on' : ''}">${l}<small>${s}</small></button>`).join('')}</div>
     <div class="f ${type === 'custom' ? '' : 'hidden'}" id="cd"><label>عدد الأيام</label><input id="days" type="number" inputmode="numeric" value="15"></div>
     <div class="lim"><div class="f"><label>🏢 عدد الفروع</label><input id="lb" type="number" inputmode="numeric" min="0" value="${lic(r).b || 0}"></div><div class="f"><label>👥 المستخدمين / الموظفين</label><input id="lu" type="number" inputmode="numeric" min="0" value="${lic(r).u || 0}"></div><small>0 = من غير حد — تقدر تغيّرهم في أي تجديد</small></div>
+    <div class="plh"><b>📦 الباقة</b><small id="plN"></small></div>
+    <div class="plans">${PLANS.map(([k, e, n, f]) => `<button data-pl="${k}"><i>${e}</i>${n}<small>${k === 'premium' ? 'كل الأقسام' : f.length + ' قسم إضافي'}</small></button>`).join('')}</div>
+    <div class="plcore">✅ أساسي في كل الباقات: نقطة البيع، المبيعات، المخزون، المشتريات، الموردين، التالف، المصروفات، الورديات، التقارير، المستخدمين، النسخ المحلي. وتحت الأقسام الإضافية — شيل أو زوّد أي واحد:</div>
+    <div class="mods">${PMODS.map(([k, e, n]) => `<label data-mk="${k}"><input type="checkbox" value="${k}">${e} ${n}</label>`).join('')}</div>
     <div class="f"><label>اسم المحل (بيظهر في البرنامج)</label><input id="nm" value="${esc(r.store_name || '')}"></div>
     <div class="f"><label>ملاحظة (اختياري) — مثلاً: دفع 300 فودافون كاش</label><input id="nt" value="${esc(r.note || '')}"></div>
     <div id="pv" class="ban i"></div>
@@ -422,14 +437,24 @@ function activate(r) {
     const pv = () => { const d = days(); $('#pv', ov).textContent = d ? `هيبقى ساري لحد ${fdate(base() + d * 864e5)}` : 'ترخيص دائم من غير تاريخ انتهاء'; };
     $$('[data-ty]', ov).forEach((b) => (b.onclick = () => { type = b.dataset.ty; $$('[data-ty]', ov).forEach((x) => x.classList.toggle('on', x === b)); $('#cd', ov).classList.toggle('hidden', type !== 'custom'); pv(); }));
     $('#days', ov).oninput = pv; pv();
+    /* الباقة: من الترخيص الحالي، أو البريميوم لو أول تفعيل */
+    const L0 = lic(r); let plan = PLANS.some((x) => x[0] === L0.p) ? L0.p : 'premium'; let sel = new Set(Array.isArray(L0.f) ? L0.f : (PLANS.find((x) => x[0] === plan) || PLANS[3])[3]);
+    const drawPl = () => {
+      $$('[data-pl]', ov).forEach((b) => b.classList.toggle('on', b.dataset.pl === plan));
+      $$('[data-mk]', ov).forEach((l) => { const on = sel.has(l.dataset.mk); l.classList.toggle('on', on); l.querySelector('input').checked = on; });
+      $('#plN', ov).textContent = `${planOf({ p: plan, f: [...sel] })} · ${sel.size}/${PALL.length}`;
+    };
+    $$('[data-pl]', ov).forEach((b) => (b.onclick = () => { plan = b.dataset.pl; sel = new Set(PLANS.find((x) => x[0] === plan)[3]); drawPl(); }));
+    $$('[data-mk] input', ov).forEach((c) => (c.onchange = () => { c.checked ? sel.add(c.value) : sel.delete(c.value); drawPl(); }));
+    drawPl();
     $('#go', ov).onclick = async () => {
       const b = $('#go', ov); b.disabled = true; b.textContent = '⏳ جاري التفعيل…';
       try {
         const d = days(); const e = d ? base() + d * 864e5 : 0;
         const lb = Math.max(0, Math.round(Number($('#lb', ov).value) || 0)), lu = Math.max(0, Math.round(Number($('#lu', ov).value) || 0));
-        const key = await sign({ n: $('#nm', ov).value.trim() || r.store_name, m: r.mid, t: type === 'custom' ? 'month' : type, e, i: Date.now(), ...(lb ? { b: lb } : {}), ...(lu ? { u: lu } : {}) });
+        const key = await sign({ n: $('#nm', ov).value.trim() || r.store_name, m: r.mid, t: type === 'custom' ? 'month' : type, e, i: Date.now(), ...(lb ? { b: lb } : {}), ...(lu ? { u: lu } : {}), p: plan, ...(sel.size === PALL.length ? {} : { f: PALL.filter((k) => sel.has(k)) }) });
         await patch(r.mid, { status: 'active', license_key: key, license_type: type, expires_at: e ? new Date(e).toISOString() : null, note: $('#nt', ov).value.trim() || null, store_name: $('#nm', ov).value.trim() || r.store_name });
-        logAct(`✅ ${cur ? 'تجديد' : 'تفعيل'} ${r.store_name} — ${TN[type]}${e ? ' لحد ' + fdate(e) : ''}${lb ? ' · فروع ' + lb : ''}${lu ? ' · مستخدمين ' + lu : ''}`); close(); toast('اتفعّل ✓ — الجهاز هيتفعّل لوحده', 'ok');
+        logAct(`✅ ${cur ? 'تجديد' : 'تفعيل'} ${r.store_name} — ${TN[type]}${e ? ' لحد ' + fdate(e) : ''}${lb ? ' · فروع ' + lb : ''}${lu ? ' · مستخدمين ' + lu : ''} · ${planOf({ p: plan, f: [...sel] })}`); close(); toast('اتفعّل ✓ — الجهاز هيتفعّل لوحده', 'ok');
         await load(); const fr = ROWS.find((x) => x.mid === r.mid) || r; waDlg(fr, 'act');
       } catch (er) { b.disabled = false; b.textContent = '🔑 حاول تاني'; toast('خطأ: ' + er.message.slice(0, 140), 'e'); }
     };

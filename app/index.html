@@ -2126,7 +2126,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.4.1', build: '', trialHours: 72 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.4.2', build: '', trialHours: 72 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2858,9 +2858,16 @@ const PrintCenter = {
     try {
       if (DB.desktop && window.api.sys.printPdf) { const r = await window.api.sys.printPdf({ html, name: fname, widthMm }); if (r && r.path) UI.toast(L('اتحفظ PDF: ', 'PDF saved: ') + r.path); return r; }
       if (this.native() && NativeFiles.plugin().pdf) {
+        if (this._busy) return null; this._busy = true; let r = null;
         UI.toast(L('جاري تجهيز PDF…', 'Preparing PDF…'), 'info', 2500);
-        const r = await NativeFiles.plugin().pdf({ html: this.nativeHtml(html), name: fname, widthMm: widthMm === 'A4' ? 210 : widthMm, base: 'file:///android_asset/public/' });
-        if (share) await NativeFiles.share(fname + '.pdf', r.data); else await NativeFiles.save(fname + '.pdf', r.data, 'application/pdf');
+        try {
+          // لو الموبايل علّق لأي سبب نطلع رسالة بدل ما الزرار يفضل ساكت
+          r = await Promise.race([NativeFiles.plugin().pdf({ html: this.nativeHtml(html), name: fname, widthMm: widthMm === 'A4' ? 210 : widthMm, base: 'file:///android_asset/public/' }),
+            new Promise((_, rej) => setTimeout(() => rej(new Error(L('الموبايل اتأخر في تجهيز الملف — جرّب تاني', 'Timed out — try again'))), 30000))]);
+          if (!r || !r.data) throw new Error(L('الملف طلع فاضي', 'Empty file'));
+          if (share) { UI.toast(L('PDF جاهز ✓ — اختار واتساب أو Drive', 'PDF ready ✓ — choose WhatsApp or Drive'), 'ok', 3000); await NativeFiles.share(fname + '.pdf', r.data); }
+          else await NativeFiles.save(fname + '.pdf', r.data, 'application/pdf');
+        } finally { this._busy = false; }
         return r;
       }
       if (this.native()) { await this.nativePrint(html, type, widthMm); return null; } // نسخة قديمة من التطبيق: شاشة الطباعة فيها «حفظ PDF»
@@ -10337,6 +10344,10 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.4.2', d: '2026-10-23', items: [
+    ['file', L('إصلاح «حفظ PDF» و«مشاركة PDF» على الموبايل: الملف بيتجهز ويظهر «تم الحفظ» أو شاشة المشاركة (واتساب / Drive) على طول', 'Fixed Save/Share PDF on Android')],
+    ['printer', L('الطباعة من الموبايل بقت أسرع وأثبت، ولو حصل أي تأخير بتظهر رسالة واضحة بدل ما الزرار يفضل ساكت', 'More reliable mobile printing with clear errors')]
+  ] },
   { v: '1.4.1', d: '2026-10-23', items: [
     ['award', L('نقاط الولاء: العميل بيكسب نقاط على كل فاتورة ويستبدلها خصم من نقطة البيع بضغطة، ورصيده بيوصله على واتساب بعد كل فاتورة', 'Loyalty points: earn on every invoice, redeem at the POS, balance sent on WhatsApp')],
     ['tool', L('الصيانة: تذكير تلقائي على واتساب للعميل اللي جهازه جاهز ومجاش ياخده (كل كام يوم تحدده، وبحد أقصى للتذكيرات)', 'Repairs: automatic WhatsApp pickup reminders for ready devices')],

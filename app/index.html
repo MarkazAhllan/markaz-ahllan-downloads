@@ -1778,6 +1778,55 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .pl-mini { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: var(--p-50); }
 .pl-mini b { display: block; font-size: 17px; }
 .ftr-row.locked { opacity: .75; } .ftr-row.locked .btn { flex: none; }
+
+/* ===== شاشة العرض: الرقم المثبّت + الشاشة التانية ===== */
+.disp-chip { position: fixed; bottom: 16px; inset-inline-start: 50%; transform: translateX(50%); z-index: 60; display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-lg); }
+[dir="ltr"] .disp-chip { transform: translateX(-50%); }
+.disp-chip small { display: block; font-size: 11px; color: var(--text-3); } .disp-chip b { font-size: 15px; letter-spacing: .5px; }
+.dc-live { width: 10px; height: 10px; border-radius: 50%; background: #e0263c; box-shadow: 0 0 0 0 rgba(224,38,60,.5); animation: dcPulse 1.6s infinite; flex: none; }
+@keyframes dcPulse { 0% { box-shadow: 0 0 0 0 rgba(224,38,60,.5); } 70% { box-shadow: 0 0 0 9px rgba(224,38,60,0); } 100% { box-shadow: 0 0 0 0 rgba(224,38,60,0); } }
+.ds-scr { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--surface-2); }
+.ds-scr-h { display: flex; align-items: center; gap: 10px; } .ds-scr-h > div { flex: 1; min-width: 0; } .ds-scr-h b { display: block; } .ds-scr-h small { color: var(--text-3); line-height: 1.7; }
+.ds-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--text-3); flex: none; } .ds-dot.on { background: var(--ok); box-shadow: 0 0 0 4px var(--ok-bg); }
+
+/* ===== 1.5 — معالج الإعداد ===== */
+.setup-modal .modal-b { padding-top: 10px; }
+.su-steps { display: flex; justify-content: space-between; gap: 4px; }
+.su-st { flex: 1; text-align: center; opacity: .55; } .su-st i { font-style: normal; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 3px; background: var(--surface-2); border: 1.5px solid var(--line); font-size: 15px; }
+.su-st small { font-size: 11px; font-weight: 700; display: block; } .su-st.on { opacity: 1; } .su-st.on i { border-color: var(--p); background: var(--p-50); box-shadow: 0 0 0 4px var(--p-50); } .su-st.done { opacity: 1; } .su-st.done i { background: var(--ok); color: #fff; border-color: var(--ok); }
+.su-prog { height: 5px; border-radius: 9px; background: var(--surface-2); margin: 10px 0 14px; overflow: hidden; } .su-prog i { display: block; height: 100%; background: linear-gradient(90deg, var(--p), var(--p-700)); border-radius: 9px; transition: width .3s; }
+.su-pane { min-height: 300px; } .su-h { margin: 0 0 4px; font-size: 19px; }
+.su-foot { display: flex; align-items: center; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+.su-store { display: flex; gap: 18px; align-items: flex-start; margin-top: 10px; flex-wrap: wrap; } .su-logo { width: 150px; text-align: center; } .su-logo img { width: 120px; height: 120px; object-fit: contain; border: 1px dashed var(--line-2); border-radius: 18px; background: #fff; padding: 6px; display: block; margin: 0 auto 8px; }
+.su-biz { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 8px; margin-top: 10px; } .su-biz.su-3 { grid-template-columns: repeat(3, 1fr); }
+.su-bz { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 12px 8px; border: 1.5px solid var(--line); border-radius: 14px; cursor: pointer; text-align: center; background: var(--surface); position: relative; }
+.su-bz input { position: absolute; top: 8px; inset-inline-start: 8px; accent-color: var(--p); } .su-bz .e { font-size: 26px; } .su-bz b { font-size: 13.5px; } .su-bz small { color: var(--text-3); font-size: 11.5px; }
+.su-bz.on { border-color: var(--p); background: var(--p-50); } .su-bz.lock { opacity: .55; cursor: not-allowed; }
+.su-wr { display: grid; grid-template-columns: 150px 1fr 1fr 120px 36px; gap: 6px; margin-top: 8px; } .su-sr { grid-template-columns: 1fr 1fr 1fr 36px; }
+.su-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; } .su-card { padding: 18px; border: 1.5px dashed var(--line-2); border-radius: 16px; background: var(--surface); cursor: pointer; text-align: center; font-family: inherit; color: var(--text); }
+.su-card span { font-size: 28px; display: block; } .su-card b { display: block; font-size: 14px; } .su-card small { color: var(--text-3); } .su-card:hover { border-color: var(--p); background: var(--p-50); }
+.su-note { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); font-size: 13px; } .su-note.ok { background: var(--ok-bg); color: var(--ok); font-weight: 700; }
+.su-done { text-align: center; } .su-ok { font-size: 54px; } .su-sum { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px 0 14px; } .su-sum span { background: var(--surface-2); border-radius: 99px; padding: 5px 12px; font-weight: 700; font-size: 13px; }
+.su-pw { text-align: start; padding: 12px 14px; border-radius: 14px; background: var(--warn-bg); } .su-pw b { display: block; } .su-pw small { color: var(--text-2); } .su-pw input { flex: 1; }
+.su-next { margin-top: 12px; padding: 10px; border-radius: 12px; border: 1px dashed var(--p); color: var(--p-700); font-size: 13.5px; }
+@media (max-width: 640px) { .su-st small { display: none; } .su-wr, .su-sr { grid-template-columns: 1fr 1fr; } .su-biz.su-3 { grid-template-columns: 1fr; } .su-cards { grid-template-columns: 1fr; } }
+
+/* ===== بلّغ عن مشكلة ===== */
+.rp-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; } .rp-meta span { background: var(--surface-2); border-radius: 10px; padding: 4px 10px; font-size: 12.5px; }
+.rp-errs { max-height: 180px; overflow: auto; font-size: 12px; direction: ltr; text-align: left; margin-top: 6px; } .rp-errs div { padding: 4px 0; border-bottom: 1px dashed var(--line); } .rp-errs small { color: var(--text-3); margin-inline-end: 6px; }
+
+/* ===== التارجت ===== */
+.tg-card { padding: 14px 16px; background: linear-gradient(135deg, var(--p-50), var(--surface)); border: 1px solid var(--p-100); }
+.tg-h { display: flex; justify-content: space-between; align-items: center; } .tg-h small { color: var(--text-2); font-weight: 700; } .tg-h b { display: block; font-size: 20px; }
+.tg-pc { font-size: 26px; font-weight: 900; color: var(--p); } .tg-pc.ok { color: var(--ok); }
+.tg-bar { height: 10px; border-radius: 9px; background: var(--surface-2); margin: 8px 0; overflow: hidden; } .tg-bar i { display: block; height: 100%; border-radius: 9px; background: linear-gradient(90deg, var(--p), #F5B300); }
+.tg-row { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13.5px; align-items: center; }
+
+/* ===== التقييمات والعروض ===== */
+.rt-users { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.pr-ln { align-items: center; font-size: 13px; }
+.pr-pick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; } .pr-pick label { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 99px; font-size: 13px; cursor: pointer; background: var(--surface); }
+.pr-pick input { accent-color: var(--p); } .pr-scroll { max-height: 220px; overflow: auto; border: 1px solid var(--line); border-radius: 12px; padding: 8px; } #ofQ { margin-top: 6px; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2126,7 +2175,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.4.2', build: '', trialHours: 72 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.5.0', build: '', trialHours: 72 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2187,7 +2236,7 @@ const AVATAR_COLORS = ['#8B1A2B', '#1F5FA8', '#16825D', '#B26A00', '#6B2C91', '#
 function avatarColor(s) { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return AVATAR_COLORS[h % AVATAR_COLORS.length]; }
 
 /* ---------------- Database (Realm via Electron IPC / browser fallback) ---------------- */
-const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx'];
+const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx', 'ratings', 'promos'];
 
 const DEFAULT_SETTINGS = {
   appName: 'Markaz Ahllan POS',
@@ -2220,6 +2269,7 @@ const DEFAULT_SETTINGS = {
   control: { maxDiscountPct: 10, approveReturns: true, approveDeletes: true, wasteApproveOver: 1000 },
   ownerReport: { on: false, phone: '', auto: true, autoSend: true, pdf: true, lowStock: true },
   cloud: { code: '', auto: true, everyHours: 24, keep: 7, lastAt: null, lastErr: '', lastSize: 0 },
+  ratings: { on: false },
   loyalty: { on: false, earnPer: 10, earnPts: 1, redeemPts: 100, redeemVal: 10, minRedeem: 100, maxPct: 50, notify: true },
   repair: {
     autoWA: true, warrantyDays: 30, inspectionFee: 0, autoPickup: true, pickupDays: 3, pickupMax: 3,
@@ -2292,7 +2342,7 @@ const DB = {
     if (this._settings) return this._settings;
     const s = this.maps.settings.get('main') || {};
     const merged = { ...DEFAULT_SETTINGS, ...s };
-    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
+    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
     this._settings = merged; return merged;
   },
   saveSettings(patch) {
@@ -3527,7 +3577,7 @@ async function receiptHTML(sale, { preview = false } = {}) {
     ${r.showContact !== false && (st.phone || r.social) ? `<div class="c xs">${r.social ? esc(r.social) : ''}</div>` : ''}
     <div class="c xs" style="margin-top:6px">${esc(DB.settings().appName)} · ${COPYRIGHT_AR}</div>
   </div>`;
-  const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Rubik',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm}
+  const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Rubik',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm;box-sizing:border-box}
     .c{text-align:center}.e{text-align:end}.b{font-weight:700}.big{font-size:${fs + 4}px}.sm{font-size:${fs - 2}px}.xs{font-size:${fs - 4}px;color:#444}
     .logo{width:${r.width == 58 ? 26 : 34}mm;height:auto}.hr{border-top:1px dashed #000;margin:5px 0}
     .ln{display:flex;justify-content:space-between;gap:6px;padding:1px 0}.tot{font-size:${fs + 4}px;font-weight:800;border-top:1px solid #000;border-bottom:1px solid #000;padding:4px 0;margin-top:3px}
@@ -3580,7 +3630,7 @@ async function walletReceiptHTML(t, { preview = false } = {}) {
     ${r.walletFooter ? `<div class="c sm">${esc(r.walletFooter)}</div>` : ''}
     ${r.footer ? `<div class="c b" style="margin-top:4px">${esc(r.footer)}</div>` : ''}
     <div class="c xs" style="margin-top:6px">${esc(s.appName)} · ${COPYRIGHT_AR}</div></div>`;
-  const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Rubik',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm}
+  const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Rubik',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm;box-sizing:border-box}
     .c{text-align:center}.b{font-weight:700}.big{font-size:${fs + 4}px}.sm{font-size:${fs - 2}px}.xs{font-size:${fs - 4}px;color:#444}
     .logo{width:${r.width == 58 ? 24 : 30}mm;height:auto}.hr{border-top:1px dashed #000;margin:5px 0}.ln{display:flex;justify-content:space-between;gap:6px;padding:1px 0}
     .tot{font-size:${fs + 5}px;font-weight:800;border-top:1px solid #000;border-bottom:1px solid #000;padding:4px 0;margin-top:3px}`;
@@ -3630,9 +3680,9 @@ const Modules = {};
 const NAV = [
   { id: 'main', grp: ['الرئيسية', 'Main'], items: ['dashboard', 'ownerLive', 'pos'], fixed: true },
   { id: 'services', grp: ['المحافظ الإلكترونية وماكينات الدفع', 'E-wallets & payment machines'], icon: 'wallet', items: ['wallets', 'machines'] },
-  { id: 'commerce', grp: ['المبيعات والمخزون', 'Sales & stock'], icon: 'cart', items: ['sales', 'customers', 'loyalty', 'installments', 'purchases', 'inventory', 'suppliers', 'losses'] },
+  { id: 'commerce', grp: ['المبيعات والمخزون', 'Sales & stock'], icon: 'cart', items: ['sales', 'customers', 'loyalty', 'offers', 'ratings', 'installments', 'purchases', 'inventory', 'suppliers', 'losses'] },
   { id: 'more', grp: ['', ''], items: ['phones', 'cctv', 'lines', 'repairs'], fixed: true },
-  { id: 'hr', grp: ['الموارد البشرية', 'HR'], icon: 'users', items: ['users', 'attendance', 'payroll'] },
+  { id: 'hr', grp: ['الموارد البشرية', 'HR'], icon: 'users', items: ['users', 'attendance', 'payroll', 'targets'] },
   { id: 'finance', grp: ['المالية', 'Finance'], icon: 'bank', items: ['shifts', 'expenses', 'capital', 'reports'] },
   { id: 'system', grp: ['النظام', 'System'], icon: 'settings', items: ['settings', 'backup'] }
 ];
@@ -3675,6 +3725,7 @@ const App = {
     await OnlineLicense.gate(); // التفعيل الأونلاين (لو مفعّل): تسجيل الجهاز وموافقة المطور قبل الدخول
     this.licenseState = await License.status();
     if (Win.handoff()) return;
+    try { Display.initDesk(); } catch (e) { console.warn(e); }
     this.loginScreen();
   },
   applyLang() { document.documentElement.lang = LANG; document.documentElement.dir = LANG === 'ar' ? 'rtl' : 'ltr'; },
@@ -3794,6 +3845,7 @@ const App = {
       { icon: 'key', label: L('تفعيل / الترخيص', 'License'), onClick: () => License.activationDialog(() => this.refreshTop()) },
       { icon: 'keyboard', label: L('اختصارات لوحة المفاتيح', 'Keyboard shortcuts'), onClick: () => this.shortcutsHelp() },
       { icon: 'download', label: L('تحقق من التحديثات', 'Check for updates'), onClick: () => AppUpdate.check(true) },
+      { icon: 'alert', label: L('بلّغ عن مشكلة', 'Report a problem'), onClick: () => Report.open() },
       { icon: 'logout', label: L('تسجيل الخروج', 'Sign out'), onClick: () => this.logout() }
     ]);
     GlobalSearch.bind($('#gSearch'));
@@ -10189,6 +10241,7 @@ Modules.settings = {
       let logo = s.store.logo;
       $('#lgUp').onclick = async () => { const d = await pickImage(400); if (d) { logo = d; $('#stLogo').src = d; } };
       $('#lgReset').onclick = () => { logo = ''; $('#stLogo').src = 'assets/logo.png'; };
+      $('#stSave').insertAdjacentHTML('beforebegin', `<button class="btn" id="stSetup">${icon('sparkles')}${L('معالج الإعداد', 'Setup wizard')}</button>`); $('#stSetup').onclick = () => Setup.open();
       $('#stSave').onclick = () => { if (!UI.validate(b)) return; const v = UI.read(b); const appName = v.appName || 'Markaz Ahllan POS'; delete v.appName; DB.saveSettings({ appName, store: { ...v, logo } }); UI.toast(L('تم الحفظ', 'Saved')); App.shell(); };
     } else if (t === 'display') {
       Display.settingsBody(b);
@@ -10344,8 +10397,17 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.5.0', d: '2026-10-27', items: [
+    ['sparkles', L('معالج إعداد لأول تشغيل: بيانات المحل واللوجو، نشاطك، المحافظ، الأصناف من Excel، الموظفين، الطابعة — وتغيير كلمة سر المدير. البرنامج يبقى جاهز في دقايق', 'First-run setup wizard: store, business, wallets, products, staff, printer')],
+    ['tag', L('العروض والكوبونات: خصم تلقائي على قسم أو أصناف لفترة محددة، وأكواد خصم بتتكتب في نقطة البيع، وتقدر تبعت الكوبون لعملاءك على واتساب', 'Offers & coupons: automatic discounts and coupon codes at the POS')],
+    ['star', L('تقييم العملاء: بعد البيع العميل بيوصله على واتساب يقيّم من 1 لـ 5، والتقييم الضعيف بيوصلك فوراً — ومتوسط تقييم كل كاشير', 'Customer ratings via WhatsApp with instant low-rating alerts')],
+    ['target', L('التارجت والعمولات: هدف شهري لكل موظف، شريط إنجاز في لوحة التحكم، وعمولة ومكافأة بتنزل في المرتبات لوحدها', 'Monthly targets, progress bar and automatic commissions in payroll')],
+    ['alert', L('«بلّغ عن مشكلة» من قائمة المستخدم: الرسالة بتوصل للمطور على واتساب ومعاها بيانات الجهاز وآخر الأخطاء عشان تتحل بسرعة', 'Report a problem straight to the developer with device info')]
+  ] },
   { v: '1.4.2', d: '2026-10-23', items: [
     ['file', L('إصلاح «حفظ PDF» و«مشاركة PDF» على الموبايل: الملف بيتجهز ويظهر «تم الحفظ» أو شاشة المشاركة (واتساب / Drive) على طول', 'Fixed Save/Share PDF on Android')],
+    ['receipt', L('إصلاح قصّ الكلام على طرف الإيصال في طابعة 80 و 58 مم', 'Fixed clipped text on receipt edges')],
+    ['pos', L('شاشة العرض على الشاشة التانية مش بتطفي لوحدها طول ما هي مفتوحة', 'The second-screen display no longer goes to sleep')],
     ['printer', L('الطباعة من الموبايل بقت أسرع وأثبت، ولو حصل أي تأخير بتظهر رسالة واضحة بدل ما الزرار يفضل ساكت', 'More reliable mobile printing with clear errors')]
   ] },
   { v: '1.4.1', d: '2026-10-23', items: [
@@ -10545,16 +10607,50 @@ const Security = {
  * - أثناء عملية سحب: المحفظة اللي العميل هيحوّل عليها بتظهر لوحدها كبيرة مع المبلغ
  * - التواصل بين البرنامج والشاشة: BroadcastChannel + localStorage (بيشتغل على الكمبيوتر والمتصفح)
  * ========================================================= */
-const DISPLAY_DEFAULT = { title: 'حوّل على أي رقم من دول', message: 'سعداء بزيارتكم — مركز أهلاً للخدمات الإلكترونية', ticker: '', showOwner: true, showAvail: true, showNetwork: true, hideFull: true, focusOnOp: true, focusSec: 90, showAmount: true, cols: 'auto', theme: 'brand', refreshSec: 15 };
+const DISPLAY_DEFAULT = { title: 'حوّل على أي رقم من دول', message: 'سعداء بزيارتكم — مركز أهلاً للخدمات الإلكترونية', ticker: '', showOwner: true, showAvail: true, showNetwork: true, hideFull: true, focusOnOp: true, focusSec: 90, showAmount: true, cols: 'auto', theme: 'brand', refreshSec: 15, autoOpen: true, full: true, top: false, screenId: '' };
 const Display = {
   KEY: 'mah:display:live',
   cfg() { return { ...DISPLAY_DEFAULT, ...(DB.settings().display || {}) }; },
   url() { return location.href.replace(/#.*$/, '') + '#display'; },
   native() { const C = window.Capacitor; return !!(C && C.isNativePlatform && C.isNativePlatform()); },
-  open() {
+  desk() { return !!(window.api && window.api.disp); },
+  async open(silent) {
     if (!feat('display')) return UI.toast(L('فعّل «شاشة العرض المباشر» الأول من الإعدادات ← شاشة العرض', 'Enable the live display first'), 'warn', 5000);
+    if (this.desk()) {
+      const c = this.cfg(); this._userClosed = false;
+      const r = await window.api.disp.open({ screenId: c.screenId || '', full: c.full !== false, top: !!c.top });
+      if (!silent) UI.toast(r && r.external ? L('شاشة العرض اتفتحت على الشاشة التانية ✓', 'Display opened on the second screen ✓') : L('مفيش شاشة تانية متوصلة — اتفتحت هنا كنافذة. وصّل الشاشة واختار «توسيع» (Win + P) وهتتنقل لوحدها', 'No second screen — opened here. Connect it and choose Extend (Win+P)'), r && r.external ? 'ok' : 'info', 6000);
+      return;
+    }
     if (this.native()) { try { sessionStorage.setItem('mah:dispInApp', '1'); } catch (_) {} location.hash = '#display'; location.reload(); return; }
     const w = window.open(this.url(), 'mah-display'); if (!w) UI.toast(L('المتصفح منع النافذة — اسمح بالنوافذ المنبثقة أو افتح الرابط: ', 'Popup blocked — open: ') + this.url(), 'warn', 7000);
+  },
+  close() { if (this.desk()) { this._userClosed = true; window.api.disp.close(); } },
+  /* الكمبيوتر: تفتح لوحدها على الشاشة التانية مع تشغيل البرنامج أو أول ما تتوصل */
+  _st: null, _userClosed: false,
+  async initDesk() {
+    if (!this.desk()) return;
+    const auto = (st) => { const c = this.cfg(); if (feat('display') && c.autoOpen !== false && !st.open && !this._userClosed && (st.screens || []).length > 1) this.open(true); };
+    window.api.disp.onUpdate((st) => {
+      const prev = this._st; this._st = st;
+      if (prev && prev.open && !st.open) this._userClosed = true; // اتقفلت بإيد المستخدم
+      if (prev && (st.screens || []).length > (prev.screens || []).length) this._userClosed = false; // شاشة جديدة اتوصلت
+      auto(st); if (this._sb && document.body.contains(this._sb)) this.drawState(this._sb);
+    });
+    try { this._st = await window.api.disp.state(); auto(this._st); } catch (_) {}
+    this.chip();
+  },
+  /* «اعرضها على الشاشة الآن» بتفضل ثابتة لحد ما تغيّرها أو توقفها */
+  HELD: 'mah:display:held', held: null,
+  getHeld() { if (this.held) return this.held; try { return (this.held = JSON.parse(localStorage.getItem(this.HELD) || 'null')); } catch (_) { return null; } },
+  setHeld(m) { this.held = m; try { m ? localStorage.setItem(this.HELD, JSON.stringify(m)) : localStorage.removeItem(this.HELD); } catch (_) {} this.chip(); },
+  stop() { this.setHeld(null); this.send({ type: 'clear' }); UI.toast(L('رجعت الشاشة لكل الأرقام ✓', 'Display back to all numbers ✓')); },
+  chip() {
+    if (location.hash === '#display') return; let el = $('#dispChip'); const h = feat('display') && this.getHeld();
+    if (!h) { el && el.remove(); return; }
+    if (!el) { el = document.createElement('div'); el.id = 'dispChip'; el.className = 'disp-chip'; document.body.appendChild(el); }
+    el.innerHTML = `<span class="dc-live"></span><div><small>${L('معروض الآن على الشاشة', 'On the display now')}</small><b dir="ltr">${esc(h.w?.number || '')}</b></div><button class="btn sm" id="dcStop">${icon('x')}${L('إيقاف', 'Stop')}</button>`;
+    $('#dcStop', el).onclick = () => this.stop();
   },
   /* ---------- من البرنامج للشاشة ---------- */
   chan() { try { return this._ch || (this._ch = new BroadcastChannel('mah-display')); } catch (_) { return null; } },
@@ -10563,8 +10659,13 @@ const Display = {
     const a = Modules.wallets.avail(w);
     return { id: w.id, network: w.network, net: netName(w.network), number: fmtWalletNo(walletNo(w)) || '—', owner: w.owner || '', availIn: a.inDay, limitIn: w.dailyInLimit || 0 };
   },
-  focus(w, amount, op) { if (!feat('display') || !w) return; const c = this.cfg(); this.send({ type: 'focus', w: this.info(w), amount: Number(amount) || 0, op: op || 'withdraw', sec: c.focusSec }); },
-  clear() { if (!feat('display')) return; this.send({ type: 'clear' }); },
+  focus(w, amount, op) {
+    if (!feat('display') || !w) return; const c = this.cfg(); const hold = op === 'show';
+    const m = { type: 'focus', w: this.info(w), amount: Number(amount) || 0, op: op || 'withdraw', sec: hold ? 0 : Number(c.focusSec) || 0 };
+    if (hold) this.setHeld(m); this.send(m);
+  },
+  /* بعد عملية سحب: لو فيه رقم مثبّت بيرجع هو، وإلا الشاشة ترجع لكل الأرقام */
+  clear() { if (!feat('display')) return; const h = this.getHeld(); if (h) this.send({ ...h, at: 0 }); else this.send({ type: 'clear' }); },
   refreshAll() { if (feat('display')) this.send({ type: 'refresh' }); },
 
   /* ---------- الشاشة نفسها ---------- */
@@ -10588,6 +10689,9 @@ const Display = {
     let lastAt = 0;
     setInterval(() => { try { const m = JSON.parse(localStorage.getItem(this.KEY) || 'null'); if (m && m.at > lastAt) { lastAt = m.at; if (Date.now() - m.at < 5 * 60e3) onMsg(m); } } catch (_) {} }, 700);
     try { const m0 = JSON.parse(localStorage.getItem(this.KEY) || 'null'); lastAt = m0?.at || 0; } catch (_) {}
+    // لو فيه رقم مثبّت قبل ما الشاشة تتفتح، يظهر على طول
+    const h0 = this.getHeld(); if (h0) setTimeout(() => this.showFocus(h0), 300);
+    window.addEventListener('storage', (e) => { if (e.key === this.HELD && !e.newValue) this.hideFocus(); });
   },
   availHTML(i, c, big) {
     if (!c.showAvail) return '';
@@ -10608,12 +10712,32 @@ const Display = {
     el.innerHTML = `<div class="dfc wnet-${i.network}"><div class="dfc-k">${m.op === 'withdraw' ? L('حوّل المبلغ على الرقم ده', 'Send the amount to this number') : L('رقم المحفظة', 'Wallet number')}</div>
       ${c.showNetwork ? `<div class="dn"><i></i>${esc(i.net)}</div>` : ''}<div class="dno num" dir="ltr">${esc(i.number)}</div>${c.showOwner && i.owner ? `<div class="dow">${L('باسم', 'Name')}: ${esc(i.owner)}</div>` : ''}
       ${c.showAmount && m.amount ? `<div class="dfc-am">${L('المبلغ', 'Amount')}: <b class="num">${money(m.amount, false)}</b> ${esc(DB.settings().currency || 'ج.م')}</div>` : ''}${this.availHTML(i, c, true)}
-      <div class="dfc-bar"><i style="animation-duration:${Math.max(10, Number(m.sec) || 90)}s"></i></div></div>`;
+      ${Number(m.sec) > 0 ? `<div class="dfc-bar"><i style="animation-duration:${Math.max(10, Number(m.sec))}s"></i></div>` : '<div class="dfc-bar" style="visibility:hidden"></div>'}</div>`;
     el.hidden = false; document.body.classList.add('disp-focused');
-    clearTimeout(this._ft); this._ft = setTimeout(() => this.hideFocus(), Math.max(10, Number(m.sec) || 90) * 1000);
+    clearTimeout(this._ft); if (Number(m.sec) > 0) this._ft = setTimeout(() => this.hideFocus(), Math.max(10, Number(m.sec)) * 1000);
   },
   hideFocus() { const el = $('#dFocus'); if (el) el.hidden = true; document.body.classList.remove('disp-focused'); clearTimeout(this._ft); },
 
+  /* الشاشة التانية (كمبيوتر) */
+  async drawState(el) {
+    if (!el) return; const c = this.cfg(); let st = this._st; try { st = await window.api.disp.state(); this._st = st; } catch (_) {}
+    const scr = (st && st.screens) || []; const ext = scr.filter((x) => !x.primary);
+    el.innerHTML = `<div class="ds-scr-h"><span class="ds-dot ${st && st.open ? 'on' : ''}"></span><div><b>${st && st.open ? L('شاشة العرض شغالة', 'Display is on') + (st.on && !st.on.primary ? ' ' + L('على الشاشة التانية', 'on the second screen') : ' ' + L('على شاشة الجهاز', 'on this screen')) : L('شاشة العرض مقفولة', 'Display is off')}</b>
+      <small>${ext.length ? L(`متوصل ${scr.length} شاشات`, `${scr.length} screens connected`) : L('مفيش شاشة تانية متوصلة — وصّلها بـ HDMI واختار «توسيع / Extend» من Win + P', 'No second screen — connect HDMI and choose Extend (Win+P)')}</small></div>
+      ${st && st.open ? `<button class="btn sm" id="dsClose">${icon('x')}${L('قفل الشاشة', 'Close')}</button>` : ''}</div>
+      <div class="form-grid mt">
+        <div class="f c6"><label class="lbl">${L('تظهر على', 'Show on')}</label><select id="dsScreen"><option value="">${L('تلقائي (الشاشة التانية)', 'Auto (second screen)')}</option>${scr.map((x) => `<option value="${x.id}" ${String(c.screenId) === x.id ? 'selected' : ''}>${x.primary ? L('شاشة الجهاز', 'This screen') : L('شاشة', 'Screen') + ' ' + x.n} — ${x.w}×${x.h}</option>`).join('')}</select></div>
+        <div class="f c6" style="display:flex;flex-direction:column;gap:6px;justify-content:flex-end">
+          <label class="check"><input type="checkbox" id="dsAuto" ${c.autoOpen !== false ? 'checked' : ''}>${L('تفتح لوحدها مع البرنامج وأول ما الشاشة تتوصل', 'Open automatically')}</label>
+          <label class="check"><input type="checkbox" id="dsFull" ${c.full !== false ? 'checked' : ''}>${L('ملء الشاشة', 'Fullscreen')}</label>
+          <label class="check"><input type="checkbox" id="dsTop" ${c.top ? 'checked' : ''}>${L('فوق أي نافذة تانية', 'Always on top')}</label></div></div>`;
+    const save = (patch) => { DB.saveSettings({ display: patch }); };
+    $('#dsScreen', el).onchange = (e) => { save({ screenId: e.target.value }); if (st && st.open) this.open(true); };
+    $('#dsAuto', el).onchange = (e) => save({ autoOpen: e.target.checked });
+    $('#dsFull', el).onchange = (e) => { save({ full: e.target.checked }); if (st && st.open) this.open(true); };
+    $('#dsTop', el).onchange = (e) => { save({ top: e.target.checked }); if (st && st.open) this.open(true); };
+    $('#dsClose', el) && ($('#dsClose', el).onclick = () => { this.close(); setTimeout(() => this.drawState(el), 500); });
+  },
   /* ---------- إعدادات الشاشة (تبويب في الإعدادات) ---------- */
   settingsBody(b) {
     const c = this.cfg(); const on = feat('display'); const ws = Wallets.ordered().filter((w) => w.active !== false);
@@ -10629,11 +10753,12 @@ const Display = {
           { name: 'focusOnOp', label: L('أثناء عملية السحب: اعرض المحفظة المختارة لوحدها كبيرة', 'During withdrawal: show the chosen wallet full-screen'), type: 'checkbox', col: 12 },
           { name: 'showAmount', label: L('إظهار المبلغ المطلوب تحويله', 'Show requested amount'), type: 'checkbox', col: 6 },
           { name: 'gridQR', label: L('QR صغير تحت كل رقم كمان (بلون المحفظة)', 'Small QR under every number too'), type: 'checkbox', col: 6 },
-          { name: 'focusSec', label: L('مدة العرض الكبير (ثانية)', 'Focus duration (sec)'), type: 'select', options: [[30, '30'], [60, '60'], [90, '90'], [120, '120'], [180, '180']], col: 6 },
+          { name: 'focusSec', label: L('مدة العرض الكبير أثناء السحب', 'Focus duration during withdrawal'), type: 'select', options: [[30, L('30 ثانية', '30 s')], [60, L('دقيقة', '60 s')], [90, L('دقيقة ونص', '90 s')], [120, L('دقيقتين', '120 s')], [180, L('3 دقايق', '180 s')], [0, L('ثابت لحد ما العملية تخلص', 'Until the operation ends')]], col: 6 },
           { name: 'cols', label: L('عدد الكروت في الصف', 'Cards per row'), type: 'select', options: [['auto', L('تلقائي', 'Auto')], [1, '1'], [2, '2'], [3, '3'], [4, '4']], col: 6 },
           { name: 'theme', label: L('ألوان الشاشة', 'Screen theme'), type: 'select', options: [['brand', L('لون البرنامج', 'Brand')], ['dark', L('داكن', 'Dark')], ['light', L('فاتح', 'Light')]], col: 6 },
           { name: 'refreshSec', label: L('تحديث الأرصدة كل (ثانية)', 'Refresh every (sec)'), type: 'select', options: [[10, '10'], [15, '15'], [30, '30'], [60, '60']], col: 6 }
         ], c)}
+        ${this.desk() ? `<div class="ds-scr mt" id="dsScr"></div>` : ''}
         <div class="row mt wrap" style="gap:8px"><button class="btn primary" id="dsSave">${icon('check')}${L('حفظ', 'Save')}</button><div class="spacer"></div><button class="btn" id="dsOpen">${icon('pos')}${L('فتح شاشة العرض', 'Open display')}</button><button class="btn" id="dsTest">${icon('send')}${L('تجربة عرض محفظة', 'Test focus')}</button></div>
       </div>
       <div class="card"><div class="card-h"><h3>${L('المحافظ اللي بتظهر على الشاشة', 'Wallets on the display')}</h3></div><div class="card-b" style="display:flex;flex-direction:column;gap:6px">
@@ -10643,7 +10768,8 @@ const Display = {
     const grid = $('#dsGrid', b); if (App.isMobile()) grid.style.gridTemplateColumns = '1fr';
     $('#dsOn', b).onchange = (e) => { DB.saveSettings({ features: { display: e.target.checked } }); audit('feature.display', e.target.checked); UI.toast(L('تم الحفظ', 'Saved')); };
     $$('[data-dw]', b).forEach((x) => (x.onchange = () => { DB.update('wallets', x.dataset.dw, { onDisplay: x.checked }); this.refreshAll(); }));
-    const read = () => { const v = UI.read(b); v.focusSec = Number(v.focusSec) || 90; v.refreshSec = Number(v.refreshSec) || 15; return v; };
+    const read = () => { const v = UI.read(b); v.focusSec = Number(v.focusSec) || 0; v.refreshSec = Number(v.refreshSec) || 15; return v; };
+    if (this.desk()) { this._sb = $('#dsScr', b); this.drawState(this._sb); }
     $('#dsSave', b).onclick = () => { DB.saveSettings({ display: read() }); this.refreshAll(); UI.toast(L('تم الحفظ — افتح الشاشة من جديد لو العنوان أو الألوان اتغيرت', 'Saved')); };
     $('#dsOpen', b).onclick = () => { DB.saveSettings({ display: read() }); this.open(); };
     $('#dsTest', b).onclick = () => { const w = Wallets.ordered().find((x) => x.onDisplay && x.active !== false) || ws[0]; if (!w) return UI.toast(L('أضف محفظة الأول', 'Add a wallet first'), 'warn'); this.focus(w, 1500, 'withdraw'); UI.toast(L('اتبعتت للشاشة ✓', 'Sent to the display ✓')); };
@@ -12972,6 +13098,536 @@ const AI = {
 </script>
   <script>
 /* =========================================================
+   معالج الإعداد لأول تشغيل — المحل يجهّز البرنامج لوحده خطوة بخطوة
+   بيظهر للمدير أول مرة (برنامج جديد مفيهوش مبيعات ولا محافظ)، وتقدر تفتحه تاني من الإعدادات ← بيانات المحل
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const Setup = {
+  STEPS: [
+    ['store', '🏪', 'بيانات المحل', 'Store'], ['biz', '🧭', 'نشاطك', 'Business'], ['wallets', '💳', 'المحافظ', 'Wallets'],
+    ['products', '📦', 'الأصناف', 'Products'], ['staff', '👥', 'الموظفين', 'Staff'], ['printer', '🖨️', 'الطابعة', 'Printer'], ['done', '🎉', 'جاهز', 'Done']
+  ],
+  BIZ: [
+    ['cash', '💳', 'خدمات كاش ومحافظ', 'Cash services', [], 'wallets'], ['machines', '⚡', 'ماكينات شحن وكروت', 'Machines & cards', ['machines'], 'machines'],
+    ['phones', '📱', 'بيع وشراء موبايلات', 'Phones', ['phones'], 'phones'], ['repairs', '🛠️', 'صيانة أجهزة', 'Repairs', ['repairs'], 'repairs'],
+    ['lines', '📶', 'خطوط الشركات', 'Mobile lines', ['lines'], 'lines'], ['cctv', '📹', 'تركيب كاميرات', 'CCTV', ['cctv'], 'cctv'], ['credit', '📒', 'بيع آجل', 'Credit sales', ['credit'], 'credit']
+  ],
+  allowed(k) { return typeof Plan === 'undefined' || Plan.allowed(k); },
+  /* أول تشغيل بجد: مفيش مبيعات ولا محافظ ولا عمليات */
+  needed() {
+    const s = DB.settings(); if (s.setupDone) return false;
+    if (!DB.desktop && !window.MAH_MOBILE) return false; // نسخة الويب التجريبية فيها بيانات جاهزة
+    const used = DB.all('sales').length || DB.all('wallets').length || DB.all('walletTx').length || DB.all('shifts').length > 1;
+    if (used) { DB.saveSettings({ setupDone: true }); return false; }
+    return true;
+  },
+  maybe() { if (this._shown || !Session.user || Session.user.username !== 'admin') return; if (!this.needed()) return; this._shown = true; setTimeout(() => this.open(), 900); },
+  open(start = 0) {
+    this.i = start; this.data = this.data || { wallets: [], staff: [] };
+    this.m = UI.modal({ title: L('تجهيز البرنامج لمحلك', 'Set up your shop'), icon: 'sparkles', size: 'lg setup-modal', actions: false, body: '<div id="suBody"></div>', onClose: () => { if (!DB.settings().setupDone) UI.toast(L('تقدر تكمّل الإعداد بعدين من الإعدادات ← بيانات المحل', 'Resume later from Settings → Store'), 'info', 5000); } });
+    this.draw();
+  },
+  draw() {
+    const st = this.STEPS[this.i]; const b = $('#suBody', this.m.el);
+    const steps = this.STEPS.map(([k, e, ar, en], j) => `<div class="su-st ${j < this.i ? 'done' : j === this.i ? 'on' : ''}"><i>${j < this.i ? '✓' : e}</i><small>${L(ar, en)}</small></div>`).join('');
+    b.innerHTML = `<div class="su-steps">${steps}</div><div class="su-prog"><i style="width:${Math.round((this.i / (this.STEPS.length - 1)) * 100)}%"></i></div><div class="su-pane" id="suPane"></div>
+      <div class="su-foot">${this.i > 0 && st[0] !== 'done' ? `<button class="btn" id="suBack">${LANG === 'ar' ? '→' : '←'} ${L('رجوع', 'Back')}</button>` : '<span></span>'}<div class="spacer"></div>
+      ${st[0] !== 'done' && st[0] !== 'store' ? `<button class="btn ghost" id="suSkip">${L('تخطي', 'Skip')}</button>` : ''}<button class="btn primary lg" id="suNext">${st[0] === 'done' ? L('ابدأ الشغل 🚀', 'Start 🚀') : L('التالي', 'Next')}</button></div>`;
+    this['p_' + st[0]]($('#suPane', b));
+    $('#suBack', b) && ($('#suBack', b).onclick = () => { this.i--; this.draw(); });
+    $('#suSkip', b) && ($('#suSkip', b).onclick = () => { this.i++; this.draw(); });
+    $('#suNext', b).onclick = async () => { const ok = await this['s_' + st[0]]($('#suPane', b)); if (ok === false) return; if (st[0] === 'done') return this.finish(); this.i++; while (this.STEPS[this.i][0] === 'wallets' && !this.hasCash()) this.i++; this.draw(); };
+  },
+  hasCash() { return this.allowed('wallets') && (!this.data.biz || this.data.biz.includes('cash')); },
+
+  /* 1) بيانات المحل */
+  p_store(el) {
+    const s = DB.settings().store; this._logo = s.logo || '';
+    el.innerHTML = `<h3 class="su-h">👋 ${L('أهلاً بيك! خلّينا نجهّز البرنامج لمحلك في دقايق', "Welcome! Let's set up your shop")}</h3><p class="faint">${L('البيانات دي بتظهر على الإيصالات والتقارير، وتقدر تغيّرها أي وقت من الإعدادات.', 'Shown on receipts and reports; editable anytime.')}</p>
+      <div class="su-store"><div class="su-logo"><img id="suLogo" src="${logoSrc()}"><button class="btn sm" id="suLg">${icon('upload')}${L('لوجو المحل', 'Logo')}</button></div><div style="flex:1">${UI.form([
+        { name: 'name', label: L('اسم المحل', 'Store name'), required: true, col: 6, value: s.name === DEFAULT_SETTINGS.store.name && DB.desktop ? '' : s.name },
+        { name: 'nameEn', label: L('الاسم بالإنجليزي (اختياري)', 'English name (optional)'), col: 6, value: s.nameEn },
+        { name: 'phone', label: L('تليفون المحل', 'Phone'), type: 'tel', col: 6, value: s.phone === DEFAULT_SETTINGS.store.phone && DB.desktop ? '' : s.phone },
+        { name: 'address', label: L('العنوان', 'Address'), col: 6, value: s.address }])}</div></div>`;
+    $('#suLg', el).onclick = async () => { const d = await pickImage(400); if (d) { this._logo = d; $('#suLogo', el).src = d; } };
+  },
+  s_store(el) { if (!UI.validate(el)) return false; const v = UI.read(el); DB.saveSettings({ store: { ...v, logo: this._logo } }); return true; },
+
+  /* 2) النشاط — بيفعّل الأقسام المناسبة بس */
+  p_biz(el) {
+    const f = DB.settings().features; const sel = this.data.biz || this.BIZ.filter(([k, , , , feats]) => feats.every((x) => f[x])).map((x) => x[0]);
+    el.innerHTML = `<h3 class="su-h">🧭 ${L('بتشتغل في إيه؟', 'What do you do?')}</h3><p class="faint">${L('اختار كل اللي بتعمله — البرنامج هيظهرلك الأقسام دي بس عشان يبقى أبسط. نقطة البيع والمخزون والمصروفات والتقارير موجودين دايماً.', 'Pick everything you do; POS, stock and reports are always on.')}</p>
+      <div class="su-biz">${this.BIZ.map(([k, e, ar, en, , pk]) => { const ok = this.allowed(pk); return `<label class="su-bz ${ok ? '' : 'lock'}"><input type="checkbox" value="${k}" ${sel.includes(k) && ok ? 'checked' : ''} ${ok ? '' : 'disabled'}><span class="e">${e}</span><b>${L(ar, en)}</b>${ok ? '' : `<small>🔒 ${L('مش في باقتك', 'Not in plan')}</small>`}</label>`; }).join('')}</div>`;
+    $$('.su-bz input', el).forEach((c) => (c.onchange = () => c.closest('.su-bz').classList.toggle('on', c.checked))); $$('.su-bz input:checked', el).forEach((c) => c.closest('.su-bz').classList.add('on'));
+  },
+  s_biz(el) {
+    const sel = $$('.su-bz input:checked', el).map((c) => c.value); this.data.biz = sel;
+    const feats = {}; this.BIZ.forEach(([k, , , , fs, pk]) => { if (!this.allowed(pk)) return; fs.forEach((x) => (feats[x] = sel.includes(k))); });
+    DB.saveSettings({ features: feats }); return true;
+  },
+
+  /* 3) المحافظ */
+  p_wallets(el) {
+    const rows = this.data.wallets.length ? this.data.wallets : [{ network: 'vodafone', number: '', owner: '', bal: '' }];
+    const nets = Object.keys(NETWORKS).filter((k) => k !== 'other');
+    el.innerHTML = `<h3 class="su-h">💳 ${L('محافظ المحل', 'Shop wallets')}</h3><p class="faint">${L('ضيف المحافظ اللي بتشتغل عليها ورصيد كل واحدة دلوقتي. الليمت والعمولة بيتحطوا تلقائي حسب الشبكة وتقدر تعدّلهم بعدين.', 'Add wallets and current balances; limits and fees are set automatically.')}</p>
+      <div id="suWl">${rows.map((r, i) => `<div class="su-wr" data-i="${i}"><select data-k="network">${nets.map((n) => `<option value="${n}" ${r.network === n ? 'selected' : ''}>${netName(n)}</option>`).join('')}</select><input data-k="number" dir="ltr" placeholder="01xxxxxxxxx" value="${esc(r.number)}"><input data-k="owner" placeholder="${L('اسم صاحب المحفظة', 'Owner')}" value="${esc(r.owner)}"><input data-k="bal" type="number" placeholder="${L('الرصيد الحالي', 'Balance')}" value="${esc(r.bal)}"><button class="btn sm ghost" data-x="${i}">${icon('x')}</button></div>`).join('')}</div>
+      <button class="btn sm soft mt" id="suWAdd">${icon('plus')}${L('محفظة كمان', 'Add another')}</button>`;
+    const collect = () => (this.data.wallets = $$('.su-wr', el).map((r) => ({ network: $('[data-k=network]', r).value, number: $('[data-k=number]', r).value.trim(), owner: $('[data-k=owner]', r).value.trim(), bal: $('[data-k=bal]', r).value })));
+    $('#suWAdd', el).onclick = () => { collect(); this.data.wallets.push({ network: 'vodafone', number: '', owner: '', bal: '' }); this.p_wallets(el); };
+    $$('[data-x]', el).forEach((x) => (x.onclick = () => { collect(); this.data.wallets.splice(+x.dataset.x, 1); this.p_wallets(el); }));
+    this._collectW = collect;
+  },
+  s_wallets() {
+    const ws = this._collectW().filter((w) => w.number.replace(/\D/g, '').length >= 6 || (w.network === 'instapay' && w.number));
+    let n = 0; ws.forEach((w) => {
+      if (DB.find('wallets', (x) => String(x.number) === w.number)) return;
+      DB.insert('wallets', { name: `${netName(w.network)} ${w.number.slice(-4)}`, network: w.network, number: w.number, owner: w.owner, openingBalance: Number(w.bal) || 0, active: true, fav: n === 0, feeWithdraw: 1, feeDeposit: 1, feeMin: 5, networkFeeMode: 'pct', qrOn: true, onDisplay: true, ...(NET_LIMITS[w.network] || {}) }); n++;
+    });
+    if (n) { audit('setup.wallets', String(n)); UI.toast(L(`اتضافت ${n} محفظة ✓`, `${n} wallets added ✓`)); }
+    this.data.wallets = []; return true;
+  },
+
+  /* 4) الأصناف */
+  p_products(el) {
+    const n = DB.all('products').length;
+    el.innerHTML = `<h3 class="su-h">📦 ${L('أصناف المحل', 'Products')}</h3><p class="faint">${L('أسرع طريقة: نزّل نموذج Excel، اكتب فيه أصنافك (الاسم، الباركود، سعر الشراء والبيع، الكمية)، وارفعه تاني. أو ضيف الأصناف بعدين من المخزون.', 'Download the Excel template, fill it, and import it — or add products later.')}</p>
+      <div class="su-cards"><button class="su-card" id="suTpl"><span>⬇️</span><b>${L('1. نزّل النموذج', '1. Download template')}</b><small>${L('ملف Excel فيه مثال', 'Excel file with an example')}</small></button>
+      <button class="su-card" id="suImp"><span>⬆️</span><b>${L('2. ارفع الملف', '2. Import file')}</b><small>${L('بعد ما تملاه', 'After you fill it')}</small></button></div>
+      <div class="su-note ${n ? 'ok' : ''}" id="suPn">${n ? `✓ ${L('عندك دلوقتي', 'You now have')} <b>${n}</b> ${L('صنف في المخزون', 'products')}` : L('لسه مفيش أصناف — مش مشكلة، تقدر تكمّل وتضيفهم بعدين.', 'No products yet — you can add them later.')}</div>`;
+    $('#suTpl', el).onclick = () => exportExcel([{ 'الاسم': 'جراب سيليكون آيفون 15', 'الباركود': '6223000000011', 'القسم': 'جرابات', 'النوع': 'accessory', 'سعر الشراء': 60, 'سعر البيع': 120, 'سعر الجملة': 95, 'الكمية': 25, 'الحد الأدنى': 5, 'الوحدة': 'قطعة' }], 'products-template');
+    $('#suImp', el).onclick = async () => { try { await Modules.inventory.importExcel(); } catch (e) { console.warn(e); } this.p_products(el); };
+  },
+  s_products() { return true; },
+
+  /* 5) الموظفين */
+  p_staff(el) {
+    const rows = this.data.staff.length ? this.data.staff : [{ name: '', user: '', pass: '' }];
+    const ex = DB.filter('users', (u) => u.username !== 'admin');
+    el.innerHTML = `<h3 class="su-h">👥 ${L('الكاشير والموظفين', 'Cashiers & staff')}</h3><p class="faint">${L('كل موظف ليه اسم دخول وكلمة سر، وبيشتغل بصلاحيات كاشير (بيع ومحافظ وورديات من غير ما يشوف الأرباح أو يمسح حاجة). تقدر تغيّر صلاحياته بعدين.', 'Each employee gets a login with cashier permissions; editable later.')}</p>
+      ${ex.length ? `<div class="su-note ok">✓ ${L('موجودين', 'Existing')}: ${ex.map((u) => esc(u.name)).join('، ')}</div>` : ''}
+      <div id="suSt">${rows.map((r, i) => `<div class="su-wr su-sr" data-i="${i}"><input data-k="name" placeholder="${L('اسم الموظف', 'Name')}" value="${esc(r.name)}"><input data-k="user" dir="ltr" placeholder="${L('اسم الدخول', 'Username')}" value="${esc(r.user)}"><input data-k="pass" type="password" placeholder="${L('كلمة السر', 'Password')}" value="${esc(r.pass)}"><button class="btn sm ghost" data-x="${i}">${icon('x')}</button></div>`).join('')}</div>
+      <button class="btn sm soft mt" id="suSAdd">${icon('plus')}${L('موظف كمان', 'Add another')}</button>`;
+    const collect = () => (this.data.staff = $$('.su-sr', el).map((r) => ({ name: $('[data-k=name]', r).value.trim(), user: $('[data-k=user]', r).value.trim().toLowerCase(), pass: $('[data-k=pass]', r).value })));
+    $('#suSAdd', el).onclick = () => { collect(); this.data.staff.push({ name: '', user: '', pass: '' }); this.p_staff(el); };
+    $$('[data-x]', el).forEach((x) => (x.onclick = () => { collect(); this.data.staff.splice(+x.dataset.x, 1); this.p_staff(el); }));
+    this._collectS = collect;
+  },
+  async s_staff() {
+    const rows = this._collectS().filter((r) => r.name || r.user);
+    for (const r of rows) {
+      if (!r.name || !r.user || !r.pass) { UI.toast(L('كمّل الاسم واسم الدخول وكلمة السر لكل موظف (أو امسح الصف)', 'Fill name, username and password for each row'), 'err'); return false; }
+      if (DB.find('users', (u) => u.username.toLowerCase() === r.user)) { UI.toast(L(`اسم الدخول «${r.user}» مستخدم قبل كده`, `Username ${r.user} exists`), 'err'); return false; }
+    }
+    let n = 0; for (const r of rows) {
+      if (typeof Limits !== 'undefined' && !Limits.check('users')) break;
+      DB.insert('users', { name: r.name, username: r.user, password: await sha256(r.pass), role: 'cashier', perms: ROLE_PRESETS.cashier, active: true, color: AVATAR_COLORS[DB.all('users').length % AVATAR_COLORS.length] }); n++;
+    }
+    if (n) { audit('setup.staff', String(n)); UI.toast(L(`اتضاف ${n} موظف ✓`, `${n} staff added ✓`)); }
+    this.data.staff = []; return true;
+  },
+
+  /* 6) الطابعة */
+  p_printer(el) {
+    const r = DB.settings().receipt;
+    const opt = (name, val, cur, e, ar, sub) => `<label class="su-bz ${String(cur) === String(val) ? 'on' : ''}"><input type="radio" name="${name}" value="${val}" ${String(cur) === String(val) ? 'checked' : ''}><span class="e">${e}</span><b>${ar}</b><small>${sub}</small></label>`;
+    el.innerHTML = `<h3 class="su-h">🖨️ ${L('الطابعة والإيصال', 'Printer & receipt')}</h3><p class="faint">${L('اختار مقاس ورق طابعتك وشكل الإيصال. لو مش متأكد: أغلب طابعات الكاشير 80 مم.', 'Pick your paper size and receipt style. Most POS printers are 80 mm.')}</p>
+      <label class="lbl">${L('مقاس الورق', 'Paper')}</label><div class="su-biz su-3">${opt('w', 80, r.width, '🧾', L('حراري 80 مم', '80 mm'), L('الأشهر', 'Most common'))}${opt('w', 58, r.width, '🧾', L('حراري 58 مم', '58 mm'), L('طابعات صغيرة', 'Small printers'))}${opt('w', 'A4', r.width, '📄', 'A4', L('طابعة عادية', 'Office printer'))}</div>
+      <label class="lbl mt">${L('شكل الإيصال', 'Style')}</label><div class="su-biz su-3">${opt('s', 'modern', r.style, '✨', L('عصري', 'Modern'), L('هيدر مميز', 'Bold header'))}${opt('s', 'classic', r.style, '📃', L('كلاسيك', 'Classic'), L('بسيط وواضح', 'Simple'))}${opt('s', 'compact', r.style, '🗜️', L('مختصر', 'Compact'), L('أقل ورق', 'Less paper'))}</div>
+      <label class="check mt"><input type="checkbox" id="suAuto" ${r.autoPrint ? 'checked' : ''}>${L('اطبع الإيصال لوحده بعد كل بيعة', 'Auto-print after each sale')}</label>
+      <button class="btn mt" id="suTest">${icon('printer')}${L('جرّب الطباعة', 'Test print')}</button>`;
+    $$('.su-bz input', el).forEach((c) => (c.onchange = () => $$(`input[name=${c.name}]`, el).forEach((x) => x.closest('.su-bz').classList.toggle('on', x.checked))));
+    $('#suTest', el).onclick = async () => { this.s_printer(el); const html = `<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{margin:0}body{font-family:Tahoma;text-align:center;padding:4mm}</style></head><body><b style="font-size:16px">${esc(DB.settings().store.name)}</b><p>${L('✓ الطابعة شغالة', '✓ Printer works')}</p><p>${fmtDT(new Date())}</p></body></html>`; printHTML(html, { type: 'receipt', name: 'Test' }); };
+  },
+  s_printer(el) { const w = $('input[name=w]:checked', el)?.value || 80; const s = $('input[name=s]:checked', el)?.value || 'modern'; DB.saveSettings({ receipt: { width: w === 'A4' ? 'A4' : Number(w), style: s, autoPrint: $('#suAuto', el).checked } }); return true; },
+
+  /* 7) خلاص — وأهم حاجة: كلمة سر المدير */
+  p_done(el) {
+    const s = DB.settings(); const c = (k) => DB.all(k).length;
+    el.innerHTML = `<div class="su-done"><div class="su-ok">🎉</div><h3 class="su-h">${L('البرنامج جاهز لـ', 'Ready for')} ${esc(s.store.name)}</h3>
+      <div class="su-sum"><span>💳 ${c('wallets')} ${L('محفظة', 'wallets')}</span><span>📦 ${c('products')} ${L('صنف', 'products')}</span><span>👥 ${c('users')} ${L('مستخدم', 'users')}</span><span>🖨️ ${s.receipt.width === 'A4' ? 'A4' : s.receipt.width + ' مم'}</span></div>
+      <div class="su-pw"><b>🔐 ${L('غيّر كلمة سر المدير (مهم جداً)', 'Change the admin password (important)')}</b><small>${L('كلمة السر الحالية هي الافتراضية 123 — أي حد يعرفها يقدر يدخل بصلاحياتك.', 'The current password is the default 123.')}</small>
+      <div class="row" style="gap:8px;margin-top:6px"><input type="password" id="suP1" placeholder="${L('كلمة سر جديدة', 'New password')}"><input type="password" id="suP2" placeholder="${L('اكتبها تاني', 'Repeat')}"></div></div>
+      <div class="su-next"><b>${L('الخطوة الجاية', 'Next step')}:</b> ${L('افتح وردية من «فتح وردية» واكتب الفلوس اللي في الدرج — وابدأ البيع 🚀', 'Open a shift with the drawer cash and start selling 🚀')}</div></div>`;
+  },
+  async s_done(el) {
+    const a = $('#suP1', el).value, b2 = $('#suP2', el).value;
+    if (a || b2) { if (a.length < 4) { UI.toast(L('كلمة السر 4 حروف أو أرقام على الأقل', 'At least 4 characters'), 'err'); return false; } if (a !== b2) { UI.toast(L('كلمتين السر مش زي بعض', 'Passwords do not match'), 'err'); return false; }
+      const u = DB.find('users', (x) => x.username === 'admin'); if (u) { DB.update('users', u.id, { password: await sha256(a) }); audit('setup.password'); } }
+    return true;
+  },
+  finish() { DB.saveSettings({ setupDone: true, setupAt: nowISO() }); audit('setup.done'); this.m.close(); UI.toast(L('مبروك — البرنامج جاهز ✓', 'All set ✓'), 'ok', 4000); App.shell(); }
+};
+(() => {
+  const base = App.shell.bind(App);
+  App.shell = function (...a) { const r = base(...a); try { Setup.maybe(); } catch (e) { console.warn(e); } return r; };
+})();
+
+</script>
+  <script>
+/* =========================================================
+   1.5 — أدوات النمو والدعم
+   - سجل الأخطاء + «بلّغ عن مشكلة» يوصل للمطور على واتساب (ومع التحقق الأونلاين بيوصل للوحة المطور)
+   - التارجت والعمولة للموظفين (مربوطة بالمرتبات)
+   - تقييم العميل بعد البيع على واتساب + تنبيه فوري للمالك على التقييم الضعيف
+   - العروض والكوبونات في نقطة البيع
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+// DEV_PHONE معرّف في license.js
+
+/* ===================== 1) سجل الأخطاء ===================== */
+const ErrLog = {
+  KEY: 'mah:errlog', MAX: 40,
+  list() { try { return JSON.parse(localStorage.getItem(this.KEY) || '[]'); } catch (_) { return []; } },
+  save(a) { try { localStorage.setItem(this.KEY, JSON.stringify(a.slice(-this.MAX))); } catch (_) {} },
+  add(msg, src = '') {
+    msg = String(msg || '').slice(0, 300); if (!msg || /ResizeObserver|Script error\.?$|NotAllowedError|AbortError/i.test(msg)) return;
+    const a = this.list(); const last = a[a.length - 1]; const now = Date.now();
+    if (last && last.msg === msg && now - last.at < 60e3) { last.n = (last.n || 1) + 1; last.at = now; } else a.push({ at: now, msg, src: String(src || '').slice(0, 160), page: (typeof App !== 'undefined' && App.current) || '', v: APP.version, sent: false });
+    this.save(a);
+  },
+  unsent() { return this.list().filter((e) => !e.sent); },
+  markSent() { const a = this.list(); a.forEach((e) => (e.sent = true)); this.save(a); },
+  short(e) { return `${new Date(e.at).toLocaleString('en-GB')} | ${e.page || '-'} | ${e.msg}${e.n > 1 ? ' ×' + e.n : ''}`; }
+};
+window.addEventListener('error', (e) => ErrLog.add(e.message || (e.error && e.error.message), `${(e.filename || '').split('/').pop()}:${e.lineno || ''}`));
+window.addEventListener('unhandledrejection', (e) => { const r = e.reason; ErrLog.add(r && (r.message || r) || 'unhandled rejection', 'promise'); });
+(() => { const ce = console.error.bind(console); console.error = (...a) => { try { const er = a.find((x) => x instanceof Error); if (er) ErrLog.add(er.message, (er.stack || '').split('\n')[1] || ''); } catch (_) {} ce(...a); }; })();
+/* الأخطاء الجديدة بتطلع مع التحقق الأونلاين، وبتظهر للمطور في لوحته جنب الجهاز */
+if (typeof OnlineLicense !== 'undefined' && OnlineLicense.call) {
+  const baseCall = OnlineLicense.call.bind(OnlineLicense);
+  OnlineLicense.call = async function (info = {}) {
+    const un = ErrLog.unsent(); const extra = un.length ? { errors: un.slice(-8).map((e) => ErrLog.short(e)).join('\n').slice(0, 1800), err_count: un.length } : {};
+    const r = await baseCall({ ...info, ...extra }); if (un.length) ErrLog.markSent(); return r;
+  };
+}
+const Report = {
+  async open() {
+    let mid = ''; try { mid = await License.machineId(); } catch (_) {}
+    const errs = ErrLog.list().slice(-5).reverse();
+    const m = UI.modal({ title: L('بلّغ عن مشكلة', 'Report a problem'), icon: 'alert', body: `<p class="faint" style="margin-top:0">${L('اكتب اللي حصل باختصار، والرسالة هتوصل للمطور على واتساب ومعاها بيانات جهازك عشان يحلها بسرعة.', 'Describe what happened; it goes to the developer on WhatsApp with your device info.')}</p>` + UI.form([
+      { name: 'what', label: L('إيه المشكلة؟', 'What happened?'), type: 'textarea', required: true, col: 12, attrs: 'style="min-height:110px"', placeholder: L('مثال: لما بدوس «حفظ PDF» من إيصال المحافظ مفيش حاجة بتحصل', 'e.g. Save PDF does nothing') },
+      { name: 'urgent', label: L('مستعجلة — موقفة الشغل', 'Urgent — blocking work'), type: 'checkbox', col: 12 }]) +
+      `<div class="rp-meta"><span>📦 ${L('النسخة', 'Version')} <b dir="ltr">${APP.version}</b></span><span>🧾 ${L('كود الجهاز', 'Device')} <b dir="ltr">${esc(mid)}</b></span><span>⚠️ ${L('أخطاء متسجلة', 'Logged errors')} <b>${ErrLog.list().length}</b></span></div>
+      ${errs.length ? `<details class="mt"><summary class="faint">${L('آخر الأخطاء اللي البرنامج سجلها', 'Recent logged errors')}</summary><div class="rp-errs">${errs.map((e) => `<div><small>${fmtDT(new Date(e.at))}</small>${esc(e.msg)}</div>`).join('')}</div></details>` : ''}`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('ابعت للمطور', 'Send to developer'), cls: 'wa', icon: 'whatsapp', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); const s = DB.settings();
+        const plan = typeof Plan !== 'undefined' ? Plan.name() : '';
+        const t = [`${v.urgent ? '🚨 *مشكلة مستعجلة*' : '🛠️ *بلاغ مشكلة*'} — ${s.store.name || ''}`, `📝 ${v.what}`, '', `📦 النسخة: ${APP.version} · ${typeof OnlineLicense !== 'undefined' ? OnlineLicense.platform() : ''}`, `🧾 كود الجهاز: ${mid}`, plan ? `📋 الباقة: ${plan}` : '', `👤 المستخدم: ${Session.user?.name || ''} · 📄 الصفحة: ${App.current || ''}`, `📞 تليفون المحل: ${s.store.phone || ''}`,
+          ...(errs.length ? ['', '⚠️ آخر الأخطاء:', ...errs.slice(0, 4).map((e) => '• ' + ErrLog.short(e).slice(0, 220))] : [])].filter((z) => z !== '').join('\n');
+        audit('report.problem', v.what.slice(0, 80)); (typeof sendWhatsAppDirect === 'function' ? sendWhatsAppDirect : sendWhatsApp)(DEV_PHONE, t); x.close(); UI.toast(L('شكراً — المطور هيتواصل معاك ✓', 'Thanks — the developer will contact you ✓'), 'ok', 4000);
+      } }] });
+    return m;
+  }
+};
+
+/* ===================== 2) التارجت والعمولة ===================== */
+const Targets = {
+  /* بيانات الموظف: target (هدف شهري بالجنيه) — commissionRate % — commMode: all (على كل المبيعات) | above (على اللي فوق التارجت بس) — targetBonus (مكافأة الوصول) */
+  sales(e, mk = monthKey()) { if (!e || !e.userId) return 0; return round2(sum(DB.filter('sales', (s) => s.userId === e.userId && monthKey(s.date) === mk && s.status !== 'cancelled'), Sales.net)); },
+  calc(e, mk = monthKey()) {
+    const done = this.sales(e, mk); const tg = Number(e.target) || 0; const rate = Number(e.commissionRate) || 0; const mode = e.commMode || 'all';
+    const base = mode === 'above' ? Math.max(0, done - tg) : done; const comm = round2((base * rate) / 100);
+    const hit = tg > 0 && done >= tg; const bonus = hit ? Number(e.targetBonus) || 0 : 0;
+    return { done, target: tg, pct: tg ? Math.min(999, Math.round((done / tg) * 100)) : 0, rate, mode, comm, bonus, hit, total: round2(comm + bonus), left: Math.max(0, round2(tg - done)) };
+  },
+  mine() { const u = Session.user; if (!u) return null; const e = DB.find('employees', (x) => x.userId === u.id && x.active !== false); return e && (Number(e.target) || Number(e.commissionRate)) ? e : null; },
+  daysLeft() { const d = new Date(); return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate() - d.getDate() + 1; },
+  card(e) {
+    const c = this.calc(e); const per = c.left && this.daysLeft() ? round2(c.left / this.daysLeft()) : 0;
+    return `<div class="card tg-card mb"><div class="tg-h"><div><small>${L('تارجت الشهر ده', 'This month\'s target')}</small><b>${c.target ? money(c.target) : L('من غير تارجت', 'No target')}</b></div><div class="tg-pc ${c.hit ? 'ok' : ''}">${c.target ? c.pct + '%' : '—'}</div></div>
+      ${c.target ? `<div class="tg-bar"><i style="width:${Math.min(100, c.pct)}%"></i></div>` : ''}
+      <div class="tg-row"><span>💰 ${L('بعت', 'Sold')} <b class="num">${money(c.done)}</b></span>${c.target && !c.hit ? `<span>🎯 ${L('فاضل', 'Left')} <b class="num">${money(c.left)}</b>${per ? ` <small class="faint">(${money(per)} ${L('في اليوم', '/day')})</small>` : ''}</span>` : ''}${c.hit ? `<span class="tag ok">🎉 ${L('وصلت التارجت', 'Target reached')}</span>` : ''}<span>🏆 ${L('عمولتك لحد دلوقتي', 'Your commission')} <b class="num pos">${money(c.total)}</b></span></div></div>`;
+  }
+};
+/* المرتبات: العمولة بتتحسب حسب نظام كل موظف + مكافأة التارجت */
+if (typeof Payroll !== 'undefined') {
+  const baseCalc = Payroll.calc.bind(Payroll);
+  Payroll.calc = function (e, mk) {
+    const r = baseCalc(e, mk); if (!(Number(e.target) || e.commMode === 'above' || Number(e.targetBonus))) return r;
+    const old = e.commissionRate && e.userId ? round2((Targets.sales(e, mk) * e.commissionRate) / 100) : 0;
+    const t = Targets.calc(e, mk); const diff = round2(t.total - old);
+    return { ...r, commission: round2(r.commission + diff), targetBonus: t.bonus, targetPct: t.pct, net: round2(r.net + diff) };
+  };
+}
+Modules.targets = {
+  title: () => L('التارجت والعمولات', 'Targets & commissions'), icon: 'target', perm: 'payroll',
+  render(el) {
+    const mk = this.mk || monthKey(); const emps = DB.filter('employees', (e) => e.active !== false);
+    const rows = emps.map((e) => ({ e, ...Targets.calc(e, mk) }));
+    el.innerHTML = `<div class="grid g4 mb">${UI.kpi(L('مبيعات الموظفين', 'Staff sales'), money(sum(rows, (r) => r.done)), 'trend', 'hero', mk)}${UI.kpi(L('وصلوا التارجت', 'Hit target'), `${rows.filter((r) => r.hit).length} / ${rows.filter((r) => r.target).length}`, 'target', 'c-ok')}${UI.kpi(L('العمولات المستحقة', 'Commissions due'), money(sum(rows, (r) => r.total)), 'money', 'c-info', L('بتنزل في المرتبات لوحدها', 'Added to payroll automatically'))}${UI.kpi(L('أيام فاضلة في الشهر', 'Days left'), mk === monthKey() ? Targets.daysLeft() : '—', 'calendar', 'c-warn')}</div>
+      <div class="row mb wrap" style="gap:8px"><input type="month" id="tgM" value="${mk}" style="width:180px"><div class="spacer"></div><span class="faint">${L('العمولة والمكافأة بيتضافوا للمرتب لوحدهم عند إصدار المرتبات', 'Commission and bonus are added to payroll automatically')}</span></div><div id="tgT"></div>`;
+    $('#tgM').onchange = (x) => { this.mk = x.target.value || monthKey(); App.go('targets'); };
+    UI.table($('#tgT'), { rows: rows.sort((a, b) => b.done - a.done), exportName: 'targets-' + mk, emptyIcon: 'users', searchText: (r) => r.e.name,
+      columns: [{ label: L('الموظف', 'Employee'), render: (r, i) => `<b>${i === 0 && r.done ? '🥇 ' : ''}${esc(r.e.name)}</b><div class="faint">${esc(r.e.jobTitle || '')}</div>`, exportVal: (r) => r.e.name },
+        { label: L('التارجت', 'Target'), render: (r) => (r.target ? money(r.target) : '—'), exportVal: (r) => r.target },
+        { label: L('المبيعات', 'Sales'), render: (r) => `<b class="num">${money(r.done)}</b>`, exportVal: (r) => r.done },
+        { label: L('الإنجاز', 'Progress'), render: (r) => (r.target ? `<div class="in-prog"><i style="width:${Math.min(100, r.pct)}%;${r.hit ? 'background:var(--ok)' : ''}"></i></div><small class="${r.hit ? 'pos' : 'faint'}">${r.pct}%${r.hit ? ' 🎉' : ''}</small>` : '—'), exportVal: (r) => r.pct },
+        { label: L('النظام', 'Scheme'), render: (r) => (r.rate ? `${r.rate}% ${r.mode === 'above' ? L('فوق التارجت', 'above target') : L('على الكل', 'on all')}` : '—') + (Number(r.e.targetBonus) ? `<div class="faint">+ ${money(r.e.targetBonus)} ${L('مكافأة', 'bonus')}</div>` : ''), exportVal: (r) => r.rate },
+        { label: L('المستحق', 'Due'), render: (r) => `<b class="num pos">${money(r.total)}</b>`, exportVal: (r) => r.total }],
+      actions: () => UI.act('edit', 'edit', L('تعديل التارجت', 'Edit target')), onAction: (a, r) => this.edit(r.e) });
+  },
+  edit(e) {
+    UI.modal({ title: L('التارجت والعمولة', 'Target & commission') + ' — ' + e.name, icon: 'target', body: UI.form([
+      { name: 'target', label: L('التارجت الشهري (ج.م مبيعات)', 'Monthly target (sales EGP)'), type: 'number', col: 6 }, { name: 'targetBonus', label: L('مكافأة لما يوصل التارجت (ج.م)', 'Bonus on reaching target'), type: 'number', col: 6 },
+      { name: 'commissionRate', label: L('نسبة العمولة %', 'Commission %'), type: 'number', col: 6 },
+      { name: 'commMode', label: L('العمولة على', 'Commission on'), type: 'select', col: 6, options: [['all', L('كل مبيعاته', 'All his sales')], ['above', L('اللي فوق التارجت بس', 'Only above the target')]] }], { target: e.target || '', targetBonus: e.targetBonus || '', commissionRate: e.commissionRate || '', commMode: e.commMode || 'all' }) +
+      `<div class="tag info mt" style="white-space:normal;line-height:1.8">${L('مثال: تارجت 50,000 وعمولة 1% «فوق التارجت» ومكافأة 300 — لو باع 60,000 ياخد 100 عمولة + 300 مكافأة = 400 ج.م على مرتبه.', 'Example: 50k target, 1% above target, 300 bonus — selling 60k earns 400.')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { const v = UI.read(x.el); DB.update('employees', e.id, { target: Number(v.target) || 0, targetBonus: Number(v.targetBonus) || 0, commissionRate: Number(v.commissionRate) || 0, commMode: v.commMode }); audit('target.set', `${e.name} ${v.target}`); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.go('targets'); } }] });
+  }
+};
+
+/* ===================== 3) تقييم العميل بعد البيع ===================== */
+const Ratings = {
+  cfg() { return { on: false, delayMin: 60, cooldownDays: 7, alertBelow: 2, minTotal: 0, ownerPhone: '', template: 'أهلاً {customer} 🌹\nشكراً إنك اشتريت من *{store}*.\nممكن تقيّم تجربتك؟ رد برقم بس من 1 لـ 5\n5️⃣ ممتازة — 1️⃣ سيئة\nرأيك بيفرق معانا 🙏', thanksGood: 'شكراً على تقييمك ⭐ يسعدنا نشوفك تاني في {store} 🌹', thanksBad: 'آسفين جداً إن تجربتك مكانتش زي ما تستاهل 🙏 اكتبلنا حصل إيه، وصاحب المحل هيتواصل معاك بنفسه.', ...(DB.settings().ratings || {}) }; },
+  fill(t, map) { return String(t || '').replace(/\{(\w+)\}/g, (m0, k) => (k in map ? map[k] : m0)); },
+  owner() { const c = this.cfg(); return c.ownerPhone || DB.settings().ownerReport?.phone || ''; },
+  /* بعد الفاتورة: طلب التقييم بيتبعت بعد مدة (افتراضي ساعة) — مرة واحدة كل أسبوع للعميل بالكتير */
+  ask(sale) {
+    const c = this.cfg(); if (!c.on || typeof WaLink === 'undefined' || !WaLink.ready()) return;
+    const cu = sale.customerId && DB.get('customers', sale.customerId); if (!cu || !cu.phone) return; if ((Number(c.minTotal) || 0) > sale.total) return;
+    const ph = waPhone(cu.phone); const cut = Date.now() - (Number(c.cooldownDays) || 7) * 864e5;
+    if (DB.find('ratings', (r) => r.phone === ph && Date.parse(r.askedAt) > cut)) return;
+    const q = WaLink.queue(cu.phone, this.fill(c.template, { customer: cu.name, store: DB.settings().store.name, no: sale.no }), { kind: 'rating', ref: sale.no });
+    if (!q) return; const when = new Date(Date.now() + Math.max(1, Number(c.delayMin) || 60) * 60e3).toISOString();
+    DB.update('waQueue', q.id, { retryAt: when });
+    DB.insert('ratings', { saleId: sale.id, saleNo: sale.no, customerId: cu.id, customerName: cu.name, phone: ph, userId: sale.userId, userName: sale.userName, total: sale.total, askedAt: when, score: null, comment: '' });
+  },
+  digits(s) { return String(s || '').replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)); },
+  parse(text) {
+    const t = this.digits(text).replace(/️|⃣/g, '').trim(); const m = t.match(/^([1-5])(\s*\/\s*5)?\s*[!.⭐*]*$/); if (m) return Number(m[1]);
+    const stars = (t.match(/⭐|★|🌟/g) || []).length; if (stars >= 1 && stars <= 5 && t.replace(/⭐|★|🌟|\s/g, '') === '') return stars; return null;
+  },
+  /* رسالة جاية من العميل على واتساب المحل */
+  onIncoming(msg) {
+    try {
+      const ph = waPhone(msg.from); if (!ph) return; const lim = Date.now() - 4 * 864e5;
+      const rs = DB.filter('ratings', (r) => r.phone === ph && Date.parse(r.askedAt) > lim && Date.parse(r.askedAt) <= Date.now() + 60e3).sort((a, b) => (a.askedAt < b.askedAt ? 1 : -1)); const r = rs[0]; if (!r) return;
+      const c = this.cfg(); const st = DB.settings().store.name;
+      if (r.score == null) {
+        const sc = this.parse(msg.text); if (!sc) return;
+        DB.update('ratings', r.id, { score: sc, ratedAt: nowISO() }); audit('rating', `${r.saleNo} ${sc}`);
+        WaLink.queue(r.phone, this.fill(sc > c.alertBelow ? c.thanksGood : c.thanksBad, { customer: r.customerName, store: st }), { kind: 'rating', ref: r.saleNo, prio: 1 });
+        if (sc <= (Number(c.alertBelow) || 2)) this.alert({ ...r, score: sc });
+      } else if (!r.comment && r.ratedAt && Date.now() - Date.parse(r.ratedAt) < 6 * 3600e3 && String(msg.text || '').trim().length > 2 && !this.parse(msg.text)) {
+        DB.update('ratings', r.id, { comment: String(msg.text).slice(0, 500) });
+        if (r.score <= (Number(c.alertBelow) || 2)) this.alert({ ...r, comment: msg.text }, true);
+      }
+    } catch (e) { console.warn(e); }
+  },
+  alert(r, isComment) {
+    const o = this.owner(); const t = isComment ? `💬 تعليق العميل ${r.customerName} (${r.phone}) على تقييمه ${r.score}/5:\n«${String(r.comment).slice(0, 400)}»` : `⚠️ *تقييم ضعيف ${r.score}/5*\n👤 ${r.customerName} — ${r.phone}\n🧾 فاتورة ${r.saleNo} (${money(r.total)})\n🧑‍💼 الكاشير: ${r.userName || ''}\nكلّمه بسرعة وحاول تكسبه تاني 🙏`;
+    if (o) WaLink.queue(o, t, { kind: 'rating-alert', ref: r.saleNo, prio: 1 });
+    try { UI.toast(t.split('\n')[0].replace(/\*/g, ''), 'warn', 7000); } catch (_) {}
+  },
+  stats(list) { const rated = list.filter((r) => r.score != null); return { asked: list.length, rated: rated.length, avg: rated.length ? round2(sum(rated, (r) => r.score) / rated.length) : 0, low: rated.filter((r) => r.score <= (Number(this.cfg().alertBelow) || 2)).length, five: rated.filter((r) => r.score === 5).length }; }
+};
+Modules.ratings = {
+  title: () => L('تقييمات العملاء', 'Customer ratings'), icon: 'star', perm: 'reports', tab: 'all',
+  render(el) {
+    const c = Ratings.cfg(); const all = DB.all('ratings').sort((a, b) => (a.askedAt < b.askedAt ? 1 : -1)); const mk = monthKey(); const mo = all.filter((r) => monthKey(r.askedAt) === mk); const s = Ratings.stats(mo);
+    const stars = (n) => `${'★'.repeat(Math.round(n))}<span style="color:var(--line-2)">${'★'.repeat(5 - Math.round(n))}</span>`;
+    const byU = {}; all.filter((r) => r.score != null).forEach((r) => { const k = r.userName || '—'; (byU[k] = byU[k] || []).push(r.score); });
+    el.innerHTML = `${!c.on ? `<div class="card card-b mb loy-off"><div class="row wrap" style="gap:14px;align-items:center"><div style="font-size:40px">⭐</div><div style="flex:1;min-width:220px"><h3 style="margin:0 0 4px">${L('تقييم العملاء مقفول', 'Ratings are off')}</h3><div class="faint">${L('فعّله وبعد كل فاتورة لعميل متسجل، يوصله على واتساب طلب تقييم من 1 لـ 5. التقييم الضعيف بيوصلك فوراً عشان تلحق العميل.', 'Ask customers to rate each purchase on WhatsApp; low ratings alert you instantly.')}</div></div>${Session.can('settings') ? `<button class="btn primary lg" id="rtOn">${icon('check')}${L('فعّل التقييم', 'Turn on')}</button>` : ''}</div></div>` : ''}
+      <div class="grid g4 mb">${UI.kpi(L('متوسط التقييم (الشهر ده)', 'Avg rating (month)'), s.rated ? `${s.avg} <small style="color:#F5B300">${stars(s.avg)}</small>` : '—', 'star', 'hero', `${s.rated} ${L('تقييم', 'ratings')}`)}${UI.kpi(L('نسبة الرد', 'Response rate'), s.asked ? Math.round((s.rated / s.asked) * 100) + '%' : '—', 'whatsapp', 'c-info', `${s.asked} ${L('طلب', 'asked')}`)}${UI.kpi(L('ممتاز (5 نجوم)', 'Excellent (5★)'), s.five, 'award', 'c-ok')}${UI.kpi(L('تقييمات ضعيفة', 'Low ratings'), s.low, 'alert', 'c-err', L('محتاجة متابعة', 'need follow-up'))}</div>
+      ${Object.keys(byU).length ? `<div class="card card-b mb"><b>${L('متوسط تقييم كل كاشير', 'Average by cashier')}</b><div class="rt-users">${Object.entries(byU).map(([k, v]) => { const a = round2(sum(v, (x) => x) / v.length); return `<span class="tag">${esc(k)} — <b>${a}</b> <span style="color:#F5B300">★</span> <small>(${v.length})</small></span>`; }).join('')}</div></div>` : ''}
+      <div class="row mb wrap" style="gap:8px"><div id="rtTabs"></div><div class="spacer"></div>${Session.can('settings') ? `<button class="btn" id="rtCfg">${icon('settings')}${L('الإعدادات والرسائل', 'Settings')}</button>` : ''}${typeof WaLinkBtn === 'function' ? WaLinkBtn() : ''}</div><div id="rtBody"></div>`;
+    UI.tabs($('#rtTabs'), [{ id: 'all', icon: 'star', label: L('كل التقييمات', 'All') }, { id: 'low', icon: 'alert', label: L('الضعيفة', 'Low') }, { id: 'wait', icon: 'clock', label: L('مستني الرد', 'Awaiting') }], this.tab, (t) => { this.tab = t; App.go('ratings'); });
+    $('#rtCfg') && ($('#rtCfg').onclick = () => this.settings()); $('#rtOn') && ($('#rtOn').onclick = () => { DB.saveSettings({ ratings: { ...c, on: true } }); UI.toast(L('التقييم اشتغل ✓', 'Ratings on ✓')); App.go('ratings'); });
+    if (typeof WaLinkBind === 'function') WaLinkBind(el);
+    const lo = Number(c.alertBelow) || 2; const rows = this.tab === 'low' ? all.filter((r) => r.score != null && r.score <= lo) : this.tab === 'wait' ? all.filter((r) => r.score == null) : all;
+    UI.table($('#rtBody'), { rows, exportName: 'ratings', emptyIcon: 'star', searchText: (r) => `${r.customerName} ${r.phone} ${r.saleNo} ${r.userName} ${r.comment}`,
+      columns: [{ key: 'askedAt', label: L('التاريخ', 'Date'), render: (r) => fmtDT(r.askedAt) }, { label: L('العميل', 'Customer'), render: (r) => `<b>${esc(r.customerName)}</b><div class="faint" dir="ltr" style="text-align:start">${esc(r.phone)}</div>`, exportVal: (r) => r.customerName },
+        { label: L('الفاتورة', 'Invoice'), render: (r) => `${esc(r.saleNo)}<div class="faint">${money(r.total)}</div>`, exportVal: (r) => r.saleNo }, { label: L('الكاشير', 'Cashier'), render: (r) => esc(r.userName || '') },
+        { key: 'score', label: L('التقييم', 'Rating'), render: (r) => (r.score == null ? `<span class="tag">${L('مستني', 'Waiting')}</span>` : `<b style="color:${r.score <= lo ? 'var(--err)' : '#E0A100'};font-size:16px;letter-spacing:1px">${stars(r.score)}</b>`), exportVal: (r) => r.score ?? '' },
+        { label: L('تعليق', 'Comment'), render: (r) => esc(r.comment || '') }],
+      actions: (r) => UI.act('wa', 'whatsapp', L('كلّم العميل', 'Contact')), onAction: (a, r) => sendWhatsApp(r.phone, `أهلاً ${r.customerName} 🌹 معاك ${DB.settings().store.name}`) });
+  },
+  settings() {
+    const c = Ratings.cfg();
+    UI.modal({ title: L('إعدادات تقييم العملاء', 'Ratings settings'), icon: 'star', size: 'lg', body: UI.form([
+      { name: 'on', label: L('تشغيل طلب التقييم بعد البيع (لما واتساب يكون مربوط)', 'Ask for a rating after sales (WhatsApp linked)'), type: 'checkbox', col: 12 },
+      { name: 'delayMin', label: L('ابعت الطلب بعد (دقيقة) من البيع', 'Send after (minutes)'), type: 'number', col: 4 }, { name: 'cooldownDays', label: L('مرة واحدة لكل عميل كل (يوم)', 'Once per customer every (days)'), type: 'number', col: 4 }, { name: 'minTotal', label: L('للفواتير اللي أكبر من (ج.م)', 'Only invoices above (EGP)'), type: 'number', col: 4 },
+      { name: 'alertBelow', label: L('نبّهني لو التقييم أقل من أو يساوي', 'Alert me at or below'), type: 'select', col: 4, options: [[1, '1'], [2, '2'], [3, '3']] }, { name: 'ownerPhone', label: L('رقم صاحب المحل للتنبيه (فاضي = رقم تقرير الوردية)', 'Owner number (empty = shift report number)'), col: 8, attrs: 'dir="ltr"' },
+      { name: 'template', label: L('رسالة طلب التقييم — {customer} {store}', 'Request message'), type: 'textarea', col: 12, attrs: 'style="min-height:120px"' },
+      { name: 'thanksGood', label: L('رد التقييم الكويس', 'Reply to good rating'), type: 'textarea', col: 6 }, { name: 'thanksBad', label: L('رد التقييم الضعيف', 'Reply to low rating'), type: 'textarea', col: 6 }], c) +
+      `<div class="tag warn mt" style="white-space:normal;line-height:1.8">🛡️ ${L('للحماية من الحظر: الطلب بيروح لعملاءك المتسجلين بس، مرة واحدة في الأسبوع للعميل، ومن خلال طابور واتساب الهادي. والرد بيتقري من واتساب المحل على الكمبيوتر المربوط.', 'Anti-ban: only your registered customers, once a week, via the paced queue.')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { const v = UI.read(x.el); DB.saveSettings({ ratings: { ...v, on: !!v.on, delayMin: Math.max(1, Number(v.delayMin) || 60), cooldownDays: Math.max(1, Number(v.cooldownDays) || 7), minTotal: Number(v.minTotal) || 0, alertBelow: Number(v.alertBelow) || 2 } }); audit('ratings.settings'); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); if (App.current === 'ratings') App.go('ratings'); } }] });
+  }
+};
+
+/* ===================== 4) العروض والكوبونات ===================== */
+const Promos = {
+  today() { return dayKey(); },
+  live(p) { const d = this.today(); return p.active !== false && (!p.from || p.from <= d) && (!p.to || p.to >= d); },
+  offers() { return DB.filter('promos', (p) => p.kind === 'offer' && this.live(p)); },
+  /* أحسن عرض لكل صنف في الفاتورة */
+  lineDisc(it) {
+    if (!it.productId || it.tradeIn || it.reserveDep || !(it.price > 0)) return { d: 0 };
+    const pr = DB.get('products', it.productId); let best = { d: 0 };
+    this.offers().forEach((o) => {
+      const ok = o.scope === 'all' || (o.scope === 'category' && pr && (o.targetIds || []).includes(pr.categoryId)) || (o.scope === 'product' && (o.targetIds || []).includes(it.productId)); if (!ok) return;
+      const unit = o.type === 'pct' ? (it.price * (Number(o.value) || 0)) / 100 : Math.min(it.price, Number(o.value) || 0);
+      const d = round2(unit * it.qty); if (d > best.d) best = { d, o };
+    });
+    return best;
+  },
+  findCoupon(code) { const c = String(code || '').trim().toUpperCase(); return c ? DB.find('promos', (p) => p.kind === 'coupon' && String(p.code).toUpperCase() === c) : null; },
+  couponErr(cp, base, customerId) {
+    if (!cp) return L('الكود ده مش موجود', 'Code not found');
+    if (!this.live(cp)) return L('الكوبون منتهي أو موقوف', 'Coupon expired or inactive');
+    if (cp.maxUses && (cp.used || 0) >= cp.maxUses) return L('الكوبون خلص عدد مرات استخدامه', 'Coupon fully used');
+    if (cp.minTotal && base < cp.minTotal) return L(`الكوبون للفواتير من ${money(cp.minTotal)}`, `Minimum ${money(cp.minTotal)}`);
+    if (cp.oncePer && customerId && DB.find('sales', (s) => s.couponId === cp.id && s.customerId === customerId)) return L('العميل ده استخدم الكوبون قبل كده', 'Customer already used it');
+    if (cp.oncePer && !customerId) return L('اختار العميل الأول — الكوبون مرة واحدة لكل عميل', 'Pick the customer first');
+    return '';
+  },
+  couponDisc(cp, base) { const v = Number(cp.value) || 0; const d = cp.type === 'pct' ? (base * v) / 100 : v; return round2(Math.max(0, Math.min(base, cp.maxDisc && cp.type === 'pct' ? Math.min(d, cp.maxDisc) : d))); },
+  _pend: null
+};
+(() => {
+  const P = Modules.pos; if (!P) return;
+  P.coupon = null;
+  const baseTot = P.totals.bind(P);
+  P.totals = function () {
+    const up = this.usePts; this.usePts = false; let t; try { t = baseTot(); } finally { this.usePts = up; }
+    const manDisc = t.discount; let off = 0; const lines = [];
+    this.cart.forEach((it, i) => { const b = Promos.lineDisc(it); if (b.d) { off += b.d; lines.push({ i, d: b.d, name: b.o.name, id: b.o.id }); } });
+    off = round2(Math.min(off, Math.max(0, t.subtotal - manDisc)));
+    let cp = 0, cpErr = ''; const cpObj = this.coupon ? DB.get('promos', this.coupon) : null;
+    if (cpObj) { const base = round2(t.subtotal - manDisc - off); cpErr = Promos.couponErr(cpObj, base, this.customerId); if (!cpErr) cp = Promos.couponDisc(cpObj, base); }
+    let discount = round2(manDisc + off + cp); let pts = 0, ptsDisc = 0;
+    if (up && this.customerId && typeof Loyalty !== 'undefined' && Loyalty.on()) { const pl = Loyalty.plan(this.customerId, round2(t.subtotal - discount)); if (pl.disc) { pts = pl.pts; ptsDisc = pl.disc; discount = round2(discount + ptsDisc); } }
+    if (!off && !cp && !ptsDisc) return { ...t, manDisc };
+    const tax = round2(((t.subtotal - discount) * (t.taxRate || 0)) / 100);
+    return { ...t, manDisc, discount, tax, total: round2(t.subtotal - discount + tax), offDisc: off, offLines: lines, cpDisc: cp, cpId: cp ? cpObj.id : null, cpCode: cp ? cpObj.code : '', cpErr, ...(ptsDisc ? { pts, ptsDisc } : {}) };
+  };
+  const baseCart = P.renderCart.bind(P);
+  P.renderCart = function () {
+    baseCart();
+    try {
+      const box = $('#posTotals'); if (!box || (typeof Plan !== 'undefined' && !Plan.allowed('offers'))) return; const t = this.totals();
+      const tot = box.querySelector('.ln.total'); if (!tot) return;
+      if (t.offDisc) tot.insertAdjacentHTML('beforebegin', `<div class="ln pr-ln"><span>🏷️ ${L('عروض', 'Offers')} <small class="faint">${esc([...new Set(t.offLines.map((x) => x.name))].join('، '))}</small></span><b class="num pos">- ${money(t.offDisc, false)}</b></div>`);
+      const has = DB.find('promos', (p) => p.kind === 'coupon' && Promos.live(p));
+      if (this.coupon) { const c = DB.get('promos', this.coupon); tot.insertAdjacentHTML('beforebegin', `<div class="ln pr-ln"><span>🎟️ ${L('كوبون', 'Coupon')} <b dir="ltr">${esc(c?.code || '')}</b>${t.cpErr ? ` <small class="neg">${esc(t.cpErr)}</small>` : ''}</span><span class="row" style="gap:4px">${t.cpDisc ? `<b class="num pos">- ${money(t.cpDisc, false)}</b>` : ''}<button class="btn sm ghost" id="posCpX" style="height:24px;padding:0 6px">${icon('x')}</button></span></div>`); $('#posCpX').onclick = () => { this.coupon = null; this.renderCart(); }; }
+      else if (has) { tot.insertAdjacentHTML('beforebegin', `<div class="ln pr-ln"><span>🎟️ ${L('كوبون خصم', 'Coupon')}</span><span class="row" style="gap:4px"><input id="posCp" dir="ltr" placeholder="CODE" style="width:100px;height:30px;text-transform:uppercase"><button class="btn sm" id="posCpGo" style="height:30px">${L('تطبيق', 'Apply')}</button></span></div>`);
+        const go = () => { const v = $('#posCp').value; const c = Promos.findCoupon(v); const t0 = this.totals(); const err = Promos.couponErr(c, round2(t0.subtotal - t0.discount), this.customerId); if (err) return UI.toast(err, 'err'); this.coupon = c.id; this.renderCart(); UI.toast(L('اتطبق الكوبون ✓', 'Coupon applied ✓')); };
+        $('#posCpGo').onclick = go; $('#posCp').onkeydown = (e) => { if (e.key === 'Enter') go(); }; }
+    } catch (e) { console.warn(e); }
+  };
+  const baseReset = P.reset.bind(P); P.reset = function () { this.coupon = null; return baseReset(); };
+  const baseFinish = P.finish.bind(P);
+  P.finish = async function (m, method, t) { Promos._pend = t && (t.offDisc || t.cpDisc) ? { offDisc: t.offDisc || 0, offLines: t.offLines || [], cpDisc: t.cpDisc || 0, cpId: t.cpId, cpCode: t.cpCode } : null; try { return await baseFinish(m, method, t); } finally { Promos._pend = null; } };
+  if (typeof Approve !== 'undefined') { const b = Approve.checkout.bind(Approve); Approve.checkout = (cart, t) => b(cart, t && (t.offDisc || t.cpDisc || t.ptsDisc) ? { ...t, discount: t.manDisc ?? t.discount } : t); }
+})();
+/* البيع: تسجيل العروض والكوبون + طلب التقييم + تهنئة الوصول للتارجت */
+(() => {
+  const baseCreate = Sales.create.bind(Sales);
+  Sales.create = function (args) {
+    const pend = Promos._pend; Promos._pend = null; const before = (() => { try { const e = Targets.mine(); return e ? Targets.calc(e) : null; } catch (_) { return null; } })();
+    const sale = baseCreate(args);
+    try {
+      if (pend) { const patch = { offerDisc: pend.offDisc, offers: pend.offLines.map((x) => x.name) }; if (pend.cpId && pend.cpDisc) { patch.couponId = pend.cpId; patch.couponCode = pend.cpCode; patch.couponDisc = pend.cpDisc; const c = DB.get('promos', pend.cpId); if (c) DB.update('promos', c.id, { used: (c.used || 0) + 1 }); } DB.update('sales', sale.id, patch); Object.assign(sale, patch); }
+    } catch (e) { console.warn(e); }
+    try { if (typeof Plan === 'undefined' || Plan.allowed('whatsapp')) Ratings.ask(sale); } catch (e) { console.warn(e); }
+    try { if (before && before.target && !before.hit) { const e = Targets.mine(); const after = Targets.calc(e); if (after.hit) setTimeout(() => UI.toast(L(`🎉 مبروك ${e.name}! وصلت التارجت بتاع الشهر`, '🎉 Target reached!'), 'ok', 7000), 1200); } } catch (_) {}
+    return sale;
+  };
+  const baseRc = receiptHTML;
+  receiptHTML = async function (sale, o) {
+    let h = await baseRc(sale, o);
+    try { const rows = (sale.offerDisc ? `<div class="ln"><span>${L('منها خصم عروض', 'Incl. offers')}</span><span>- ${money(sale.offerDisc, false)}</span></div>` : '') + (sale.couponDisc ? `<div class="ln"><span>${L('كوبون', 'Coupon')} ${esc(sale.couponCode || '')}</span><span>- ${money(sale.couponDisc, false)}</span></div>` : ''); if (rows) h = h.replace(/(<div class="ln tot">[\s\S]*?<\/div>)/, (m0) => m0 + rows); } catch (_) {}
+    return h;
+  };
+})();
+Modules.offers = {
+  title: () => L('العروض والكوبونات', 'Offers & coupons'), icon: 'tag', perm: 'settings', tab: 'offers',
+  render(el) {
+    const all = DB.all('promos'); const offs = all.filter((p) => p.kind === 'offer'), cps = all.filter((p) => p.kind === 'coupon');
+    const mk = monthKey(); const ms = DB.filter('sales', (s) => monthKey(s.date) === mk && (s.offerDisc || s.couponDisc));
+    el.innerHTML = `<div class="grid g4 mb">${UI.kpi(L('عروض شغالة', 'Live offers'), offs.filter((p) => Promos.live(p)).length, 'tag', 'hero')}${UI.kpi(L('كوبونات شغالة', 'Live coupons'), cps.filter((p) => Promos.live(p)).length, 'percent', 'c-info')}${UI.kpi(L('فواتير بعروض الشهر ده', 'Promo invoices (month)'), ms.length, 'receipt', 'c-ok', money(sum(ms, (s) => s.total)))}${UI.kpi(L('إجمالي خصم العروض', 'Promo discounts'), money(sum(ms, (s) => (s.offerDisc || 0) + (s.couponDisc || 0))), 'money', 'c-warn')}</div>
+      <div class="row mb wrap" style="gap:8px"><div id="ofTabs"></div><div class="spacer"></div>${this.tab === 'coupons' ? `<button class="btn" id="ofSend">${icon('whatsapp')}${L('ابعت كوبون للعملاء', 'Send to customers')}</button><button class="btn primary" id="ofNewC">${icon('plus')}${L('كوبون جديد', 'New coupon')}</button>` : `<button class="btn primary" id="ofNewO">${icon('plus')}${L('عرض جديد', 'New offer')}</button>`}</div><div id="ofBody"></div>`;
+    UI.tabs($('#ofTabs'), [{ id: 'offers', icon: 'tag', label: L('العروض التلقائية', 'Auto offers') }, { id: 'coupons', icon: 'percent', label: L('الكوبونات', 'Coupons') }], this.tab, (t) => { this.tab = t; App.go('offers'); });
+    $('#ofNewO') && ($('#ofNewO').onclick = () => this.editOffer()); $('#ofNewC') && ($('#ofNewC').onclick = () => this.editCoupon()); $('#ofSend') && ($('#ofSend').onclick = () => this.send());
+    const st = (p) => (Promos.live(p) ? `<span class="tag ok">${L('شغال', 'Live')}</span>` : p.active === false ? `<span class="tag">${L('موقوف', 'Paused')}</span>` : p.to && p.to < dayKey() ? `<span class="tag err">${L('انتهى', 'Ended')}</span>` : `<span class="tag warn">${L('لسه', 'Upcoming')}</span>`);
+    const val = (p) => (p.type === 'pct' ? `${p.value}%` : money(p.value));
+    const per = (p) => `${p.from ? fmtDate(p.from) : L('من دلوقتي', 'Now')} ← ${p.to ? fmtDate(p.to) : L('مفتوح', 'Open')}`;
+    if (this.tab === 'coupons') return UI.table($('#ofBody'), { rows: cps.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)), emptyIcon: 'percent', exportName: 'coupons', searchText: (p) => `${p.code} ${p.note || ''}`,
+      columns: [{ label: L('الكود', 'Code'), render: (p) => `<b class="mono" dir="ltr">${esc(p.code)}</b><div class="faint">${esc(p.note || '')}</div>`, exportVal: (p) => p.code }, { label: L('الخصم', 'Discount'), render: val }, { label: L('الشروط', 'Rules'), render: (p) => [p.minTotal ? L('من', 'min') + ' ' + money(p.minTotal) : '', p.oncePer ? L('مرة لكل عميل', 'once/customer') : ''].filter(Boolean).join(' · ') || '—' },
+        { label: L('الاستخدام', 'Uses'), render: (p) => `${p.used || 0}${p.maxUses ? ' / ' + p.maxUses : ''}` }, { label: L('المدة', 'Period'), render: per }, { label: L('الحالة', 'Status'), render: st }],
+      actions: (p) => UI.act('edit', 'edit', L('تعديل', 'Edit')) + UI.act('del', 'trash', L('حذف', 'Delete'), 'del'), onAction: async (a, p) => { if (a === 'edit') this.editCoupon(p); if (a === 'del' && (await UI.confirm(L('حذف الكوبون؟', 'Delete coupon?')))) { DB.remove('promos', p.id); App.go('offers'); } } });
+    UI.table($('#ofBody'), { rows: offs.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)), emptyIcon: 'tag', exportName: 'offers', searchText: (p) => p.name,
+      columns: [{ label: L('العرض', 'Offer'), render: (p) => `<b>${esc(p.name)}</b>`, exportVal: (p) => p.name }, { label: L('الخصم', 'Discount'), render: (p) => val(p) + (p.type === 'amount' ? ' ' + L('للقطعة', '/unit') : '') },
+        { label: L('على', 'Applies to'), render: (p) => (p.scope === 'all' ? L('كل الأصناف', 'All products') : p.scope === 'category' ? (p.targetIds || []).map((id) => esc(DB.get('categories', id)?.name || '')).join('، ') : `${(p.targetIds || []).length} ${L('صنف', 'products')}`) },
+        { label: L('المدة', 'Period'), render: per }, { label: L('الحالة', 'Status'), render: st }],
+      actions: (p) => UI.act('edit', 'edit', L('تعديل', 'Edit')) + UI.act('del', 'trash', L('حذف', 'Delete'), 'del'), onAction: async (a, p) => { if (a === 'edit') this.editOffer(p); if (a === 'del' && (await UI.confirm(L('حذف العرض؟', 'Delete offer?')))) { DB.remove('promos', p.id); App.go('offers'); } } });
+  },
+  editOffer(p) {
+    p = p || { kind: 'offer', type: 'pct', value: 10, scope: 'category', targetIds: [], from: dayKey(), to: dayKey(addDays(new Date(), 7)), active: true };
+    const cats = DB.all('categories'); const prods = DB.filter('products', (x) => x.active !== false).slice(0, 800);
+    const m = UI.modal({ title: p.id ? L('تعديل عرض', 'Edit offer') : L('عرض جديد', 'New offer'), icon: 'tag', size: 'lg', body: UI.form([
+      { name: 'name', label: L('اسم العرض (بيظهر للكاشير وعلى الإيصال)', 'Offer name'), required: true, col: 12, placeholder: L('مثال: خصم الجرابات 20%', 'e.g. 20% off cases') },
+      { name: 'type', label: L('نوع الخصم', 'Type'), type: 'select', col: 4, options: [['pct', L('نسبة %', 'Percent %')], ['amount', L('مبلغ ثابت للقطعة', 'Fixed per unit')]] }, { name: 'value', label: L('القيمة', 'Value'), type: 'number', required: true, col: 4 },
+      { name: 'scope', label: L('على', 'Applies to'), type: 'select', col: 4, options: [['category', L('قسم / أقسام', 'Categories')], ['product', L('أصناف محددة', 'Products')], ['all', L('كل الأصناف', 'All products')]] },
+      { name: 'from', label: L('من يوم', 'From'), type: 'date', col: 4 }, { name: 'to', label: L('لحد يوم', 'To'), type: 'date', col: 4 }, { name: 'active', label: L('شغال', 'Active'), type: 'checkbox', col: 4 },
+      { type: 'html', col: 12, html: `<div id="ofCats"><label class="lbl">${L('الأقسام', 'Categories')}</label><div class="pr-pick">${cats.map((c) => `<label><input type="checkbox" value="${c.id}" ${(p.targetIds || []).includes(c.id) ? 'checked' : ''}>${esc(c.name)}</label>`).join('')}</div></div>
+        <div id="ofProds"><label class="lbl">${L('الأصناف', 'Products')}</label><input id="ofQ" placeholder="${L('ابحث باسم الصنف أو الباركود…', 'Search…')}"><div class="pr-pick pr-scroll">${prods.map((x) => `<label data-n="${esc((x.name + ' ' + (x.barcode || '')).toLowerCase())}"><input type="checkbox" value="${x.id}" ${(p.targetIds || []).includes(x.id) ? 'checked' : ''}>${esc(x.name)} <small class="faint">${money(x.price, false)}</small></label>`).join('')}</div></div>` }], p),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); v.value = Number(v.value) || 0; if (v.type === 'pct' && (v.value <= 0 || v.value > 90)) return UI.toast(L('النسبة من 1 لـ 90%', '1–90%'), 'err');
+        v.targetIds = v.scope === 'all' ? [] : $$(v.scope === 'category' ? '#ofCats input:checked' : '#ofProds input:checked', x.el).map((c) => c.value); if (v.scope !== 'all' && !v.targetIds.length) return UI.toast(L('اختار قسم أو صنف واحد على الأقل', 'Pick at least one'), 'err');
+        const doc = { ...v, kind: 'offer', active: !!v.active }; p.id ? DB.update('promos', p.id, doc) : DB.insert('promos', { ...doc, createdAt: nowISO() }); audit('offer.save', v.name); x.close(); UI.toast(L('اتحفظ ✓ — العرض بيتطبق لوحده في نقطة البيع', 'Saved ✓ — applied automatically at the POS')); App.go('offers');
+      } }] });
+    const sync = () => { const s = $('[name=scope]', m.el).value; $('#ofCats', m.el).style.display = s === 'category' ? '' : 'none'; $('#ofProds', m.el).style.display = s === 'product' ? '' : 'none'; };
+    $('[name=scope]', m.el).onchange = sync; sync();
+    $('#ofQ', m.el).oninput = (e) => { const q = e.target.value.trim().toLowerCase(); $$('#ofProds label[data-n]', m.el).forEach((l) => (l.style.display = !q || l.dataset.n.includes(q) ? '' : 'none')); };
+  },
+  editCoupon(p) {
+    const gen = () => 'AHLAN' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    p = p || { kind: 'coupon', code: gen(), type: 'pct', value: 10, minTotal: 0, maxUses: 0, oncePer: true, from: dayKey(), to: dayKey(addDays(new Date(), 30)), active: true };
+    UI.modal({ title: p.id ? L('تعديل كوبون', 'Edit coupon') : L('كوبون جديد', 'New coupon'), icon: 'percent', body: UI.form([
+      { name: 'code', label: L('كود الكوبون', 'Code'), required: true, col: 6, attrs: 'dir="ltr" style="text-transform:uppercase;font-weight:800"' }, { name: 'note', label: L('ملاحظة (مثلاً: عملاء رمضان)', 'Note'), col: 6 },
+      { name: 'type', label: L('نوع الخصم', 'Type'), type: 'select', col: 4, options: [['pct', L('نسبة %', 'Percent %')], ['amount', L('مبلغ ثابت', 'Fixed amount')]] }, { name: 'value', label: L('القيمة', 'Value'), type: 'number', required: true, col: 4 }, { name: 'maxDisc', label: L('أقصى خصم (للنسبة) — اختياري', 'Max discount (optional)'), type: 'number', col: 4 },
+      { name: 'minTotal', label: L('أقل قيمة فاتورة', 'Minimum invoice'), type: 'number', col: 4 }, { name: 'maxUses', label: L('أقصى عدد استخدام (0 = مفتوح)', 'Max uses (0 = unlimited)'), type: 'number', col: 4 }, { name: 'oncePer', label: L('مرة واحدة لكل عميل', 'Once per customer'), type: 'checkbox', col: 4 },
+      { name: 'from', label: L('من يوم', 'From'), type: 'date', col: 4 }, { name: 'to', label: L('لحد يوم', 'To'), type: 'date', col: 4 }, { name: 'active', label: L('شغال', 'Active'), type: 'checkbox', col: 4 }], p),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); v.code = String(v.code).trim().toUpperCase().replace(/\s+/g, ''); if (!/^[A-Z0-9_-]{3,20}$/.test(v.code)) return UI.toast(L('الكود حروف إنجليزي وأرقام من 3 لـ 20', 'Use 3–20 letters/digits'), 'err');
+        if (DB.find('promos', (z) => z.kind === 'coupon' && z.code === v.code && z.id !== p.id)) return UI.toast(L('الكود ده موجود قبل كده', 'Code exists'), 'err');
+        ['value', 'maxDisc', 'minTotal', 'maxUses'].forEach((k) => (v[k] = Number(v[k]) || 0)); const doc = { ...v, kind: 'coupon', active: !!v.active, oncePer: !!v.oncePer };
+        p.id ? DB.update('promos', p.id, doc) : DB.insert('promos', { ...doc, used: 0, createdAt: nowISO() }); audit('coupon.save', v.code); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.go('offers');
+      } }] });
+  },
+  /* إرسال كوبون لعملاء المحل — من خلال طابور واتساب الهادي (حماية من الحظر) */
+  send() {
+    const cps = DB.filter('promos', (p) => p.kind === 'coupon' && Promos.live(p)); if (!cps.length) return UI.toast(L('اعمل كوبون شغال الأول', 'Create a live coupon first'), 'warn');
+    if (typeof WaLink === 'undefined' || !WaLink.ready()) return UI.toast(L('اربط واتساب المحل الأول — الإرسال الجماعي بيتم من خلاله بس عشان الأمان', 'Link the shop WhatsApp first'), 'warn', 6000);
+    const groups = { recent: [L('اشتروا آخر 60 يوم', 'Bought in last 60 days'), (c) => DB.find('sales', (s) => s.customerId === c.id && Date.now() - Date.parse(s.date) < 60 * 864e5)], inactive: [L('ماشتروش من 60 يوم (رجّعهم)', 'Inactive 60+ days (win back)'), (c) => !DB.find('sales', (s) => s.customerId === c.id && Date.now() - Date.parse(s.date) < 60 * 864e5)], all: [L('كل العملاء', 'All customers'), () => true] };
+    const m = UI.modal({ title: L('ابعت كوبون للعملاء', 'Send coupon'), icon: 'whatsapp', body: UI.form([
+      { name: 'cp', label: L('الكوبون', 'Coupon'), type: 'select', col: 6, options: cps.map((c) => [c.id, `${c.code} — ${c.type === 'pct' ? c.value + '%' : money(c.value)}`]) }, { name: 'g', label: L('لمين', 'To'), type: 'select', col: 6, options: Object.entries(groups).map(([k, v]) => [k, v[0]]) },
+      { name: 'text', label: L('الرسالة — {customer} {code} {value} {to} {store}', 'Message'), type: 'textarea', col: 12, attrs: 'style="min-height:120px"', value: 'أهلاً {customer} 🌹\nعشانك عميل مميز عند *{store}* — خصم *{value}* بكود:\n🎟️ *{code}*\nصالح لحد {to}. في انتظارك 🛍️' }]) + `<div class="tag info mt" id="ofCnt"></div><div class="tag warn mt" style="white-space:normal;line-height:1.8">🛡️ ${L('الرسايل بتتبعت واحدة واحدة بفاصل زمني، في ساعات العمل، وبالحد اليومي اللي في إعدادات واتساب — لعملاءك المتسجلين بس.', 'Sent one by one, in work hours, within the daily cap — only to your customers.')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('ضيف للطابور', 'Queue'), cls: 'wa', icon: 'whatsapp', onClick: (x) => {
+        const v = UI.read(x.el); const c = DB.get('promos', v.cp); const list = DB.filter('customers', (z) => z.phone && groups[v.g][1](z)); if (!list.length) return UI.toast(L('مفيش عملاء بأرقام في المجموعة دي', 'No customers'), 'warn');
+        const st = DB.settings().store.name; list.forEach((z) => WaLink.queue(z.phone, Ratings.fill(v.text, { customer: z.name, code: c.code, value: c.type === 'pct' ? c.value + '%' : money(c.value), to: c.to ? fmtDate(c.to) : '', store: st }), { kind: 'coupon', ref: c.code }));
+        audit('coupon.send', `${c.code} ${list.length}`); x.close(); UI.toast(L(`اتحط ${list.length} رسالة في طابور واتساب — هتتبعت على مهل`, `${list.length} queued`), 'ok', 6000);
+      } }] });
+    const cnt = () => { const g = $('[name=g]', m.el).value; const n = DB.filter('customers', (z) => z.phone && groups[g][1](z)).length; $('#ofCnt', m.el).textContent = `👥 ${n} ${L('عميل هيوصلهم الكوبون', 'customers')} — ${L('حوالي', 'about')} ${Math.ceil((n * (Number(WaLink.cfg().minGap) || 25)) / 60)} ${L('دقيقة', 'min')}`; };
+    $('[name=g]', m.el).onchange = cnt; cnt();
+  }
+};
+
+/* ===================== ربط بالواجهة ===================== */
+(() => {
+  /* لوحة التحكم: كارت التارجت للكاشير */
+  if (Modules.dashboard) { const b = Modules.dashboard.render.bind(Modules.dashboard); Modules.dashboard.render = function (el) { b(el); try { const e = Targets.mine(); if (e && (typeof Plan === 'undefined' || Plan.allowed('hr'))) el.insertAdjacentHTML('afterbegin', Targets.card(e)); } catch (er) { console.warn(er); } }; }
+  /* التنبيهات: التقييمات الضعيفة الجديدة */
+  if (typeof Notify !== 'undefined') { const b = Notify.list.bind(Notify); Notify.list = function () { const out = b(); try { if (Session.can('reports')) { const lo = Number(Ratings.cfg().alertBelow) || 2; const n = DB.filter('ratings', (r) => r.score != null && r.score <= lo && Date.now() - Date.parse(r.ratedAt || r.askedAt) < 3 * 864e5).length; if (n) out.unshift({ type: 'err', icon: 'star', t: L(`${n} تقييم ضعيف من العملاء (آخر 3 أيام)`, `${n} low customer ratings`), s: L('كلّمهم وحاول تكسبهم تاني', 'Follow up'), go: () => { Modules.ratings.tab = 'low'; App.go('ratings'); } }); } } catch (_) {} return out; }; }
+  /* رسايل العملاء الجاية على واتساب المحل (الكمبيوتر المربوط) */
+  try { if (window.api && window.api.wa && window.api.wa.onMsg) window.api.wa.onMsg((m) => Ratings.onIncoming(m)); } catch (_) {}
+})();
+
+</script>
+  <script>
+/* =========================================================
    الباقات — الأقسام المسموحة جوّه الترخيص الموقّع
    - الترخيص فيه p (اسم الباقة) و f (الأقسام المسموحة) — موقّعين بمفتاح المطور فمحدش يقدر يعدّلهم
    - ترخيص من غير f (العملاء القدام) أو فترة التجربة = كل الأقسام
@@ -12990,8 +13646,9 @@ const PLAN_MODS = [
   { k: 'repairs', ic: 'tool', ar: 'قسم الصيانة', en: 'Repairs', d: 'استلام أجهزة ومراحل ورسائل للعميل', mods: ['repairs'], perms: ['repairs'], feats: ['repairs'] },
   { k: 'lines', ic: 'sim', ar: 'خطوط الشركات', en: 'Mobile lines', d: 'خطوط المفوض والتحصيل والشرايح', mods: ['lines'], perms: ['lines', 'lines.manage'], feats: ['lines', 'simSales'] },
   { k: 'cctv', ic: 'cctv', ar: 'كاميرات المراقبة', en: 'CCTV installs', d: 'تركيبات وعرابين وضمان وزيارات', mods: ['cctv'], perms: ['cctv', 'cctv.manage'], feats: ['cctv'] },
-  { k: 'hr', ic: 'users', ar: 'الموارد البشرية', en: 'HR & payroll', d: 'حضور وانصراف ومرتبات تلقائي', mods: ['attendance', 'payroll'], perms: ['attendance', 'payroll'], keys: { autoAttendance: false, autoPayroll: false } },
-  { k: 'whatsapp', ic: 'whatsapp', ar: 'واتساب التلقائي', en: 'Automatic WhatsApp', d: 'ربط رقم المحل بالـ QR وتذكيرات لوحدها' },
+  { k: 'hr', ic: 'users', ar: 'الموارد البشرية', en: 'HR & payroll', d: 'حضور وانصراف ومرتبات وتارجت وعمولات', mods: ['attendance', 'payroll', 'targets'], perms: ['attendance', 'payroll'], keys: { autoAttendance: false, autoPayroll: false } },
+  { k: 'whatsapp', ic: 'whatsapp', ar: 'واتساب التلقائي', en: 'Automatic WhatsApp', d: 'ربط رقم المحل بالـ QR وتذكيرات وتقييم العملاء', mods: ['ratings'] },
+  { k: 'offers', ic: 'tag', ar: 'العروض والكوبونات', en: 'Offers & coupons', d: 'خصومات تلقائية بالمدة وأكواد خصم للعملاء', mods: ['offers'] },
   { k: 'cloud', ic: 'cloud', ar: 'النسخ الاحتياطي السحابي', en: 'Cloud backup', d: 'نسخة مشفّرة يومية ومع كل وردية' },
   { k: 'owner', ic: 'eye', ar: 'لوحة المالك وتقرير الوردية', en: 'Owner live view & reports', d: 'أرقام لحظية وتقرير واتساب عند الغلق', mods: ['ownerLive'] },
   { k: 'ai', ic: 'sparkles', ar: 'المساعد الذكي', en: 'AI assistant', d: 'اسأل عن أرقام محلك بالعربي', perms: ['ai'] }
@@ -13000,7 +13657,7 @@ const PLAN_ALL = PLAN_MODS.map((m) => m.k);
 const PLANS = [
   { id: 'start', ar: 'الأساسية', en: 'Start', emoji: '🟢', d: 'نقطة بيع ومخزون ومشتريات ومصروفات وورديات وتقارير', f: [] },
   { id: 'cash', ar: 'الكاش', en: 'Cash', emoji: '🔵', d: 'الأساسية + المحافظ والماكينات وشاشة العرض والآجل', f: ['wallets', 'machines', 'display', 'credit'] },
-  { id: 'business', ar: 'البيزنس', en: 'Business', emoji: '🟣', d: 'الكاش + الموبايلات والصيانة والخطوط والتقسيط والولاء والموظفين وواتساب', f: ['wallets', 'machines', 'display', 'credit', 'phones', 'repairs', 'lines', 'installments', 'loyalty', 'hr', 'whatsapp'] },
+  { id: 'business', ar: 'البيزنس', en: 'Business', emoji: '🟣', d: 'الكاش + الموبايلات والصيانة والخطوط والتقسيط والولاء والموظفين وواتساب والعروض', f: ['wallets', 'machines', 'display', 'credit', 'phones', 'repairs', 'lines', 'installments', 'loyalty', 'hr', 'whatsapp', 'offers'] },
   { id: 'premium', ar: 'البريميوم', en: 'Premium', emoji: '👑', d: 'كل الأقسام', f: PLAN_ALL }
 ];
 const PLAN_CORE = ['نقطة البيع', 'المبيعات والمرتجعات', 'المخزون والباركود', 'المشتريات والموردين', 'التالف والهوالك', 'المصروفات ورأس المال', 'الورديات والدرج', 'التقارير والأرباح', 'المستخدمين والصلاحيات', 'النسخ الاحتياطي المحلي'];

@@ -106,6 +106,7 @@ main{flex:1;min-width:0;padding:22px 24px 110px}
 @media (max-width:520px){.plans{grid-template-columns:repeat(2,1fr)}}
 .mods{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}.mods label{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:12px;border:1.5px solid var(--l);background:var(--s);font-weight:800;font-size:13px;cursor:pointer;user-select:none}.mods label input{width:18px;height:18px;accent-color:var(--p);flex:none}.mods label.on{border-color:var(--p);background:var(--p50)}
 .plh{display:flex;justify-content:space-between;align-items:center;margin-top:12px}.plh b{font-size:15px}.plh small{color:var(--t2);font-weight:800}
+.errs{margin:0 0 12px;border:1px solid #f1c3c8;background:#fff5f6;border-radius:12px;padding:8px 12px}.errs summary{cursor:pointer;font-weight:800;font-size:13px;color:#a3172b}.errs pre{white-space:pre-wrap;font-size:11px;max-height:220px;overflow:auto;margin:8px 0 0;color:#5a2a30}
 .plcore{font-size:12px;color:var(--t2);margin:-2px 0 8px;line-height:1.7}
 /* toast */
 #toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:8px;width:min(92vw,420px)}
@@ -171,9 +172,9 @@ const LS = { get(k, d = null) { try { const v = localStorage.getItem('mahdev:' +
 const ST = { pending: 'بانتظار موافقتك', trial: 'تجربة', active: 'مفعّل', blocked: 'موقوف' };
 const TN = { full: 'دائم', year: 'سنوي', half: '6 شهور', month: 'شهري', custom: 'مخصص' };
 /* الباقات — لازم تفضل مطابقة لـ renderer/js/plan.js في البرنامج */
-const PMODS = [['wallets', '💳', 'المحافظ والكاش'], ['machines', '⚡', 'الماكينات والكروت'], ['display', '📺', 'شاشة العرض'], ['credit', '📒', 'عملاء الآجل'], ['installments', '📅', 'التقسيط'], ['loyalty', '⭐', 'نقاط الولاء'], ['phones', '📱', 'الموبايلات'], ['repairs', '🛠️', 'الصيانة'], ['lines', '📶', 'خطوط الشركات'], ['cctv', '📹', 'كاميرات المراقبة'], ['hr', '👥', 'الموارد البشرية'], ['whatsapp', '💬', 'واتساب التلقائي'], ['cloud', '☁️', 'النسخ السحابي'], ['owner', '👁️', 'لوحة المالك والتقارير'], ['ai', '✨', 'المساعد الذكي']];
+const PMODS = [['wallets', '💳', 'المحافظ والكاش'], ['machines', '⚡', 'الماكينات والكروت'], ['display', '📺', 'شاشة العرض'], ['credit', '📒', 'عملاء الآجل'], ['installments', '📅', 'التقسيط'], ['loyalty', '⭐', 'نقاط الولاء'], ['phones', '📱', 'الموبايلات'], ['repairs', '🛠️', 'الصيانة'], ['lines', '📶', 'خطوط الشركات'], ['cctv', '📹', 'كاميرات المراقبة'], ['hr', '👥', 'الموارد البشرية'], ['whatsapp', '💬', 'واتساب التلقائي'], ['offers', '🏷️', 'العروض والكوبونات'], ['cloud', '☁️', 'النسخ السحابي'], ['owner', '👁️', 'لوحة المالك والتقارير'], ['ai', '✨', 'المساعد الذكي']];
 const PALL = PMODS.map((m) => m[0]);
-const PLANS = [['start', '🟢', 'الأساسية', []], ['cash', '🔵', 'الكاش', ['wallets', 'machines', 'display', 'credit']], ['business', '🟣', 'البيزنس', ['wallets', 'machines', 'display', 'credit', 'phones', 'repairs', 'lines', 'installments', 'loyalty', 'hr', 'whatsapp']], ['premium', '👑', 'البريميوم', PALL]];
+const PLANS = [['start', '🟢', 'الأساسية', []], ['cash', '🔵', 'الكاش', ['wallets', 'machines', 'display', 'credit']], ['business', '🟣', 'البيزنس', ['wallets', 'machines', 'display', 'credit', 'phones', 'repairs', 'lines', 'installments', 'loyalty', 'hr', 'whatsapp', 'offers']], ['premium', '👑', 'البريميوم', PALL]];
 const planOf = (l) => { const p = PLANS.find((x) => x[0] === l.p); if (!p) return Array.isArray(l.f) ? '🧩 مخصصة' : '👑 كل الأقسام'; const f = Array.isArray(l.f) ? l.f : PALL; const custom = f.length !== p[3].length || p[3].some((k) => !f.includes(k)); return `${p[1]} ${p[2]}${custom ? ' (مخصصة)' : ''}`; };
 const PL = { android: 'أندرويد', pwa: 'تطبيق ويب', web: 'متصفح', desktop: 'كمبيوتر' };
 const fmt = (d) => (d ? new Date(d).toLocaleString('ar-EG-u-nu-latn', { dateStyle: 'medium', timeStyle: 'short' }) : '—');
@@ -388,6 +389,7 @@ function openDev(mid) {
       ${lic(r).b || lic(r).u ? `<span>الحدود</span><b>${lic(r).b ? '🏢 ' + lic(r).b + ' فرع ' : ''}${lic(r).u ? '👥 ' + lic(r).u + ' مستخدم' : ''}</b>` : ''}
       <span>سجّل</span><b>${fmt(r.created_at)}</b><span>آخر ظهور</span><b>${online(r) ? '🟢 ' : ''}${fmt(r.last_seen)} (${ago(r.last_seen)})</b><span>مرات الفحص</span><b class="num">${r.checks ?? 0}</b>
       ${r.note ? `<span>ملاحظة</span><b>${esc(r.note)}</b>` : ''}</div>
+    ${r.errors ? `<details class="errs"><summary>⚠️ أخطاء من البرنامج: <b>${r.err_count || 0}</b> — آخرها ${fmt(r.last_error_at)} (${ago(r.last_error_at)})</summary><pre dir="ltr">${esc(r.errors)}</pre></details>` : ''}
     <div class="ag">
       ${r.status !== 'active' ? '<button class="btn ok" data-a="act">✅ تفعيل</button>' : '<button class="btn p" data-a="act">🔁 تجديد / تغيير المدة</button>'}
       ${r.status !== 'active' ? '<button class="btn" data-a="trial">🧪 تجربة</button>' : '<button class="btn" data-a="trial">🧪 تحويل لتجربة</button>'}

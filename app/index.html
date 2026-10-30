@@ -11,10 +11,10 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <script>window.MAH_MOBILE = true;</script>
-  <!-- Rubik: محلي (يعمل بدون إنترنت) + Google Fonts كاحتياطي -->
-  <style>@font-face{font-family:'Rubik';font-style:normal;font-display:swap;font-weight:300 900;src:url(fonts/rubik-arabic-wght-normal.woff2) format('woff2');}
-@font-face{font-family:'Rubik';font-style:normal;font-display:swap;font-weight:300 900;src:url(fonts/rubik-latin-wght-normal.woff2) format('woff2');}</style>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap">
+  <!-- Cairo: محلي (يعمل بدون إنترنت) + Google Fonts كاحتياطي -->
+  <style>@font-face{font-family:'Cairo';font-style:normal;font-display:swap;font-weight:200 1000;src:url(fonts/cairo-arabic-wght-normal.woff2) format('woff2');}
+@font-face{font-family:'Cairo';font-style:normal;font-display:swap;font-weight:200 1000;src:url(fonts/cairo-latin-wght-normal.woff2) format('woff2');}</style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap">
   <style>/* Markaz Ahllan POS — Theme: دم الغزال (Oxblood) + White */
 :root {
   --p: #8B1A2B;
@@ -46,7 +46,7 @@
   --r: 14px;
   --r-sm: 10px;
   --side: 264px;
-  --font: 'Rubik', 'Segoe UI', Tahoma, sans-serif;
+  --font: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
   color-scheme: light;
 }
 :root[data-theme="dark"] {
@@ -769,7 +769,7 @@ table.tbl { width: 100%; border-collapse: separate; border-spacing: 0; }
 
 /* ---- Bigger wallet number on cards ---- */
 .wc-num { font-size: 27px; font-weight: 900; letter-spacing: 1px; color: #0d0a0b; }
-.wc-num span { font-family: 'Rubik', 'Segoe UI', Arial, sans-serif; font-weight: 900; }
+.wc-num span { font-family: 'Cairo', 'Segoe UI', Arial, sans-serif; font-weight: 900; }
 .wc-num.txt { font-size: 18px; }
 
 /* ===================== Wallet page (دخول المحفظة) ===================== */
@@ -1834,6 +1834,18 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .ct-qr img { width: 100%; max-width: 230px; border-radius: 14px; border: 1px solid var(--line); background: #fff; padding: 6px; display: block; margin: 0 auto 8px; } .ct-qr b, .ct-qr small { display: block; }
 .pl-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: linear-gradient(135deg, var(--p-50), var(--surface)); border: 1px solid var(--p-100); }
 @media (max-width: 860px) { .ct-grid { grid-template-columns: 1fr; } }
+
+/* ===== 1.6.1 الدخول بالبصمة ===== */
+.bio-btn{margin-top:10px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--p);color:var(--p);background:transparent;font-weight:800}
+.bio-btn svg{width:22px;height:22px}
+.bio-btn:hover{background:color-mix(in srgb,var(--p) 8%,transparent)}
+.lock-card .bio-btn{height:48px}
+.bio-hero{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:var(--surface-2)}
+.bio-hero .bio-ic{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--line);color:var(--text-2);flex:none}
+.bio-hero .bio-ic svg{width:30px;height:30px}
+.bio-hero.on .bio-ic{background:var(--ok);color:#fff}
+.bio-hero b{display:block;font-size:15.5px}.bio-hero span{color:var(--text-2);font-size:13px}
+.bio-pts{margin:12px 0 0;padding-inline-start:20px;line-height:1.9;font-size:13.5px;color:var(--text-2)}
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2082,7 +2094,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   
 </head>
 <body>
-  <div style="display:grid;place-items:center;height:100vh;color:#8B1A2B;font-family:Rubik,Tahoma">
+  <div style="display:grid;place-items:center;height:100vh;color:#8B1A2B;font-family:Cairo,Tahoma">
     <div style="text-align:center"><img src="assets/logo.png" style="width:140px"><div style="margin-top:10px">Markaz Ahllan POS</div></div>
   </div>
   <script>
@@ -2182,7 +2194,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.6.0', build: '', trialHours: 72 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.6.1', build: '', trialHours: 72 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2279,6 +2291,7 @@ const DEFAULT_SETTINGS = {
   ratings: { on: false },
   catalog: { on: false },
   monthlyPL: { auto: true },
+  bio: { on: true, auto: true, lock: true, confirm: false },
   loyalty: { on: false, earnPer: 10, earnPts: 1, redeemPts: 100, redeemVal: 10, minRedeem: 100, maxPct: 50, notify: true },
   repair: {
     autoWA: true, warrantyDays: 30, inspectionFee: 0, autoPickup: true, pickupDays: 3, pickupMax: 3,
@@ -2351,7 +2364,7 @@ const DB = {
     if (this._settings) return this._settings;
     const s = this.maps.settings.get('main') || {};
     const merged = { ...DEFAULT_SETTINGS, ...s };
-    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings', 'catalog', 'monthlyPL']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
+    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings', 'catalog', 'monthlyPL', 'bio']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
     this._settings = merged; return merged;
   },
   saveSettings(patch) {
@@ -2738,7 +2751,7 @@ async function printHTML(html, opts = {}) {
   if (/size:A4/.test(html) && type === 'receipt' && DB.settings().receipt.width !== 'A4') type = 'report'; // A4 reports always show the dialog
   const s = DB.settings(); const cfg = type === 'label' ? s.label : type === 'receipt' ? s.receipt : {};
   const baseDir = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
-  html = html.replace('<head>', `<head><base href="${baseDir}"><link rel="stylesheet" href="vendor/rubik.css">`);
+  html = html.replace('<head>', `<head><base href="${baseDir}"><link rel="stylesheet" href="vendor/cairo.css">`);
   if (typeof PrintCenter !== 'undefined' && !opts.direct) return PrintCenter.handle(html, { ...opts, type, cfg });
   if (DB.desktop) {
     const r = await window.api.sys.printHtml({ html, silent: !!cfg.silent && !!cfg.printer, deviceName: cfg.printer || undefined });
@@ -3586,7 +3599,7 @@ async function receiptHTML(sale, { preview = false } = {}) {
     ${r.showContact !== false && (st.phone || r.social) ? `<div class="c xs">${r.social ? esc(r.social) : ''}</div>` : ''}
     <div class="c xs" style="margin-top:6px">${esc(DB.settings().appName)} · ${COPYRIGHT_AR}</div>
   </div>`;
-  const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Rubik',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm;box-sizing:border-box}
+  const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Cairo',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm;box-sizing:border-box}
     .c{text-align:center}.e{text-align:end}.b{font-weight:700}.big{font-size:${fs + 4}px}.sm{font-size:${fs - 2}px}.xs{font-size:${fs - 4}px;color:#444}
     .logo{width:${r.width == 58 ? 26 : 34}mm;height:auto}.hr{border-top:1px dashed #000;margin:5px 0}
     .ln{display:flex;justify-content:space-between;gap:6px;padding:1px 0}.tot{font-size:${fs + 4}px;font-weight:800;border-top:1px solid #000;border-bottom:1px solid #000;padding:4px 0;margin-top:3px}
@@ -3639,7 +3652,7 @@ async function walletReceiptHTML(t, { preview = false } = {}) {
     ${r.walletFooter ? `<div class="c sm">${esc(r.walletFooter)}</div>` : ''}
     ${r.footer ? `<div class="c b" style="margin-top:4px">${esc(r.footer)}</div>` : ''}
     <div class="c xs" style="margin-top:6px">${esc(s.appName)} · ${COPYRIGHT_AR}</div></div>`;
-  const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Rubik',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm;box-sizing:border-box}
+  const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Cairo',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm;box-sizing:border-box}
     .c{text-align:center}.b{font-weight:700}.big{font-size:${fs + 4}px}.sm{font-size:${fs - 2}px}.xs{font-size:${fs - 4}px;color:#444}
     .logo{width:${r.width == 58 ? 24 : 30}mm;height:auto}.hr{border-top:1px dashed #000;margin:5px 0}.ln{display:flex;justify-content:space-between;gap:6px;padding:1px 0}
     .tot{font-size:${fs + 5}px;font-weight:800;border-top:1px solid #000;border-bottom:1px solid #000;padding:4px 0;margin-top:3px}`;
@@ -3674,7 +3687,7 @@ function labelsHTML(list /* [{product, copies}] */) {
   const s = DB.settings(); const lb = s.label;
   const one = (p) => `<div class="lb">${lb.showStore ? `<div class="st">${esc(s.store.name)}</div>` : ''}${lb.showName ? `<div class="nm">${esc(p.name)}</div>` : ''}<div class="bc">${barcodeSVG(p.barcode || p.sku || p.id, { height: lb.barcodeHeight, module: 1.6, fontSize: 11 })}</div>${lb.showPrice ? `<div class="pr">${money(p.price)}</div>` : ''}</div>`;
   const items = list.flatMap(({ product, copies }) => Array.from({ length: copies || 1 }, () => one(product))).join('');
-  return `<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:${lb.width}mm ${lb.height}mm;margin:0}body{margin:0;font-family:'Rubik',Tahoma,Arial}
+  return `<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:${lb.width}mm ${lb.height}mm;margin:0}body{margin:0;font-family:'Cairo',Tahoma,Arial}
   .lb{width:${lb.width}mm;height:${lb.height}mm;box-sizing:border-box;padding:1mm 2mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;page-break-after:always;text-align:center;font-size:${lb.fontSize}px;color:#000}
   .st{font-weight:700;font-size:${lb.fontSize - 1}px}.nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.pr{font-weight:800;font-size:${lb.fontSize + 3}px}.bc{width:100%;line-height:0}.bc svg{height:auto;max-height:${lb.height * 0.55}mm}</style></head><body>${items}</body></html>`;
 }
@@ -3689,7 +3702,8 @@ const Modules = {};
 const NAV = [
   { id: 'main', grp: ['الرئيسية', 'Main'], items: ['dashboard', 'ownerLive', 'pos'], fixed: true },
   { id: 'services', grp: ['المحافظ الإلكترونية وماكينات الدفع', 'E-wallets & payment machines'], icon: 'wallet', items: ['wallets', 'machines'] },
-  { id: 'commerce', grp: ['المبيعات والمخزون', 'Sales & stock'], icon: 'cart', items: ['sales', 'customers', 'loyalty', 'offers', 'catalog', 'ratings', 'installments', 'purchases', 'inventory', 'suppliers', 'losses'] },
+  { id: 'commerce', grp: ['المبيعات والمخزون', 'Sales & stock'], icon: 'cart', items: ['sales', 'customers', 'loyalty', 'offers', 'catalog', 'ratings', 'installments', 'purchases', 'inventory', 'losses'] },
+  { id: 'supp', grp: ['', ''], items: ['suppliers'], fixed: true },
   { id: 'more', grp: ['', ''], items: ['phones', 'cctv', 'lines', 'repairs'], fixed: true },
   { id: 'hr', grp: ['الموارد البشرية', 'HR'], icon: 'users', items: ['users', 'attendance', 'payroll', 'targets'] },
   { id: 'finance', grp: ['المالية', 'Finance'], icon: 'bank', items: ['shifts', 'expenses', 'capital', 'reports'] },
@@ -3781,10 +3795,16 @@ const App = {
       const user = DB.find('users', (x) => x.username.toLowerCase() === u && x.password === p);
       if (!user) { Security.fail(u); audit('login.failed', u); UI.toast(L('اسم المستخدم أو كلمة المرور غير صحيحة', 'Wrong username or password'), 'err'); return; }
       Security.ok(u);
+      await this.enter(user);
+    };
+    setTimeout(() => $('#loginForm input[name=p]')?.focus(), 50);
+  },
+  /* بعد التحقق من الهوية (كلمة مرور أو بصمة) */
+  async enter(user) {
       const dev = await Devices.touch(user);
-      if (dev?.blocked && user.role !== 'admin') { UI.toast(L('هذا الجهاز محظور من المالك', 'This device is blocked by the owner'), 'err'); return; }
-      if (user.active === false) { UI.toast(L('هذا الحساب موقوف', 'This account is disabled'), 'err'); return; }
-      if (typeof Otp !== 'undefined' && !(await Otp.gate(user, dev))) return;
+      if (dev?.blocked && user.role !== 'admin') { UI.toast(L('هذا الجهاز محظور من المالك', 'This device is blocked by the owner'), 'err'); return false; }
+      if (user.active === false) { UI.toast(L('هذا الحساب موقوف', 'This account is disabled'), 'err'); return false; }
+      if (typeof Otp !== 'undefined' && !(await Otp.gate(user, dev))) return false;
       Session.user = user; Session.loginAt = nowISO(); DB.update('users', user.id, { lastLogin: nowISO() }); audit('login');
       this.licenseState = await License.status();
       this.shell();
@@ -3797,8 +3817,7 @@ const App = {
       try { CloudBackup.start(); } catch (e) { console.warn(e); }
       try { WaLink.init(); } catch (e) { console.warn(e); }
       if (this.licenseState.state === 'expired') License.lockScreen(async () => { this.licenseState = await License.status(); this.shell(); });
-    };
-    setTimeout(() => $('#loginForm input[name=p]')?.focus(), 50);
+      return true;
   },
   logout() { audit('logout'); try { SmsLink.stop(); } catch (_) {} Tabs.reset(); Session.user = null; Session.loginAt = null; $$('.lock-screen,.ai-panel,.ai-fab,.notif-panel').forEach((x) => x.remove()); this.loginScreen(); },
 
@@ -5197,7 +5216,7 @@ Modules.customers = {
   receiptPrint(c, amount, ref) {
     const st = DB.settings().store;
     UI.modal({ title: L('إيصال التحصيل', 'Payment receipt'), icon: 'receipt', size: 'sm', body: `<p>${L('تم تحصيل', 'Collected')} <b>${money(amount)}</b> ${L('من', 'from')} <b>${esc(c.name)}</b></p><p class="muted">${L('الرصيد المتبقي', 'Remaining')}: ${money(Customers.balance(c))}</p>`,
-      actions: [{ label: L('طباعة إيصال', 'Print'), icon: 'printer', onClick: () => printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:0}body{font-family:Rubik,Tahoma;width:74mm;margin:3mm;font-size:12px;text-align:center}.ln{display:flex;justify-content:space-between}hr{border:0;border-top:1px dashed #000}</style></head><body><img src="${logoSrc()}" style="width:30mm"><h3 style="margin:4px 0">${esc(st.name)}</h3><div>${L('إيصال استلام نقدية', 'Cash receipt')}</div><hr><div class="ln"><span>${L('رقم', 'No.')}</span><b>${ref}</b></div><div class="ln"><span>${L('التاريخ', 'Date')}</span><span>${fmtDT(new Date())}</span></div><div class="ln"><span>${L('العميل', 'Customer')}</span><span>${esc(c.name)}</span></div><hr><div class="ln" style="font-size:16px"><b>${L('المبلغ', 'Amount')}</b><b>${money(amount)}</b></div><div class="ln"><span>${L('الرصيد المتبقي', 'Remaining')}</span><span>${money(Customers.balance(c))}</span></div><hr><div style="font-size:9px">${COPYRIGHT_AR}</div></body></html>`) },
+      actions: [{ label: L('طباعة إيصال', 'Print'), icon: 'printer', onClick: () => printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:0}body{font-family:Cairo,Tahoma;width:74mm;margin:3mm;font-size:12px;text-align:center}.ln{display:flex;justify-content:space-between}hr{border:0;border-top:1px dashed #000}</style></head><body><img src="${logoSrc()}" style="width:30mm"><h3 style="margin:4px 0">${esc(st.name)}</h3><div>${L('إيصال استلام نقدية', 'Cash receipt')}</div><hr><div class="ln"><span>${L('رقم', 'No.')}</span><b>${ref}</b></div><div class="ln"><span>${L('التاريخ', 'Date')}</span><span>${fmtDT(new Date())}</span></div><div class="ln"><span>${L('العميل', 'Customer')}</span><span>${esc(c.name)}</span></div><hr><div class="ln" style="font-size:16px"><b>${L('المبلغ', 'Amount')}</b><b>${money(amount)}</b></div><div class="ln"><span>${L('الرصيد المتبقي', 'Remaining')}</span><span>${money(Customers.balance(c))}</span></div><hr><div style="font-size:9px">${COPYRIGHT_AR}</div></body></html>`) },
         ...(c.phone ? [{ label: L('واتساب', 'WhatsApp'), cls: 'wa', icon: 'whatsapp', onClick: () => sendWhatsApp(c.phone, `${L('مرحباً', 'Hello')} ${c.name}\n${L('تم استلام مبلغ', 'We received')} ${money(amount)} ${L('بتاريخ', 'on')} ${fmtDate(new Date())}\n${L('رقم الإيصال', 'Receipt')}: ${ref}\n${L('رصيدك المتبقي', 'Your remaining balance')}: ${money(Customers.balance(c))}\n${L('شكراً لك', 'Thank you')} — ${st.name}`) }] : []),
         { label: L('تم', 'Done'), cls: 'primary', onClick: (m) => m.close() }] });
   },
@@ -5856,7 +5875,7 @@ Modules.repairs = {
     const st = DB.settings().store, c = this.cfg();
     const row = (a, b) => (b ? `<tr><td>${a}</td><td><b>${b}</b></td></tr>` : '');
     printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>
-      @page{size:80mm auto;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Rubik',Tahoma,Arial,sans-serif;color:#000;font-size:12px}
+      @page{size:80mm auto;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Cairo',Tahoma,Arial,sans-serif;color:#000;font-size:12px}
       .w{width:76mm;margin:2mm auto;padding:2mm}.c{text-align:center}.logo{width:22mm;height:22mm;object-fit:contain}.st{font-size:17px;font-weight:900}
       .tt{border:2px solid #000;border-radius:3mm;padding:1.5mm;margin:2mm 0;font-size:15px;font-weight:900;text-align:center}
       table{width:100%;border-collapse:collapse}td{padding:1mm 0;vertical-align:top;border-bottom:1px dotted #999}td:first-child{width:30%;color:#333}
@@ -5872,7 +5891,7 @@ Modules.repairs = {
   },
   printLabel(r) {
     const lb = DB.settings().label;
-    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:${lb.width}mm ${lb.height}mm;margin:0}body{margin:0;font-family:'Rubik',Tahoma,sans-serif}
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:${lb.width}mm ${lb.height}mm;margin:0}body{margin:0;font-family:'Cairo',Tahoma,sans-serif}
       .l{width:${lb.width}mm;height:${lb.height}mm;padding:1mm;box-sizing:border-box;text-align:center;overflow:hidden;font-size:9px;line-height:1.25}.n{font-weight:900;font-size:11px}</style></head><body>
       <div class="l"><div class="n">${esc(r.no)} — ${esc(r.customerName)}</div><div>${esc(r.phone || '')} · ${esc(Repairs.device(r)).slice(0, 30)}</div>${barcodeSVG(r.no, { height: 22, module: 1.3, fontSize: 8 })}</div></body></html>`, { type: 'label' });
   },
@@ -6154,7 +6173,7 @@ Modules.phones = {
   },
   buyReceipt(p) {
     const s = DB.settings();
-    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:3mm}body{font-family:'Rubik',Tahoma,Arial;font-size:12px;margin:0}h2{text-align:center;margin:4px 0}table{width:100%;border-collapse:collapse}td{padding:3px 0;border-bottom:1px dashed #ccc}.c{text-align:center}.sig{margin-top:22px;border-top:1px solid #000;padding-top:4px;text-align:center}</style></head><body>
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:3mm}body{font-family:'Cairo',Tahoma,Arial;font-size:12px;margin:0}h2{text-align:center;margin:4px 0}table{width:100%;border-collapse:collapse}td{padding:3px 0;border-bottom:1px dashed #ccc}.c{text-align:center}.sig{margin-top:22px;border-top:1px solid #000;padding-top:4px;text-align:center}</style></head><body>
       <div class="c"><b>${esc(s.store.name)}</b><br>${esc(s.store.phone || '')}</div><h2>${L('إيصال شراء جهاز', 'Phone purchase receipt')}</h2><div class="c">${p.buyNo} — ${fmtDT(p.buyDate)}</div>
       <table><tr><td>${L('الجهاز', 'Phone')}</td><td>${esc(Phones.full(p))}</td></tr><tr><td>IMEI</td><td dir="ltr">${esc(p.imei1)}${p.imei2 ? ' / ' + esc(p.imei2) : ''}</td></tr><tr><td>${L('الحالة', 'Condition')}</td><td>${L(...PH_COND[p.condition].slice(0, 2))}${p.battery ? ` — 🔋 ${p.battery}%` : ''}</td></tr>
       <tr><td>${L('البائع', 'Seller')}</td><td>${esc(p.sellerName || '')}</td></tr><tr><td>${L('الموبايل', 'Phone')}</td><td>${esc(p.sellerPhone || '')}</td></tr><tr><td>${L('الرقم القومي', 'National ID')}</td><td dir="ltr">${esc(p.sellerNid || '')}</td></tr><tr><td><b>${L('المبلغ', 'Amount')}</b></td><td><b>${money(p.buyPrice)}</b></td></tr></table>
@@ -6299,7 +6318,7 @@ Object.assign(Modules.phones, {
   /* شهادة ضمان مطبوعة */
   certificate(p) {
     const s = DB.settings(); const st = s.store; const c = Phones.cfg();
-    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:3mm}body{font-family:'Rubik',Tahoma,Arial;font-size:12px;margin:0;color:#111}.c{text-align:center}h2{margin:6px 0;font-size:17px}.box{border:2px solid #111;border-radius:10px;padding:8px;margin:8px 0}td{padding:3px 0;border-bottom:1px dashed #bbb;vertical-align:top}td:first-child{color:#555;width:38%}.big{font-size:15px;font-weight:800}.t{font-size:10.5px;white-space:pre-line;color:#333}</style></head><body>
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:3mm}body{font-family:'Cairo',Tahoma,Arial;font-size:12px;margin:0;color:#111}.c{text-align:center}h2{margin:6px 0;font-size:17px}.box{border:2px solid #111;border-radius:10px;padding:8px;margin:8px 0}td{padding:3px 0;border-bottom:1px dashed #bbb;vertical-align:top}td:first-child{color:#555;width:38%}.big{font-size:15px;font-weight:800}.t{font-size:10.5px;white-space:pre-line;color:#333}</style></head><body>
       <div class="c">${s.receipt?.showLogo !== false ? `<img src="${logoSrc()}" style="height:46px"><br>` : ''}<b style="font-size:14px">${esc(st.name)}</b><br>${esc(st.phone || '')}</div>
       <h2 class="c">🛡️ ${L('شهادة ضمان', 'Warranty certificate')}</h2>
       <div class="box"><table style="width:100%;border-collapse:collapse"><tr><td>${L('الجهاز', 'Device')}</td><td><b>${esc(Phones.full(p))}</b></td></tr><tr><td>IMEI</td><td dir="ltr" style="text-align:right">${esc(p.imei1 || '')}${p.imei2 ? '<br>' + esc(p.imei2) : ''}</td></tr>
@@ -6893,7 +6912,7 @@ Object.assign(Modules.cctv, {
   },
   receipt(j, p) {
     if (!p) return; const s = DB.settings(); const st = s.store; const fresh = DB.get('cctvJobs', j.id) || j;
-    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:3mm}body{font-family:'Rubik',Tahoma,Arial;font-size:12px;margin:0}.c{text-align:center}td{padding:3px 0;border-bottom:1px dashed #bbb}td:first-child{color:#555;width:42%}.big{font-size:20px;font-weight:900;text-align:center;border:2px solid #000;border-radius:10px;padding:8px;margin:8px 0}</style></head><body>
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:3mm}body{font-family:'Cairo',Tahoma,Arial;font-size:12px;margin:0}.c{text-align:center}td{padding:3px 0;border-bottom:1px dashed #bbb}td:first-child{color:#555;width:42%}.big{font-size:20px;font-weight:900;text-align:center;border:2px solid #000;border-radius:10px;padding:8px;margin:8px 0}</style></head><body>
       <div class="c">${s.receipt?.showLogo !== false ? `<img src="${logoSrc()}" style="height:44px"><br>` : ''}<b style="font-size:14px">${esc(st.name)}</b><br>${esc(st.phone || '')}</div>
       <h3 class="c" style="margin:6px 0">${L('إيصال استلام نقدية', 'Payment receipt')}</h3><div class="c">${fresh.no} — ${fmtDT(p.date)}</div>
       <div class="big">${money(p.amount)}</div>
@@ -7354,7 +7373,7 @@ Modules.lines = {
   printReceipt(l) {
     l = DB.get('lines', l.id) || l; const s = DB.settings(); const c = Lines.co(l.company);
     const ln = (a, b) => `<div class="ln"><span>${a}</span><b>${b}</b></div>`;
-    printHTML(`<!doctype html><html dir="${LANG === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:0}body{font-family:Rubik,Tahoma;width:74mm;margin:3mm;font-size:12px}.c{text-align:center}.ln{display:flex;justify-content:space-between;padding:2px 0;gap:8px}hr{border:0;border-top:1px dashed #000}.big{font-size:22px;font-weight:800;letter-spacing:1px;direction:ltr}</style></head><body>
+    printHTML(`<!doctype html><html dir="${LANG === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:0}body{font-family:Cairo,Tahoma;width:74mm;margin:3mm;font-size:12px}.c{text-align:center}.ln{display:flex;justify-content:space-between;padding:2px 0;gap:8px}hr{border:0;border-top:1px dashed #000}.big{font-size:22px;font-weight:800;letter-spacing:1px;direction:ltr}</style></head><body>
       <div class="c"><img src="${logoSrc()}" style="width:24mm"><h3 style="margin:2px 0">${esc(s.store.name)}</h3><div>${esc(s.store.phone || '')}</div><b>${L('إيصال بيع خط', 'Line sale receipt')}</b></div><hr>
       <div class="c" style="margin:6px 0"><div>${esc(c.name)} — ${esc(Lines.type(l.type))}</div><div class="big">${Lines.fmt(l.number)}</div>${l.serial ? `<div style="font-size:10px">SN ${esc(l.serial)}</div>` : ''}</div><hr>
       ${ln(L('رقم العملية', 'Ref'), esc(l.saleNo || ''))}${ln(L('التاريخ', 'Date'), fmtDT(l.soldAt))}${ln(L('العميل', 'Customer'), esc(l.customerName || ''))}${l.customerPhone ? ln(L('موبايل', 'Mobile'), esc(l.customerPhone)) : ''}${l.pkg ? ln(L('الباقة', 'Package'), esc(l.pkg)) : ''}${ln(L('الحالة', 'Status'), lStatus(l.status))}<hr>
@@ -7709,7 +7728,7 @@ Object.assign(Modules.lines, {
   subReceipt(l, no) {
     const ps = DB.filter('subPays', (x) => x.receiptNo === no); const d = Corp.del(l.delegateId) || {}; const s = DB.settings();
     const ln = (a, b) => `<div class="ln"><span>${a}</span><b>${b}</b></div>`;
-    printHTML(`<!doctype html><html dir="${LANG === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:0}body{font-family:Rubik,Tahoma;width:74mm;margin:3mm;font-size:12px}.c{text-align:center}.ln{display:flex;justify-content:space-between;padding:2px 0;gap:8px}hr{border:0;border-top:1px dashed #000}.big{font-size:20px;font-weight:800;direction:ltr}</style></head><body>
+    printHTML(`<!doctype html><html dir="${LANG === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:0}body{font-family:Cairo,Tahoma;width:74mm;margin:3mm;font-size:12px}.c{text-align:center}.ln{display:flex;justify-content:space-between;padding:2px 0;gap:8px}hr{border:0;border-top:1px dashed #000}.big{font-size:20px;font-weight:800;direction:ltr}</style></head><body>
       <div class="c"><img src="${logoSrc()}" style="width:22mm"><h3 style="margin:2px 0">${esc(s.store.name)}</h3><b>${L('إيصال تحصيل اشتراك خط', 'Line subscription receipt')}</b></div><hr>
       ${ln(L('رقم الإيصال', 'Receipt'), esc(no))}${ln(L('التاريخ', 'Date'), fmtDT(ps[0]?.date || nowISO()))}${ln(L('الموظف', 'Employee'), esc(l.holderName))}<div class="c big">${Lines.fmt(l.number)}</div>${ln(L('الباقة', 'Package'), esc(Corp.pkg(l.packageId)?.name || ''))}${d.name ? ln(L('المفوض', 'Delegate'), esc(d.name)) + ln(L('رقم المفوض', 'Delegate #'), esc(d.delegateNo || '')) : ''}<hr>
       ${ps.map((p) => ln(monthLabel(p.period), money(p.amount))).join('')}<hr>${ln(`<b>${L('الإجمالي', 'Total')}</b>`, `<b>${money(sum(ps, (p) => p.amount))}</b>`)}${ln(L('المتبقي عليه', 'Remaining'), money(Corp.arrears(l)))}<hr>
@@ -8516,7 +8535,7 @@ Modules.wallets = {
     const st = DB.settings().store; const now = new Date();
     const qr = await qrDataURL(String(walletNo(w)), 160);
     const html = `<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>
-      @page{size:80mm auto;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Rubik',Tahoma,Arial,sans-serif;color:#000}
+      @page{size:80mm auto;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Cairo',Tahoma,Arial,sans-serif;color:#000}
       .card{width:76mm;margin:2mm auto;border:2px solid #000;border-radius:4mm;padding:4mm 4mm 3mm;text-align:center}
       .logo{width:30mm;height:30mm;object-fit:contain}.store{font-size:19px;font-weight:900;margin:1mm 0 2mm}
       .type{display:inline-block;border:1.5px solid #000;border-radius:10mm;padding:1mm 5mm;font-size:15px;font-weight:800;margin-bottom:2mm}
@@ -9105,7 +9124,7 @@ const Installments = {
       <div class="ln"><span>${L('إجمالي المدفوع', 'Total paid')}</span><span>${money(this.paid(p) + p.down, false)}</span></div><div class="ln b"><span>${L('المتبقي', 'Remaining')}</span><span>${money(this.remaining(p), false)}</span></div>
       ${this.next(p) ? `<div class="ln"><span>${L('القسط الجاي', 'Next due')}</span><span>${fmtDate(this.next(p).due)} — ${money(this.next(p).amount - this.next(p).paid, false)}</span></div>` : `<div class="c b">${L('✓ تم سداد كل الأقساط', '✓ Fully paid')}</div>`}
       <div class="hr"></div>${r.footer ? `<div class="c b">${esc(r.footer)}</div>` : ''}<div class="c xs" style="margin-top:6px">${esc(s.appName)} · ${COPYRIGHT_AR}</div></div>`;
-    const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Rubik',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm}.c{text-align:center}.b{font-weight:700}.big{font-size:${fs + 4}px}.sm{font-size:${fs - 2}px}.xs{font-size:${fs - 4}px;color:#444}.logo{width:28mm;height:auto}.hr{border-top:1px dashed #000;margin:5px 0}.ln{display:flex;justify-content:space-between;gap:6px;padding:1px 0}.tot{font-size:${fs + 4}px;font-weight:800;border-top:1px solid #000;border-bottom:1px solid #000;padding:4px 0}`;
+    const css = receiptCSS(r, w, fs) + `.rc{width:${w};margin:0 auto;font-family:'Cairo',Tahoma,Arial,sans-serif;font-size:${fs}px;color:#000;direction:${LANG === 'ar' ? 'rtl' : 'ltr'};padding:2mm}.c{text-align:center}.b{font-weight:700}.big{font-size:${fs + 4}px}.sm{font-size:${fs - 2}px}.xs{font-size:${fs - 4}px;color:#444}.logo{width:28mm;height:auto}.hr{border-top:1px dashed #000;margin:5px 0}.ln{display:flex;justify-content:space-between;gap:6px;padding:1px 0}.tot{font-size:${fs + 4}px;font-weight:800;border-top:1px solid #000;border-bottom:1px solid #000;padding:4px 0}`;
     return `<!doctype html><html dir="${LANG === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><style>@page{size:${r.width === 'A4' ? 'A4' : w + ' auto'};margin:0}body{margin:0}${css}</style></head><body>${body}</body></html>`;
   },
   printPay(rec) { const p = DB.get('installments', rec.planId); const c = this.customer(p); printHTML(this.payReceiptHTML(rec), { type: 'receipt', name: rec.no, wa: { phone: c.phone || p.phone, text: () => `${DB.settings().store.name}\n${L('تم استلام قسط', 'Installment received')}: ${money(rec.amount + (rec.lateFee || 0))}\n${L('الخطة', 'Plan')}: ${p.no}\n${L('المتبقي', 'Remaining')}: ${money(this.remaining(p))}\n${L('شكراً لالتزامك 🌹', 'Thank you 🌹')}` } }); },
@@ -9448,7 +9467,7 @@ Modules.shifts = {
     const wt = DB.filter('walletTx', (t) => t.shiftId === s.id), mt = DB.filter('machineTx', (t) => t.shiftId === s.id);
     const ln = (a, b) => `<div class="ln"><span>${a}</span><b>${b}</b></div>`;
     const exp = s.status === 'open' ? this.expected(s) : s.expected;
-    printHTML(`<!doctype html><html dir="${LANG === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:0}body{font-family:Rubik,Tahoma;width:74mm;margin:3mm;font-size:12px}.c{text-align:center}.ln{display:flex;justify-content:space-between;padding:1px 0}hr{border:0;border-top:1px dashed #000}h4{margin:6px 0 2px}</style></head><body>
+    printHTML(`<!doctype html><html dir="${LANG === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:0}body{font-family:Cairo,Tahoma;width:74mm;margin:3mm;font-size:12px}.c{text-align:center}.ln{display:flex;justify-content:space-between;padding:1px 0}hr{border:0;border-top:1px dashed #000}h4{margin:6px 0 2px}</style></head><body>
       <div class="c"><img src="${logoSrc()}" style="width:26mm"><h3 style="margin:2px 0">${esc(DB.settings().store.name)}</h3><b>${s.status === 'open' ? L('تقرير X (وردية مفتوحة)', 'X report') : L('تقرير Z — إغلاق وردية', 'Z report — shift close')}</b></div><hr>
       ${ln(L('الكاشير', 'Cashier'), esc(u?.name || ''))}${ln(L('الفتح', 'Opened'), fmtDT(s.openAt))}${s.closeAt ? ln(L('الإغلاق', 'Closed'), fmtDT(s.closeAt)) : ''}<hr>
       <h4>${L('المبيعات', 'Sales')}</h4>${ln(L('عدد الفواتير', 'Invoices'), sales.length)}${ln(L('صافي المبيعات', 'Net sales'), money(sum(sales, Sales.net)))}${Object.entries(pays).map(([k, v]) => ln(payName(k), money(v))).join('')}${ln(L('المرتجعات', 'Returns'), money(sum(sales, (x) => x.returnedTotal || 0)))}
@@ -9847,7 +9866,7 @@ Modules.payroll = {
 function reportDoc(title, bodyHTML, landscape = false) {
   const s = DB.settings(); const st = s.store;
   return `<!doctype html><html dir="${LANG === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><title>${esc(title)}</title><style>
-  @page{size:A4 ${landscape ? 'landscape' : 'portrait'};margin:12mm}body{font-family:'Rubik',Tahoma,Arial,sans-serif;color:#222;font-size:11.5px;margin:0}
+  @page{size:A4 ${landscape ? 'landscape' : 'portrait'};margin:12mm}body{font-family:'Cairo',Tahoma,Arial,sans-serif;color:#222;font-size:11.5px;margin:0}
   .hd{display:flex;align-items:center;gap:14px;border-bottom:3px solid #8B1A2B;padding-bottom:10px;margin-bottom:14px}.hd img{width:62px;height:62px}.hd h1{margin:0;font-size:19px;color:#8B1A2B}.hd .m{color:#666;font-size:11px}.hd .sp{flex:1}
   h2{font-size:15px;color:#8B1A2B;margin:16px 0 6px;border-inline-start:4px solid #8B1A2B;padding-inline-start:8px}
   table{width:100%;border-collapse:collapse;margin-bottom:8px}th{background:#F5DEE1;color:#5E0F1C;font-weight:700;padding:6px 8px;border:1px solid #e3cfd2;text-align:start;font-size:11px}td{padding:5px 8px;border:1px solid #eee}tbody tr:nth-child(even) td{background:#FBF7F7}tfoot td{font-weight:800;background:#F5DEE1}
@@ -10407,6 +10426,13 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.6.1', d: '2026-10-30', items: [
+    ['fingerprint', L('الدخول بالبصمة: على الموبايل ببصمة الصباع أو الوش، وعلى الويندوز بـ Windows Hello — كل مستخدم يفعّلها من قائمة اسمه ← «الدخول بالبصمة»', 'Biometric sign-in: fingerprint/face on Android, Windows Hello on Windows')],
+    ['lock', L('فتح الشاشة المقفولة بالبصمة من غير ما تكتب كلمة المرور', 'Unlock the lock screen with biometrics')],
+    ['shield', L('تأكيد هويتك بالبصمة قبل العمليات الحساسة (المرتجع، تعديل الأسعار بالجملة، الاستعادة، المسح) — بتتفعّل من الإعدادات ← الأمان', 'Confirm sensitive actions with biometrics')],
+    ['key', L('أمان: كلمة المرور مش بتتخزن، ولو اتضافت بصمة جديدة على الجهاز أو اتغيرت كلمة المرور البصمة بتتلغي لوحدها', 'Password never stored; auto-invalidated on new fingerprints or password change')],
+    ['sparkles', L('خط البرنامج الجديد: Cairo من جوجل — أوضح في القراءة، وشغال من غير نت على الكمبيوتر والموبايل، وكمان في الإيصالات والتقارير', 'New app font: Cairo')],
+    ['factory', L('الموردين بقوا في القائمة الرئيسية مباشرة بعد «المبيعات والمخزون»، ومعاهم «مرتجعات التالف» و«الهوالك»', 'Suppliers moved to the main menu')]] },
   { v: '1.6.0', d: '2026-10-30', items: [
     ['tag', L('تعديل الأسعار بالجملة: زوّد أو قلّل أسعار قسم أو مورد بنسبة أو مبلغ، مع تقريب لأقرب 5 جنيه ومعاينة قبل الحفظ، وطباعة ملصقات الأسعار الجديدة — وتقدر تتراجع', 'Bulk price update with rounding, preview, labels and undo')],
     ['tool', L('«تابع جهازك»: QR على إيصال الصيانة ورابط في رسايل واتساب — العميل يشوف حالة جهازه والمتبقي عليه من موبايله', 'Track-your-device page for repair customers')],
@@ -10851,7 +10877,7 @@ const OwnerTools = {
     UI.modal({ title: L('إعدادات الأمان', 'Security settings'), icon: 'shield', size: 'sm', body: UI.form([
       { name: 'autoLockMin', label: L('قفل الشاشة تلقائياً بعد (دقيقة عدم نشاط)', 'Auto-lock after (idle minutes)'), type: 'select', col: 12, options: [[0, L('معطل', 'Off')], [2, '2'], [5, '5'], [10, '10'], [15, '15'], [30, '30']] },
       { name: 'maxAttempts', label: L('عدد محاولات الدخول الخاطئة قبل الإيقاف المؤقت', 'Failed logins before lockout'), type: 'select', col: 12, options: [[0, L('بدون حد', 'Unlimited')], [3, '3'], [5, '5'], [10, '10']] },
-      { name: 'lockoutMin', label: L('مدة الإيقاف المؤقت (دقيقة)', 'Lockout duration (minutes)'), type: 'select', col: 12, options: [[1, '1'], [2, '2'], [5, '5'], [15, '15']] }], s) + `<p class="faint">${L('رسائل التحقق OTP بتحتاج اتصال بخدمة رسائل؛ البرنامج بيعتمد بدلها على قفل الشاشة والإيقاف المؤقت والتراخيص المرتبطة بالجهاز.', 'OTP needs an SMS service; the app uses auto-lock, lockout and device-bound licensing instead.')}</p>`,
+      { name: 'lockoutMin', label: L('مدة الإيقاف المؤقت (دقيقة)', 'Lockout duration (minutes)'), type: 'select', col: 12, options: [[1, '1'], [2, '2'], [5, '5'], [15, '15']] }], s) + `<p class="faint">${L('رسائل التحقق OTP بتحتاج اتصال بخدمة رسائل؛ البرنامج بيعتمد بدلها على قفل الشاشة والإيقاف المؤقت والتراخيص المرتبطة بالجهاز.', 'OTP needs an SMS service; the app uses auto-lock, lockout and device-bound licensing instead.')}</p>${typeof Bio !== 'undefined' ? `<button type="button" class="btn block" id="secBio" onclick="Bio.settings()">${icon('fingerprint')}${L('الدخول بالبصمة وتأكيد العمليات الحساسة', 'Biometrics & sensitive actions')}</button>` : ''}`,
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (m) => { const v = UI.read(m.el); Object.keys(v).forEach((k) => (v[k] = Number(v[k]) || 0)); DB.saveSettings({ security: v }); audit('security.save'); m.close(); UI.toast(L('تم الحفظ', 'Saved')); } }] });
   },
   async devices() {
@@ -13888,6 +13914,239 @@ const MonthlyPL = {
 (() => {
   const RP = Modules.reports; if (RP) { const b = RP.render.bind(RP); RP.render = function (el) { b(el); try { el.insertAdjacentHTML('afterbegin', `<div class="card card-b mb pl-cta"><div style="font-size:30px">📊</div><div style="flex:1"><b>${L('تقرير الأرباح والخسائر الشهري', 'Monthly P&L report')}</b><div class="faint">${L('PDF احترافي بمقارنة بالشهر اللي فات — وبيوصل لصاحب المحل على واتساب أول كل شهر', 'Professional PDF with month-over-month comparison')}</div></div><button class="btn primary" id="plOpen">${icon('file')}${L('افتح التقرير', 'Open')}</button></div>`); $('#plOpen').onclick = () => MonthlyPL.dialog(); } catch (e) { console.warn(e); } }; }
   setTimeout(() => MonthlyPL.auto(), 60000); setInterval(() => MonthlyPL.auto(), 3 * 3600e3);
+})();
+
+</script>
+  <script>
+/* =========================================================
+   الدخول بالبصمة — الإصدار 1.6.1
+   - أندرويد: بصمة الصباع / الوش (BiometricPrompt + Android Keystore)
+   - ويندوز: Windows Hello (بصمة / وش / PIN) + تشفير DPAPI
+   - كلمة المرور مش بتتخزن: بيتخزن رمز عشوائي متشفّر بمفتاح مايتفتحش غير بالبصمة
+   - فتح الشاشة المقفولة بالبصمة + تأكيد الهوية قبل العمليات الحساسة
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const Bio = {
+  KEY: 'mah:bio', LAST: 'mah:bioLast',
+  cfg() { return { on: true, auto: true, lock: true, confirm: false, ...(DB.settings().bio || {}) }; },
+  plat() {
+    const C = window.Capacitor;
+    if (C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.Biometric) return 'android';
+    if (window.api && window.api.bio) return 'win';
+    return null;
+  },
+  name() { return this.plat() === 'win' ? 'Windows Hello' : L('البصمة', 'Biometrics'); },
+  label() { return this.plat() === 'win' ? L('Windows Hello (بصمة / وش / PIN)', 'Windows Hello') : L('البصمة / بصمة الوش', 'Fingerprint / face'); },
+  _av: null, _avAt: 0,
+  async avail(force) {
+    const p = this.plat(); if (!p) return { available: false, reason: 'unsupported' };
+    if (this._av && !force && Date.now() - this._avAt < 60e3) return this._av;
+    let r;
+    try { r = p === 'android' ? await window.Capacitor.Plugins.Biometric.available() : await window.api.bio.avail(!!force); } catch (e) { r = { available: false, reason: 'error' }; }
+    this._av = r || { available: false, reason: 'error' }; this._avAt = Date.now(); return this._av;
+  },
+  why(r) {
+    return ({ 'none-enrolled': this.plat() === 'win' ? L('Windows Hello مش متفعّل على الجهاز — فعّله من إعدادات ويندوز ← الحسابات ← خيارات تسجيل الدخول', 'Set up Windows Hello in Windows Settings first') : L('مفيش بصمة متسجلة على الموبايل — سجّل بصمتك من إعدادات الموبايل ← الأمان الأول', 'Add a fingerprint in phone settings first'),
+      'no-hardware': L('الجهاز ده مفيهوش حساس بصمة أو وش مدعوم', 'No supported biometric sensor'), 'old-android': L('البصمة محتاجة أندرويد 9 أو أحدث', 'Needs Android 9+'),
+      policy: L('Windows Hello مقفول بسياسة الجهاز', 'Windows Hello disabled by policy'), unsupported: L('الدخول بالبصمة متاح على تطبيق الموبايل وبرنامج الويندوز بس', 'Available in the Android & Windows apps only') }[r && r.reason]) || L('البصمة مش متاحة دلوقتي', 'Biometrics not available');
+  },
+  _mid: null,
+  async mid() { if (!this._mid) this._mid = await License.machineId(); return this._mid; },
+  local() { try { return JSON.parse(localStorage.getItem(this.KEY) || '{}') || {}; } catch (_) { return {}; } },
+  saveLocal(o) { try { localStorage.setItem(this.KEY, JSON.stringify(o)); } catch (_) {} },
+  /* المستخدم متفعّل له البصمة على الجهاز ده؟ (لازم الاتنين: الرمز المتشفّر هنا + بصمته في سجل المستخدم) */
+  async enrolled(u) { if (!u) return false; const mid = await this.mid(); return !!(this.local()[u.id] && u.bio && u.bio[mid] && u.bio[mid].h); },
+  async enrolledUsers() { const loc = this.local(); const out = []; for (const id of Object.keys(loc)) { const u = DB.get('users', id); if (u && u.active !== false && (await this.enrolled(u))) out.push(u); } return out; },
+  err(e) { const c = (e && (e.code || e.errorMessage || e.message)) || ''; return /cancel/i.test(c) ? 'cancel' : /invalidated/i.test(c) ? 'invalidated' : /lockout/i.test(c) ? 'lockout' : /busy/i.test(c) ? 'busy' : /unavailable/i.test(c) ? 'unavailable' : 'error'; },
+  async call(kind, o) {
+    const p = this.plat(); let r;
+    if (p === 'android') { try { r = await window.Capacitor.Plugins.Biometric[kind](o); } catch (e) { throw Object.assign(new Error(e && e.message), { code: this.err(e) }); } }
+    else if (p === 'win') { r = await window.api.bio[kind](o); if (r && r.error) throw Object.assign(new Error(r.message), { code: r.code || 'error' }); }
+    else throw Object.assign(new Error('unsupported'), { code: 'unavailable' });
+    return r;
+  },
+  toastErr(code) {
+    if (code === 'cancel') return;
+    UI.toast(code === 'lockout' ? L('محاولات كتير — استنى شوية أو ادخل بكلمة المرور', 'Too many attempts — use your password') : code === 'busy' ? L('فيه طلب بصمة مفتوح بالفعل', 'A prompt is already open') : code === 'invalidated' ? L('اتغيرت البصمات المتسجلة على الجهاز — ادخل بكلمة المرور وفعّل البصمة تاني', 'Biometrics changed — sign in with your password and re-enable') : L('البصمة ما اشتغلتش — ادخل بكلمة المرور', 'Biometric failed — use your password'), code === 'invalidated' ? 'warn' : 'err', 5500);
+  },
+  hex(n = 32) { return [...crypto.getRandomValues(new Uint8Array(n))].map((b) => b.toString(16).padStart(2, '0')).join(''); },
+  /* تفعيل البصمة لمستخدم (بعد تأكيد كلمة المرور) */
+  async enable(u) {
+    const a = await this.avail(true); if (!a.available) return UI.toast(this.why(a), 'warn', 6000), false;
+    const tok = this.hex(32);
+    let r; try { r = await this.call('enroll', { data: tok, title: L('تفعيل الدخول بالبصمة', 'Enable biometric sign-in'), subtitle: `${u.name} — ${DB.settings().appName || 'مركز أهلاً'}`, cancel: L('إلغاء', 'Cancel') }); } catch (e) { this.toastErr(e.code); return false; }
+    if (!r || !r.ct) return false;
+    const mid = await this.mid(); const loc = this.local(); loc[u.id] = { iv: r.iv, ct: r.ct, at: nowISO() }; this.saveLocal(loc);
+    const fresh = DB.get('users', u.id) || u;
+    const dev = DB.get('devices', mid);
+    DB.update('users', u.id, { bio: { ...(fresh.bio || {}), [mid]: { h: await sha256('mah-bio:' + tok), at: nowISO(), dev: dev?.label || dev?.name || this.label() } } });
+    if (Session.user && Session.user.id === u.id) Session.user = DB.get('users', u.id);
+    try { localStorage.setItem(this.LAST, u.id); } catch (_) {}
+    audit('bio.enable', `${u.username} ${this.plat()}`); return true;
+  },
+  async disable(u, mid) {
+    mid = mid || (await this.mid());
+    const fresh = DB.get('users', u.id) || u; const b = { ...(fresh.bio || {}) }; delete b[mid];
+    DB.update('users', u.id, { bio: b }); if (Session.user && Session.user.id === u.id) Session.user = DB.get('users', u.id);
+    if (mid === (await this.mid())) { const loc = this.local(); delete loc[u.id]; this.saveLocal(loc); }
+    audit('bio.disable', u.username);
+  },
+  /* التحقق: بيرجع true لو البصمة صح ومطابقة للمستخدم */
+  async verify(u, title, subtitle) {
+    const loc = this.local()[u.id]; const mid = await this.mid(); const rec = u.bio && u.bio[mid];
+    if (!loc || !rec) return false;
+    let r; try { r = await this.call('unlock', { iv: loc.iv, ct: loc.ct, title: title || L('الدخول بالبصمة', 'Biometric sign-in'), subtitle: subtitle || u.name, cancel: L('كلمة المرور', 'Use password') }); }
+    catch (e) {
+      if (e.code === 'invalidated') { const l = this.local(); delete l[u.id]; this.saveLocal(l); try { if (this.plat() === 'android') await window.Capacitor.Plugins.Biometric.reset(); } catch (_) {} audit('bio.invalidated', u.username); }
+      this.toastErr(e.code); return false;
+    }
+    if (!r || typeof r.data !== 'string') return false;
+    const ok = (await sha256('mah-bio:' + r.data)) === rec.h;
+    if (!ok) { audit('bio.mismatch', u.username); UI.toast(L('البصمة دي مش مربوطة بالحساب ده — ادخل بكلمة المرور وفعّلها تاني', 'Not linked to this account — re-enable'), 'err', 5500); }
+    return ok;
+  },
+  /* ---------- شاشة الدخول ---------- */
+  _noAuto: false,
+  async loginButton() {
+    const c = this.cfg(); const form = $('#loginForm'); if (!c.on || !form || !this.plat()) return;
+    const us = await this.enrolledUsers(); if (!us.length) return;
+    const a = await this.avail(); if (!a.available || !$('#loginForm')) return;
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn btn-login bio-btn'; btn.id = 'bioGo';
+    btn.innerHTML = `${icon('fingerprint')}${this.plat() === 'win' ? L('الدخول بـ Windows Hello', 'Sign in with Windows Hello') : L('الدخول بالبصمة', 'Sign in with fingerprint')}`;
+    $('.btn-login', form).after(btn);
+    btn.onclick = () => this.pick(btn);
+    let last = null; try { last = localStorage.getItem(this.LAST); } catch (_) {}
+    const lu = us.find((u) => u.id === last) || (us.length === 1 ? us[0] : null);
+    if (lu) { const ui = $('input[name=u]', form); if (ui) ui.value = lu.username; }
+    if (c.auto && lu && !this._noAuto) setTimeout(() => { if ($('#bioGo') && !$('.modal-bg')) this.login(lu); }, 450);
+    this._noAuto = false;
+  },
+  async pick(btn) {
+    const us = await this.enrolledUsers(); const typed = ($('#loginForm input[name=u]')?.value || '').trim().toLowerCase();
+    const t = us.find((u) => u.username.toLowerCase() === typed);
+    if (t || us.length === 1) return this.login(t || us[0]);
+    UI.dropdown(btn, us.map((u) => ({ icon: 'user', label: `${u.name} (${u.username})`, onClick: () => this.login(u) })));
+  },
+  _busy: false,
+  async login(u) {
+    if (this._busy) return; this._busy = true;
+    try {
+      const key = u.username.toLowerCase();
+      if (!Security.canTry(key)) return UI.toast(L('تم إيقاف الدخول مؤقتاً بسبب محاولات خاطئة متكررة — حاول بعد قليل', 'Too many failed attempts — try again shortly'), 'err');
+      const fresh = DB.get('users', u.id); if (!fresh || fresh.active === false) return UI.toast(L('هذا الحساب موقوف', 'This account is disabled'), 'err');
+      if (!(await this.verify(fresh))) { $('#loginForm input[name=p]')?.focus(); return; }
+      Security.ok(key); try { localStorage.setItem(this.LAST, fresh.id); } catch (_) {}
+      audit('login.bio', `${fresh.username} ${this.plat()}`);
+      await App.enter(fresh);
+    } finally { this._busy = false; }
+  },
+  /* ---------- تأكيد الهوية قبل العمليات الحساسة ---------- */
+  async confirm(reason) {
+    const u = Session.user; if (!u) return false;
+    if (this.cfg().on && (await this.enrolled(DB.get('users', u.id) || u)) && (await this.avail()).available) {
+      const ok = await this.verify(DB.get('users', u.id) || u, L('تأكيد العملية', 'Confirm'), String(reason).replace(/<[^>]+>/g, ''));
+      if (ok) { audit('confirm.bio', String(reason).replace(/<[^>]+>/g, '').slice(0, 120)); return true; }
+    }
+    return new Promise((res) => {
+      let done = false;
+      const m = UI.modal({ title: L('تأكيد هويتك', 'Confirm it’s you'), icon: 'shield', size: 'sm', body: `<div class="ap-why">${icon('alert')}<span>${reason}</span></div><label class="lbl">${L('كلمة المرور بتاعتك', 'Your password')}</label><input type="password" name="p" autocomplete="off">`,
+        onClose: () => { if (!done) res(false); },
+        actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد', 'Confirm'), cls: 'primary', icon: 'check', onClick: (x) => go(x) }] });
+      const go = async (x) => { const p = $('[name=p]', x.el).value; if (!p || (await sha256(p)) !== DB.get('users', u.id)?.password) return UI.toast(L('كلمة المرور غلط', 'Wrong password'), 'err'); done = true; audit('confirm.pass', String(reason).replace(/<[^>]+>/g, '').slice(0, 120)); x.close(); res(true); };
+      const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => e.key === 'Enter' && go(m);
+    });
+  },
+  guard(obj, fn, reason) {
+    if (!obj || typeof obj[fn] !== 'function') return;
+    const base = obj[fn];
+    obj[fn] = async function (...a) { if (Bio.cfg().confirm && Session.user && !(await Bio.confirm(typeof reason === 'function' ? reason(...a) : reason))) return; return base.apply(this, a); };
+  },
+  /* ---------- نافذة «الدخول بالبصمة» للمستخدم ---------- */
+  async dialog() {
+    const u = DB.get('users', Session.user.id) || Session.user; const a = await this.avail(true); const on = await this.enrolled(u); const c = this.cfg();
+    const devs = Object.entries(u.bio || {}); const mid = await this.mid();
+    const m = UI.modal({ title: L('الدخول بالبصمة', 'Biometric sign-in'), icon: 'fingerprint', size: 'sm', body: `
+      <div class="bio-hero ${on ? 'on' : ''}"><div class="bio-ic">${icon('fingerprint')}</div><div><b>${on ? L('مفعّل على الجهاز ده ✓', 'Enabled on this device ✓') : L('مش مفعّل على الجهاز ده', 'Not enabled on this device')}</b><span>${esc(this.label())}</span></div></div>
+      ${!this.plat() || !a.available ? `<div class="tag warn mt" style="white-space:normal;padding:10px;line-height:1.8">${icon('alert')} ${esc(this.why(a))}</div>` : ''}
+      ${!c.on ? `<div class="tag warn mt" style="white-space:normal;padding:10px">${L('المالك قافل الدخول بالبصمة من إعدادات الأمان', 'Disabled by the owner')}</div>` : ''}
+      <ul class="bio-pts"><li>${L('كلمة المرور مش بتتخزن — البصمة بتفتح رمز متشفّر على الجهاز ده بس', 'Your password is never stored')}</li><li>${L('لو حد ضاف بصمة جديدة على الجهاز، البصمة بتتلغي لوحدها ولازم تفعّلها تاني', 'Adding a new fingerprint disables it automatically')}</li><li>${L('أي بصمة متسجلة على الجهاز تقدر تفتح — فعّلها على جهازك الشخصي أو جهاز مافيهوش غير بصمتك', 'Any fingerprint enrolled on this device can unlock — use it on your own device')}</li></ul>
+      ${devs.length ? `<div class="lbl mt">${L('الأجهزة المفعّل عليها', 'Enabled on')}</div>${devs.map(([k, d]) => `<div class="list-item"><div class="ic">${icon('fingerprint')}</div><div style="flex:1;min-width:0"><div class="t">${esc(d.dev || k)} ${k === mid ? `<span class="tag ok">${L('هذا الجهاز', 'This device')}</span>` : ''}</div><div class="s">${fmtDT(d.at)}</div></div><button class="btn sm" data-bx="${esc(k)}">${icon('trash')}</button></div>`).join('')}` : ''}`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() },
+        ...(on ? [{ label: L('إيقاف على الجهاز ده', 'Disable here'), cls: 'danger', onClick: async (x) => { await this.disable(u); x.close(); UI.toast(L('اتقفل الدخول بالبصمة على الجهاز ده', 'Disabled')); } }]
+          : this.plat() && a.available && c.on ? [{ label: L('تفعيل', 'Enable'), cls: 'primary', icon: 'fingerprint', onClick: async (x) => { if (!(await this.passOnce(u))) return; if (await this.enable(u)) { x.close(); UI.toast(L('اتفعّل الدخول بالبصمة ✓ — المرة الجاية ادخل ببصمتك', 'Enabled ✓'), 'ok', 5000); } } }] : [])] });
+    $$('[data-bx]', m.el).forEach((b) => (b.onclick = async () => { await this.disable(u, b.dataset.bx); m.close(); this.dialog(); }));
+  },
+  passOnce(u) {
+    return new Promise((res) => {
+      let done = false;
+      const m = UI.modal({ title: L('أكّد كلمة المرور', 'Confirm password'), icon: 'lock', size: 'sm', body: `<label class="lbl">${L('كلمة المرور الحالية', 'Current password')}</label><input type="password" name="p" autocomplete="off">`, onClose: () => { if (!done) res(false); },
+        actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('متابعة', 'Continue'), cls: 'primary', onClick: (x) => go(x) }] });
+      const go = async (x) => { if ((await sha256($('[name=p]', x.el).value)) !== DB.get('users', u.id)?.password) return UI.toast(L('كلمة المرور غلط', 'Wrong password'), 'err'); done = true; x.close(); res(true); };
+      const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => e.key === 'Enter' && go(m);
+    });
+  },
+  /* إعدادات المالك */
+  settings() {
+    const c = this.cfg();
+    UI.modal({ title: L('إعدادات البصمة', 'Biometric settings'), icon: 'fingerprint', size: 'sm', body: UI.form([
+      { name: 'on', label: L('السماح بالدخول بالبصمة / Windows Hello', 'Allow biometric sign-in'), type: 'checkbox', col: 12 },
+      { name: 'auto', label: L('اطلب البصمة تلقائياً أول ما شاشة الدخول تفتح', 'Prompt automatically on the sign-in screen'), type: 'checkbox', col: 12 },
+      { name: 'lock', label: L('فتح الشاشة المقفولة بالبصمة', 'Unlock the lock screen with biometrics'), type: 'checkbox', col: 12 },
+      { name: 'confirm', label: L('تأكيد الهوية (بصمة أو كلمة مرور) قبل العمليات الحساسة: المرتجع، تعديل الأسعار بالجملة، استعادة نسخة احتياطية، مسح البيانات، إعادة كلمة مرور مستخدم', 'Confirm identity before sensitive actions'), type: 'checkbox', col: 12 },
+      { type: 'html', col: 12, html: `<div class="faint" style="line-height:1.9">${L('كل مستخدم بيفعّل بصمته بنفسه من قائمة اسمه ← «الدخول بالبصمة». لو قفلت السماح هنا، الكل هيدخل بكلمة المرور.', 'Each user enables it from their menu.')}</div>` }], c),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (m) => { const v = UI.read(m.el); DB.saveSettings({ bio: { on: !!v.on, auto: !!v.auto, lock: !!v.lock, confirm: !!v.confirm } }); audit('bio.settings', JSON.stringify(v)); m.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } }] });
+  }
+};
+
+(function () {
+  /* شاشة الدخول */
+  const baseLogin = App.loginScreen.bind(App);
+  App.loginScreen = function (...a) { const r = baseLogin(...a); Bio.loginButton().catch((e) => console.warn(e)); return r; };
+  const baseOut = App.logout.bind(App);
+  App.logout = function (...a) { Bio._noAuto = true; return baseOut(...a); };
+
+  /* قفل الشاشة */
+  const baseLock = Security.lock.bind(Security);
+  Security.lock = function (...a) {
+    const r = baseLock(...a);
+    (async () => {
+      try {
+        const u = Session.user && DB.get('users', Session.user.id); const el = $$('.lock-screen').pop();
+        if (!u || !el || !Bio.cfg().on || !Bio.cfg().lock || !(await Bio.enrolled(u)) || !(await Bio.avail()).available) return;
+        const b = document.createElement('button'); b.className = 'btn lg block mt bio-btn'; b.innerHTML = `${icon('fingerprint')}${L('افتح بالبصمة', 'Unlock with biometrics')}`;
+        $('.lock-card', el).appendChild(b);
+        const go = async () => { if (await Bio.verify(u, L('فتح الشاشة', 'Unlock'), u.name)) { el.remove(); Security.locked = false; Security.last = Date.now(); audit('unlock.bio', u.username); } };
+        b.onclick = go; if (Bio.cfg().auto) setTimeout(() => { if (el.isConnected) go(); }, 350);
+      } catch (e) { console.warn(e); }
+    })();
+    return r;
+  };
+
+  /* تغيير كلمة المرور بيلغي البصمة المرتبطة (أمان) */
+  const bu = DB.update.bind(DB);
+  DB.update = function (col, id, patch, ...rest) {
+    if (col === 'users' && patch && patch.password && !('bio' in patch)) { const cur = DB.get('users', id); if (cur && cur.password !== patch.password && cur.bio && Object.keys(cur.bio).length) patch = { ...patch, bio: {} }; }
+    return bu(col, id, patch, ...rest);
+  };
+
+  /* قائمة المستخدم: «الدخول بالبصمة» بعد «تغيير كلمة المرور» */
+  const bdd = UI.dropdown.bind(UI);
+  UI.dropdown = function (anchor, items, ...rest) {
+    try {
+      if (anchor && anchor.id === 'userChip' && Bio.plat() && Array.isArray(items) && !items.some((x) => x && x._bio)) {
+        items = items.slice(); const k = items.findIndex((x) => x && x.icon === 'lock');
+        items.splice(k >= 0 ? k + 1 : Math.max(0, items.length - 1), 0, { _bio: 1, icon: 'fingerprint', label: L('الدخول بالبصمة', 'Biometric sign-in'), onClick: () => Bio.dialog() });
+      }
+    } catch (_) {}
+    return bdd(anchor, items, ...rest);
+  };
+
+  /* العمليات الحساسة */
+  try { Bio.guard(Modules.sales, 'returnGuard', (s) => L(`مرتجع على الفاتورة <b>${esc(s && s.no)}</b>`, `Return on invoice ${s && s.no}`)); } catch (_) {}
+  try { Bio.guard(BulkPrice, 'apply', L('تعديل الأسعار بالجملة', 'Bulk price change')); Bio.guard(BulkPrice, 'undo', L('ترجيع الأسعار القديمة', 'Undo bulk prices')); } catch (_) {}
+  try { Bio.guard(Backup, 'restore', L('استعادة نسخة احتياطية — هتستبدل كل البيانات', 'Restore a backup')); } catch (_) {}
+  try { Bio.guard(OwnerTools, 'resetDialog', L('مسح بيانات من النظام', 'Erase system data')); } catch (_) {}
+  try { Bio.guard(Modules.users, 'resetPassword', (u) => L(`إعادة تعيين كلمة مرور <b>${esc(u && u.name)}</b>`, `Reset password for ${u && u.name}`)); } catch (_) {}
 })();
 
 </script>

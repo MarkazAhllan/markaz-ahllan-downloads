@@ -1863,6 +1863,21 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .pw-wrap{position:relative}.pw-wrap input{padding-left:46px}
 .pw-eye{position:absolute;left:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:none;background:transparent;color:var(--text-2);display:grid;place-items:center;cursor:pointer;border-radius:10px}
 .pw-eye.on{color:var(--p)}.pw-eye svg{width:19px;height:19px}
+
+/* ===== 1.6.1 رأس لوحة التحكم: اللوجو جنب الترحيب ===== */
+.dh-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.dh-brand{display:flex;align-items:center;gap:14px;flex:1 1 320px;min-width:0}
+.dh-logo{width:64px;height:64px;flex:none;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.18))}
+.dh-txt{min-width:0}
+.dh-greet{font-size:22px;font-weight:800;line-height:1.35}
+.dh-sub{color:var(--text-2);font-size:14px;margin-top:2px}
+@media (max-width:640px){
+  .dh-brand{flex-basis:100%;gap:12px}
+  .dh-logo{width:58px;height:58px}
+  .dh-greet{font-size:18px}
+  .dh-sub{font-size:13px}
+  .dh-top #dashRange{width:100%}
+}
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -4136,10 +4151,11 @@ Modules.dashboard = {
 
     el.innerHTML = `
       <div class="card dash-hero">
-        <div class="row wrap" style="gap:16px">
-          <img src="${logoSrc()}" style="width:64px;height:64px">
-          <div><div style="font-size:22px;font-weight:800">${greet}، ${esc(u.name)} 👋</div><div class="muted">${L('ده ملخص أداء', 'Here is the summary for')} <b>${esc(storeName())}</b> — ${rngLabel}</div></div>
-          <div class="spacer"></div>
+        <div class="dh-top">
+          <div class="dh-brand">
+            <img class="dh-logo" src="${logoSrc()}" alt="">
+            <div class="dh-txt"><div class="dh-greet">${greet}، ${esc(u.name)} 👋</div><div class="dh-sub">${L('ده ملخص أداء', 'Here is the summary for')} <b>${esc(storeName())}</b> — ${rngLabel}</div></div>
+          </div>
           <div id="dashRange"></div>
         </div>
         <div class="qa-grid">
@@ -10452,6 +10468,7 @@ const CHANGELOG = [
   { v: '1.6.1', d: '2026-10-30', items: [
     ['fingerprint', L('الدخول بالبصمة: على الموبايل ببصمة الصباع أو الوش، وعلى الويندوز بـ Windows Hello — كل مستخدم يفعّلها من قائمة اسمه ← «الدخول بالبصمة»', 'Biometric sign-in: fingerprint/face on Android, Windows Hello on Windows')],
     ['user', L('«احفظ كلمة المرور على الجهاز ده»: المرة الجاية تدوس «تسجيل الدخول» على طول — أو تدخل بالبصمة، اللي يريحك', 'Remember password on this device, alongside biometrics')],
+    ['dashboard', L('لوحة التحكم: اللوجو جنب الترحيب في سطر واحد على الموبايل والكمبيوتر', 'Dashboard header: logo beside the greeting')],
     ['check', L('إصلاح: خانات كلمة المرور في نوافذ التأكيد وموافقة المدير وقفل الشاشة كانت بترفض الأرقام الإنجليزي من الكيبورد', 'Fix: password boxes in dialogs rejected English digits')],
     ['key', L('كلمات المرور بتتقبل بالأرقام العربي (١٢٣) أو الإنجليزي (123) زي بعض، ومعاها زرار 👁️ لإظهار اللي بتكتبه', 'Passwords accept Arabic or English digits; show/hide button')],
     ['lock', L('فتح الشاشة المقفولة بالبصمة من غير ما تكتب كلمة المرور', 'Unlock the lock screen with biometrics')],

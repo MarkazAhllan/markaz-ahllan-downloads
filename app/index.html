@@ -6285,7 +6285,7 @@ Modules.phones = {
       if (!p) { r.innerHTML = `<div class="tag err" style="padding:10px;white-space:normal">${L('الجهاز ده مش متسجل عندنا', 'Not found in our records')}</div>`; return; }
       const w = Phones.warrantyLeft(p); r.innerHTML = `<div class="card card-b"><b>${esc(Phones.full(p))}</b><div class="faint">${p.code} · ${L(...PH_STATUS[p.status].slice(0, 2))}</div>${p.status === 'sold' ? `<div class="mt">${L('اتباع', 'Sold')} ${fmtDate(p.soldAt)} — ${esc(p.customerName || L('عميل نقدي', 'Walk-in'))}</div><div class="tag ${w > 0 ? 'ok' : 'err'} mt" style="font-size:15px;padding:6px 12px">🛡️ ${w == null ? L('بدون ضمان', 'No warranty') : w > 0 ? L(`في الضمان — باقي ${w} يوم`, `${w} days left`) : L('الضمان انتهى', 'Warranty ended')}</div>` : ''}<div class="mt"><button class="btn sm" id="wOpen">${icon('eye')}${L('التفاصيل والتاريخ', 'Details & history')}</button></div></div>`;
       $('#wOpen', r).onclick = () => { m.close(); this.details(p); }; };
-    $('#wQ', m.el).onkeydown = (e) => e.key === 'Enter' && go();
+    $('#wQ', m.el).onkeydown = (e) => { if (e.key === 'Enter') go(); };
     $('#wCam', m.el).onclick = () => Scanner.camera((c) => { $('#wQ', m.el).value = c; go(); });
   },
 
@@ -6857,7 +6857,7 @@ Modules.cctv = {
       const ls = CCTV.jobs().filter((j) => j.status !== 'quote' && (String(j.no).toLowerCase() === q.toLowerCase() || (d.length >= 7 && String(j.phone || '').replace(/\D/g, '').endsWith(d.slice(-10))) || (j.items || []).some((i) => (i.serials || []).some((s) => String(s).toLowerCase() === q.toLowerCase()))));
       r.innerHTML = ls.length ? ls.map((j) => { const w = CCTV.warrantyLeft(j); return `<div class="cv-row" data-cv="${j.id}"><div style="flex:1;min-width:0"><b>${esc(j.customerName)}</b> <span class="mono faint">${j.no}</span><div class="faint" style="font-size:12px">${esc(CCTV.summary(j))}</div><div style="font-size:12px">${j.installedAt ? L('اتركب', 'Installed') + ' ' + fmtDate(j.installedAt) : L(...CV_STATUS[j.status].slice(0, 2))}</div></div>${w != null ? `<span class="tag ${w > 0 ? 'ok' : 'err'}">${w > 0 ? L(`في الضمان ${w} يوم`, `${w}d`) : L('الضمان انتهى', 'Ended')}</span>` : ''}</div>`; }).join('') : `<div class="tag err" style="padding:10px;white-space:normal">${L('مفيش عملية بالبيانات دي', 'Nothing found')}</div>`;
       $$('[data-cv]', r).forEach((c) => (c.onclick = () => { m.close(); this.view(DB.get('cctvJobs', c.dataset.cv)); })); };
-    $('#cvL', m.el).onkeydown = (e) => e.key === 'Enter' && go();
+    $('#cvL', m.el).onkeydown = (e) => { if (e.key === 'Enter') go(); };
   },
 
   /* ---------- طباعة: عرض سعر / فاتورة + شهادة ضمان ---------- */
@@ -10452,6 +10452,7 @@ const CHANGELOG = [
   { v: '1.6.1', d: '2026-10-30', items: [
     ['fingerprint', L('الدخول بالبصمة: على الموبايل ببصمة الصباع أو الوش، وعلى الويندوز بـ Windows Hello — كل مستخدم يفعّلها من قائمة اسمه ← «الدخول بالبصمة»', 'Biometric sign-in: fingerprint/face on Android, Windows Hello on Windows')],
     ['user', L('«احفظ كلمة المرور على الجهاز ده»: المرة الجاية تدوس «تسجيل الدخول» على طول — أو تدخل بالبصمة، اللي يريحك', 'Remember password on this device, alongside biometrics')],
+    ['check', L('إصلاح: خانات كلمة المرور في نوافذ التأكيد وموافقة المدير وقفل الشاشة كانت بترفض الأرقام الإنجليزي من الكيبورد', 'Fix: password boxes in dialogs rejected English digits')],
     ['key', L('كلمات المرور بتتقبل بالأرقام العربي (١٢٣) أو الإنجليزي (123) زي بعض، ومعاها زرار 👁️ لإظهار اللي بتكتبه', 'Passwords accept Arabic or English digits; show/hide button')],
     ['lock', L('فتح الشاشة المقفولة بالبصمة من غير ما تكتب كلمة المرور', 'Unlock the lock screen with biometrics')],
     ['shield', L('تأكيد هويتك بالبصمة قبل العمليات الحساسة (المرتجع، تعديل الأسعار بالجملة، الاستعادة، المسح) — بتتفعّل من الإعدادات ← الأمان', 'Confirm sensitive actions with biometrics')],
@@ -10665,7 +10666,7 @@ const Security = {
     el.innerHTML = `<div class="lock-card" style="max-width:400px;text-align:center"><div class="avatar" style="width:70px;height:70px;font-size:24px;border-radius:20px;margin:0 auto 10px;background:${u.color || avatarColor(u.name)}">${initials(u.name)}</div><h2 style="margin:0">${esc(u.name)}</h2><p class="muted">${L('تم قفل الشاشة تلقائياً لعدم النشاط', 'Screen locked due to inactivity')}</p><input type="password" id="ulP" placeholder="${L('كلمة المرور', 'Password')}" style="height:48px;text-align:center"><div class="row mt"><button class="btn primary lg" style="flex:1" id="ulGo">${icon('lock')}${L('فتح', 'Unlock')}</button><button class="btn lg" id="ulOut">${icon('logout')}</button></div></div>`;
     document.body.appendChild(el); setTimeout(() => $('#ulP', el).focus(), 50);
     const go = async () => { if ((await sha256($('#ulP', el).value)) === DB.get('users', u.id)?.password) { el.remove(); this.locked = false; this.last = Date.now(); } else UI.toast(L('كلمة المرور غير صحيحة', 'Wrong password'), 'err'); };
-    $('#ulGo', el).onclick = go; $('#ulP', el).onkeydown = (e) => e.key === 'Enter' && go();
+    $('#ulGo', el).onclick = go; $('#ulP', el).onkeydown = (e) => { if (e.key === 'Enter') go(); };
     $('#ulOut', el).onclick = () => { el.remove(); this.locked = false; App.logout(); };
   },
   attempts: {},
@@ -10972,7 +10973,7 @@ const Approve = {
         if (!u || !v.p || !(await pwMatch(v.p, u.password))) return UI.toast(L('كلمة المرور غلط', 'Wrong password'), 'err');
         done = true; audit('approve', `${String(reason).replace(/<[^>]+>/g, '')} — ${L('وافق', 'by')} ${u.name} ← ${Session.user?.name || ''}`); x.close(); res(u.name);
       };
-      const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => e.key === 'Enter' && go(m);
+      const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => { if (e.key === 'Enter') go(m); };
     });
   },
   /* الخصم الفعلي في الفاتورة = خصم الفاتورة + خصم الأصناف + تخفيض السعر عن سعر الصنف الأصلي */
@@ -14148,7 +14149,7 @@ const Bio = {
         onClose: () => { if (!done) res(false); },
         actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد', 'Confirm'), cls: 'primary', icon: 'check', onClick: (x) => go(x) }] });
       const go = async (x) => { const p = $('[name=p]', x.el).value; if (!p || (await sha256(p)) !== DB.get('users', u.id)?.password) return UI.toast(L('كلمة المرور غلط', 'Wrong password'), 'err'); done = true; audit('confirm.pass', String(reason).replace(/<[^>]+>/g, '').slice(0, 120)); x.close(); res(true); };
-      const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => e.key === 'Enter' && go(m);
+      const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => { if (e.key === 'Enter') go(m); };
     });
   },
   guard(obj, fn, reason) {
@@ -14177,7 +14178,7 @@ const Bio = {
       const m = UI.modal({ title: L('أكّد كلمة المرور', 'Confirm password'), icon: 'lock', size: 'sm', body: `<label class="lbl">${L('كلمة المرور الحالية', 'Current password')}</label>${Bio.passField()}`, onClose: () => { if (!done) res(false); },
         actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('متابعة', 'Continue'), cls: 'primary', onClick: (x) => go(x) }] });
       const go = async (x) => { if ((await sha256($('[name=p]', x.el).value)) !== DB.get('users', u.id)?.password) return UI.toast(L('كلمة المرور غلط', 'Wrong password'), 'err'); done = true; x.close(); res(true); };
-      const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => e.key === 'Enter' && go(m);
+      const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => { if (e.key === 'Enter') go(m); };
     });
   },
   /* إعدادات المالك */

@@ -277,7 +277,7 @@ function notifyNew() {
   beep(); fresh.forEach((r) => { toast(`🆕 جهاز جديد: ${r.store_name || ''} — ${r.phone || ''}`, 'ok'); try { if (Notification.permission === 'granted') new Notification('جهاز جديد سجّل 🆕', { body: `${r.store_name || ''} — ${r.owner_name || ''} — ${r.phone || ''}`, icon: 'icon-192.png', tag: r.mid }); } catch (_) {} });
 }
 const isExp = (r) => r.status === 'active' && r.expires_at && Date.parse(r.expires_at) - Date.now() < 7 * 864e5;
-const trialLeft = (r) => (r.status === 'trial' && r.trial_start ? Date.parse(r.trial_start) + (r.trial_hours || 72) * 36e5 - Date.now() : null);
+const trialLeft = (r) => (r.status === 'trial' && r.trial_start ? Date.parse(r.trial_start) + (r.trial_hours || 168) * 36e5 - Date.now() : null);
 const need = () => ROWS.filter((r) => r.status === 'pending' || isExp(r) || (trialLeft(r) != null && trialLeft(r) < 24 * 36e5));
 
 /* ================= الواجهة ================= */
@@ -488,8 +488,8 @@ function activate(r) {
   });
 }
 function trialDlg(r) {
-  sheet(`<h3>🧪 تجربة — ${esc(r.store_name || '')}</h3><div class="types">${[24, 48, 72, 120, 168, 336].map((h) => `<button data-h="${h}" class="${h === (CFG.trial_hours || 72) ? 'on' : ''}">${h >= 48 ? h / 24 + ' أيام' : 'يوم'}<small>${h} ساعة</small></button>`).join('')}</div><button class="btn p block" id="go">ابدأ التجربة</button>`, (ov, close) => {
-    let h = CFG.trial_hours || 72; $$('[data-h]', ov).forEach((b) => (b.onclick = () => { h = +b.dataset.h; $$('[data-h]', ov).forEach((x) => x.classList.toggle('on', x === b)); }));
+  sheet(`<h3>🧪 تجربة — ${esc(r.store_name || '')}</h3><div class="types">${[24, 48, 72, 120, 168, 336].map((h) => `<button data-h="${h}" class="${h === (CFG.trial_hours || 168) ? 'on' : ''}">${h >= 48 ? h / 24 + ' أيام' : 'يوم'}<small>${h} ساعة</small></button>`).join('')}</div><button class="btn p block" id="go">ابدأ التجربة</button>`, (ov, close) => {
+    let h = CFG.trial_hours || 168; $$('[data-h]', ov).forEach((b) => (b.onclick = () => { h = +b.dataset.h; $$('[data-h]', ov).forEach((x) => x.classList.toggle('on', x === b)); }));
     $('#go', ov).onclick = async () => { try { await patch(r.mid, { status: 'trial', trial_start: new Date().toISOString(), trial_hours: h }); logAct(`🧪 تجربة ${h} ساعة — ${r.store_name}`); close(); toast('التجربة بدأت', 'ok'); await load(); waDlg(ROWS.find((x) => x.mid === r.mid) || r, 'trial'); } catch (e) { toast('خطأ: ' + e.message, 'e'); } };
   });
 }

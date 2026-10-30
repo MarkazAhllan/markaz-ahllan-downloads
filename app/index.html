@@ -1846,6 +1846,18 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .bio-hero.on .bio-ic{background:var(--ok);color:#fff}
 .bio-hero b{display:block;font-size:15.5px}.bio-hero span{color:var(--text-2);font-size:13px}
 .bio-pts{margin:12px 0 0;padding-inline-start:20px;line-height:1.9;font-size:13.5px;color:var(--text-2)}
+
+/* ===== 1.6.1 اللوجو في الوضع الداكن: ميدالية أحمر دم الغزال 3D (assets/logo-dark.png) ===== */
+:root[data-theme="dark"] :is(.side-brand .mark, .login-hero .brand-row .mark, .ab-logo) { background: transparent !important; box-shadow: none !important; padding: 0 !important; }
+:root[data-theme="dark"] .side-brand .mark img { width: 46px; height: 46px; }
+:root[data-theme="dark"] .login-hero .brand-row .mark img { width: 58px; height: 58px; }
+:root[data-theme="dark"] .disp-h img { background: transparent; padding: 0; box-shadow: none; }
+:root[data-theme="dark"] .login-card .logo-big { width: 158px; height: 158px; filter: drop-shadow(0 0 22px rgba(232, 23, 62, .28)); }
+
+/* ===== 1.6.1 زرار التحديث الجديد ===== */
+.upd-pill{white-space:nowrap;flex:none;line-height:1;display:inline-grid;place-items:center;width:38px;height:38px;border:none;cursor:pointer;padding:0;border-radius:12px;background:var(--ok);color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--ok) 35%,transparent);animation:updPulse 2.2s ease-in-out infinite}
+.upd-pill svg{width:19px;height:19px}
+@keyframes updPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 45%,transparent)}50%{box-shadow:0 0 0 7px transparent}}
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2194,7 +2206,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.6.1', build: '', trialHours: 72 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.6.1', build: '', trialHours: 168 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2992,7 +3004,7 @@ const PrintCenter = {
 </script>
   <script>
 /* =========================================================
- * Licensing: 72h trial + ECDSA P-256 signed license keys
+ * Licensing: 7-day trial + ECDSA P-256 signed license keys
  * المفتاح العام فقط داخل البرنامج — المفتاح الخاص عند المطور في أداة إصدار التراخيص
  * ========================================================= */
 const LICENSE_PUBLIC_JWK = { kty: 'EC', crv: 'P-256', x: 'UtI7zoZqolmSiqBtCa6wxUvGLk9Ekffv6G2mCGbCVDg', y: 'TgfCr6egICsVfUuJZaFM9owSq8CnsFlKc5jMhassi_0' };
@@ -3158,7 +3170,7 @@ const OnlineLicense = {
   async refresh(info) {
     let res; try { res = await this.call(info); } catch (e) { return false; }
     const prev = this.load() || {};
-    const c = { ...prev, status: res.status, trialStart: res.trial_start ? Date.parse(res.trial_start) : null, trialHours: res.trial_hours || 72, expiresAt: res.expires_at ? Date.parse(res.expires_at) : null, message: res.message || '', checkedAt: Date.now(), skew: Date.parse(res.server_time) - Date.now() , beta: !!res.beta, stableCode: res.stable_code == null ? null : Number(res.stable_code) };
+    const c = { ...prev, status: res.status, trialStart: res.trial_start ? Date.parse(res.trial_start) : null, trialHours: res.trial_hours || 168, expiresAt: res.expires_at ? Date.parse(res.expires_at) : null, message: res.message || '', checkedAt: Date.now(), skew: Date.parse(res.server_time) - Date.now() , beta: !!res.beta, stableCode: res.stable_code == null ? null : Number(res.stable_code) };
     if (res.status === 'unregistered') c.registered = false; else c.registered = true;
     if (res.license_key) { const info2 = await License.verify(res.license_key); const mid = await License.machineId(); if (info2 && (info2.m === mid || info2.m === '*')) { c.key = res.license_key; DB.saveSettings({ license: { key: res.license_key, activatedAt: nowISO(), online: true } }); } }
     if (res.status === 'blocked' || (res.status !== 'active' && prev.key)) { delete c.key; if (DB.settings().license?.online) DB.saveSettings({ license: null }); }
@@ -3177,7 +3189,7 @@ const OnlineLicense = {
       const info = await License.verify(key); const mid = await License.machineId();
       if (info && (info.m === mid || info.m === '*')) { if (!info.e || info.e > this.now(c)) return { state: 'active', info }; return { state: 'expired', reason: 'license', info }; }
     }
-    if (c.status === 'trial' && c.trialStart) { const left = c.trialStart + (c.trialHours || 72) * 36e5 - this.now(c); if (left > 0) return { state: 'trial', left, start: c.trialStart }; }
+    if (c.status === 'trial' && c.trialStart) { const left = c.trialStart + (c.trialHours || 168) * 36e5 - this.now(c); if (left > 0) return { state: 'trial', left, start: c.trialStart }; }
     return { state: 'expired', reason: c.status === 'trial' ? 'trial' : 'license' };
   },
 
@@ -3884,6 +3896,7 @@ const App = {
     Background.start();
   },
   refreshTop() {
+    try { AppUpdate.pill(); } catch (_) {}
     const st = this.licenseState; const tp = $('#trialPill');
     if (tp) tp.innerHTML = st?.state === 'trial' ? `<span class="trial-badge" style="cursor:pointer" title="${L('تفعيل', 'Activate')}">${icon('clock')} ${L('تجريبي', 'Trial')}: ${License.fmtLeft(st.left)}</span>` : '';
     if (tp) tp.onclick = () => License.activationDialog(async () => { this.licenseState = await License.status(); this.refreshTop(); });
@@ -10431,6 +10444,10 @@ const CHANGELOG = [
     ['lock', L('فتح الشاشة المقفولة بالبصمة من غير ما تكتب كلمة المرور', 'Unlock the lock screen with biometrics')],
     ['shield', L('تأكيد هويتك بالبصمة قبل العمليات الحساسة (المرتجع، تعديل الأسعار بالجملة، الاستعادة، المسح) — بتتفعّل من الإعدادات ← الأمان', 'Confirm sensitive actions with biometrics')],
     ['key', L('أمان: كلمة المرور مش بتتخزن، ولو اتضافت بصمة جديدة على الجهاز أو اتغيرت كلمة المرور البصمة بتتلغي لوحدها', 'Password never stored; auto-invalidated on new fingerprints or password change')],
+    ['fingerprint', L('بعد ما تدخل بكلمة المرور، البرنامج بيعرض عليك تفعيل البصمة بضغطة واحدة', 'One-tap biometric setup offer after password sign-in')],
+    ['moon', L('الوضع الداكن: اللوجو بقى ميدالية 3D بلون أحمر دم الغزال جوه إطار واضح', 'Dark mode: 3D crimson logo medallion')],
+    ['clock', L('الفترة التجريبية بقت 7 أيام بدل 3', 'Trial is now 7 days')],
+    ['download', L('التحديثات بتظهر لوحدها: أول ما تفتح التطبيق، ولما ترجعله من الخلفية، وكل نص ساعة — وزرار أخضر فوق طول ما فيه تحديث مستني', 'Updates are detected automatically on open, resume and every 30 minutes')],
     ['sparkles', L('خط البرنامج الجديد: Cairo من جوجل — أوضح في القراءة، وشغال من غير نت على الكمبيوتر والموبايل، وكمان في الإيصالات والتقارير', 'New app font: Cairo')],
     ['factory', L('الموردين بقوا في القائمة الرئيسية مباشرة بعد «المبيعات والمخزون»، ومعاهم «مرتجعات التالف» و«الهوالك»', 'Suppliers moved to the main menu')]] },
   { v: '1.6.0', d: '2026-10-30', items: [
@@ -12997,12 +13014,37 @@ const AppUpdate = {
     return j;
   },
 
-  /* بيتنادى بعد تسجيل الدخول — مرة كل 6 ساعات بالكتير */
+  /* الفحص التلقائي: أول ما التطبيق يفتح، وكل ما يرجع من الخلفية، وكل 30 دقيقة وهو مفتوح
+     (أقل فاصل بين فحصين 10 دقايق — الملف صغير جداً ومش بيستهلك نت) */
+  avail: null, _t: null, _hooked: false, _launch: true,
   auto() {
     if (!this.native() || !this.site() || window.MAH_DEMO) return;
-    let last = 0; try { last = Number(localStorage.getItem('mah:updChk')) || 0; } catch (_) {}
-    if (Date.now() - last < 6 * 3600e3) return;
-    setTimeout(() => this.check(false), 4000);
+    if (!this._hooked) {
+      this._hooked = true;
+      try { window.Capacitor.Plugins.App.addListener('appStateChange', (st) => { if (st && st.isActive) this.soon(1500); }); } catch (_) {}
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) this.soon(1500); });
+      setInterval(() => this.soon(0), 30 * 60e3);
+    }
+    this.soon(2500);
+  },
+  soon(ms) {
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      let last = 0; try { last = Number(localStorage.getItem('mah:updChk')) || 0; } catch (_) {}
+      if (!this._launch && Date.now() - last < 10 * 60e3) { this.pill(); return; }
+      this._launch = false; this.check(false);
+    }, ms);
+  },
+  snoozed(code) { try { const z = JSON.parse(localStorage.getItem('mah:updSnooze') || 'null'); return !!(z && Number(z.code) === Number(code) && Date.now() < z.until); } catch (_) { return false; } },
+  snooze(code) { try { localStorage.setItem('mah:updSnooze', JSON.stringify({ code: Number(code), until: Date.now() + 6 * 3600e3 })); } catch (_) {} },
+  /* زرار «تحديث جديد» ثابت في الشريط العلوي طول ما فيه تحديث */
+  pill() {
+    const tp = document.getElementById('trialPill'); let el = document.getElementById('updPill');
+    if (!this.avail) { if (el) el.remove(); return; }
+    if (!tp) return;
+    if (!el) { el = document.createElement('button'); el.id = 'updPill'; el.className = 'upd-pill'; tp.parentNode.insertBefore(el, tp); }
+    el.innerHTML = icon('download'); el.title = `${L('تحديث جديد', 'New update')} ${this.avail.j.name || this.avail.j.code}`;
+    el.onclick = () => this.prompt(this.avail.j, this.avail.cur, true);
   },
   async check(manual) {
     if (!this.native()) { if (manual) UI.toast(L('نسخة الويب بتتحدث لوحدها — اقفل الصفحة وافتحها تاني لو التحديث ما ظهرش', 'The web version updates itself — reopen the page'), 'info', 5000); return; }
@@ -13014,13 +13056,23 @@ const AppUpdate = {
       // قناة التحديث التجريبية: النسخة الجديدة بتوصل للأجهزة التجريبية بس لحد ما المطور يعتمدها من لوحته
       const ch = (typeof OnlineLicense !== 'undefined' && OnlineLicense.load && OnlineLicense.load()) || {};
       const held = ch.stableCode && !ch.beta && Number(j.code) > Number(ch.stableCode);
-      if (Number(j.code) > cur.code && !held) this.prompt(j, cur);
-      else if (manual) UI.toast(L('عندك آخر إصدار ✓', 'You have the latest version ✓') + (cur.name ? ` (${cur.name})` : ''));
+      if (Number(j.code) > cur.code && !held) {
+        this.avail = { j, cur }; this.pill();
+        if (manual || !this.snoozed(j.code)) this.promptWhenFree(j, cur, manual);
+      } else { this.avail = null; this.pill(); if (manual) UI.toast(L('عندك آخر إصدار ✓', 'You have the latest version ✓') + (cur.name ? ` (${cur.name})` : '')); }
     } catch (e) { if (manual) UI.toast(L('مش قادر أوصل لسيرفر التحديثات', 'Cannot reach the update server'), 'err'); }
   },
+  /* لو فيه نافذة تانية مفتوحة (ما الجديد / البصمة / الإعداد) نستنى لحد ما تتقفل */
+  promptWhenFree(j, cur, now, n = 0) {
+    if ($('.modal-bg.upd-m')) return;
+    if (!now && ($('.modal-bg') || $('.lock-screen')) && n < 40) return setTimeout(() => this.promptWhenFree(j, cur, now, n + 1), 3000);
+    this.prompt(j, cur);
+  },
   prompt(j, cur) {
-    UI.modal({ title: L('تحديث جديد متاح 🎉', 'Update available 🎉'), icon: 'download', size: 'sm', body: `<div style="line-height:1.9"><div>${L('الإصدار الجديد', 'New version')}: <b class="num">${esc(j.name || String(j.code))}</b>${cur.name ? ` <span class="faint">(${L('عندك', 'you have')} ${esc(cur.name)})</span>` : ''}</div>${j.notes ? `<div class="faint mt">${esc(j.notes)}</div>` : ''}<div class="faint mt">${L('بياناتك هتفضل زي ما هي — التحديث بيتثبت فوق النسخة الحالية.', 'Your data stays — the update installs over the current version.')}</div></div>`,
-      actions: [{ label: L('بعدين', 'Later'), onClick: (m) => m.close() }, { label: L('تحديث الآن', 'Update now'), cls: 'primary', icon: 'download', onClick: (m) => { m.close(); this.install(this.url(j.apk || 'downloads/MarkazAhllanPOS.apk'), j.mirror ? this.url(j.mirror) : null); } }] });
+    if ($('.modal-bg.upd-m')) return;
+    const mm = UI.modal({ title: L('تحديث جديد متاح 🎉', 'Update available 🎉'), icon: 'download', size: 'sm', body: `<div style="line-height:1.9"><div>${L('الإصدار الجديد', 'New version')}: <b class="num">${esc(j.name || String(j.code))}</b>${cur.name ? ` <span class="faint">(${L('عندك', 'you have')} ${esc(cur.name)})</span>` : ''}</div>${j.notes ? `<div class="faint mt">${esc(j.notes)}</div>` : ''}<div class="faint mt">${L('بياناتك هتفضل زي ما هي — التحديث بيتثبت فوق النسخة الحالية.', 'Your data stays — the update installs over the current version.')}</div></div>`,
+      actions: [{ label: L('بعدين', 'Later'), onClick: (m) => { this.snooze(j.code); m.close(); } }, { label: L('تحديث الآن', 'Update now'), cls: 'primary', icon: 'download', onClick: (m) => { m.close(); this.install(this.url(j.apk || 'downloads/MarkazAhllanPOS.apk'), j.mirror ? this.url(j.mirror) : null); } }] });
+    try { mm.el.closest('.modal-bg')?.classList.add('upd-m'); } catch (_) {}
   },
   url(p) { return /^https?:/.test(p) ? p : `${this.site()}/${String(p).replace(/^\//, '')}`; },
   async install(url, mirror, mode = 'view') {
@@ -13047,6 +13099,9 @@ const AppUpdate = {
     }
   }
 };
+
+/* أول ما البرنامج يفتح (حتى قبل تسجيل الدخول) */
+window.addEventListener('DOMContentLoaded', () => setTimeout(() => { try { if (location.hash !== '#display') AppUpdate.auto(); } catch (_) {} }, 1500));
 
 </script>
   <script>
@@ -14037,8 +14092,19 @@ const Bio = {
       if (!(await this.verify(fresh))) { $('#loginForm input[name=p]')?.focus(); return; }
       Security.ok(key); try { localStorage.setItem(this.LAST, fresh.id); } catch (_) {}
       audit('login.bio', `${fresh.username} ${this.plat()}`);
-      await App.enter(fresh);
+      this._via = true; try { await App.enter(fresh); } finally { this._via = false; }
     } finally { this._busy = false; }
+  },
+  async offer(user) {
+    const c = this.cfg(); if (!c.on || !this.plat() || !Session.user || Session.user.id !== user.id) return;
+    const k = 'mah:bioAsk:' + user.id; let st = null; try { st = localStorage.getItem(k); } catch (_) {}
+    if (st === 'never') return;
+    const u = DB.get('users', user.id); if (!u || (await this.enrolled(u))) return;
+    if (!(await this.avail()).available || $('.modal-bg') || $('.lock-screen')) return;
+    const set = (v) => { try { localStorage.setItem(k, v); } catch (_) {} };
+    UI.modal({ title: L('ادخل ببصمتك المرة الجاية؟', 'Sign in with biometrics next time?'), icon: 'fingerprint', size: 'sm', body: `<div class="bio-hero"><div class="bio-ic">${icon('fingerprint')}</div><div><b>${esc(this.label())}</b><span>${L('أسرع وأأمن من كتابة كلمة المرور كل مرة', 'Faster and safer than typing your password')}</span></div></div>`,
+      actions: [{ label: L('مش تاني', 'Don’t ask again'), onClick: (x) => { set('never'); x.close(); } }, { label: L('بعدين', 'Later'), onClick: (x) => x.close() },
+        { label: L('فعّل', 'Enable'), cls: 'primary', icon: 'fingerprint', onClick: async (x) => { x.close(); if (await this.enable(u)) { set('never'); UI.toast(L('اتفعّل الدخول بالبصمة ✓ — المرة الجاية ادخل ببصمتك', 'Enabled ✓'), 'ok', 5000); } } }] });
   },
   /* ---------- تأكيد الهوية قبل العمليات الحساسة ---------- */
   async confirm(reason) {
@@ -14093,8 +14159,8 @@ const Bio = {
       { name: 'auto', label: L('اطلب البصمة تلقائياً أول ما شاشة الدخول تفتح', 'Prompt automatically on the sign-in screen'), type: 'checkbox', col: 12 },
       { name: 'lock', label: L('فتح الشاشة المقفولة بالبصمة', 'Unlock the lock screen with biometrics'), type: 'checkbox', col: 12 },
       { name: 'confirm', label: L('تأكيد الهوية (بصمة أو كلمة مرور) قبل العمليات الحساسة: المرتجع، تعديل الأسعار بالجملة، استعادة نسخة احتياطية، مسح البيانات، إعادة كلمة مرور مستخدم', 'Confirm identity before sensitive actions'), type: 'checkbox', col: 12 },
-      { type: 'html', col: 12, html: `<div class="faint" style="line-height:1.9">${L('كل مستخدم بيفعّل بصمته بنفسه من قائمة اسمه ← «الدخول بالبصمة». لو قفلت السماح هنا، الكل هيدخل بكلمة المرور.', 'Each user enables it from their menu.')}</div>` }], c),
-      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (m) => { const v = UI.read(m.el); DB.saveSettings({ bio: { on: !!v.on, auto: !!v.auto, lock: !!v.lock, confirm: !!v.confirm } }); audit('bio.settings', JSON.stringify(v)); m.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } }] });
+      { type: 'html', col: 12, html: `<div class="faint" style="line-height:1.9">${L('ده إذن عام بس. كل مستخدم لازم يفعّل بصمته لحسابه على جهازه من قائمة اسمه ← «الدخول بالبصمة» (أو الزرار اللي تحت). لو قفلت السماح هنا، الكل هيدخل بكلمة المرور.', 'Each user must enable it for their own account.')}</div><button type="button" class="btn block mt" onclick="Bio.dialog()">${icon('fingerprint')}${L('فعّل البصمة لحسابي على الجهاز ده', 'Enable for my account on this device')}</button>` }], c),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (m) => { const v = UI.read(m.el); DB.saveSettings({ bio: { on: !!v.on, auto: !!v.auto, lock: !!v.lock, confirm: !!v.confirm } }); audit('bio.settings', JSON.stringify(v)); m.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); if (v.on && Session.user) { (async () => { const u = DB.get('users', Session.user.id); if (!(await this.enrolled(u))) { UI.toast(L('خطوة أخيرة: فعّل بصمتك لحسابك على الجهاز ده 👆', 'Last step: enable it for your account'), 'info', 5000); setTimeout(() => this.dialog(), 400); } })(); } } }] });
   }
 };
 
@@ -14104,6 +14170,14 @@ const Bio = {
   App.loginScreen = function (...a) { const r = baseLogin(...a); Bio.loginButton().catch((e) => console.warn(e)); return r; };
   const baseOut = App.logout.bind(App);
   App.logout = function (...a) { Bio._noAuto = true; return baseOut(...a); };
+
+  /* بعد الدخول بكلمة المرور: اعرض تفعيل البصمة (مرة، ولو المستخدم رفض مش هيتسأل تاني) */
+  const baseEnter = App.enter.bind(App);
+  App.enter = async function (user, ...a) {
+    const ok = await baseEnter(user, ...a);
+    if (ok && !Bio._via) setTimeout(() => Bio.offer(user).catch((e) => console.warn(e)), 1600);
+    return ok;
+  };
 
   /* قفل الشاشة */
   const baseLock = Security.lock.bind(Security);

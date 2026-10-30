@@ -1858,6 +1858,8 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .upd-pill{white-space:nowrap;flex:none;line-height:1;display:inline-grid;place-items:center;width:38px;height:38px;border:none;cursor:pointer;padding:0;border-radius:12px;background:var(--ok);color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--ok) 35%,transparent);animation:updPulse 2.2s ease-in-out infinite}
 .upd-pill svg{width:19px;height:19px}
 @keyframes updPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 45%,transparent)}50%{box-shadow:0 0 0 7px transparent}}
+.rem-box{display:flex;align-items:center;gap:8px;margin:-4px 2px 14px;font-size:13.5px;color:var(--text-2);cursor:pointer;user-select:none}
+.rem-box input{width:18px;height:18px;accent-color:var(--p);margin:0}
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2303,7 +2305,7 @@ const DEFAULT_SETTINGS = {
   ratings: { on: false },
   catalog: { on: false },
   monthlyPL: { auto: true },
-  bio: { on: true, auto: true, lock: true, confirm: false },
+  bio: { on: true, auto: true, lock: true, confirm: false, remember: true },
   loyalty: { on: false, earnPer: 10, earnPts: 1, redeemPts: 100, redeemVal: 10, minRedeem: 100, maxPct: 50, notify: true },
   repair: {
     autoWA: true, warrantyDays: 30, inspectionFee: 0, autoPickup: true, pickupDays: 3, pickupMax: 3,
@@ -10441,12 +10443,14 @@ Modules.settings = {
 const CHANGELOG = [
   { v: '1.6.1', d: '2026-10-30', items: [
     ['fingerprint', L('الدخول بالبصمة: على الموبايل ببصمة الصباع أو الوش، وعلى الويندوز بـ Windows Hello — كل مستخدم يفعّلها من قائمة اسمه ← «الدخول بالبصمة»', 'Biometric sign-in: fingerprint/face on Android, Windows Hello on Windows')],
+    ['user', L('«احفظ كلمة المرور على الجهاز ده»: المرة الجاية تدوس «تسجيل الدخول» على طول — أو تدخل بالبصمة، اللي يريحك', 'Remember password on this device, alongside biometrics')],
     ['lock', L('فتح الشاشة المقفولة بالبصمة من غير ما تكتب كلمة المرور', 'Unlock the lock screen with biometrics')],
     ['shield', L('تأكيد هويتك بالبصمة قبل العمليات الحساسة (المرتجع، تعديل الأسعار بالجملة، الاستعادة، المسح) — بتتفعّل من الإعدادات ← الأمان', 'Confirm sensitive actions with biometrics')],
     ['key', L('أمان: كلمة المرور مش بتتخزن، ولو اتضافت بصمة جديدة على الجهاز أو اتغيرت كلمة المرور البصمة بتتلغي لوحدها', 'Password never stored; auto-invalidated on new fingerprints or password change')],
     ['fingerprint', L('بعد ما تدخل بكلمة المرور، البرنامج بيعرض عليك تفعيل البصمة بضغطة واحدة', 'One-tap biometric setup offer after password sign-in')],
     ['moon', L('الوضع الداكن: اللوجو بقى ميدالية 3D بلون أحمر دم الغزال جوه إطار واضح', 'Dark mode: 3D crimson logo medallion')],
     ['clock', L('الفترة التجريبية بقت 7 أيام بدل 3', 'Trial is now 7 days')],
+    ['alert', L('لو التطبيق اتقفل فجأة، السبب بيتسجل ويتبعت للمطور تلقائياً أول ما تفتحه تاني', 'Crash reports are sent to the developer automatically')],
     ['download', L('التحديثات بتظهر لوحدها: أول ما تفتح التطبيق، ولما ترجعله من الخلفية، وكل نص ساعة — وزرار أخضر فوق طول ما فيه تحديث مستني', 'Updates are detected automatically on open, resume and every 30 minutes')],
     ['sparkles', L('خط البرنامج الجديد: Cairo من جوجل — أوضح في القراءة، وشغال من غير نت على الكمبيوتر والموبايل، وكمان في الإيصالات والتقارير', 'New app font: Cairo')],
     ['factory', L('الموردين بقوا في القائمة الرئيسية مباشرة بعد «المبيعات والمخزون»، ومعاهم «مرتجعات التالف» و«الهوالك»', 'Suppliers moved to the main menu')]] },
@@ -13402,6 +13406,21 @@ if (typeof OnlineLicense !== 'undefined' && OnlineLicense.call) {
     const r = await baseCall({ ...info, ...extra }); if (un.length) ErrLog.markSent(); return r;
   };
 }
+/* أندرويد: لو البرنامج اتقفل فجأة المرة اللي فاتت — السبب بيتسجل ويتبعت للمطور تلقائياً */
+const CrashLog = {
+  summary(t) { const L0 = String(t || '').split('\n').map((x) => x.trim()).filter(Boolean); const head = L0.slice(1, 2); const ours = L0.filter((x) => /^at com\.markazahllan|^Caused by/.test(x)).slice(0, 4); const top = L0.filter((x) => /^at /.test(x)).slice(0, 2); return `CRASH ${L0[0] || ''} || ${[...head, ...ours, ...top].join(' | ')}`.slice(0, 300); },
+  async check() {
+    try {
+      const P = window.Capacitor?.Plugins?.ApkInstaller; if (!P || !P.lastCrash) return;
+      const r = await P.lastCrash(); if (!r || !r.text) return;
+      ErrLog.add(this.summary(r.text), 'android-crash');
+      try { localStorage.setItem('mah:lastCrash', JSON.stringify({ at: r.at || Date.now(), text: String(r.text).slice(0, 6000) })); } catch (_) {}
+      try { OnlineLicense.call && OnlineLicense.call({}).catch(() => {}); } catch (_) {}
+      setTimeout(() => { try { UI.toast(L('البرنامج اتقفل فجأة المرة اللي فاتت — اتبعت تقرير بالسبب للمطور تلقائياً 🛠️', 'The app closed unexpectedly last time — a report was sent'), 'warn', 7000); } catch (_) {} }, 2500);
+    } catch (e) { console.warn(e); }
+  }
+};
+window.addEventListener('DOMContentLoaded', () => setTimeout(() => CrashLog.check(), 1200));
 const Report = {
   async open() {
     let mid = ''; try { mid = await License.machineId(); } catch (_) {}
@@ -13983,7 +14002,7 @@ const MonthlyPL = {
    ========================================================= */
 const Bio = {
   KEY: 'mah:bio', LAST: 'mah:bioLast',
-  cfg() { return { on: true, auto: true, lock: true, confirm: false, ...(DB.settings().bio || {}) }; },
+  cfg() { return { on: true, auto: true, lock: true, confirm: false, remember: true, ...(DB.settings().bio || {}) }; },
   plat() {
     const C = window.Capacitor;
     if (C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.Biometric) return 'android';
@@ -14158,9 +14177,10 @@ const Bio = {
       { name: 'on', label: L('السماح بالدخول بالبصمة / Windows Hello', 'Allow biometric sign-in'), type: 'checkbox', col: 12 },
       { name: 'auto', label: L('اطلب البصمة تلقائياً أول ما شاشة الدخول تفتح', 'Prompt automatically on the sign-in screen'), type: 'checkbox', col: 12 },
       { name: 'lock', label: L('فتح الشاشة المقفولة بالبصمة', 'Unlock the lock screen with biometrics'), type: 'checkbox', col: 12 },
+      { name: 'remember', label: L('السماح بـ «احفظ كلمة المرور على الجهاز ده» في شاشة الدخول', 'Allow “remember password on this device”'), type: 'checkbox', col: 12 },
       { name: 'confirm', label: L('تأكيد الهوية (بصمة أو كلمة مرور) قبل العمليات الحساسة: المرتجع، تعديل الأسعار بالجملة، استعادة نسخة احتياطية، مسح البيانات، إعادة كلمة مرور مستخدم', 'Confirm identity before sensitive actions'), type: 'checkbox', col: 12 },
       { type: 'html', col: 12, html: `<div class="faint" style="line-height:1.9">${L('ده إذن عام بس. كل مستخدم لازم يفعّل بصمته لحسابه على جهازه من قائمة اسمه ← «الدخول بالبصمة» (أو الزرار اللي تحت). لو قفلت السماح هنا، الكل هيدخل بكلمة المرور.', 'Each user must enable it for their own account.')}</div><button type="button" class="btn block mt" onclick="Bio.dialog()">${icon('fingerprint')}${L('فعّل البصمة لحسابي على الجهاز ده', 'Enable for my account on this device')}</button>` }], c),
-      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (m) => { const v = UI.read(m.el); DB.saveSettings({ bio: { on: !!v.on, auto: !!v.auto, lock: !!v.lock, confirm: !!v.confirm } }); audit('bio.settings', JSON.stringify(v)); m.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); if (v.on && Session.user) { (async () => { const u = DB.get('users', Session.user.id); if (!(await this.enrolled(u))) { UI.toast(L('خطوة أخيرة: فعّل بصمتك لحسابك على الجهاز ده 👆', 'Last step: enable it for your account'), 'info', 5000); setTimeout(() => this.dialog(), 400); } })(); } } }] });
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (m) => { const v = UI.read(m.el); DB.saveSettings({ bio: { on: !!v.on, auto: !!v.auto, lock: !!v.lock, confirm: !!v.confirm, remember: !!v.remember } }); if (!v.remember) Remember.set(null); audit('bio.settings', JSON.stringify(v)); m.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); if (v.on && Session.user) { (async () => { const u = DB.get('users', Session.user.id); if (!(await this.enrolled(u))) { UI.toast(L('خطوة أخيرة: فعّل بصمتك لحسابك على الجهاز ده 👆', 'Last step: enable it for your account'), 'info', 5000); setTimeout(() => this.dialog(), 400); } })(); } } }] });
   }
 };
 
@@ -14221,6 +14241,78 @@ const Bio = {
   try { Bio.guard(Backup, 'restore', L('استعادة نسخة احتياطية — هتستبدل كل البيانات', 'Restore a backup')); } catch (_) {}
   try { Bio.guard(OwnerTools, 'resetDialog', L('مسح بيانات من النظام', 'Erase system data')); } catch (_) {}
   try { Bio.guard(Modules.users, 'resetPassword', (u) => L(`إعادة تعيين كلمة مرور <b>${esc(u && u.name)}</b>`, `Reset password for ${u && u.name}`)); } catch (_) {}
+})();
+
+/* =========================================================
+   حفظ كلمة المرور على الجهاز (بجانب البصمة) — 1.6.1
+   - «احفظ كلمة المرور على الجهاز ده»: المرة الجاية تدوس «تسجيل الدخول» على طول
+   - كلمة المرور نفسها مش بتتخزن: بيتخزن رمز عشوائي، وبصمته في سجل المستخدم
+   - تغيير كلمة المرور أو «انسَ الجهاز ده» بيلغيه
+   ========================================================= */
+const Remember = {
+  KEY: 'mah:rem', FAKE: '⁣⁣⁣⁣⁣⁣⁣⁣',
+  on() { return Bio.cfg().remember !== false; },
+  get() { try { return JSON.parse(localStorage.getItem(this.KEY) || 'null'); } catch (_) { return null; } },
+  set(v) { try { v ? localStorage.setItem(this.KEY, JSON.stringify(v)) : localStorage.removeItem(this.KEY); } catch (_) {} },
+  async valid() {
+    const r = this.get(); if (!r || !r.uid || !r.tok || !this.on()) return null;
+    const u = DB.get('users', r.uid); const mid = await Bio.mid();
+    if (!u || u.active === false || !u.rem || !u.rem[mid] || u.rem[mid].h !== (await sha256('mah-rem:' + r.tok))) return null;
+    return u;
+  },
+  async save(u) {
+    const tok = Bio.hex(24); const mid = await Bio.mid(); const fresh = DB.get('users', u.id) || u; const dev = DB.get('devices', mid);
+    DB.update('users', u.id, { rem: { ...(fresh.rem || {}), [mid]: { h: await sha256('mah-rem:' + tok), at: nowISO(), dev: dev?.label || dev?.name || '' } } });
+    this.set({ uid: u.id, tok }); if (Session.user && Session.user.id === u.id) Session.user = DB.get('users', u.id);
+  },
+  async forget(uid) {
+    const r = this.get(); const id = uid || (r && r.uid); this.set(null); if (!id) return;
+    const u = DB.get('users', id); const mid = await Bio.mid(); if (u && u.rem && u.rem[mid]) { const x = { ...u.rem }; delete x[mid]; DB.update('users', id, { rem: x }); }
+  },
+  async ui() {
+    const form = $('#loginForm'); if (!form || !this.on() || $('#remBox', form)) return;
+    const pi = $('input[name=p]', form), ui = $('input[name=u]', form);
+    const box = document.createElement('label'); box.id = 'remBox'; box.className = 'rem-box';
+    box.innerHTML = `<input type="checkbox" id="remChk"><span>${L('احفظ كلمة المرور على الجهاز ده', 'Remember password on this device')}</span>`;
+    pi.closest('.field').after(box);
+    const u = await this.valid(); if (!$('#loginForm')) return;
+    if (u) {
+      $('#remChk').checked = true; ui.value = u.username; pi.value = this.FAKE; pi.dataset.rem = '1';
+      const clear = () => { if (pi.dataset.rem) { pi.value = ''; delete pi.dataset.rem; } };
+      pi.addEventListener('focus', () => { if (pi.dataset.rem) pi.select(); });
+      pi.addEventListener('input', () => { if (pi.dataset.rem && pi.value !== this.FAKE) delete pi.dataset.rem; });
+      ui.addEventListener('input', clear);
+      setTimeout(() => { if (document.activeElement === pi) pi.blur(); }, 120);
+    }
+    form.addEventListener('submit', async (e) => {
+      const chk = $('#remChk')?.checked; Remember._want = !!chk;
+      if (pi.dataset.rem && pi.value === this.FAKE) {
+        e.preventDefault(); e.stopImmediatePropagation();
+        const v = await this.valid(); const key = ui.value.trim().toLowerCase();
+        if (!v || v.username.toLowerCase() !== key) { this.set(null); pi.value = ''; delete pi.dataset.rem; return UI.toast(L('اكتب كلمة المرور', 'Enter your password'), 'warn'); }
+        if (!Security.canTry(key)) return UI.toast(L('تم إيقاف الدخول مؤقتاً بسبب محاولات خاطئة متكررة — حاول بعد قليل', 'Too many failed attempts — try again shortly'), 'err');
+        Security.ok(key); audit('login.remembered', v.username);
+        Remember._skip = true; try { await App.enter(v); } finally { Remember._skip = false; }
+        if (!chk) await this.forget(v.id);
+      }
+    }, true);
+  }
+};
+
+(function () {
+  const bl = App.loginScreen; App.loginScreen = function (...a) { const r = bl.apply(this, a); Remember.ui().catch((e) => console.warn(e)); return r; };
+  /* بعد الدخول بكلمة المرور: احفظ أو امسح حسب الاختيار */
+  const be = App.enter; App.enter = async function (user, ...a) {
+    const ok = await be.call(this, user, ...a);
+    try { if (ok && !Remember._skip && !Bio._via && Remember.on()) { if (Remember._want) await Remember.save(user); else { const r = Remember.get(); if (r && r.uid === user.id) await Remember.forget(user.id); } } } catch (e) { console.warn(e); }
+    Remember._want = false; return ok;
+  };
+  /* تغيير كلمة المرور بيلغي الحفظ */
+  const bu = DB.update.bind(DB);
+  DB.update = function (col, id, patch, ...rest) {
+    if (col === 'users' && patch && patch.password && !('rem' in patch)) { const cur = DB.get('users', id); if (cur && cur.password !== patch.password && cur.rem && Object.keys(cur.rem).length) patch = { ...patch, rem: {} }; }
+    return bu(col, id, patch, ...rest);
+  };
 })();
 
 </script>

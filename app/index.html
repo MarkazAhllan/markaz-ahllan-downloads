@@ -1827,6 +1827,13 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .pr-ln { align-items: center; font-size: 13px; }
 .pr-pick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; } .pr-pick label { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 99px; font-size: 13px; cursor: pointer; background: var(--surface); }
 .pr-pick input { accent-color: var(--p); } .pr-scroll { max-height: 220px; overflow: auto; border: 1px solid var(--line); border-radius: 12px; padding: 8px; } #ofQ { margin-top: 6px; }
+
+/* ===== 1.6 ===== */
+.bp-sum { margin: 10px 0 6px; } .bp-tbl { max-height: 320px; overflow: auto; border: 1px solid var(--line); border-radius: 12px; } .bp-tbl td, .bp-tbl th { padding: 6px 10px; }
+.ct-grid { grid-template-columns: 1fr 300px; gap: 14px; } .ct-link { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; } .ct-link input { flex: 1; min-width: 200px; font-weight: 700; }
+.ct-qr img { width: 100%; max-width: 230px; border-radius: 14px; border: 1px solid var(--line); background: #fff; padding: 6px; display: block; margin: 0 auto 8px; } .ct-qr b, .ct-qr small { display: block; }
+.pl-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: linear-gradient(135deg, var(--p-50), var(--surface)); border: 1px solid var(--p-100); }
+@media (max-width: 860px) { .ct-grid { grid-template-columns: 1fr; } }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2175,7 +2182,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.5.0', build: '', trialHours: 72 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.6.0', build: '', trialHours: 72 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2270,6 +2277,8 @@ const DEFAULT_SETTINGS = {
   ownerReport: { on: false, phone: '', auto: true, autoSend: true, pdf: true, lowStock: true },
   cloud: { code: '', auto: true, everyHours: 24, keep: 7, lastAt: null, lastErr: '', lastSize: 0 },
   ratings: { on: false },
+  catalog: { on: false },
+  monthlyPL: { auto: true },
   loyalty: { on: false, earnPer: 10, earnPts: 1, redeemPts: 100, redeemVal: 10, minRedeem: 100, maxPct: 50, notify: true },
   repair: {
     autoWA: true, warrantyDays: 30, inspectionFee: 0, autoPickup: true, pickupDays: 3, pickupMax: 3,
@@ -2342,7 +2351,7 @@ const DB = {
     if (this._settings) return this._settings;
     const s = this.maps.settings.get('main') || {};
     const merged = { ...DEFAULT_SETTINGS, ...s };
-    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
+    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings', 'catalog', 'monthlyPL']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
     this._settings = merged; return merged;
   },
   saveSettings(patch) {
@@ -3136,7 +3145,7 @@ const OnlineLicense = {
   async refresh(info) {
     let res; try { res = await this.call(info); } catch (e) { return false; }
     const prev = this.load() || {};
-    const c = { ...prev, status: res.status, trialStart: res.trial_start ? Date.parse(res.trial_start) : null, trialHours: res.trial_hours || 72, expiresAt: res.expires_at ? Date.parse(res.expires_at) : null, message: res.message || '', checkedAt: Date.now(), skew: Date.parse(res.server_time) - Date.now() };
+    const c = { ...prev, status: res.status, trialStart: res.trial_start ? Date.parse(res.trial_start) : null, trialHours: res.trial_hours || 72, expiresAt: res.expires_at ? Date.parse(res.expires_at) : null, message: res.message || '', checkedAt: Date.now(), skew: Date.parse(res.server_time) - Date.now() , beta: !!res.beta, stableCode: res.stable_code == null ? null : Number(res.stable_code) };
     if (res.status === 'unregistered') c.registered = false; else c.registered = true;
     if (res.license_key) { const info2 = await License.verify(res.license_key); const mid = await License.machineId(); if (info2 && (info2.m === mid || info2.m === '*')) { c.key = res.license_key; DB.saveSettings({ license: { key: res.license_key, activatedAt: nowISO(), online: true } }); } }
     if (res.status === 'blocked' || (res.status !== 'active' && prev.key)) { delete c.key; if (DB.settings().license?.online) DB.saveSettings({ license: null }); }
@@ -3680,7 +3689,7 @@ const Modules = {};
 const NAV = [
   { id: 'main', grp: ['الرئيسية', 'Main'], items: ['dashboard', 'ownerLive', 'pos'], fixed: true },
   { id: 'services', grp: ['المحافظ الإلكترونية وماكينات الدفع', 'E-wallets & payment machines'], icon: 'wallet', items: ['wallets', 'machines'] },
-  { id: 'commerce', grp: ['المبيعات والمخزون', 'Sales & stock'], icon: 'cart', items: ['sales', 'customers', 'loyalty', 'offers', 'ratings', 'installments', 'purchases', 'inventory', 'suppliers', 'losses'] },
+  { id: 'commerce', grp: ['المبيعات والمخزون', 'Sales & stock'], icon: 'cart', items: ['sales', 'customers', 'loyalty', 'offers', 'catalog', 'ratings', 'installments', 'purchases', 'inventory', 'suppliers', 'losses'] },
   { id: 'more', grp: ['', ''], items: ['phones', 'cctv', 'lines', 'repairs'], fixed: true },
   { id: 'hr', grp: ['الموارد البشرية', 'HR'], icon: 'users', items: ['users', 'attendance', 'payroll', 'targets'] },
   { id: 'finance', grp: ['المالية', 'Finance'], icon: 'bank', items: ['shifts', 'expenses', 'capital', 'reports'] },
@@ -5878,6 +5887,7 @@ Modules.repairs = {
       { name: 'autoPickup', label: L('تذكير تلقائي للأجهزة الجاهزة اللي ما اتستلمتش (لما واتساب يكون مربوط)', 'Auto-remind uncollected ready devices (WhatsApp linked)'), type: 'checkbox', col: 4, value: c.autoPickup !== false },
       { name: 'pickupDays', label: L('ابعت التذكير كل (يوم)', 'Remind every (days)'), type: 'number', col: 4, value: c.pickupDays || 3 },
       { name: 'pickupMax', label: L('أقصى عدد تذكيرات للجهاز', 'Max reminders per device'), type: 'number', col: 4, value: c.pickupMax || 3 },
+      { name: 'track', label: L('«تابع جهازك»: QR على إيصال الاستلام ورابط في رسايل واتساب — العميل يشوف حالة جهازه من موبايله', 'Track-your-device QR & link for customers'), type: 'checkbox', col: 12, value: c.track !== false },
       { name: 'deviceTypes', label: L('أنواع الأجهزة (كل نوع في سطر)', 'Device types (one per line)'), type: 'textarea', col: 6, value: c.deviceTypes.join('\n'), attrs: 'style="min-height:150px"' },
       { name: 'accessories', label: L('المرفقات (كل واحدة في سطر)', 'Accessories (one per line)'), type: 'textarea', col: 6, value: c.accessories.join('\n'), attrs: 'style="min-height:150px"' },
       { name: 'terms', label: L('شروط الصيانة (تُطبع على الإيصال)', 'Repair terms (printed on ticket)'), type: 'textarea', col: 12, value: c.terms }])}</div>
@@ -5889,7 +5899,7 @@ Modules.repairs = {
     $('#rpSave').onclick = () => {
       const v = UI.read(el); const lines = (x) => String(x || '').split('\n').map((s) => s.trim()).filter(Boolean);
       const templates = {}; $$('[data-tpl]', el).forEach((t) => (templates[t.dataset.tpl] = t.value));
-      DB.saveSettings({ repair: { autoPickup: !!v.autoPickup, pickupDays: Math.max(1, Number(v.pickupDays) || 3), pickupMax: Math.max(1, Number(v.pickupMax) || 3), autoWA: !!v.autoWA, warrantyDays: Number(v.warrantyDays) || 0, inspectionFee: Number(v.inspectionFee) || 0, deviceTypes: lines(v.deviceTypes), accessories: lines(v.accessories), terms: v.terms, templates } });
+      DB.saveSettings({ repair: { track: !!v.track, autoPickup: !!v.autoPickup, pickupDays: Math.max(1, Number(v.pickupDays) || 3), pickupMax: Math.max(1, Number(v.pickupMax) || 3), autoWA: !!v.autoWA, warrantyDays: Number(v.warrantyDays) || 0, inspectionFee: Number(v.inspectionFee) || 0, deviceTypes: lines(v.deviceTypes), accessories: lines(v.accessories), terms: v.terms, templates } });
       audit('repair.settings'); UI.toast(L('تم الحفظ', 'Saved'));
     };
   }
@@ -10397,6 +10407,13 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.6.0', d: '2026-10-30', items: [
+    ['tag', L('تعديل الأسعار بالجملة: زوّد أو قلّل أسعار قسم أو مورد بنسبة أو مبلغ، مع تقريب لأقرب 5 جنيه ومعاينة قبل الحفظ، وطباعة ملصقات الأسعار الجديدة — وتقدر تتراجع', 'Bulk price update with rounding, preview, labels and undo')],
+    ['tool', L('«تابع جهازك»: QR على إيصال الصيانة ورابط في رسايل واتساب — العميل يشوف حالة جهازه والمتبقي عليه من موبايله', 'Track-your-device page for repair customers')],
+    ['globe', L('الكتالوج الأونلاين: صفحة لمحلك بالمنتجات والصور والأسعار، العميل يختار ويبعتلك الطلب على واتساب — وبتتحدث لوحدها من المخزون', 'Online catalog with WhatsApp ordering')],
+    ['file', L('تقرير الأرباح والخسائر الشهري PDF بمقارنة بالشهر اللي فات — وبيوصل لصاحب المحل على واتساب أول كل شهر', 'Monthly P&L PDF sent to the owner every month')],
+    ['shield', L('التحديثات بقت بتتجرّب الأول على أجهزة مختارة قبل ما توصل للكل — عشان شغلك يفضل مستقر', 'Updates are tested on selected devices before everyone')]
+  ] },
   { v: '1.5.0', d: '2026-10-27', items: [
     ['sparkles', L('معالج إعداد لأول تشغيل: بيانات المحل واللوجو، نشاطك، المحافظ، الأصناف من Excel، الموظفين، الطابعة — وتغيير كلمة سر المدير. البرنامج يبقى جاهز في دقايق', 'First-run setup wizard: store, business, wallets, products, staff, printer')],
     ['tag', L('العروض والكوبونات: خصم تلقائي على قسم أو أصناف لفترة محددة، وأكواد خصم بتتكتب في نقطة البيع، وتقدر تبعت الكوبون لعملاءك على واتساب', 'Offers & coupons: automatic discounts and coupon codes at the POS')],
@@ -12968,7 +12985,10 @@ const AppUpdate = {
     try {
       const [j, cur] = await Promise.all([this.info('pos.json'), this.current()]);
       try { localStorage.setItem('mah:updChk', String(Date.now())); } catch (_) {}
-      if (Number(j.code) > cur.code) this.prompt(j, cur);
+      // قناة التحديث التجريبية: النسخة الجديدة بتوصل للأجهزة التجريبية بس لحد ما المطور يعتمدها من لوحته
+      const ch = (typeof OnlineLicense !== 'undefined' && OnlineLicense.load && OnlineLicense.load()) || {};
+      const held = ch.stableCode && !ch.beta && Number(j.code) > Number(ch.stableCode);
+      if (Number(j.code) > cur.code && !held) this.prompt(j, cur);
       else if (manual) UI.toast(L('عندك آخر إصدار ✓', 'You have the latest version ✓') + (cur.name ? ` (${cur.name})` : ''));
     } catch (e) { if (manual) UI.toast(L('مش قادر أوصل لسيرفر التحديثات', 'Cannot reach the update server'), 'err'); }
   },
@@ -13628,6 +13648,251 @@ Modules.offers = {
 </script>
   <script>
 /* =========================================================
+   1.6 — تعديل الأسعار بالجملة • «تابع جهازك» لعملاء الصيانة • الكتالوج الأونلاين • تقرير الأرباح الشهري
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const Cloud = {
+  ok() { return typeof LICENSE_SERVER !== 'undefined' && !!(LICENSE_SERVER.url && LICENSE_SERVER.anonKey) && !window.MAH_DEMO; },
+  site() { return (typeof LICENSE_SERVER !== 'undefined' && LICENSE_SERVER.site ? LICENSE_SERVER.site : '').replace(/\/$/, ''); },
+  async rpc(fn, body) {
+    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 20000);
+    try {
+      const r = await fetch(LICENSE_SERVER.url.replace(/\/$/, '') + '/rest/v1/rpc/' + fn, { method: 'POST', signal: ctl.signal, headers: { apikey: LICENSE_SERVER.anonKey, Authorization: 'Bearer ' + LICENSE_SERVER.anonKey, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const tx = await r.text(); if (!r.ok) { let m = tx; try { m = JSON.parse(tx).message || tx; } catch (_) {} throw new Error(m || 'HTTP ' + r.status); } return tx ? JSON.parse(tx) : null;
+    } finally { clearTimeout(t); }
+  },
+  token(n = 16) { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'; const b = new Uint8Array(n); crypto.getRandomValues(b); return [...b].map((x) => a[x % a.length]).join(''); },
+  async thumb(src, size = 160) {
+    if (!src) return ''; try {
+      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+      const s = Math.min(1, size / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * s)); c.height = Math.max(1, Math.round(img.height * s));
+      const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', 0.72);
+    } catch (_) { return ''; }
+  }
+};
+
+/* ===================== 1) تعديل الأسعار بالجملة ===================== */
+const BulkPrice = {
+  KEY: 'mah:lastBulk',
+  last() { try { const b = JSON.parse(localStorage.getItem(this.KEY) || 'null'); return b && Date.now() - b.at < 14 * 864e5 ? b : null; } catch (_) { return null; } },
+  round(v, mode) { if (!(v > 0)) return 0; if (mode === 'up1') return Math.ceil(v); if (mode === 'up5') return Math.ceil(v / 5) * 5; if (mode === 'up10') return Math.ceil(v / 10) * 10; return round2(v); },
+  calc(p, f, op, val, rnd) {
+    const old = Number(p[f]) || 0; let nv = old;
+    if (op === 'inc') nv = old * (1 + val / 100); else if (op === 'dec') nv = old * (1 - val / 100); else if (op === 'add') nv = old + val; else if (op === 'sub') nv = old - val;
+    else if (op === 'margin') { const c = Number(p.cost) || 0; if (!c) return null; nv = c * (1 + val / 100); } else if (op === 'set') nv = val;
+    nv = this.round(Math.max(0, nv), rnd); return nv === old ? null : nv;
+  },
+  open() {
+    if (!Session.can('inventory')) return UI.toast(L('مش عندك صلاحية', 'No permission'), 'err');
+    const cats = DB.all('categories'), sups = DB.all('suppliers'); const canCost = Session.can('inventory.cost'); const last = this.last();
+    const m = UI.modal({ title: L('تعديل الأسعار بالجملة', 'Bulk price update'), icon: 'tag', size: 'lg', body: UI.form([
+      { name: 'scope', label: L('الأصناف', 'Products'), type: 'select', col: 4, options: [['category', L('قسم', 'Category')], ['supplier', L('مورد', 'Supplier')], ['all', L('كل الأصناف', 'All products')]] },
+      { name: 'cat', label: L('القسم', 'Category'), type: 'select', col: 4, options: cats.map((c) => [c.id, c.name]) }, { name: 'sup', label: L('المورد', 'Supplier'), type: 'select', col: 4, options: [['', '—'], ...sups.map((s) => [s.id, s.name])] },
+      { name: 'field', label: L('السعر اللي هيتغير', 'Price to change'), type: 'select', col: 4, options: [['price', L('سعر البيع', 'Selling price')], ['wholesale', L('سعر الجملة', 'Wholesale price')], ...(canCost ? [['cost', L('سعر الشراء (التكلفة)', 'Cost price')]] : [])] },
+      { name: 'op', label: L('التعديل', 'Change'), type: 'select', col: 4, options: [['inc', L('زيادة بنسبة %', 'Increase by %')], ['dec', L('تخفيض بنسبة %', 'Decrease by %')], ['add', L('زيادة مبلغ ثابت', 'Add amount')], ['sub', L('تخفيض مبلغ ثابت', 'Subtract amount')], ['margin', L('هامش ربح % على التكلفة', 'Margin % over cost')], ['set', L('سعر موحّد', 'Set price')]] },
+      { name: 'val', label: L('القيمة', 'Value'), type: 'number', col: 4, value: 10 },
+      { name: 'rnd', label: L('التقريب', 'Rounding'), type: 'select', col: 4, options: [['up5', L('لأعلى 5 جنيه (19 ← 20)', 'Up to 5')], ['up1', L('لأعلى جنيه', 'Up to 1')], ['up10', L('لأعلى 10 جنيه', 'Up to 10')], ['none', L('من غير تقريب', 'No rounding')]] },
+      { name: 'labels', label: L('اطبع ملصقات الباركود بالأسعار الجديدة بعد الحفظ', 'Print new price labels after saving'), type: 'checkbox', col: 8, value: true }]) +
+      `<div class="bp-sum" id="bpSum"></div><div class="tbl-wrap bp-tbl"><table class="tbl"><thead><tr><th style="width:34px"><input type="checkbox" id="bpAll" checked></th><th>${L('الصنف', 'Product')}</th><th>${L('القديم', 'Old')}</th><th>${L('الجديد', 'New')}</th><th>${L('الفرق', 'Diff')}</th></tr></thead><tbody id="bpRows"></tbody></table></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, ...(last ? [{ label: L(`تراجع عن آخر تعديل (${last.items.length} صنف)`, 'Undo last change'), icon: 'refresh', onClick: (x) => this.undo(x) }] : []), { label: L('طبّق الأسعار الجديدة', 'Apply new prices'), cls: 'primary', icon: 'check', onClick: (x) => this.apply(x) }] });
+    const sync = () => { const s = $('[name=scope]', m.el).value; $('[name=cat]', m.el).closest('.f').style.display = s === 'category' ? '' : 'none'; $('[name=sup]', m.el).closest('.f').style.display = s === 'supplier' ? '' : 'none'; this.preview(m); };
+    $$('select,input', m.el).forEach((e) => { if (e.id !== 'bpAll') { e.oninput = sync; e.onchange = sync; } });
+    $('#bpAll', m.el).onchange = (e) => { $$('[data-bp]', m.el).forEach((c) => (c.checked = e.target.checked)); this.summ(m); };
+    sync(); this.m = m;
+  },
+  rows(m) {
+    const v = UI.read(m.el); const val = Number(v.val) || 0;
+    const list = DB.filter('products', (p) => p.active !== false && (v.scope === 'all' || (v.scope === 'category' && p.categoryId === v.cat) || (v.scope === 'supplier' && p.supplierId === v.sup)));
+    return { v, rows: list.map((p) => ({ p, old: Number(p[v.field]) || 0, nv: this.calc(p, v.field, v.op, val, v.rnd) })).filter((r) => r.nv != null) };
+  },
+  preview(m) {
+    const { rows } = this.rows(m); this._rows = rows;
+    $('#bpRows', m.el).innerHTML = rows.slice(0, 400).map((r, i) => `<tr><td><input type="checkbox" data-bp="${i}" checked></td><td>${esc(r.p.name)}</td><td class="num">${money(r.old, false)}</td><td class="num"><b>${money(r.nv, false)}</b></td><td class="num ${r.nv >= r.old ? 'pos' : 'neg'}">${r.nv >= r.old ? '+' : ''}${money(r.nv - r.old, false)}</td></tr>`).join('') || `<tr><td colspan="5" class="faint tc" style="padding:18px">${L('مفيش أصناف هتتغير بالاختيارات دي', 'Nothing changes with these options')}</td></tr>`;
+    $$('[data-bp]', m.el).forEach((c) => (c.onchange = () => this.summ(m))); this.summ(m);
+  },
+  summ(m) { const sel = $$('[data-bp]:checked', m.el).length; $('#bpSum', m.el).innerHTML = `<span class="tag info">${sel} / ${(this._rows || []).length} ${L('صنف هيتغير سعره', 'products will change')}</span>${(this._rows || []).length > 400 ? ` <span class="faint">${L('(المعاينة بتعرض أول 400)', '(preview shows first 400)')}</span>` : ''}`; },
+  async apply(m) {
+    const { v } = this.rows(m); const sel = $$('[data-bp]:checked', m.el).map((c) => this._rows[+c.dataset.bp]).filter(Boolean);
+    if (!sel.length) return UI.toast(L('مفيش أصناف مختارة', 'Nothing selected'), 'warn');
+    if (!(await UI.confirm(L(`تغيير ${L({ price: 'سعر البيع', wholesale: 'سعر الجملة', cost: 'سعر الشراء' }[v.field], v.field)} لـ ${sel.length} صنف؟`, `Change ${sel.length} prices?`), { danger: false }))) return;
+    const at = Date.now(); const by = Session.user?.name || '';
+    sel.forEach((r) => { const h = [...(r.p.priceHistory || []), { at: nowISO(), f: v.field, from: r.old, to: r.nv, by }].slice(-20); DB.update('products', r.p.id, { [v.field]: r.nv, priceHistory: h }); });
+    try { localStorage.setItem(this.KEY, JSON.stringify({ at, field: v.field, items: sel.map((r) => ({ id: r.p.id, from: r.old, to: r.nv })) })); } catch (_) {}
+    audit('price.bulk', `${v.field} ${v.op} ${v.val} × ${sel.length}`); m.close(); UI.toast(L(`اتعدّل سعر ${sel.length} صنف ✓`, `${sel.length} prices updated ✓`), 'ok', 4000);
+    if (v.labels && v.field !== 'cost') { const list = sel.map((r) => ({ product: DB.get('products', r.p.id), copies: 1 })).filter((x) => x.product); if (list.length) printHTML(labelsHTML(list), { type: 'label' }); }
+    if (App.current === 'inventory') App.reload();
+  },
+  async undo(m) {
+    const b = this.last(); if (!b) return; if (!(await UI.confirm(L(`ترجيع الأسعار القديمة لـ ${b.items.length} صنف؟`, 'Restore old prices?')))) return;
+    let n = 0; b.items.forEach((it) => { const p = DB.get('products', it.id); if (p && Number(p[b.field]) === Number(it.to)) { DB.update('products', p.id, { [b.field]: it.from }); n++; } });
+    try { localStorage.removeItem(this.KEY); } catch (_) {} audit('price.bulk.undo', String(n)); m.close(); UI.toast(L(`رجعت الأسعار القديمة لـ ${n} صنف ✓`, `${n} restored ✓`)); if (App.current === 'inventory') App.reload();
+  }
+};
+(() => {
+  const I = Modules.inventory; if (!I) return; const b = I.render.bind(I);
+  I.render = function (el) { b(el); try { const lb = $('#invLbl'); if (lb && Session.can('inventory')) { lb.insertAdjacentHTML('beforebegin', `<button class="btn" id="invBulk">${icon('tag')}${L('تعديل الأسعار بالجملة', 'Bulk prices')}</button>`); $('#invBulk').onclick = () => BulkPrice.open(); } } catch (e) { console.warn(e); } };
+})();
+
+/* ===================== 2) «تابع جهازك» ===================== */
+const Track = {
+  KEY: 'mah:trackDirty', busy: false,
+  on() { const c = DB.settings().repair || {}; return Cloud.ok() && c.track !== false && (typeof Plan === 'undefined' || Plan.allowed('repairs')); },
+  dirty() { try { return new Set(JSON.parse(localStorage.getItem(this.KEY) || '[]')); } catch (_) { return new Set(); } },
+  mark(id) { const d = this.dirty(); d.add(id); try { localStorage.setItem(this.KEY, JSON.stringify([...d].slice(-500))); } catch (_) {} },
+  token(r) { if (r.trackToken) return r.trackToken; const t = Cloud.token(16); DB.update('repairs', r.id, { trackToken: t }); r.trackToken = t; return t; },
+  link(r) { return `${Cloud.site()}/track.html?t=${this.token(r)}`; },
+  data(r) {
+    const st = DB.settings().store; const tot = Repairs.total(r), paid = Repairs.paid(r);
+    return { v: 1, store: { name: st.name, phone: st.phone || '', address: st.address || '' }, no: r.no, device: Repairs.device(r), issue: String(r.issue || '').slice(0, 140), stage: r.stage, date: r.date,
+      hist: (r.history || []).map((h) => ({ s: h.stage, at: h.date })), total: tot, paid, due: Math.max(0, round2(tot - paid)), estimate: Number(r.estimate) || 0, readyAt: r.readyAt || null, deliveredAt: r.deliveredAt || null, warrantyUntil: r.warrantyUntil || null, cur: DB.settings().currency || 'ج.م', at: nowISO() };
+  },
+  async flush() {
+    if (this.busy || !this.on() || !navigator.onLine) return; const d = this.dirty(); if (!d.size) return; this.busy = true;
+    try {
+      const items = [...d].map((id) => DB.get('repairs', id)).filter((r) => r && r.trackToken).slice(0, 150).map((r) => ({ t: r.trackToken, d: this.data(r) }));
+      if (items.length) { const mid = await License.machineId(); await Cloud.rpc('pos_track_put', { p_mid: mid, p_items: items }); }
+      const left = this.dirty(); items.forEach((it) => { const r = DB.find('repairs', (x) => x.trackToken === it.t); if (r) left.delete(r.id); }); [...left].forEach((id) => { const r = DB.get('repairs', id); if (!r || !r.trackToken) left.delete(id); });
+      try { localStorage.setItem(this.KEY, JSON.stringify([...left])); } catch (_) {}
+    } catch (e) { console.warn('track', e.message); } finally { this.busy = false; }
+  }
+};
+(() => {
+  const bi = DB.insert.bind(DB), bu = DB.update.bind(DB);
+  DB.insert = function (col, doc) { const r = bi(col, doc); try { if (col === 'repairs' && r && r.id && Track.on()) { if (!r.trackToken) { r.trackToken = Cloud.token(16); bu('repairs', r.id, { trackToken: r.trackToken }); } Track.mark(r.id); } } catch (_) {} return r; };
+  DB.update = function (col, id, patch) { const r = bu(col, id, patch); try { if (col === 'repairs' && Track.on() && !(patch && Object.keys(patch).length === 1 && 'trackToken' in patch)) Track.mark(id); } catch (_) {} return r; };
+  setInterval(() => Track.flush(), 30000); setTimeout(() => Track.flush(), 15000);
+  const R = Modules.repairs; if (!R) return;
+  /* رسالة الواتساب: رابط المتابعة مع كل مرحلة (ما عدا التسليم) */
+  const bw = R.waText.bind(R);
+  R.waText = function (r, stage, note) { let t = bw(r, stage, note); try { if (Track.on() && stage !== 'delivered' && !/track\.html/.test(t)) t += `\n\n📲 ${L('تابع جهازك لحظة بلحظة', 'Track your device')}: ${Track.link(r)}`; } catch (_) {} return t; };
+  /* إيصال الاستلام: QR للمتابعة */
+  const bp = R.printTicket.bind(R);
+  R.printTicket = function (r) { try { if (Track.on()) { Track.token(r); Track._qr = Track.link(r); Track.mark(r.id); setTimeout(() => Track.flush(), 500); } } catch (_) {} return bp(DB.get('repairs', r.id) || r); };
+  const bph = printHTML;
+  printHTML = async function (html, opts) {
+    try { if (Track._qr && typeof html === 'string' && html.includes('<div class="terms">')) { const u = Track._qr; Track._qr = null; const q = await qrDataURL(u, 150); if (q) html = html.replace('<div class="terms">', `<div style="text-align:center;margin:2mm 0;border:1.5px dashed #000;border-radius:2mm;padding:1.5mm"><img src="${q}" style="width:30mm;height:30mm"><div style="font-weight:900;font-size:12px">امسح الكود وتابع جهازك من موبايلك</div></div><div class="terms">`); } } catch (_) {}
+    return bph(html, opts);
+  };
+})();
+
+/* ===================== 3) الكتالوج الأونلاين ===================== */
+const Catalog = {
+  cfg() { return { on: false, slug: '', title: 'منتجاتنا', note: '', inStock: true, cats: [], phone: '', lastAt: '', lastHash: '', count: 0, ...(DB.settings().catalog || {}) }; },
+  url(c = this.cfg()) { return c.slug ? `${Cloud.site()}/catalog.html?s=${c.slug}` : ''; },
+  suggest() { const st = DB.settings().store; const b = String(st.nameEn || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24); return (b.length >= 4 ? b : 'shop') + '-' + Cloud.token(4).toLowerCase(); },
+  items(c = this.cfg()) { return DB.filter('products', (p) => p.active !== false && p.hidden !== true && Number(p.price) > 0 && p.type !== 'service' && (!c.cats.length || c.cats.includes(p.categoryId)) && (!c.inStock || p.trackStock === false || Number(p.qty) > 0)).slice(0, 400); },
+  hash(list) { let h = 0; const s = list.map((p) => `${p.id}|${p.name}|${p.price}|${Number(p.qty) > 0 ? 1 : 0}|${(p.image || '').length}`).join(';'); for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return String(h) + ':' + list.length; },
+  async publish(silent) {
+    const c = this.cfg(); if (!Cloud.ok()) return !silent && UI.toast(L('الكتالوج محتاج السيرفر الأونلاين', 'Needs the online server'), 'err');
+    if (!c.slug) return !silent && UI.toast(L('اختار اسم الرابط الأول', 'Choose a link name first'), 'warn');
+    const list = this.items(c); const st = DB.settings().store; const cats = {};
+    const items = []; for (const p of list) { const cn = DB.get('categories', p.categoryId)?.name || ''; if (cn) cats[cn] = 1; items.push({ n: p.name, p: Number(p.price), c: cn, i: await Cloud.thumb(p.image, 180), s: p.trackStock === false || Number(p.qty) > 0 ? 1 : 0 }); }
+    const data = { v: 1, store: { name: st.name, phone: c.phone || st.phone || '', address: st.address || '', logo: await Cloud.thumb(st.logo || 'assets/logo.png', 120) }, title: c.title, note: c.note, cur: DB.settings().currency || 'ج.م', cats: Object.keys(cats), items, at: nowISO() };
+    try {
+      if (!silent) UI.toast(L('جاري نشر الكتالوج…', 'Publishing…'), 'info', 2500);
+      const mid = await License.machineId(); await Cloud.rpc('pos_catalog_put', { p_mid: mid, p_slug: c.slug, p_data: data });
+      DB.saveSettings({ catalog: { lastAt: nowISO(), lastHash: this.hash(list), count: items.length, lastErr: '' } }); if (!silent) UI.toast(L(`اتنشر الكتالوج ✓ (${items.length} صنف)`, `Published ✓ (${items.length})`), 'ok', 4000); return true;
+    } catch (e) { DB.saveSettings({ catalog: { lastErr: e.message.slice(0, 200) } }); if (!silent) UI.toast(/taken/.test(e.message) ? L('اسم الرابط ده محجوز لمحل تاني — اختار اسم تاني', 'Link name taken') : L('تعذر النشر: ', 'Publish failed: ') + e.message, 'err', 6000); return false; }
+    finally { if (App.current === 'catalog' && !silent) App.go('catalog'); }
+  },
+  auto() { const c = this.cfg(); if (!c.on || !c.slug || !Cloud.ok() || !navigator.onLine || (typeof Plan !== 'undefined' && !Plan.allowed('offers'))) return; if (this.hash(this.items(c)) !== c.lastHash) this.publish(true); }
+};
+setTimeout(() => Catalog.auto(), 40000); setInterval(() => Catalog.auto(), 20 * 60e3);
+Modules.catalog = {
+  title: () => L('الكتالوج الأونلاين', 'Online catalog'), icon: 'globe', perm: 'settings',
+  async render(el) {
+    const c = Catalog.cfg(); const n = Catalog.items(c).length; const url = Catalog.url(c); const qr = url ? await qrDataURL(url, 220) : '';
+    el.innerHTML = `<div class="grid ct-grid">
+      <div class="card card-b ct-main"><div class="row wrap" style="gap:12px;align-items:center"><div style="font-size:40px">🛍️</div><div style="flex:1;min-width:220px"><h3 style="margin:0">${L('كتالوج محلك على النت', 'Your shop online')}</h3><div class="faint">${L('صفحة فيها أصنافك بالصور والأسعار — العميل يختار ويبعتلك الطلب على واتساب جاهز. الأسعار والمخزون بيتحدثوا لوحدهم من البرنامج.', 'Products with photos and prices; customers order on WhatsApp. Updates automatically.')}</div></div></div>
+        ${url ? `<div class="ct-link"><input readonly dir="ltr" value="${esc(url)}" id="ctUrl"><button class="btn" id="ctCopy">${icon('copy')}${L('نسخ', 'Copy')}</button><button class="btn wa" id="ctShare">${icon('whatsapp')}${L('مشاركة', 'Share')}</button><a class="btn" href="${esc(url)}" target="_blank" rel="noopener">${icon('eye')}${L('فتح', 'Open')}</a></div>` : ''}
+        <div class="row wrap mt" style="gap:8px"><span class="tag ${c.on ? 'ok' : ''}">${c.on ? L('شغال — بيتحدث لوحده', 'On — auto updates') : L('مقفول', 'Off')}</span><span class="tag">📦 ${n} ${L('صنف هيظهر', 'products')}</span>${c.lastAt ? `<span class="tag">🕓 ${L('آخر نشر', 'Last published')} ${fmtDT(c.lastAt)}</span>` : ''}${c.lastErr ? `<span class="tag err">${esc(c.lastErr)}</span>` : ''}</div>
+        <div class="mt">${UI.form([
+          { name: 'on', label: L('تشغيل الكتالوج وتحديثه تلقائي', 'Enable and auto-update'), type: 'checkbox', col: 12 },
+          { name: 'slug', label: L('اسم الرابط (حروف إنجليزي صغيرة وأرقام و -)', 'Link name (a-z, 0-9, -)'), col: 6, attrs: 'dir="ltr"', placeholder: Catalog.suggest() }, { name: 'phone', label: L('رقم واتساب الطلبات', 'Orders WhatsApp number'), col: 6, attrs: 'dir="ltr"', placeholder: DB.settings().store.phone || '' },
+          { name: 'title', label: L('عنوان الصفحة', 'Page title'), col: 6 }, { name: 'note', label: L('ملاحظة للعملاء (توصيل، مواعيد…)', 'Note (delivery, hours…)'), col: 6 },
+          { name: 'inStock', label: L('المتاح في المخزون بس', 'In-stock only'), type: 'checkbox', col: 12 },
+          { type: 'html', col: 12, html: `<label class="lbl">${L('الأقسام اللي تظهر (فاضي = كله)', 'Categories (empty = all)')}</label><div class="pr-pick">${DB.all('categories').map((k) => `<label><input type="checkbox" data-cc="${k.id}" ${c.cats.includes(k.id) ? 'checked' : ''}>${esc(k.name)}</label>`).join('')}</div>` }], c)}</div>
+        <div class="row mt" style="gap:8px"><div class="spacer"></div><button class="btn" id="ctSave">${icon('check')}${L('حفظ', 'Save')}</button><button class="btn primary" id="ctPub">${icon('upload')}${L('حفظ وانشر دلوقتي', 'Save & publish')}</button></div></div>
+      <div class="card card-b tc ct-qr">${qr ? `<img src="${qr}" alt=""><b>${L('امسح وشوف الكتالوج', 'Scan to open')}</b><small class="faint">${L('اطبعه وحطه على الكاونتر أو على الإعلانات', 'Print it for the counter or ads')}</small><button class="btn sm mt" id="ctPrint">${icon('printer')}${L('اطبع لافتة', 'Print poster')}</button>` : `<div class="faint" style="padding:30px 0">${L('اختار اسم الرابط واضغط «حفظ وانشر» وهيظهر الـ QR هنا', 'Pick a link name and publish to get the QR')}</div>`}</div></div>`;
+    const save = () => { const v = UI.read(el); v.slug = String(v.slug || '').trim().toLowerCase() || Catalog.suggest(); if (!/^[a-z0-9-]{4,40}$/.test(v.slug)) { UI.toast(L('اسم الرابط: حروف إنجليزي صغيرة وأرقام و - من 4 لـ 40', 'Link name: a-z 0-9 - (4-40)'), 'err'); return false; } DB.saveSettings({ catalog: { on: !!v.on, slug: v.slug, phone: v.phone || '', title: v.title || 'منتجاتنا', note: v.note || '', inStock: !!v.inStock, cats: $$('[data-cc]:checked', el).map((x) => x.dataset.cc), lastHash: '' } }); audit('catalog.save', v.slug); return true; };
+    $('#ctSave').onclick = () => { if (save()) { UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.go('catalog'); } };
+    $('#ctPub').onclick = async () => { if (save()) await Catalog.publish(false); };
+    $('#ctCopy') && ($('#ctCopy').onclick = () => { navigator.clipboard?.writeText(url).then(() => UI.toast(L('اتنسخ الرابط ✓', 'Copied ✓'))); });
+    $('#ctShare') && ($('#ctShare').onclick = () => sendWhatsAppDirect('', `🛍️ ${L('شوف منتجاتنا وأسعارها واطلب على واتساب', 'See our products and order on WhatsApp')}:\n${url}`));
+    $('#ctPrint') && ($('#ctPrint').onclick = () => printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:A5;margin:10mm}body{font-family:Tahoma;text-align:center;color:#111}h1{font-size:30px;margin:6px 0}img.q{width:110mm;height:110mm}.u{font-size:13px;direction:ltr;color:#555}</style></head><body><img src="${logoSrc()}" style="width:26mm"><h1>${esc(DB.settings().store.name)}</h1><h2>🛍️ امسح الكود وشوف منتجاتنا وأسعارها</h2><img class="q" src="${qr}"><p style="font-size:18px;font-weight:700">واطلب على واتساب بضغطة</p><p class="u">${esc(url)}</p></body></html>`, { type: 'report', name: 'Catalog-QR' }));
+  }
+};
+
+/* ===================== 4) تقرير الأرباح والخسائر الشهري ===================== */
+const MonthlyPL = {
+  range(mk) { const [y, m] = mk.split('-').map(Number); return { from: `${mk}-01`, to: `${mk}-${pad(new Date(y, m, 0).getDate())}` }; },
+  prev(mk) { const [y, m] = mk.split('-').map(Number); const d = new Date(y, m - 2, 1); return monthKey(d); },
+  data(mk) {
+    const { from, to } = this.range(mk); const R = (x) => inRange(x.date, from, to);
+    const sales = DB.filter('sales', R), wtx = DB.filter('walletTx', R), mtx = DB.filter('machineTx', R), exps = DB.filter('expenses', R);
+    const rev = sum(sales, Sales.net), cogs = sum(sales, (s) => (s.cost || 0) - (s.returnedCost || 0)), tax = sum(sales, (s) => s.tax || 0); const gp = rev - tax - cogs;
+    const wfee = sum(wtx, (t) => t.fee || 0), mfee = sum(mtx, (t) => (t.fee || 0) + (t.commission || 0));
+    const rprof = typeof Repairs !== 'undefined' ? Repairs.profitIn(from, to) : 0, lprof = typeof Lines !== 'undefined' && Lines.profitIn ? Lines.profitIn(from, to) : 0, cprof = typeof CCTV !== 'undefined' ? CCTV.profitIn(from, to) : 0, iprof = typeof Installments !== 'undefined' ? Installments.interestIn(from, to) : 0;
+    const ex = sum(exps, (e) => e.amount), sal = sum(DB.filter('payroll', (p) => p.status === 'paid' && inRange(p.paidAt, from, to)), (p) => p.net);
+    const waste = sum(DB.filter('losses', (x) => (x.kind === 'waste' || x.status === 'rejected') && inRange(x.date, from, to)), (x) => x.total);
+    const promo = sum(sales, (s) => (s.offerDisc || 0) + (s.couponDisc || 0) + (s.pointsDisc || 0));
+    const net = gp + wfee + mfee + rprof + lprof + cprof + iprof - ex - sal;
+    const exC = {}; exps.forEach((e) => { const k = e.category || e.type || L('أخرى', 'Other'); exC[k] = (exC[k] || 0) + (Number(e.amount) || 0); });
+    const items = {}; sales.forEach((s) => (s.items || []).forEach((i) => { if (i.tradeIn || i.reserveDep) return; const q = (Number(i.qty) || 0) - (Number(i.returned) || 0); if (q <= 0) return; const k = i.name; items[k] = items[k] || { q: 0, p: 0 }; items[k].q += q; items[k].p += q * ((Number(i.price) || 0) - (Number(i.cost) || 0)) - (Number(i.discount) || 0); }));
+    const top = Object.entries(items).sort((a, b) => b[1].p - a[1].p).slice(0, 8);
+    return { mk, rev, cogs, tax, gp, wfee, mfee, rprof, lprof, cprof, iprof, ex, sal, waste, promo, net, n: sales.length, exC, top, wtxN: wtx.length };
+  },
+  name(mk) { const [y, m] = mk.split('-').map(Number); return `${(LANG === 'en' ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] : MONTHS_AR)[m - 1]} ${y}`; },
+  html(mk) {
+    const d = this.data(mk), p = this.data(this.prev(mk)); const M = (v) => money(v);
+    const ch = (a, b) => { if (!b || Math.abs(b) < Math.abs(a) * 0.05) return '—'; const pc = Math.abs(Math.round(((a - b) / Math.abs(b)) * 100)); return `${a >= b ? '▲' : '▼'} ${pc > 500 ? '+500' : pc}%`; };
+    const row = (l, a, b, bold) => `<tr${bold ? ' style="font-weight:800;background:#faf3f4"' : ''}><td>${l}</td><td class="num">${M(a)}</td><td class="num" style="color:#888">${M(b)}</td><td class="num" style="color:${a >= b ? '#16825D' : '#b3261e'}">${ch(a, b)}</td></tr>`;
+    const inc = [[L('مجمل ربح المبيعات', 'Gross sales profit'), 'gp'], [L('عمولات المحافظ', 'Wallet fees'), 'wfee'], [L('أرباح الماكينات والكروت', 'Machines & cards'), 'mfee'], [L('أرباح الصيانة', 'Repairs'), 'rprof'], [L('أرباح الخطوط والعمولات', 'Lines'), 'lprof'], [L('أرباح الكاميرات', 'CCTV'), 'cprof'], [L('فوايد وغرامات التقسيط', 'Installment interest'), 'iprof']].filter(([, k]) => d[k] || p[k]);
+    return reportDoc(`${L('تقرير الأرباح والخسائر', 'Profit & loss')} — ${this.name(mk)}`, `
+      <div class="kp"><div><span>${L('صافي الربح', 'Net profit')}</span><b style="color:${d.net >= 0 ? '#16825D' : '#b3261e'}">${M(d.net)}</b></div><div><span>${L('صافي المبيعات', 'Net sales')}</span><b>${M(d.rev)}</b></div><div><span>${L('عدد الفواتير', 'Invoices')}</span><b>${d.n}</b></div><div><span>${L('مقارنة بالشهر اللي فات', 'vs last month')}</span><b>${ch(d.net, p.net)}</b></div></div>
+      <h2>${L('قائمة الدخل', 'Income statement')}</h2><table><thead><tr><th>${L('البند', 'Item')}</th><th>${this.name(mk)}</th><th>${this.name(this.prev(mk))}</th><th>${L('التغيير', 'Change')}</th></tr></thead><tbody>
+        ${row(L('صافي المبيعات', 'Net sales'), d.rev, p.rev)}${row(L('(−) تكلفة البضاعة', '(−) COGS'), d.cogs, p.cogs)}${d.tax || p.tax ? row(L('(−) الضريبة', '(−) Tax'), d.tax, p.tax) : ''}
+        ${inc.map(([l, k], i) => row((i ? '(+) ' : '') + l, d[k], p[k], i === 0)).join('')}
+        ${row(L('(−) المصروفات', '(−) Expenses'), d.ex, p.ex)}${row(L('(−) المرتبات', '(−) Salaries'), d.sal, p.sal)}${row(`<b>${L('صافي الربح', 'Net profit')}</b>`, d.net, p.net, true)}</tbody></table>
+      <div class="grid2"><div><h2>${L('المصروفات حسب البند', 'Expenses by category')}</h2><table><tbody>${Object.entries(d.exC).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num"><b>${M(v)}</b></td></tr>`).join('') || `<tr><td>—</td><td></td></tr>`}</tbody></table></div>
+        <div><h2>${L('أكتر الأصناف ربحاً', 'Most profitable items')}</h2><table><tbody>${d.top.map(([k, v]) => `<tr><td>${esc(k)} <small style="color:#888">× ${v.q}</small></td><td class="num"><b>${M(v.p)}</b></td></tr>`).join('') || `<tr><td>—</td><td></td></tr>`}</tbody></table></div></div>
+      ${d.promo || d.waste ? `<h2>${L('للعلم', 'Notes')}</h2><table><tbody>${d.promo ? `<tr><td>${L('خصومات العروض والكوبونات والنقاط', 'Offers, coupons & points discounts')}</td><td class="num">${M(d.promo)}</td></tr>` : ''}${d.waste ? `<tr><td>${L('الهوالك (من رأس المال)', 'Waste (from capital)')}</td><td class="num">${M(d.waste)}</td></tr>` : ''}</tbody></table>` : ''}
+      <div class="netbox">${L('صافي ربح', 'Net profit')} ${this.name(mk)}: <b>${M(d.net)}</b></div>`);
+  },
+  text(mk) { const d = this.data(mk), p = this.data(this.prev(mk)); const st = DB.settings().store.name; return [`📊 *${L('تقرير الأرباح الشهري', 'Monthly P&L')}* — ${st}`, `🗓️ ${this.name(mk)}`, '', `💰 ${L('صافي الربح', 'Net profit')}: *${money(d.net)}*${p.net && Math.abs(p.net) >= Math.abs(d.net) * 0.05 ? ` (${d.net >= p.net ? '▲' : '▼'} ${Math.min(500, Math.abs(Math.round(((d.net - p.net) / Math.abs(p.net)) * 100)))}% ${L('عن الشهر اللي فات', 'vs last month')})` : ''}`, `🛒 ${L('صافي المبيعات', 'Net sales')}: ${money(d.rev)} — ${d.n} ${L('فاتورة', 'invoices')}`, `💳 ${L('الكاش والماكينات', 'Cash & machines')}: ${money(d.wfee + d.mfee)}`, d.rprof ? `🛠️ ${L('الصيانة', 'Repairs')}: ${money(d.rprof)}` : '', `🧾 ${L('المصروفات والمرتبات', 'Expenses & salaries')}: ${money(d.ex + d.sal)}`, '', `📄 ${L('التقرير الكامل PDF مرفق', 'Full PDF attached')}`].filter((x) => x !== '').join('\n'); },
+  async pdf(mk) {
+    const html = this.html(mk); const name = 'PL-' + mk;
+    try {
+      if (DB.desktop && window.api.sys.printPdf) { const r = await window.api.sys.printPdf({ html: html.replace('<head>', `<head><base href="${location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '')}">`), name, widthMm: 'A4', save: false }); return r && r.data ? { data: r.data, name: name + '.pdf' } : null; }
+      if (typeof NativeFiles !== 'undefined' && NativeFiles.ok() && NativeFiles.plugin().pdf) { const r = await NativeFiles.plugin().pdf({ html: html.replace('<head>', '<head><base href="file:///android_asset/public/">'), name, widthMm: 210, base: 'file:///android_asset/public/' }); return r && r.data ? { data: r.data, name: name + '.pdf' } : null; }
+    } catch (e) { console.warn(e); } return null;
+  },
+  owner() { return DB.settings().ownerReport?.phone || ''; },
+  async send(mk, auto) {
+    const ph = this.owner(); if (!ph) return !auto && UI.toast(L('اكتب رقم صاحب المحل في إعدادات «تقرير الوردية لصاحب المحل»', 'Set the owner number first'), 'warn', 6000);
+    if (typeof WaLink !== 'undefined' && WaLink.ready()) { const doc = await this.pdf(mk); WaLink.queue(ph, this.text(mk), { prio: 1, kind: 'pl', ref: mk, doc: doc ? { ...doc, mime: 'application/pdf', caption: '📄 ' + this.name(mk) } : null }); if (!auto) UI.toast(L('✓ التقرير هيتبعت على واتساب خلال ثواني', '✓ Sending on WhatsApp')); }
+    else if (!auto) sendWhatsAppDirect(ph, this.text(mk)); else return;
+    DB.saveSettings({ monthlyPL: { lastSent: mk } }); audit('pl.send', mk);
+  },
+  /* أول كل شهر: تقرير الشهر اللي فات بيوصل لصاحب المحل لوحده */
+  auto() { try { const s = DB.settings(); const c = s.monthlyPL || {}; if (c.auto === false || !s.ownerReport?.on || !this.owner() || typeof WaLink === 'undefined' || !WaLink.ready()) return; if (typeof Plan !== 'undefined' && !Plan.allowed('owner')) return; const pm = this.prev(monthKey()); if (c.lastSent === pm) return; if (!DB.find('sales', (x) => monthKey(x.date) === pm) && !DB.find('walletTx', (x) => monthKey(x.date) === pm)) return; this.send(pm, true); } catch (e) { console.warn(e); } },
+  dialog() {
+    const mk0 = this.prev(monthKey()); const c = DB.settings().monthlyPL || {};
+    const m = UI.modal({ title: L('تقرير الأرباح والخسائر الشهري', 'Monthly P&L report'), icon: 'file', size: 'sm', body: `<label class="lbl">${L('الشهر', 'Month')}</label><input type="month" id="plM" value="${mk0}"><div class="pl-prev mt" id="plPrev"></div>
+      <label class="check mt"><input type="checkbox" id="plAuto" ${c.auto !== false ? 'checked' : ''}>${L('ابعته لصاحب المحل على واتساب تلقائي أول كل شهر', 'Send to the owner automatically every month')}</label><small class="faint">${L('بيستخدم رقم «تقرير الوردية لصاحب المحل» وواتساب المحل المربوط.', 'Uses the shift-report owner number and linked WhatsApp.')}</small>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('عرض / PDF', 'View / PDF'), icon: 'printer', onClick: () => { const mk = $('#plM', m.el).value || mk0; printHTML(this.html(mk), { type: 'report', name: 'PL-' + mk }); return false; } }, { label: L('ابعته لصاحب المحل', 'Send to owner'), cls: 'wa', icon: 'whatsapp', onClick: () => { this.send($('#plM', m.el).value || mk0); return false; } }] });
+    const upd = () => { const d = this.data($('#plM', m.el).value || mk0); $('#plPrev', m.el).innerHTML = `<div class="stat-mini"><span class="l">${L('صافي الربح', 'Net profit')}</span><span class="v num ${d.net >= 0 ? 'pos' : 'neg'}">${money(d.net)}</span></div><div class="faint mt">${L('مبيعات', 'Sales')} ${money(d.rev)} · ${L('مصروفات ومرتبات', 'Expenses & salaries')} ${money(d.ex + d.sal)}</div>`; };
+    $('#plM', m.el).onchange = upd; $('#plAuto', m.el).onchange = (e) => DB.saveSettings({ monthlyPL: { auto: e.target.checked } }); upd();
+  }
+};
+(() => {
+  const RP = Modules.reports; if (RP) { const b = RP.render.bind(RP); RP.render = function (el) { b(el); try { el.insertAdjacentHTML('afterbegin', `<div class="card card-b mb pl-cta"><div style="font-size:30px">📊</div><div style="flex:1"><b>${L('تقرير الأرباح والخسائر الشهري', 'Monthly P&L report')}</b><div class="faint">${L('PDF احترافي بمقارنة بالشهر اللي فات — وبيوصل لصاحب المحل على واتساب أول كل شهر', 'Professional PDF with month-over-month comparison')}</div></div><button class="btn primary" id="plOpen">${icon('file')}${L('افتح التقرير', 'Open')}</button></div>`); $('#plOpen').onclick = () => MonthlyPL.dialog(); } catch (e) { console.warn(e); } }; }
+  setTimeout(() => MonthlyPL.auto(), 60000); setInterval(() => MonthlyPL.auto(), 3 * 3600e3);
+})();
+
+</script>
+  <script>
+/* =========================================================
    الباقات — الأقسام المسموحة جوّه الترخيص الموقّع
    - الترخيص فيه p (اسم الباقة) و f (الأقسام المسموحة) — موقّعين بمفتاح المطور فمحدش يقدر يعدّلهم
    - ترخيص من غير f (العملاء القدام) أو فترة التجربة = كل الأقسام
@@ -13648,7 +13913,7 @@ const PLAN_MODS = [
   { k: 'cctv', ic: 'cctv', ar: 'كاميرات المراقبة', en: 'CCTV installs', d: 'تركيبات وعرابين وضمان وزيارات', mods: ['cctv'], perms: ['cctv', 'cctv.manage'], feats: ['cctv'] },
   { k: 'hr', ic: 'users', ar: 'الموارد البشرية', en: 'HR & payroll', d: 'حضور وانصراف ومرتبات وتارجت وعمولات', mods: ['attendance', 'payroll', 'targets'], perms: ['attendance', 'payroll'], keys: { autoAttendance: false, autoPayroll: false } },
   { k: 'whatsapp', ic: 'whatsapp', ar: 'واتساب التلقائي', en: 'Automatic WhatsApp', d: 'ربط رقم المحل بالـ QR وتذكيرات وتقييم العملاء', mods: ['ratings'] },
-  { k: 'offers', ic: 'tag', ar: 'العروض والكوبونات', en: 'Offers & coupons', d: 'خصومات تلقائية بالمدة وأكواد خصم للعملاء', mods: ['offers'] },
+  { k: 'offers', ic: 'tag', ar: 'العروض والكوبونات', en: 'Offers & coupons', d: 'خصومات وكوبونات وكتالوج أونلاين للطلبات على واتساب', mods: ['offers', 'catalog'] },
   { k: 'cloud', ic: 'cloud', ar: 'النسخ الاحتياطي السحابي', en: 'Cloud backup', d: 'نسخة مشفّرة يومية ومع كل وردية' },
   { k: 'owner', ic: 'eye', ar: 'لوحة المالك وتقرير الوردية', en: 'Owner live view & reports', d: 'أرقام لحظية وتقرير واتساب عند الغلق', mods: ['ownerLive'] },
   { k: 'ai', ic: 'sparkles', ar: 'المساعد الذكي', en: 'AI assistant', d: 'اسأل عن أرقام محلك بالعربي', perms: ['ai'] }

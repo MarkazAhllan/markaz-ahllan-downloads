@@ -300,7 +300,7 @@ function home() {
   const per = days.map((d) => ROWS.filter((r) => { const x = new Date(r.created_at); return x >= d && x < new Date(+d + 864e5); }).length); const mx = Math.max(1, ...per);
   const plat = {}; ROWS.forEach((r) => (plat[r.platform || 'web'] = (plat[r.platform || 'web'] || 0) + 1));
   const vers = {}; ROWS.filter((r) => r.app_version).forEach((r) => (vers[r.app_version] = (vers[r.app_version] || 0) + 1));
-  $('#view').innerHTML = `${CFG.auto_trial ? '<div class="ban i">ℹ️ التجربة التلقائية شغالة — أي جهاز جديد بياخد تجربة لوحده</div>' : ''}
+  $('#view').innerHTML = `<div class="card sec upd" id="updCard"><h3>🚀 التحديثات</h3><div class="faint">جاري التحميل…</div></div>${CFG.auto_trial ? '<div class="ban i">ℹ️ التجربة التلقائية شغالة — أي جهاز جديد بياخد تجربة لوحده</div>' : ''}
     <div class="kpis">
       <div class="k hero" data-f="all"><small>كل الأجهزة</small><b class="num">${ROWS.length}</b><em>🟢 ${on} شغالين دلوقتي</em></div>
       <div class="k w" data-f="pending"><small>⏳ بانتظار موافقتك</small><b class="num">${c('pending')}</b><em>${today ? `${today} جديد النهارده` : 'مفيش جديد النهارده'}</em></div>
@@ -316,9 +316,32 @@ function home() {
     </div>
     <div class="card sec"><h3>🕓 آخر الأجهزة اللي سجّلت</h3>${ROWS.slice(0, 6).map((r) => item(r)).join('') || '<div class="empty">مفيش أجهزة لسه</div>'}</div>
     <p class="sig">جميع الحقوق محفوظة للمصمم والمطور — م/ أسامة حسن بدري — 01145060007</p>`;
+  updCard();
   $$('.k[data-f]').forEach((k) => (k.onclick = () => { FIL = k.dataset.f; TAB = 'devices'; draw(); }));
   $$('[data-qa]').forEach((b) => (b.onclick = () => activate(ROWS.find((r) => r.mid === b.dataset.qa))));
   bindItems();
+}
+
+/* ===== قناة التحديث التجريبية ===== */
+const SITE = 'https://markazahllan.github.io/markaz-ahllan-downloads', DLS = 'https://github.com/MarkazAhllan/markaz-ahllan-downloads/releases/download';
+async function latestBuild() {
+  const urls = [`${SITE}/downloads/pos.json?t=${Date.now()}`];
+  const res = await Promise.allSettled(urls.map((u) => fetch(u, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null))));
+  return res.map((x) => x.value).filter((x) => x && x.code).sort((a, b) => b.code - a.code)[0] || null;
+}
+async function updCard() {
+  const el = $('#updCard'); if (!el) return; let j = null; try { j = await latestBuild(); } catch (_) {}
+  const st = CFG.stable_code; const has = 'stable_code' in CFG; const betas = ROWS.filter((r) => r.beta);
+  let body = '';
+  if (!has) body = `<div class="ban i">شغّل ملف <b class="mono">supabase/pos-1.6.sql</b> مرة واحدة في Supabase عشان قناة التحديث التجريبية تشتغل.</div>`;
+  else if (st == null) body = `<p>القناة التجريبية <b>مقفولة</b> — أي نسخة جديدة بتوصل لكل العملاء على طول.</p><p class="faint">لما تشغّلها: النسخة الحالية${j ? ` (<b class="mono">${esc(j.name)}</b>)` : ''} تتعتبر المعتمدة، وأي نسخة جديدة بعد كده بتوصل للأجهزة التجريبية بس (${betas.length} جهاز) لحد ما تدوس «انشر للكل».</p><button class="btn p" id="chOn">🧪 شغّل القناة التجريبية</button>`;
+  else if (j && j.code > st) body = `<div class="ban i">🧪 نسخة <b class="mono">${esc(j.name)}</b> وصلت للأجهزة التجريبية بس (${betas.length} جهاز) — والباقي على النسخة المعتمدة <b class="mono">${st}</b>.</div><p class="faint">جرّبها على جهازك، ولو كله تمام انشرها للكل.</p><div class="row wrap"><button class="btn ok" id="chPub">✅ انشر للكل</button><button class="btn" id="chOff">إيقاف القناة</button></div>`;
+  else body = `<p>✓ كل العملاء على آخر نسخة معتمدة <b class="mono">${j ? esc(j.name) : st}</b>.</p><p class="faint">الأجهزة التجريبية: ${betas.length ? betas.map((r) => esc(r.store_name || r.mid)).join('، ') : 'مفيش — افتح أي جهاز واضغط «خلّيه جهاز تجريبي»'}</p><button class="btn sm" id="chOff">إيقاف القناة</button>`;
+  el.innerHTML = `<h3>🚀 التحديثات ${j ? `<span class="tag mono">آخر نسخة: ${esc(j.name)}</span>` : ''}</h3>${body}`;
+  const setStable = async (v, msg) => { try { await api('pos_license_config?id=eq.1', { method: 'PATCH', body: JSON.stringify({ stable_code: v }) }); logAct(msg); toast(msg, 'ok'); await load(true); } catch (e) { toast('خطأ: ' + e.message.slice(0, 140), 'e'); } };
+  $('#chOn', el) && ($('#chOn', el).onclick = () => { if (!j) return toast('مش قادر أقرا آخر نسخة من الموقع', 'e'); setStable(j.code, `🧪 تشغيل القناة التجريبية — المعتمدة ${j.name}`); });
+  $('#chPub', el) && ($('#chPub', el).onclick = () => { if (!confirm(`نشر النسخة ${j.name} لكل العملاء؟`)) return; setStable(j.code, `✅ نشر ${j.name} للكل`); });
+  $('#chOff', el) && ($('#chOff', el).onclick = () => { if (!confirm('إيقاف القناة؟ أي نسخة جديدة هتوصل للكل على طول.')) return; setStable(null, '⏹️ إيقاف القناة التجريبية'); });
 }
 
 function devices() {
@@ -395,6 +418,7 @@ function openDev(mid) {
       ${r.status !== 'active' ? '<button class="btn" data-a="trial">🧪 تجربة</button>' : '<button class="btn" data-a="trial">🧪 تحويل لتجربة</button>'}
       <button class="btn wa" data-a="wa">💬 واتساب</button><button class="btn" data-a="call">📞 اتصال</button>
       <button class="btn" data-a="note">📝 ملاحظة / اسم</button>
+      <button class="btn ${r.beta ? 'p' : ''}" data-a="beta" style="grid-column:1/-1">${r.beta ? '🧪 جهاز تجريبي — بياخد التحديثات الأول (اضغط للإلغاء)' : '🧪 خلّيه جهاز تجريبي (ياخد التحديثات قبل الكل)'}</button>
       ${r.status !== 'blocked' ? '<button class="btn e" data-a="block">⛔ إيقاف</button>' : '<button class="btn" data-a="unblock">▶️ إلغاء الإيقاف</button>'}
       <button class="btn e" data-a="del" style="grid-column:1/-1">🗑️ حذف الجهاز من السيرفر</button>
     </div>`, (ov, close) => {
@@ -410,6 +434,7 @@ async function act(a, r) {
     if (a === 'wa') return waDlg(r);
     if (a === 'call') return (location.href = 'tel:' + String(r.phone || '').replace(/[^\d+]/g, ''));
     if (a === 'note') return noteDlg(r);
+    if (a === 'beta') { await patch(r.mid, { beta: !r.beta }); logAct(`🧪 ${r.beta ? 'إلغاء' : 'تفعيل'} تجريبي — ${r.store_name}`); toast(r.beta ? 'اتلغى التجريبي' : 'بقى جهاز تجريبي 🧪', 'ok'); }
     if (a === 'block') { if (!confirm(`إيقاف البرنامج على جهاز «${r.store_name}»؟\nهيتقفل خلال 30 دقيقة أو عند الفتح الجاي.`)) return; await patch(r.mid, { status: 'blocked' }); logAct(`⛔ إيقاف ${r.store_name}`); toast('اتوقف ⛔'); }
     if (a === 'unblock') { await patch(r.mid, { status: r.license_key && (!r.expires_at || Date.parse(r.expires_at) > Date.now()) ? 'active' : 'pending' }); logAct(`▶️ إلغاء إيقاف ${r.store_name}`); toast('اتلغى الإيقاف', 'ok'); }
     if (a === 'del') { if (!confirm(`حذف «${r.store_name}» من السيرفر؟\nالبرنامج عنده هيرجع لشاشة التسجيل.`)) return; await api('pos_devices?mid=eq.' + encodeURIComponent(r.mid), { method: 'DELETE' }); logAct(`🗑️ حذف ${r.store_name} (${r.mid})`); toast('اتحذف'); }

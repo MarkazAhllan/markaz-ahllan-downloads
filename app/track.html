@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8B1A2B">
+<title>تابع جهازك — مركز أهلاً</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#8B1A2B;--p2:#5E0F1C;--bg:#f7f1f2;--s:#fff;--t:#231719;--t2:#6e6062;--l:#ecdfe1;--ok:#16825D;--okb:#e7f5ee;--w:#B26A00;--wb:#fff4e0;--e:#b3261e;--eb:#fdeceb}
+@media (prefers-color-scheme:dark){:root{--bg:#140b0d;--s:#1f1416;--t:#f5ecee;--t2:#b9a9ac;--l:#33242a;--okb:#123326;--wb:#3a2a0e;--eb:#3a1614}}
+*{box-sizing:border-box}body{margin:0;font-family:Cairo,Tahoma,Arial,sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.top{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:22px 18px 70px;text-align:center}
+.top small{opacity:.85}.top h1{margin:4px 0 0;font-size:22px}
+.wrap{max-width:560px;margin:-52px auto 30px;padding:0 14px}
+.card{background:var(--s);border-radius:20px;padding:18px;box-shadow:0 10px 30px rgba(60,10,20,.12);margin-bottom:12px}
+.st{display:flex;align-items:center;gap:12px}.st .ic{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:var(--wb);flex:none}
+.st.ok .ic{background:var(--okb)}.st.e .ic{background:var(--eb)}.st b{font-size:21px;display:block}.st span{color:var(--t2);font-size:13.5px}
+.dev{margin-top:12px;padding-top:12px;border-top:1px dashed var(--l);display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14.5px}.dev span{color:var(--t2)}
+.tl{list-style:none;margin:0;padding:0}.tl li{display:flex;gap:12px;position:relative;padding:0 0 16px}.tl li:not(:last-child)::before{content:'';position:absolute;top:28px;bottom:0;inset-inline-start:13px;width:2px;background:var(--l)}
+.tl i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:13px;flex:none;background:var(--l);color:var(--t2);font-weight:900}
+.tl li.done i{background:var(--ok);color:#fff}.tl li.now i{background:var(--p);color:#fff;box-shadow:0 0 0 5px rgba(139,26,43,.15)}.tl b{display:block;font-size:15px}.tl small{color:var(--t2)}.tl li.todo b{color:var(--t2);font-weight:600}
+.money{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.money div{background:var(--bg);border-radius:14px;padding:10px 4px}.money small{color:var(--t2);font-size:12px;display:block}.money b{font-size:17px}.money .due b{color:var(--p)}
+.act{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:13px;border-radius:14px;font:inherit;font-weight:800;text-decoration:none;border:1.5px solid var(--l);color:var(--t);background:var(--s)}.btn.wa{background:#25D366;border-color:#25D366;color:#fff}
+.msg{text-align:center;padding:40px 10px;color:var(--t2)}.msg b{display:block;font-size:20px;color:var(--t);margin:8px 0}
+.foot{text-align:center;color:var(--t2);font-size:12px;margin-top:6px;line-height:1.8}
+.upd{font-size:12px;color:var(--t2);text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="top"><small>تابع جهازك</small><h1 id="shop">…</h1></div>
+<div class="wrap" id="app"><div class="card msg">⏳ جاري التحميل…</div></div>
+<script>
+const SUPA = 'https://inxlleknypxzegzgzmfl.supabase.co', ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlueGxsZWtueXB4emVnemd6bWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMzcwMzQsImV4cCI6MjEwNzkxMzAzNH0.JzWJf2nE5rhYGKQBtPRbf9RBA-0C7lIGw-IM0uTtu2s';
+const ST = { received: ['تم الاستلام', '📥'], diagnosing: ['جاري الفحص', '🔍'], approval: ['بانتظار موافقتك على التكلفة', '⏳'], parts: ['بانتظار قطع غيار', '📦'], repairing: ['جاري الإصلاح', '🛠️'], ready: ['جاهز للاستلام', '✅'], unrepairable: ['تعذر الإصلاح', '⚠️'], delivered: ['تم التسليم', '🤝'] };
+const FLOW = ['received', 'diagnosing', 'repairing', 'ready', 'delivered'];
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const dt = (s) => { try { return new Date(s).toLocaleString('ar-EG-u-nu-latn', { day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' }); } catch (_) { return ''; } };
+const m = (v, c) => `${Number(v || 0).toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 2 })} ${esc(c || 'ج.م')}`;
+const wa = (p) => { let d = String(p || '').replace(/\D/g, ''); if (d.startsWith('0')) d = '20' + d.slice(1); return d; };
+async function load() {
+  const t = new URLSearchParams(location.search).get('t') || '';
+  if (!/^[A-Za-z0-9]{10,40}$/.test(t)) return show('<div class="card msg">🔗<b>الرابط مش كامل</b>امسح الكود اللي على إيصال الاستلام تاني.</div>');
+  try {
+    const r = await fetch(SUPA + '/rest/v1/rpc/pos_track_get', { method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_token: t }) });
+    const j = await r.json(); if (!j || !j.data) return show('<div class="card msg">🔎<b>مش لاقيين الجهاز ده</b>ممكن البيانات لسه ما اترفعتش — جرّب كمان شوية.</div>');
+    render(j.data, j.updated_at);
+  } catch (e) { show('<div class="card msg">📶<b>مفيش اتصال</b>اتأكد من النت وجرّب تاني.</div>'); }
+}
+function show(h) { document.getElementById('app').innerHTML = h; }
+function render(d, upd) {
+  document.getElementById('shop').textContent = d.store?.name || ''; document.title = 'تابع جهازك — ' + (d.store?.name || '');
+  const s = d.stage; const info = ST[s] || ST.received; const cls = s === 'ready' || s === 'delivered' ? 'ok' : s === 'unrepairable' ? 'e' : '';
+  const when = {}; (d.hist || []).forEach((h) => (when[h.s] = h.at));
+  let flow = FLOW.slice(); if (s === 'approval' || when.approval) flow.splice(2, 0, 'approval'); if (s === 'parts' || when.parts) flow.splice(flow.indexOf('repairing'), 0, 'parts'); if (s === 'unrepairable' || when.unrepairable) flow = ['received', 'diagnosing', 'unrepairable', 'delivered'];
+  const cur = flow.indexOf(s);
+  const tl = flow.map((k, i) => `<li class="${i < cur ? 'done' : i === cur ? 'now' : 'todo'}"><i>${i < cur ? '✓' : i + 1}</i><div><b>${ST[k][0]}</b>${when[k] ? `<small>${dt(when[k])}</small>` : ''}</div></li>`).join('');
+  const msg = s === 'ready' ? 'جهازك جاهز — تقدر تعدّي تستلمه في أي وقت 🌹' : s === 'approval' ? `الفني فحص الجهاز${d.estimate ? ` والتكلفة المتوقعة ${m(d.estimate, d.cur)}` : ''} — كلّمنا عشان نبدأ` : s === 'delivered' ? `اتسلّم ${d.warrantyUntil ? `— ضمان لحد ${dt(d.warrantyUntil)}` : ''}` : s === 'unrepairable' ? 'للأسف ماقدرناش نصلّحه — تقدر تستلمه من المحل' : 'شغالين عليه — هنبلّغك أول ما يخلص';
+  show(`<div class="card"><div class="st ${cls}"><div class="ic">${info[1]}</div><div><b>${info[0]}</b><span>${esc(msg)}</span></div></div>
+    <div class="dev"><span>الجهاز</span><b>${esc(d.device)}</b><span>رقم الإيصال</span><b>${esc(d.no)}</b>${d.issue ? `<span>العطل</span><b>${esc(d.issue)}</b>` : ''}<span>الاستلام</span><b>${dt(d.date)}</b></div></div>
+    ${d.total || d.paid ? `<div class="card money"><div><small>الإجمالي</small><b>${m(d.total, d.cur)}</b></div><div><small>المدفوع</small><b>${m(d.paid, d.cur)}</b></div><div class="due"><small>المتبقي</small><b>${m(d.due, d.cur)}</b></div></div>` : ''}
+    <div class="card"><ul class="tl">${tl}</ul></div>
+    ${d.store?.phone ? `<div class="act"><a class="btn wa" href="https://wa.me/${wa(d.store.phone)}?text=${encodeURIComponent('أهلاً، بسأل على جهازي رقم ' + d.no)}">💬 واتساب</a><a class="btn" href="tel:${esc(d.store.phone)}">📞 اتصال</a></div>` : ''}
+    <div class="upd">آخر تحديث: ${dt(d.at || upd)} — الصفحة بتتحدث لوحدها</div>
+    <div class="foot">${esc(d.store?.name || '')}${d.store?.address ? ' · ' + esc(d.store.address) : ''}<br>Markaz Ahllan POS · م/ أسامة حسن بدري</div>`);
+}
+load(); setInterval(load, 60000);
+</script>
+</body>
+</html>

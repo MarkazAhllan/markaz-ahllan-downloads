@@ -1860,6 +1860,9 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 @keyframes updPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 45%,transparent)}50%{box-shadow:0 0 0 7px transparent}}
 .rem-box{display:flex;align-items:center;gap:8px;margin:-4px 2px 14px;font-size:13.5px;color:var(--text-2);cursor:pointer;user-select:none}
 .rem-box input{width:18px;height:18px;accent-color:var(--p);margin:0}
+.pw-wrap{position:relative}.pw-wrap input{padding-left:46px}
+.pw-eye{position:absolute;left:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:none;background:transparent;color:var(--text-2);display:grid;place-items:center;cursor:pointer;border-radius:10px}
+.pw-eye.on{color:var(--p)}.pw-eye svg{width:19px;height:19px}
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2260,6 +2263,9 @@ const DAYS_AR = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأرب
 const DAYS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 function monthName(m) { return (LANG === 'en' ? MONTHS_EN : MONTHS_AR)[m]; }
 function monthLabel(mk) { const [y, m] = mk.split('-'); return `${monthName(+m - 1)} ${y}`; }
+/* الأرقام في كلمات المرور: إنجليزي ↔ عربي (عشان كلمة مرور اتعملت بكيبورد عربي تفضل شغالة) */
+function pwArabic(v) { return String(v || '').replace(/[0-9]/g, (d) => String.fromCharCode(0x0660 + +d)); }
+async function pwMatch(v, hash) { if (!v || !hash) return false; if ((await sha256(v)) === hash) return true; const a = pwArabic(v); return a !== v && (await sha256(a)) === hash; }
 async function sha256(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -3806,7 +3812,9 @@ const App = {
       e.preventDefault();
       const u = e.target.u.value.trim().toLowerCase(), p = await sha256(e.target.p.value);
       if (!Security.canTry(u)) { UI.toast(L('تم إيقاف الدخول مؤقتاً بسبب محاولات خاطئة متكررة — حاول بعد قليل', 'Too many failed attempts — try again shortly'), 'err'); return; }
-      const user = DB.find('users', (x) => x.username.toLowerCase() === u && x.password === p);
+      let user = DB.find('users', (x) => x.username.toLowerCase() === u && x.password === p);
+      // كلمة مرور قديمة اتكتبت بأرقام عربية (٠١٢٣): تتقبل وتتحول لأرقام إنجليزي
+      if (!user) { const pa = await sha256(pwArabic(e.target.p.value)); const ua = pa !== p && DB.find('users', (x) => x.username.toLowerCase() === u && x.password === pa); if (ua) { user = DB.update('users', ua.id, { password: p }) || DB.get('users', ua.id); audit('password.digits', ua.username); } }
       if (!user) { Security.fail(u); audit('login.failed', u); UI.toast(L('اسم المستخدم أو كلمة المرور غير صحيحة', 'Wrong username or password'), 'err'); return; }
       Security.ok(u);
       await this.enter(user);
@@ -10444,6 +10452,7 @@ const CHANGELOG = [
   { v: '1.6.1', d: '2026-10-30', items: [
     ['fingerprint', L('الدخول بالبصمة: على الموبايل ببصمة الصباع أو الوش، وعلى الويندوز بـ Windows Hello — كل مستخدم يفعّلها من قائمة اسمه ← «الدخول بالبصمة»', 'Biometric sign-in: fingerprint/face on Android, Windows Hello on Windows')],
     ['user', L('«احفظ كلمة المرور على الجهاز ده»: المرة الجاية تدوس «تسجيل الدخول» على طول — أو تدخل بالبصمة، اللي يريحك', 'Remember password on this device, alongside biometrics')],
+    ['key', L('كلمات المرور بتتقبل بالأرقام العربي (١٢٣) أو الإنجليزي (123) زي بعض، ومعاها زرار 👁️ لإظهار اللي بتكتبه', 'Passwords accept Arabic or English digits; show/hide button')],
     ['lock', L('فتح الشاشة المقفولة بالبصمة من غير ما تكتب كلمة المرور', 'Unlock the lock screen with biometrics')],
     ['shield', L('تأكيد هويتك بالبصمة قبل العمليات الحساسة (المرتجع، تعديل الأسعار بالجملة، الاستعادة، المسح) — بتتفعّل من الإعدادات ← الأمان', 'Confirm sensitive actions with biometrics')],
     ['key', L('أمان: كلمة المرور مش بتتخزن، ولو اتضافت بصمة جديدة على الجهاز أو اتغيرت كلمة المرور البصمة بتتلغي لوحدها', 'Password never stored; auto-invalidated on new fingerprints or password change')],
@@ -10960,7 +10969,7 @@ const Approve = {
         actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('موافقة', 'Approve'), cls: 'primary', icon: 'check', onClick: (x) => go(x) }] });
       const go = async (x) => {
         const v = UI.read(x.el); const u = DB.get('users', v.u);
-        if (!u || !v.p || (await sha256(v.p)) !== u.password) return UI.toast(L('كلمة المرور غلط', 'Wrong password'), 'err');
+        if (!u || !v.p || !(await pwMatch(v.p, u.password))) return UI.toast(L('كلمة المرور غلط', 'Wrong password'), 'err');
         done = true; audit('approve', `${String(reason).replace(/<[^>]+>/g, '')} — ${L('وافق', 'by')} ${u.name} ← ${Session.user?.name || ''}`); x.close(); res(u.name);
       };
       const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => e.key === 'Enter' && go(m);
@@ -14043,6 +14052,7 @@ const Bio = {
     if (code === 'cancel') return;
     UI.toast(code === 'lockout' ? L('محاولات كتير — استنى شوية أو ادخل بكلمة المرور', 'Too many attempts — use your password') : code === 'busy' ? L('فيه طلب بصمة مفتوح بالفعل', 'A prompt is already open') : code === 'invalidated' ? L('اتغيرت البصمات المتسجلة على الجهاز — ادخل بكلمة المرور وفعّل البصمة تاني', 'Biometrics changed — sign in with your password and re-enable') : L('البصمة ما اشتغلتش — ادخل بكلمة المرور', 'Biometric failed — use your password'), code === 'invalidated' ? 'warn' : 'err', 5500);
   },
+  passField() { return `<div class="pw-wrap"><input type="password" name="p" autocomplete="current-password" dir="ltr"><button type="button" class="pw-eye" tabindex="-1" onclick="const i=this.previousElementSibling;i.type=i.type==='password'?'text':'password';this.classList.toggle('on')" title="${L('إظهار / إخفاء', 'Show / hide')}">${icon('eye')}</button></div>`; },
   hex(n = 32) { return [...crypto.getRandomValues(new Uint8Array(n))].map((b) => b.toString(16).padStart(2, '0')).join(''); },
   /* تفعيل البصمة لمستخدم (بعد تأكيد كلمة المرور) */
   async enable(u) {
@@ -14134,7 +14144,7 @@ const Bio = {
     }
     return new Promise((res) => {
       let done = false;
-      const m = UI.modal({ title: L('تأكيد هويتك', 'Confirm it’s you'), icon: 'shield', size: 'sm', body: `<div class="ap-why">${icon('alert')}<span>${reason}</span></div><label class="lbl">${L('كلمة المرور بتاعتك', 'Your password')}</label><input type="password" name="p" autocomplete="off">`,
+      const m = UI.modal({ title: L('تأكيد هويتك', 'Confirm it’s you'), icon: 'shield', size: 'sm', body: `<div class="ap-why">${icon('alert')}<span>${reason}</span></div><label class="lbl">${L('كلمة المرور بتاعتك', 'Your password')}</label>${Bio.passField()}`,
         onClose: () => { if (!done) res(false); },
         actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد', 'Confirm'), cls: 'primary', icon: 'check', onClick: (x) => go(x) }] });
       const go = async (x) => { const p = $('[name=p]', x.el).value; if (!p || (await sha256(p)) !== DB.get('users', u.id)?.password) return UI.toast(L('كلمة المرور غلط', 'Wrong password'), 'err'); done = true; audit('confirm.pass', String(reason).replace(/<[^>]+>/g, '').slice(0, 120)); x.close(); res(true); };
@@ -14164,7 +14174,7 @@ const Bio = {
   passOnce(u) {
     return new Promise((res) => {
       let done = false;
-      const m = UI.modal({ title: L('أكّد كلمة المرور', 'Confirm password'), icon: 'lock', size: 'sm', body: `<label class="lbl">${L('كلمة المرور الحالية', 'Current password')}</label><input type="password" name="p" autocomplete="off">`, onClose: () => { if (!done) res(false); },
+      const m = UI.modal({ title: L('أكّد كلمة المرور', 'Confirm password'), icon: 'lock', size: 'sm', body: `<label class="lbl">${L('كلمة المرور الحالية', 'Current password')}</label>${Bio.passField()}`, onClose: () => { if (!done) res(false); },
         actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('متابعة', 'Continue'), cls: 'primary', onClick: (x) => go(x) }] });
       const go = async (x) => { if ((await sha256($('[name=p]', x.el).value)) !== DB.get('users', u.id)?.password) return UI.toast(L('كلمة المرور غلط', 'Wrong password'), 'err'); done = true; x.close(); res(true); };
       const pi = $('[name=p]', m.el); setTimeout(() => pi && pi.focus(), 60); pi.onkeydown = (e) => e.key === 'Enter' && go(m);
@@ -14314,6 +14324,13 @@ const Remember = {
     return bu(col, id, patch, ...rest);
   };
 })();
+
+/* الأرقام العربية (٠١٢٣) في خانات كلمة المرور بتتحول لأرقام إنجليزي (0123) — عشان كلمة المرور تتقبل من أي كيبورد */
+document.addEventListener('input', (e) => {
+  const t = e.target; if (!t || t.tagName !== 'INPUT' || !(t.matches('#loginForm input[name=p], #ulP') || t.closest('.pw-wrap'))) return;
+  const v = t.value.replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660)).replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06F0));
+  if (v !== t.value) { const pos = t.selectionStart; t.value = v; try { t.setSelectionRange(pos, pos); } catch (_) {} }
+}, true);
 
 </script>
   <script>

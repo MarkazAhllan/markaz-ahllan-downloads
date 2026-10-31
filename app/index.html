@@ -1878,6 +1878,12 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
   .dh-sub{font-size:13px}
   .dh-top #dashRange{width:100%}
 }
+
+/* ===== 1.6.1 درج النقدية ===== */
+.dw-card{display:flex;align-items:center;gap:14px}
+.dw-card .dw-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--p-50);color:var(--p);flex:none}
+.dw-card .dw-ic svg{width:24px;height:24px}
+.dw-card b{display:block;font-size:15px}.dw-card small{color:var(--text-2);font-size:13px;line-height:1.7}
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2326,6 +2332,7 @@ const DEFAULT_SETTINGS = {
   ratings: { on: false },
   catalog: { on: false },
   monthlyPL: { auto: true },
+  drawer: { on: false, mode: 'printer', printer: '', pin: '2', com: 'COM1', baud: 9600, host: '', port: 9100, auto: true, btn: true, custom: '' },
   bio: { on: true, auto: true, lock: true, confirm: false, remember: true },
   loyalty: { on: false, earnPer: 10, earnPts: 1, redeemPts: 100, redeemVal: 10, minRedeem: 100, maxPct: 50, notify: true },
   repair: {
@@ -2399,7 +2406,7 @@ const DB = {
     if (this._settings) return this._settings;
     const s = this.maps.settings.get('main') || {};
     const merged = { ...DEFAULT_SETTINGS, ...s };
-    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings', 'catalog', 'monthlyPL', 'bio']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
+    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings', 'catalog', 'monthlyPL', 'bio', 'drawer']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
     this._settings = merged; return merged;
   },
   saveSettings(patch) {
@@ -2452,7 +2459,7 @@ const PERMS = [
   ['expenses', 'المصروفات', 'Expenses'], ['reports', 'التقارير', 'Reports'], ['capital', 'رأس المال', 'Capital'], ['shifts', 'الورديات', 'Shifts'],
   ['users', 'المستخدمين', 'Users'], ['attendance', 'الحضور والانصراف', 'Attendance'], ['payroll', 'المرتبات', 'Payroll'], ['backup', 'النسخ الاحتياطي', 'Backup'],
   ['settings', 'الإعدادات', 'Settings'], ['owner', 'لوحة المالك', 'Owner panel'], ['repairs', 'الصيانة', 'Repairs'], ['lines', 'خطوط الشركات: استعلام وتحصيل', 'Lines: view & collect'], ['lines.manage', 'خطوط الشركات: تحكم كامل (إضافة/تعديل/أسعار/حسابات المفوض)', 'Lines: full control'], ['machines.price', 'تعديل المحصّل من العميل في الكروت', 'Edit card collected price'], ['losses', 'التالف والهوالك', 'Damaged & waste'], ['ai', 'المساعد الذكي', 'AI assistant'], ['discount', 'منح خصم', 'Give discount'], ['limit.override', 'تجاوز الليمت', 'Override limits'],
-  ['phones', 'قسم الموبايلات: عرض وبيع', 'Phones: view & sell'], ['phones.buy', 'قسم الموبايلات: شراء وتعديل الأجهزة', 'Phones: buy & edit'], ['cctv', 'كاميرات المراقبة: عرض وتحصيل', 'CCTV: view & collect'], ['cctv.manage', 'كاميرات المراقبة: إنشاء وتعديل التركيبات', 'CCTV: manage installations'], ['cctv.secret', 'كاميرات المراقبة: رؤية باسوردات الأجهزة', 'CCTV: view device passwords']
+  ['drawer.open', 'فتح درج النقدية يدوياً (من غير عملية)', 'Open cash drawer manually'], ['phones', 'قسم الموبايلات: عرض وبيع', 'Phones: view & sell'], ['phones.buy', 'قسم الموبايلات: شراء وتعديل الأجهزة', 'Phones: buy & edit'], ['cctv', 'كاميرات المراقبة: عرض وتحصيل', 'CCTV: view & collect'], ['cctv.manage', 'كاميرات المراقبة: إنشاء وتعديل التركيبات', 'CCTV: manage installations'], ['cctv.secret', 'كاميرات المراقبة: رؤية باسوردات الأجهزة', 'CCTV: view device passwords']
 ];
 const ROLE_PRESETS = {
   admin: PERMS.map((p) => p[0]),
@@ -3760,6 +3767,8 @@ const App = {
     if ((DB.settings().permMig || 0) < 3) { DB.all('users').forEach((u) => { if (u.role === 'admin') return; const p = new Set(u.perms || []); if (u.role === 'cashier' || u.role === 'manager') { p.add('phones'); p.add('cctv'); } if (u.role === 'manager') { p.add('phones.buy'); p.add('cctv.manage'); } DB.update('users', u.id, { perms: [...p] }); }); DB.saveSettings({ permMig: 3 }); }
     // صلاحيات 1.4: مدير الفرع يوافق على طلبات الكاشير ويعمل خصم من غير حد
     if ((DB.settings().permMig || 0) < 4) { DB.all('users').forEach((u) => { if (u.role === 'cashier') DB.update('users', u.id, { perms: [...new Set([...(u.perms || []), 'installments'])] }); if (u.role !== 'manager') return; const p = new Set(u.perms || []); p.add('discount.unlimited'); p.add('approve'); p.add('installments'); DB.update('users', u.id, { perms: [...p] }); }); DB.saveSettings({ permMig: 4 }); }
+    // صلاحية 1.6.1: مدير الفرع يفتح درج النقدية يدوياً
+    if ((DB.settings().permMig || 0) < 5) { DB.all('users').forEach((u) => { if (u.role === 'manager') DB.update('users', u.id, { perms: [...new Set([...(u.perms || []), 'drawer.open'])] }); }); DB.saveSettings({ permMig: 5 }); }
     // فئات الكروت وقيم الشحن لكل الشبكات (مرة واحدة) — الفئات التجريبية القديمة بتتوقف لو محدش عدّلها
     if ((DB.settings().cardsMig || 0) < 1) {
       const OLD = { cc1: 10, cc2: 15, cc3: 25, cc4: 10, cc5: 10, cc6: 10, cc7: 50, cc8: 50 };
@@ -10466,6 +10475,7 @@ Modules.settings = {
    ========================================================= */
 const CHANGELOG = [
   { v: '1.6.1', d: '2026-10-30', items: [
+    ['money', L('درج النقدية الخارجي: بيفتح لوحده مع أي حركة كاش، أو يدوي من زرار فوق / F10 — عن طريق الطابعة الحرارية (منفذ DK)، أو طابعة شبكة IP (من الكمبيوتر والموبايل)، أو منفذ COM. الإعداد من الإعدادات ← الإيصال ← درج النقدية', 'External cash drawer: auto-open on cash, manual button / F10; via receipt printer, network IP or COM')],
     ['fingerprint', L('الدخول بالبصمة: على الموبايل ببصمة الصباع أو الوش، وعلى الويندوز بـ Windows Hello — كل مستخدم يفعّلها من قائمة اسمه ← «الدخول بالبصمة»', 'Biometric sign-in: fingerprint/face on Android, Windows Hello on Windows')],
     ['user', L('«احفظ كلمة المرور على الجهاز ده»: المرة الجاية تدوس «تسجيل الدخول» على طول — أو تدخل بالبصمة، اللي يريحك', 'Remember password on this device, alongside biometrics')],
     ['dashboard', L('لوحة التحكم: اللوجو جنب الترحيب في سطر واحد على الموبايل والكمبيوتر', 'Dashboard header: logo beside the greeting')],
@@ -14349,6 +14359,123 @@ document.addEventListener('input', (e) => {
   const v = t.value.replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660)).replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06F0));
   if (v !== t.value) { const pos = t.selectionStart; t.value = v; try { t.setSelectionRange(pos, pos); } catch (_) {} }
 }, true);
+
+</script>
+  <script>
+/* =========================================================
+   درج النقدية الخارجي (Cash drawer) — الإصدار 1.6.1
+   - الكمبيوتر: عن طريق الطابعة الحرارية (أمر ESC/POS)، أو منفذ COM، أو طابعة شبكة IP
+   - الموبايل: عن طريق طابعة شبكة IP (Wi-Fi / LAN)
+   - بيفتح لوحده مع أي حركة كاش في الدرج (بيع نقدي، سحب/إيداع، مصروف، مرتجع…)
+   - فتح يدوي من زرار فوق أو F10 — بصلاحية، وأي فتح بيتسجل في سجل العمليات
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const Drawer = {
+  cfg() { return { on: false, mode: 'printer', printer: '', pin: '2', com: 'COM1', baud: 9600, host: '', port: 9100, auto: true, btn: true, custom: '', ...(DB.settings().drawer || {}) }; },
+  native() { const C = window.Capacitor; return !!(C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.ApkInstaller && C.Plugins.ApkInstaller.rawTcp); },
+  desk() { return !!(window.api && window.api.drawer); },
+  supported() { return this.desk() || this.native(); },
+  ready() { const c = this.cfg(); return c.on && this.supported() && (this.desk() || c.mode === 'net'); },
+  /* ESC p m t1 t2 — النبضة على السن 2 أو 5 */
+  bytes(c = this.cfg()) {
+    const hex = String(c.custom || '').replace(/[^0-9a-f]/gi, '');
+    if (hex.length >= 2 && hex.length % 2 === 0) return hex.match(/../g).map((h) => parseInt(h, 16));
+    const p2 = [0x1b, 0x70, 0x00, 0x19, 0xfa], p5 = [0x1b, 0x70, 0x01, 0x19, 0xfa];
+    return c.pin === '5' ? p5 : c.pin === 'both' ? [...p2, ...p5] : p2;
+  },
+  b64(arr) { return btoa(String.fromCharCode(...arr)); },
+  _last: 0, _busy: false,
+  async kick(reason = 'manual', opts = {}) {
+    const c = { ...this.cfg(), ...(opts.cfg || {}) };
+    if (!opts.test && !this.ready()) return false;
+    if (!opts.test && Date.now() - this._last < 2500) return true; // بيع واحد ممكن يعمل أكتر من حركة كاش
+    if (this._busy) return false; this._busy = true; this._last = Date.now();
+    try {
+      const b64 = this.b64(this.bytes(c)); let r;
+      if (this.desk()) {
+        const printer = c.mode === 'printer' ? c.printer || DB.settings().receipt?.printer || '' : '';
+        if (c.mode === 'printer' && !printer) { UI.toast(L('اختار طابعة الإيصالات اللي الدرج متوصل بيها من إعدادات الدرج', 'Choose the receipt printer the drawer is connected to'), 'warn', 6000); return false; }
+        r = await window.api.drawer.kick({ mode: c.mode, printer, com: c.com, baud: c.baud, host: c.host, port: c.port, b64 });
+      } else if (this.native() && c.mode === 'net') {
+        try { r = await window.Capacitor.Plugins.ApkInstaller.rawTcp({ host: c.host, port: Number(c.port) || 9100, b64 }); } catch (e) { r = { ok: false, error: e.message }; }
+      } else r = { ok: false, error: L('الموبايل بيفتح الدرج عن طريق طابعة شبكة (IP) بس', 'On mobile only network (IP) printers are supported') };
+      if (r && r.ok) { audit('drawer.open', String(reason).slice(0, 120)); return true; }
+      UI.toast(L('الدرج ما اتفتحش: ', 'Drawer did not open: ') + (r && r.error ? this.why(r.error) : ''), 'err', 7000);
+      try { ErrLog.add('drawer: ' + (r && r.error), 'drawer'); } catch (_) {}
+      return false;
+    } finally { this._busy = false; }
+  },
+  why(e) {
+    e = String(e || '');
+    if (/^open:1801|^open:/.test(e)) return L('اسم الطابعة مش موجود — اختارها تاني من الإعدادات', 'Printer not found');
+    if (/timeout|ECONNREFUSED|EHOSTUNREACH|failed to connect/i.test(e)) return L('مش قادر أوصل للطابعة على الشبكة — اتأكد من الـ IP وإنها شغالة', 'Cannot reach the network printer');
+    if (/COM|port/i.test(e)) return L('منفذ COM مش متاح أو مستخدم من برنامج تاني', 'COM port unavailable');
+    return e.slice(0, 120);
+  },
+  /* فتح يدوي (من غير عملية بيع) */
+  async manual() {
+    if (!this.ready()) return this.settings();
+    if (!Session.can('drawer.open')) {
+      const who = await Approve.ask(L('فتح درج النقدية من غير عملية', 'Open the cash drawer without a sale'), 'drawer.open');
+      if (!who) return; this._last = 0; if (await this.kick(L(`يدوي — بموافقة ${who}`, `manual — approved by ${who}`))) UI.toast(L('الدرج اتفتح ✓', 'Drawer opened ✓'));
+      return;
+    }
+    this._last = 0; if (await this.kick(L('يدوي', 'manual'))) UI.toast(L('الدرج اتفتح ✓', 'Drawer opened ✓'));
+  },
+  async settings() {
+    const c = this.cfg();
+    const printers = this.desk() && window.api.sys.getPrinters ? await window.api.sys.getPrinters().catch(() => []) : [];
+    const prOpts = [['', L('— طابعة الإيصالات المحفوظة —', '— saved receipt printer —')], ...printers.map((p) => [p.name, p.name + (p.isDefault ? ' ★' : '')])];
+    const modes = this.desk() ? [['printer', L('عن طريق الطابعة الحرارية (الأشهر — كابل RJ11 من الدرج للطابعة)', 'Through the receipt printer (RJ11)')], ['com', L('منفذ COM / USB-Serial (درج متوصل بالكمبيوتر مباشرة)', 'COM / USB-Serial port')], ['net', L('طابعة شبكة IP (Wi-Fi / LAN)', 'Network printer (IP)')]] : [['net', L('طابعة شبكة IP (Wi-Fi / LAN)', 'Network printer (IP)')]];
+    const m = UI.modal({ title: L('درج النقدية', 'Cash drawer'), icon: 'money', body: `
+      ${!this.supported() ? `<div class="tag warn mb" style="white-space:normal;padding:10px;line-height:1.8">${icon('alert')} ${L('فتح الدرج متاح في برنامج الكمبيوتر وتطبيق الموبايل بس (مش نسخة المتصفح).', 'Available in the Windows and Android apps only.')}</div>` : ''}
+      ${UI.form([
+        { name: 'on', label: L('تفعيل درج النقدية', 'Enable the cash drawer'), type: 'checkbox', col: 12 },
+        { name: 'mode', label: L('الدرج متوصل إزاي؟', 'How is the drawer connected?'), type: 'select', options: modes, col: 12 },
+        { type: 'html', col: 12, html: '<div id="dwFields"></div>' },
+        { name: 'pin', label: L('سن الدرج (Pin)', 'Drawer pin'), type: 'select', options: [['2', L('Pin 2 (الأشهر)', 'Pin 2 (most common)')], ['5', 'Pin 5'], ['both', L('الاتنين', 'Both')]], col: 6 },
+        { name: 'custom', label: L('أمر مخصص HEX (اختياري — للمتقدمين)', 'Custom HEX command (optional)'), col: 6, placeholder: '1B 70 00 19 FA' },
+        { name: 'auto', label: L('يفتح لوحده مع أي حركة كاش (بيع نقدي، سحب/إيداع، مصروف، مرتجع، تسليم وردية)', 'Open automatically on any cash movement'), type: 'checkbox', col: 12 },
+        { name: 'btn', label: L('زرار «فتح الدرج» في الشريط اللي فوق (واختصار F10)', 'Show the «Open drawer» button (F10)'), type: 'checkbox', col: 12 }
+      ], c)}
+      <div class="faint mt" style="line-height:1.9">${L('الفتح اليدوي من غير عملية بيحتاج صلاحية «فتح الدرج يدوياً» أو موافقة المدير، وكل فتح بيتسجل في سجل العمليات باسم الموظف.', 'Manual opening needs permission or manager approval; every opening is logged.')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تجربة', 'Test'), icon: 'play', onClick: async (x) => { const v = read(x); this._last = 0; if (await this.kick(L('تجربة', 'test'), { test: true, cfg: v })) UI.toast(L('اتبعت أمر الفتح ✓ — لو الدرج ما اتفتحش جرّب Pin 5', 'Sent ✓ — if it did not open, try Pin 5'), 'ok', 6000); } },
+        { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { const v = read(x); DB.saveSettings({ drawer: v }); audit('drawer.settings', `${v.mode} ${v.on}`); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.refreshTop?.(); } }] });
+    const read = (x) => { const v = UI.read(x.el); return { on: !!v.on, mode: v.mode, printer: v.printer || '', pin: v.pin, com: (v.com || 'COM1').toUpperCase(), baud: Number(v.baud) || 9600, host: (v.host || '').trim(), port: Number(v.port) || 9100, auto: !!v.auto, btn: !!v.btn, custom: v.custom || '' }; };
+    const draw = async () => {
+      const md = $('[name=mode]', m.el).value; const f = $('#dwFields', m.el);
+      if (md === 'printer') f.innerHTML = UI.form([{ name: 'printer', label: L('الطابعة الحرارية اللي الدرج متوصل بيها', 'Receipt printer the drawer is plugged into'), type: 'select', options: prOpts, col: 12 }], { printer: c.printer });
+      else if (md === 'com') {
+        f.innerHTML = UI.form([{ name: 'com', label: L('منفذ COM', 'COM port'), col: 6, placeholder: 'COM3' }, { name: 'baud', label: 'Baud rate', type: 'select', options: [[9600, '9600'], [19200, '19200'], [38400, '38400'], [115200, '115200']], col: 6 }], { com: c.com, baud: c.baud }) + `<div class="faint" id="dwPorts" style="margin-top:-6px">${L('بيدوّر على المنافذ…', 'Looking for ports…')}</div>`;
+        try { const ps = await window.api.drawer.ports(); const el = $('#dwPorts', m.el); if (el) el.innerHTML = ps.length ? L('المنافذ الموجودة: ', 'Ports found: ') + ps.map((p) => `<button type="button" class="btn sm" data-port="${esc(p)}">${esc(p)}</button>`).join(' ') : L('مفيش منافذ COM ظاهرة — اتأكد إن تعريف الدرج متسطّب', 'No COM ports found'); $$('[data-port]', m.el).forEach((b) => (b.onclick = () => ($('[name=com]', m.el).value = b.dataset.port))); } catch (_) {}
+      } else f.innerHTML = UI.form([{ name: 'host', label: L('IP الطابعة', 'Printer IP'), col: 8, placeholder: '192.168.1.100' }, { name: 'port', label: 'Port', type: 'number', col: 4 }], { host: c.host, port: c.port });
+    };
+    $('[name=mode]', m.el).onchange = draw; draw();
+  },
+  /* زرار في الشريط اللي فوق */
+  topBtn() {
+    const old = $('#btnDrawer'); const show = this.ready() && this.cfg().btn && Session.user && (Session.can('drawer.open') || Session.can('pos'));
+    if (!show) { if (old) old.remove(); return; }
+    if (old) return; const calc = $('#btnCalc'); if (!calc) return;
+    const b = document.createElement('button'); b.className = 'icon-btn'; b.id = 'btnDrawer'; b.title = L('فتح درج النقدية (F10)', 'Open cash drawer (F10)'); b.innerHTML = icon('money');
+    b.onclick = () => this.manual(); calc.parentNode.insertBefore(b, calc);
+  }
+};
+
+(function () {
+  /* أي حركة كاش جديدة في الدرج على الجهاز ده (مش اللي جاية من المزامنة) */
+  const bi = DB.insert.bind(DB);
+  DB.insert = function (col, doc, ...rest) {
+    const r = bi(col, doc, ...rest);
+    try { if (col === 'cashMoves' && doc && Number(doc.amount) && doc.source !== 'adjust' && Drawer.cfg().auto && Drawer.ready() && Session.user) setTimeout(() => Drawer.kick(`${doc.source || ''} ${doc.amount}`), 50); } catch (_) {}
+    return r;
+  };
+  const brt = App.refreshTop.bind(App); App.refreshTop = function (...a) { const r = brt(...a); try { Drawer.topBtn(); } catch (_) {} return r; };
+  document.addEventListener('keydown', (e) => { if (e.key === 'F10' && Session.user && Drawer.ready() && Drawer.cfg().btn) { e.preventDefault(); Drawer.manual(); } });
+  /* إعدادات الإيصال: كارت «درج النقدية» فوق */
+  try { const bb = Modules.settings.body.bind(Modules.settings); Modules.settings.body = async function (...a) { const r = await bb(...a); try { if (this.tab === 'receipt' && Session.can('settings') && !$('#dwSet')) { const b = $('#stBody'); const c = Drawer.cfg(); b.insertAdjacentHTML('afterbegin', `<div class="card card-b mb dw-card"><div class="dw-ic">${icon('money')}</div><div style="flex:1;min-width:0"><b>${L('درج النقدية', 'Cash drawer')}</b><small>${c.on ? L('مفعّل', 'On') + ' — ' + ({ printer: L('عن طريق الطابعة', 'via printer'), com: 'COM', net: 'IP' }[c.mode] || '') + (c.auto ? ' — ' + L('بيفتح لوحده مع الكاش', 'opens on cash') : '') : L('مش مفعّل — الدرج اللي متوصل بالطابعة أو الكمبيوتر يفتح لوحده مع البيع النقدي', 'Off — open the drawer automatically on cash sales')}</small></div><button class="btn" id="dwSet">${icon('settings')}${L('إعداد', 'Setup')}</button></div>`); $('#dwSet').onclick = () => Drawer.settings(); } } catch (e) { console.warn(e); } return r; }; } catch (_) {}
+  try { const ba = CmdK.actions.bind(CmdK); CmdK.actions = function () { const A = ba(); if (Drawer.ready()) A.unshift({ id: 'a:drawer', grp: 'act', icon: 'money', t: L('فتح درج النقدية', 'Open cash drawer'), kw: 'drawer درج كاش', run: () => Drawer.manual() }); return A; }; } catch (_) {}
+})();
 
 </script>
   <script>

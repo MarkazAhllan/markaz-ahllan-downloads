@@ -1884,6 +1884,41 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .dw-card .dw-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--p-50);color:var(--p);flex:none}
 .dw-card .dw-ic svg{width:24px;height:24px}
 .dw-card b{display:block;font-size:15px}.dw-card small{color:var(--text-2);font-size:13px;line-height:1.7}
+
+/* ===== 1.7 الفروع والطلبات والحملات وعروض الأسعار ===== */
+.ip-wrap{display:flex;flex-direction:column;gap:8px;position:relative}
+.ip-res{display:flex;flex-direction:column;gap:4px}.ip-res:empty{display:none}
+.ip-res button{display:flex;align-items:center;gap:8px;text-align:start;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;cursor:pointer;font:inherit;color:var(--text)}
+.ip-res button:hover{border-color:var(--p);background:var(--p-50)}.ip-res button span:nth-child(2){flex:1;font-weight:700}
+.ip-tbl input{width:100%;min-width:70px}.ip-sum{text-align:end;font-size:15px}
+.tr-alert{display:flex;align-items:center;gap:14px;border:1.5px solid var(--warn);background:var(--warn-bg)}
+.tr-alert>svg{width:28px;height:28px;color:var(--warn)}.tr-alert b{display:block}.tr-alert small{color:var(--text-2)}
+.br-qty{display:flex;flex-wrap:wrap;gap:8px}.br-qty>div{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:8px 14px;min-width:110px}
+.br-qty>div.on{border-color:var(--p);background:var(--p-50)}.br-qty small{display:block;color:var(--text-2);font-size:12px}.br-qty b{font-size:18px}
+.br-cmp{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.br-bar{height:8px;background:var(--surface-2);border-radius:99px;margin:10px 0;overflow:hidden}.br-bar i{display:block;height:100%;background:var(--p);border-radius:99px}
+.br-st{display:grid;grid-template-columns:1fr 1fr;gap:8px}.br-st small{display:block;color:var(--text-2);font-size:12px}.br-st b{font-size:16px}.br-st .faint{font-size:11.5px}
+.cp-count{background:var(--p-50);border-radius:12px;padding:10px 14px}.cp-count b{font-size:20px;color:var(--p)}
+.cp-prev{background:#E7F8EE;border-radius:12px;padding:10px 14px;color:#0F3D2A}.cp-prev small{display:block;color:#3d7a5c;font-weight:700;margin-bottom:4px}.cp-prev div{white-space:pre-wrap;line-height:1.8}
+:root[data-theme="dark"] .cp-prev{background:#11291d;color:#d5f5e3}
+.cp-man{display:flex;flex-wrap:wrap;gap:8px}.cp-man .btn.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.pk-box{margin-top:12px;padding:12px;border:1px dashed var(--line-2);border-radius:12px;display:flex;flex-direction:column;gap:8px}.pk-box small{color:var(--text-2)}
+.pk-calc{background:var(--surface-2);border-radius:10px;padding:10px 14px;font-size:15px}
+
+/* ===== 1.7 الشريط العلوي على شاشات اللاب (1280–1440): كل الأزرار تبان من غير ما الصفحة تتزق ===== */
+@media (min-width: 901px) {
+  .topbar { min-width: 0; }
+  .topbar .gsearch { flex: 0 1 320px; min-width: 130px; width: auto; }
+  #trialPill, #shiftPill { min-width: 0; flex: 0 1 auto; display: flex; }
+  #trialPill .trial-badge, #shiftPill > * { overflow: hidden; text-overflow: ellipsis; max-width: 230px; }
+}
+@media (max-width: 1440px) and (min-width: 901px) {
+  .topbar { padding: 0 14px; gap: 8px; }
+  .user-chip > div:last-child { display: none; }
+  .user-chip { padding: 4px !important; }
+  .topbar h1 { max-width: 220px; }
+  #trialPill .trial-badge { max-width: 170px; }
+}
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2232,7 +2267,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.6.1', build: '', trialHours: 168 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.7.0', build: '', trialHours: 168 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2296,7 +2331,7 @@ const AVATAR_COLORS = ['#8B1A2B', '#1F5FA8', '#16825D', '#B26A00', '#6B2C91', '#
 function avatarColor(s) { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return AVATAR_COLORS[h % AVATAR_COLORS.length]; }
 
 /* ---------------- Database (Realm via Electron IPC / browser fallback) ---------------- */
-const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx', 'ratings', 'promos'];
+const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx', 'ratings', 'promos', 'transfers', 'orders', 'quotes', 'campaigns', 'eReceipts'];
 
 const DEFAULT_SETTINGS = {
   appName: 'Markaz Ahllan POS',
@@ -2332,6 +2367,9 @@ const DEFAULT_SETTINGS = {
   ratings: { on: false },
   catalog: { on: false },
   monthlyPL: { auto: true },
+  eta: { on: false, env: 'preprod', taxRate: 14, inclusive: true, sendReturns: true },
+  orders: { pull: true, fee: 0, after: '' },
+  campaigns: {},
   drawer: { on: false, mode: 'printer', printer: '', pin: '2', com: 'COM1', baud: 9600, host: '', port: 9100, auto: true, btn: true, custom: '' },
   bio: { on: true, auto: true, lock: true, confirm: false, remember: true },
   loyalty: { on: false, earnPer: 10, earnPts: 1, redeemPts: 100, redeemVal: 10, minRedeem: 100, maxPct: 50, notify: true },
@@ -2406,7 +2444,7 @@ const DB = {
     if (this._settings) return this._settings;
     const s = this.maps.settings.get('main') || {};
     const merged = { ...DEFAULT_SETTINGS, ...s };
-    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings', 'catalog', 'monthlyPL', 'bio', 'drawer']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
+    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings', 'catalog', 'monthlyPL', 'bio', 'drawer', 'orders', 'campaigns', 'eta']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
     this._settings = merged; return merged;
   },
   saveSettings(patch) {
@@ -3429,11 +3467,36 @@ const mProfit = (t) => (t.fee || 0) + (t.commission || 0);
 const PRODUCT_TYPES = { accessory: ['إكسسوار محمول', 'Mobile accessory'], mobile: ['موبايل', 'Mobile phone'], camera: ['كاميرات مراقبة', 'CCTV'], computer: ['كمبيوتر ولابتوب', 'Computer'], service: ['خدمة / صيانة', 'Service'], other: ['أخرى', 'Other'] };
 
 /* ---------------- Stock ---------------- */
+/* ---------------- الفروع: مخزون لكل فرع ----------------
+ * p.qty = إجمالي كل الفروع (زي ما هو — التقارير والقيمة شغالة عليه)
+ * p.bq = { فرع: كمية } للفروع غير الرئيسي؛ الفرع الرئيسي = الباقي (p.qty − مجموع bq)
+ * لو مفيش فروع: كل حاجة زي الأول */
+const Branch = {
+  list() { return DB.all('branches').filter((b) => b.active !== false); },
+  on() { return this.list().length > 1; },
+  mainId() { const bs = this.list(); if (!bs.length) return ''; const m = bs.find((b) => b.main); if (m) return m.id; return bs.slice().sort((a, b) => ((a.createdAt || '') < (b.createdAt || '') ? -1 : 1))[0].id; },
+  cur() { const id = DB.settings().branchId || ''; return id && DB.get('branches', id) ? id : this.mainId(); },
+  isMain(id) { return !id || id === this.mainId(); },
+  name(id) { const b = id && DB.get('branches', id); return b ? b.name : L('الفرع الرئيسي', 'Main branch'); }
+};
 const Stock = {
-  move(productId, qty, type, ref, note = '') {
+  /* الكمية في فرع معيّن (افتراضي: فرع الجهاز ده) */
+  qty(p, b) {
+    if (!p) return 0; if (p.trackStock === false) return Infinity;
+    const total = Number(p.qty) || 0; if (!Branch.on()) return total;
+    b = b === undefined ? Branch.cur() : b; const bq = p.bq || {}; const main = Branch.mainId();
+    if (!Branch.isMain(b)) return round2(Number(bq[b]) || 0);
+    const others = Object.entries(bq).filter(([k]) => k !== main).reduce((a, [, v]) => a + (Number(v) || 0), 0);
+    return round2(total - others + (Number(bq[main]) || 0));
+  },
+  byBranch(p) { return Branch.list().map((b) => ({ id: b.id, name: b.name, qty: this.qty(p, b.id) })); },
+  move(productId, qty, type, ref, note = '', branch) {
     const p = DB.get('products', productId); if (!p || p.trackStock === false) return;
-    DB.update('products', p.id, { qty: round2((Number(p.qty) || 0) + qty) });
-    DB.insert('stockMoves', { productId, qty, type, ref, note, date: nowISO(), userId: Session.user?.id, balance: round2(Number(p.qty)) });
+    const b = branch === undefined ? (Branch.on() ? Branch.cur() : '') : branch;
+    const patch = { qty: round2((Number(p.qty) || 0) + qty) };
+    if (Branch.on() && b && !Branch.isMain(b)) patch.bq = { ...(p.bq || {}), [b]: round2((Number((p.bq || {})[b]) || 0) + qty) };
+    DB.update('products', p.id, patch);
+    DB.insert('stockMoves', { productId, qty, type, ref, note, date: nowISO(), userId: Session.user?.id, balance: round2(Number(p.qty)), ...(Branch.on() ? { branchId: b || Branch.mainId(), branchBal: this.qty(p, b || Branch.mainId()) } : {}) });
   },
   value(byCost = true) { return round2(sum(DB.all('products').filter((p) => p.trackStock !== false), (p) => Math.max(0, p.qty) * (byCost ? p.cost : p.price))); }
 };
@@ -3742,13 +3805,15 @@ function labelsHTML(list /* [{product, copies}] */) {
  * ========================================================= */
 const Modules = {};
 const NAV = [
-  { id: 'main', grp: ['الرئيسية', 'Main'], items: ['dashboard', 'ownerLive', 'pos'], fixed: true },
+  { id: 'main', grp: ['الرئيسية', 'Main'], items: ['dashboard', 'pos', 'ownerLive'], fixed: true },
   { id: 'services', grp: ['المحافظ الإلكترونية وماكينات الدفع', 'E-wallets & payment machines'], icon: 'wallet', items: ['wallets', 'machines'] },
-  { id: 'commerce', grp: ['المبيعات والمخزون', 'Sales & stock'], icon: 'cart', items: ['sales', 'customers', 'loyalty', 'offers', 'catalog', 'ratings', 'installments', 'purchases', 'inventory', 'losses'] },
+  { id: 'more', grp: ['الأقسام', 'Departments'], items: ['phones', 'repairs', 'cctv', 'lines'], fixed: true },
+  { id: 'sales', grp: ['المبيعات والطلبات', 'Sales & orders'], icon: 'cart', items: ['sales', 'orders', 'quotes', 'installments', 'offers'] },
+  { id: 'crm', grp: ['العملاء والتسويق', 'Customers & marketing'], icon: 'star', items: ['customers', 'loyalty', 'campaigns', 'ratings', 'catalog'] },
+  { id: 'stock', grp: ['المخزون والمشتريات', 'Stock & purchasing'], icon: 'box', items: ['inventory', 'purchases', 'transfers', 'losses'] },
   { id: 'supp', grp: ['', ''], items: ['suppliers'], fixed: true },
-  { id: 'more', grp: ['', ''], items: ['phones', 'cctv', 'lines', 'repairs'], fixed: true },
+  { id: 'finance', grp: ['المالية والتقارير', 'Finance & reports'], icon: 'bank', items: ['reports', 'shifts', 'expenses', 'capital', 'eta'] },
   { id: 'hr', grp: ['الموارد البشرية', 'HR'], icon: 'users', items: ['users', 'attendance', 'payroll', 'targets'] },
-  { id: 'finance', grp: ['المالية', 'Finance'], icon: 'bank', items: ['shifts', 'expenses', 'capital', 'reports'] },
   { id: 'system', grp: ['النظام', 'System'], icon: 'settings', items: ['settings', 'backup'] }
 ];
 const App = {
@@ -4086,7 +4151,7 @@ const GlobalSearch = {
 const Notify = {
   list() {
     const out = []; const s = DB.settings();
-    if (s.lowStockAlert) DB.filter('products', (p) => p.trackStock !== false && Number(p.qty) <= Number(p.minQty || 0)).slice(0, 15).forEach((p) => out.push({ type: Number(p.qty) <= 0 ? 'err' : 'warn', icon: 'box', t: L('مخزون منخفض: ', 'Low stock: ') + p.name, s: L('الرصيد الحالي', 'Current') + ': ' + p.qty + ' / ' + L('الحد الأدنى', 'min') + ': ' + (p.minQty || 0), go: () => App.go('inventory') }));
+    if (s.lowStockAlert) DB.filter('products', (p) => p.trackStock !== false && Stock.qty(p) <= Number(p.minQty || 0)).slice(0, 15).forEach((p) => out.push({ type: Stock.qty(p) <= 0 ? 'err' : 'warn', icon: 'box', t: L('مخزون منخفض: ', 'Low stock: ') + p.name, s: L('الرصيد الحالي', 'Current') + ': ' + Stock.qty(p) + ' / ' + L('الحد الأدنى', 'min') + ': ' + (p.minQty || 0), go: () => App.go('inventory') }));
     DB.filter('wallets', (w) => w.active !== false).forEach((w) => { const u = Wallets.usage(w); if (w.dailyLimit && u.dayPct >= 80) out.push({ type: u.dayPct >= 100 ? 'err' : 'warn', icon: 'wallet', t: L('اقتراب الليمت اليومي: ', 'Daily limit near: ') + w.name, s: `${money(u.day)} / ${money(w.dailyLimit)}`.replace(/^/, '\u2066') + '\u2069', go: () => App.go('wallets') }); if (w.monthlyLimit && u.monthPct >= 80) out.push({ type: 'warn', icon: 'wallet', t: L('اقتراب الليمت الشهري: ', 'Monthly limit near: ') + w.name, s: `${money(u.month)} / ${money(w.monthlyLimit)}`, go: () => App.go('wallets') }); });
     const pend = Wallets.openOps('pending'), und = Wallets.openOps('undelivered');
     if (und.length) out.push({ type: 'err', icon: 'alert', t: L(`${und.length} عملية غير مسلمة للعملاء`, `${und.length} undelivered operations`), s: money(sum(und, (t) => t.amount)), go: () => { Modules.wallets.tab = 'undelivered'; App.go('wallets'); } });
@@ -4328,9 +4393,9 @@ Modules.pos = {
     if (this.cat === '__ph') return this.renderPhones();
     const list = this.filtered().slice(0, 120);
     $('#posGrid').innerHTML = list.length ? list.map((p) => {
-      const out = p.trackStock !== false && p.qty <= 0;
+      const bq = Stock.qty(p); const out = p.trackStock !== false && bq <= 0;
       return `<button class="prod ${out ? 'out' : ''}" data-id="${p.id}">
-        <span class="q tag ${p.trackStock === false ? 'info' : p.qty <= 0 ? 'err' : p.qty <= (p.minQty || 0) ? 'warn' : 'ok'}">${p.trackStock === false ? L('خدمة', 'Service') : p.qty}</span>
+        <span class="q tag ${p.trackStock === false ? 'info' : bq <= 0 ? 'err' : bq <= (p.minQty || 0) ? 'warn' : 'ok'}">${p.trackStock === false ? L('خدمة', 'Service') : bq}</span>
         <div class="pic">${p.image ? `<img src="${p.image}" style="max-height:64px;max-width:100%;border-radius:8px">` : icon(p.type === 'camera' ? 'cctv' : p.type === 'service' ? 'settings' : p.type === 'computer' ? 'pos' : 'phone')}</div>
         <div class="n">${esc(p.name)}</div><div class="pr num">${money(p.price)}</div></button>`;
     }).join('') : `<div style="grid-column:1/-1">${UI.empty(L('لا توجد منتجات — أضف منتجات من صفحة المخزون', 'No products — add some from Inventory'), 'box')}</div>`;
@@ -4369,7 +4434,7 @@ Modules.pos = {
     const s = DB.settings();
     const line = this.cart.find((i) => i.productId === p.id);
     const newQty = (line ? line.qty : 0) + 1;
-    if (p.trackStock !== false && !s.allowNegativeStock && newQty > p.qty) { UI.toast(L(`الكمية المتاحة من "${p.name}" هي ${p.qty} فقط`, `Only ${p.qty} available`), 'err'); return; }
+    if (p.trackStock !== false && !s.allowNegativeStock && newQty > Stock.qty(p)) { UI.toast(L(`الكمية المتاحة من "${p.name}" هي ${Stock.qty(p)} فقط`, `Only ${Stock.qty(p)} available`), 'err'); return; }
     if (line) line.qty = newQty; else this.cart.push({ productId: p.id, name: p.name, qty: 1, price: Number(p.price), cost: Number(p.cost) || 0, discount: 0, barcode: p.barcode });
     this.renderCart();
     const g = $(`#posGrid [data-id="${p.id}"]`); if (g) { g.classList.remove('scan-flash'); void g.offsetWidth; g.classList.add('scan-flash'); }
@@ -4658,15 +4723,15 @@ Modules.sales = {
   <script>
 Modules.inventory = {
   title: () => L('المخزون والمنتجات', 'Inventory'), icon: 'box', perm: 'inventory',
-  badge: () => DB.filter('products', (p) => p.trackStock !== false && p.qty <= (p.minQty || 0)).length,
+  badge: () => DB.filter('products', (p) => p.trackStock !== false && Stock.qty(p) <= (p.minQty || 0)).length,
   tab: 'products',
   render(el) {
     const prods = DB.all('products'); const tracked = prods.filter((p) => p.trackStock !== false);
     el.innerHTML = `<div class="grid g4 mb">
       ${UI.kpi(L('عدد الأصناف', 'Products'), num(prods.length), 'box', 'hero', `${DB.all('categories').length} ${L('قسم', 'categories')}`)}
-      ${UI.kpi(L('إجمالي القطع', 'Total units'), num(sum(tracked, (p) => Math.max(0, p.qty))), 'layers', 'c-info')}
+      ${UI.kpi(Branch.on() ? L('القطع في الفرع ده', 'Units in this branch') : L('إجمالي القطع', 'Total units'), num(sum(tracked, (p) => Math.max(0, Stock.qty(p)))), 'layers', 'c-info', Branch.on() ? `${esc(Branch.name(Branch.cur()))} — ${L('كل الفروع', 'All branches')}: ${num(sum(tracked, (p) => Math.max(0, p.qty)))}` : '')}
       ${Session.can('inventory.cost') ? UI.kpi(L('قيمة المخزون (تكلفة)', 'Stock value (cost)'), money(Stock.value(true)), 'money', 'c-ok', `${L('بسعر البيع', 'At retail')}: ${money(Stock.value(false))}`) : UI.kpi(L('قيمة المخزون (بيع)', 'Stock value'), money(Stock.value(false)), 'money', 'c-ok')}
-      ${UI.kpi(L('نواقص / منخفض', 'Low / out of stock'), num(tracked.filter((p) => p.qty <= (p.minQty || 0)).length), 'alert', 'c-err', `${L('نفد', 'Out')}: ${tracked.filter((p) => p.qty <= 0).length}`)}
+      ${UI.kpi(L('نواقص / منخفض', 'Low / out of stock'), num(tracked.filter((p) => Stock.qty(p) <= (p.minQty || 0)).length), 'alert', 'c-err', `${L('نفد', 'Out')}: ${tracked.filter((p) => Stock.qty(p) <= 0).length}`)}
     </div><div class="row mb wrap"><div id="invTabs"></div><div class="spacer"></div>
       <button class="btn" id="invImp">${icon('upload')}${L('استيراد Excel', 'Import Excel')}</button>
       <button class="btn" id="invTpl">${icon('excel')}${L('نموذج الاستيراد', 'Import template')}</button>
@@ -4693,14 +4758,14 @@ Modules.inventory = {
       rows: () => DB.all('products').sort((a, b2) => a.name.localeCompare(b2.name, 'ar')), exportName: 'products', searchText: (p) => `${p.name} ${p.barcode || ''} ${p.sku || ''}`,
       filters: [{ label: L('القسم', 'Category'), options: DB.all('categories').map((c) => [c.id, c.name]), test: (p, v) => p.categoryId === v },
         { label: L('النوع', 'Type'), options: Object.entries(PRODUCT_TYPES).map(([k, v]) => [k, L(...v)]), test: (p, v) => p.type === v },
-        { label: L('حالة المخزون', 'Stock'), options: [['low', L('منخفض', 'Low')], ['out', L('نفد', 'Out')], ['ok', L('متوفر', 'In stock')]], test: (p, v) => (v === 'out' ? p.qty <= 0 : v === 'low' ? p.qty > 0 && p.qty <= (p.minQty || 0) : p.qty > (p.minQty || 0)) }],
+        { label: L('حالة المخزون', 'Stock'), options: [['low', L('منخفض', 'Low')], ['out', L('نفد', 'Out')], ['ok', L('متوفر', 'In stock')]], test: (p, v) => { const q = Stock.qty(p); return v === 'out' ? q <= 0 : v === 'low' ? q > 0 && q <= (p.minQty || 0) : q > (p.minQty || 0); } }],
       columns: [
         { key: 'name', label: L('المنتج', 'Product'), render: (p) => `<div class="row"><div class="avatar" style="background:var(--p-50);color:var(--p)">${p.image ? `<img src="${p.image}" style="width:34px;height:34px;border-radius:10px;object-fit:cover">` : icon(p.type === 'camera' ? 'cctv' : 'phone')}</div><div><b>${esc(p.name)}</b><div class="faint">${esc(DB.get('categories', p.categoryId)?.name || '')}</div></div></div>`, exportVal: (p) => p.name },
         { key: 'barcode', label: L('الباركود', 'Barcode'), render: (p) => `<span class="mono">${esc(p.barcode || '—')}</span>`, exportVal: (p) => p.barcode },
         ...(canCost ? [{ key: 'cost', label: L('سعر الشراء', 'Cost'), render: (p) => `<span class="num">${money(p.cost, false)}</span>`, exportVal: (p) => p.cost }] : []),
         { key: 'price', label: L('سعر البيع', 'Price'), render: (p) => `<b class="num">${money(p.price, false)}</b>`, exportVal: (p) => p.price },
         ...(canCost ? [{ label: L('الربح', 'Margin'), render: (p) => (p.price ? `<span class="tag ok">${Math.round(((p.price - p.cost) / p.price) * 100)}%</span>` : '—'), export: false }] : []),
-        { key: 'qty', label: L('الكمية', 'Qty'), render: (p) => (p.trackStock === false ? `<span class="tag info">${L('خدمة', 'Service')}</span>` : `<span class="tag ${p.qty <= 0 ? 'err' : p.qty <= (p.minQty || 0) ? 'warn' : 'ok'}">${num(p.qty)}</span>`), exportVal: (p) => p.qty },
+        { key: 'qty', label: L('الكمية', 'Qty'), render: (p) => { if (p.trackStock === false) return `<span class="tag info">${L('خدمة', 'Service')}</span>`; const q = Stock.qty(p); return `<span class="tag ${q <= 0 ? 'err' : q <= (p.minQty || 0) ? 'warn' : 'ok'}">${num(q)}</span>${Branch.on() ? `<div class="faint" style="font-size:11px" title="${esc(Stock.byBranch(p).map((b) => b.name + ': ' + b.qty).join(' • '))}">${L('الكل', 'All')}: ${num(p.qty)}</div>` : ''}`; }, exportVal: (p) => Stock.qty(p) },
         { key: 'minQty', label: L('الحد الأدنى', 'Min'), exportVal: (p) => p.minQty },
         { label: L('القسم', 'Category'), render: (p) => esc(DB.get('categories', p.categoryId)?.name || ''), exportVal: (p) => DB.get('categories', p.categoryId)?.name || '' }
       ].filter((c) => c.label !== L('القسم', 'Category') || true),
@@ -4754,20 +4819,20 @@ Modules.inventory = {
     const moves = DB.filter('stockMoves', (x) => x.productId === p.id).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 50);
     const soldQ = sum(DB.all('sales').flatMap((s) => s.items.filter((i) => i.productId === p.id)), (i) => i.qty - (i.returned || 0));
     UI.modal({ title: esc(p.name), icon: 'box', size: 'lg', body: `
-      <div class="grid g4 mb">${[[L('سعر البيع', 'Price'), money(p.price)], ...(Session.can('inventory.cost') ? [[L('التكلفة', 'Cost'), money(p.cost)]] : []), [L('الرصيد', 'Stock'), p.trackStock === false ? '∞' : num(p.qty)], [L('إجمالي المباع', 'Total sold'), num(soldQ)]].map(([l, v]) => `<div class="stat-mini"><span class="l">${l}</span><span class="v num">${v}</span></div>`).join('')}</div>
+      <div class="grid g4 mb">${[[L('سعر البيع', 'Price'), money(p.price)], ...(Session.can('inventory.cost') ? [[L('التكلفة', 'Cost'), money(p.cost)]] : []), [Branch.on() ? L('رصيد الفرع ده', 'This branch') : L('الرصيد', 'Stock'), p.trackStock === false ? '∞' : num(Stock.qty(p))], [L('إجمالي المباع', 'Total sold'), num(soldQ)]].map(([l, v]) => `<div class="stat-mini"><span class="l">${l}</span><span class="v num">${v}</span></div>`).join('')}</div>
       <div class="row mb" style="gap:20px;align-items:flex-start"><div style="width:240px;background:#fff;padding:8px;border-radius:10px;border:1px solid var(--line)">${barcodeSVG(p.barcode || p.sku || p.id, { height: 50 })}</div>
       <div class="muted" style="line-height:1.9">${L('القسم', 'Category')}: <b>${esc(DB.get('categories', p.categoryId)?.name || '—')}</b><br>${L('النوع', 'Type')}: <b>${L(...(PRODUCT_TYPES[p.type] || PRODUCT_TYPES.other))}</b><br>${L('المورد', 'Supplier')}: <b>${esc(DB.get('suppliers', p.supplierId)?.name || '—')}</b><br>${p.warranty ? L('الضمان', 'Warranty') + `: <b>${p.warranty} ${L('شهر', 'months')}</b><br>` : ''}${p.notes ? esc(p.notes) : ''}</div></div>
-      <h4 style="margin:6px 0">${L('آخر حركات المخزون', 'Recent stock movements')}</h4>
+      ${Branch.on() && p.trackStock !== false ? `<h4 style="margin:6px 0">${L('الرصيد في كل فرع', 'Stock per branch')}</h4><div class="br-qty mb">${Stock.byBranch(p).map((b) => `<div class="${b.id === Branch.cur() ? 'on' : ''}"><small>${esc(b.name)}</small><b class="num">${num(b.qty)}</b></div>`).join('')}<div><small>${L('الإجمالي', 'Total')}</small><b class="num">${num(p.qty)}</b></div></div>` : ''}<h4 style="margin:6px 0">${L('آخر حركات المخزون', 'Recent stock movements')}</h4>
       <div class="card"><table class="tbl"><thead><tr><th>${L('التاريخ', 'Date')}</th><th>${L('النوع', 'Type')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('المرجع', 'Ref')}</th></tr></thead><tbody>${moves.map((x) => `<tr><td>${fmtDT(x.date)}</td><td>${moveName(x.type)}</td><td><span class="tag ${x.qty > 0 ? 'ok' : 'err'}">${x.qty > 0 ? '+' : ''}${x.qty}</span></td><td>${esc(x.ref || '')} ${esc(x.note || '')}</td></tr>`).join('') || `<tr><td colspan="4">${UI.empty(L('لا توجد حركات', 'No movements'))}</td></tr>`}</tbody></table></div>`,
       actions: [{ label: L('طباعة باركود', 'Print label'), icon: 'barcode', onClick: (m) => { m.close(); this.labelsDialog([p]); } }, { label: L('تعديل', 'Edit'), cls: 'primary', icon: 'edit', onClick: (m) => { m.close(); this.edit(p); } }] });
   },
   adjust(p) {
-    UI.modal({ title: L('تسوية مخزون', 'Stock adjustment') + ' — ' + esc(p.name), icon: 'swap', size: 'sm', body: `<div class="stat-mini mb"><span class="l">${L('الرصيد الحالي', 'Current')}</span><span class="v">${p.qty}</span></div>` + UI.form([
+    UI.modal({ title: L('تسوية مخزون', 'Stock adjustment') + ' — ' + esc(p.name), icon: 'swap', size: 'sm', body: `<div class="stat-mini mb"><span class="l">${Branch.on() ? L('رصيد الفرع ده', 'This branch') : L('الرصيد الحالي', 'Current')}</span><span class="v">${Stock.qty(p)}</span></div>` + UI.form([
       { name: 'mode', label: L('العملية', 'Operation'), type: 'select', options: [['add', L('إضافة (+)', 'Add (+)')], ['sub', L('خصم (−) تالف / هالك', 'Remove (−) damaged')], ['set', L('تعيين الرصيد الفعلي', 'Set actual qty')]], col: 12 },
       { name: 'qty', label: L('الكمية', 'Quantity'), type: 'number', required: true, col: 12 }, { name: 'note', label: L('السبب', 'Reason'), col: 12 }]),
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('تنفيذ', 'Apply'), cls: 'primary', onClick: (m) => {
         if (!UI.validate(m.el)) return; const v = UI.read(m.el); const q = Number(v.qty) || 0;
-        const delta = v.mode === 'add' ? q : v.mode === 'sub' ? -q : q - p.qty;
+        const delta = v.mode === 'add' ? q : v.mode === 'sub' ? -q : q - Stock.qty(p);
         if (delta) Stock.move(p.id, delta, 'adjust', L('تسوية', 'Adjustment'), v.note); audit('stock.adjust', `${p.name} ${delta}`);
         m.close(); UI.toast(L('تمت التسوية', 'Adjusted')); App.reload();
       } }] });
@@ -4800,15 +4865,15 @@ Modules.inventory = {
     const prods = DB.filter('products', (p) => p.trackStock !== false);
     b.innerHTML = `<div class="card"><div class="card-h"><h3>${L('جرد المخزون الفعلي', 'Physical stock count')}</h3><span class="sub">${L('اكتب الكمية الفعلية — يمكنك مسح الباركود لزيادة العدد', 'Enter actual counts — scan barcodes to increment')}</span><div class="spacer"></div><input id="cntScan" placeholder="${L('امسح باركود...', 'Scan barcode...')}" style="width:220px"><button class="btn primary" id="cntApply">${icon('check')}${L('اعتماد الجرد', 'Apply count')}</button></div>
       <div class="tbl-wrap" style="max-height:60vh"><table class="tbl"><thead><tr><th>${L('المنتج', 'Product')}</th><th>${L('الباركود', 'Barcode')}</th><th>${L('رصيد النظام', 'System')}</th><th>${L('الفعلي', 'Actual')}</th><th>${L('الفرق', 'Diff')}</th></tr></thead>
-      <tbody>${prods.map((p) => `<tr><td>${esc(p.name)}</td><td class="mono">${esc(p.barcode || '')}</td><td>${p.qty}</td><td><input type="number" data-c="${p.id}" style="width:100px" placeholder="${p.qty}"></td><td data-d="${p.id}">—</td></tr>`).join('')}</tbody></table></div></div>`;
-    const upd = (i) => { const p = DB.get('products', i.dataset.c); const d = i.value === '' ? null : Number(i.value) - p.qty; $(`[data-d="${p.id}"]`).innerHTML = d === null ? '—' : `<span class="tag ${d === 0 ? 'ok' : d > 0 ? 'info' : 'err'}">${d > 0 ? '+' : ''}${d}</span>`; };
+      <tbody>${prods.map((p) => `<tr><td>${esc(p.name)}</td><td class="mono">${esc(p.barcode || '')}</td><td>${Stock.qty(p)}</td><td><input type="number" data-c="${p.id}" style="width:100px" placeholder="${Stock.qty(p)}"></td><td data-d="${p.id}">—</td></tr>`).join('')}</tbody></table></div></div>`;
+    const upd = (i) => { const p = DB.get('products', i.dataset.c); const d = i.value === '' ? null : Number(i.value) - Stock.qty(p); $(`[data-d="${p.id}"]`).innerHTML = d === null ? '—' : `<span class="tag ${d === 0 ? 'ok' : d > 0 ? 'info' : 'err'}">${d > 0 ? '+' : ''}${d}</span>`; };
     $$('[data-c]', b).forEach((i) => (i.oninput = () => upd(i)));
     $('#cntScan').onkeydown = (e) => { if (e.key !== 'Enter') return; const p = findProductByCode(e.target.value); e.target.value = ''; if (!p) return UI.toast(L('غير موجود', 'Not found'), 'warn'); const i = $(`[data-c="${p.id}"]`); if (i) { i.value = (Number(i.value) || 0) + 1; upd(i); i.scrollIntoView({ block: 'center' }); } };
     $('#cntApply').onclick = async () => {
-      const ch = $$('[data-c]', b).filter((i) => i.value !== '').map((i) => ({ p: DB.get('products', i.dataset.c), v: Number(i.value) })).filter((x) => x.v !== x.p.qty);
+      const ch = $$('[data-c]', b).filter((i) => i.value !== '').map((i) => ({ p: DB.get('products', i.dataset.c), v: Number(i.value) })).filter((x) => x.v !== Stock.qty(x.p));
       if (!ch.length) return UI.toast(L('لا توجد فروقات', 'No differences'), 'info');
       if (!(await UI.confirm(L(`سيتم تعديل ${ch.length} صنف. متابعة؟`, `Adjust ${ch.length} items?`), { danger: false }))) return;
-      ch.forEach((x) => Stock.move(x.p.id, x.v - x.p.qty, 'count', L('جرد', 'Count'))); audit('stock.count', ch.length);
+      ch.forEach((x) => Stock.move(x.p.id, x.v - Stock.qty(x.p), 'count', L('جرد', 'Count'))); audit('stock.count', ch.length);
       UI.toast(L('تم اعتماد الجرد', 'Count applied')); App.reload();
     };
   },
@@ -4896,7 +4961,7 @@ Modules.purchases = {
         <div class="f c4"><label class="lbl">${L('رقم فاتورة المورد', 'Supplier invoice #')}</label><input id="puRef"></div>
         <div class="f c4"><label class="lbl">${L('التاريخ', 'Date')}</label><input type="date" id="puDate" value="${dayKey()}"></div>
       </div>
-      <div class="row mb"><div style="flex:1;position:relative"><input id="puQ" placeholder="${L('امسح الباركود أو ابحث عن المنتج لإضافته...', 'Scan or search a product to add...')}" style="height:46px"></div><button class="btn" id="puNewProd">${icon('plus')}${L('منتج جديد', 'New product')}</button></div>
+      <div class="row mb"><div style="flex:1;position:relative"><input id="puQ" placeholder="${L('امسح الباركود أو ابحث عن المنتج لإضافته...', 'Scan or search a product to add...')}" style="height:46px"></div><button class="btn" id="puPack" type="button">${icon('box')}${L('بالكرتونة', 'By carton')}</button><button class="btn" id="puNewProd">${icon('plus')}${L('منتج جديد', 'New product')}</button></div>
       <div class="card"><div class="tbl-wrap" style="max-height:38vh"><table class="tbl"><thead><tr><th>${L('المنتج', 'Product')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('سعر الشراء', 'Cost')}</th><th>${L('سعر البيع الجديد', 'New price')}</th><th>${L('الإجمالي', 'Total')}</th><th></th></tr></thead><tbody id="puItems"></tbody></table></div></div>
       <div class="grid g4 mt">
         <div><label class="lbl">${L('خصم على الفاتورة', 'Invoice discount')}</label><input type="number" id="puDisc" value="0"></div>
@@ -4920,7 +4985,7 @@ Modules.purchases = {
       GlobalSearch.close(); const v = q.value.trim().toLowerCase(); if (v.length < 2) return;
       const res = DB.filter('products', (p) => (p.name + ' ' + (p.barcode || '')).toLowerCase().includes(v)).slice(0, 8);
       const d = document.createElement('div'); d.className = 'dropdown gs-drop'; const r = q.getBoundingClientRect(); d.style.cssText = `top:${zpx(r.bottom) + 4}px;left:${zpx(r.left)}px;width:${zpx(r.width)}px;z-index:120`;
-      d.innerHTML = res.map((p, i) => `<button data-i="${i}">${icon('box')}<span>${esc(p.name)} <span class="faint">· ${L('رصيد', 'qty')} ${p.qty} · ${money(p.cost)}</span></span></button>`).join('') || `<div class="empty" style="padding:14px">${L('لا نتائج', 'No results')}</div>`;
+      d.innerHTML = res.map((p, i) => `<button data-i="${i}">${icon('box')}<span>${esc(p.name)} <span class="faint">· ${L('رصيد', 'qty')} ${p.trackStock === false ? '—' : Stock.qty(p)} · ${money(p.cost)}</span></span></button>`).join('') || `<div class="empty" style="padding:14px">${L('لا نتائج', 'No results')}</div>`;
       document.body.appendChild(d); $$('button', d).forEach((b) => (b.onclick = () => { add(res[+b.dataset.i]); q.value = ''; d.remove(); q.focus(); }));
     }, 150);
     $('#puDisc').oninput = () => { if (!$('#puPaid').dataset.touched) $('#puPaid').value = tot(); tot(); };
@@ -4928,6 +4993,7 @@ Modules.purchases = {
     $('#puSup').onchange = (e) => (supplierId = e.target.value);
     $('#puNewSup').onclick = () => Modules.suppliers.edit(null, (s) => { const o = new Option(s.name, s.id, true, true); $('#puSup').add(o); supplierId = s.id; });
     $('#puNewProd').onclick = () => Modules.inventory.edit(null, (p) => add(p));
+    $('#puPack').onclick = () => PackUnits.open((r) => { const ex = items.find((i) => i.productId === r.product.id); if (ex) { ex.qty += r.qty; ex.cost = r.cost; } else items.push({ productId: r.product.id, name: r.product.name, qty: r.qty, cost: r.cost, price: Number(r.product.price) || 0, pack: r.note }); draw(); });
     m.supplier = () => $('#puSup').value; draw();
   },
   save(m, items) {
@@ -5108,7 +5174,7 @@ const Losses = {
     const isD = kind === 'damaged'; const supplierId = isD ? $('#lsSup', md.el).value : null;
     if (isD && !supplierId) return UI.toast(L('اختر المورد', 'Choose supplier'), 'err');
     const lines = items.filter((i) => i.qty > 0); if (!lines.length) return UI.toast(L('أضف الأصناف', 'Add items'), 'err');
-    for (const i of lines) { const p = i.productId && DB.get('products', i.productId); if (p && p.trackStock !== false && p.qty < i.qty && !DB.settings().allowNegativeStock) return UI.toast(L(`الكمية أكبر من المخزون: ${p.name}`, `Qty exceeds stock: ${p.name}`), 'err'); }
+    for (const i of lines) { const p = i.productId && DB.get('products', i.productId); if (p && p.trackStock !== false && Stock.qty(p) < i.qty && !DB.settings().allowNegativeStock) return UI.toast(L(`الكمية أكبر من المخزون: ${p.name}`, `Qty exceeds stock: ${p.name}`), 'err'); }
     const settlement = isD ? $('#lsSet', md.el).value : null;
     if (settlement === 'cash' && !App.needShift()) return;
     const total = round2(sum(lines, (i) => i.qty * i.cost));
@@ -5823,14 +5889,14 @@ Modules.repairs = {
       { name: 'cost', label: L('التكلفة', 'Cost'), type: 'number', value: 0, col: 4 }, { name: 'price', label: L('السعر للعميل', 'Price to customer'), type: 'number', required: true, col: 4 }]),
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('إضافة', 'Add'), cls: 'primary', onClick: (x) => {
         if (!UI.validate(x.el)) return; const v = UI.read(x.el); const qty = Math.max(1, Number(v.qty) || 1);
-        if (prod && prod.trackStock !== false && prod.qty < qty && !DB.settings().allowNegativeStock) return UI.toast(L('الكمية غير متوفرة في المخزون', 'Not enough stock'), 'err');
+        if (prod && prod.trackStock !== false && Stock.qty(prod) < qty && !DB.settings().allowNegativeStock) return UI.toast(L('الكمية غير متوفرة في المخزون', 'Not enough stock'), 'err');
         const part = { id: uid(), productId: prod?.id || null, name: v.name, qty, cost: Number(v.cost) || 0, price: Number(v.price) || 0 };
         if (prod) Stock.move(prod.id, -qty, 'repair', r.no, L('قطعة غيار صيانة', 'Repair part'));
         DB.update('repairs', r.id, { parts: [...(DB.get('repairs', r.id).parts || []), part] }); audit('repair.part', `${r.no} ${v.name}`); x.close(); this.refresh(r.id);
       } }] });
     const q = $('#rpPq', md.el), res = $('#rpPres', md.el);
     q.oninput = () => { const v = q.value.trim().toLowerCase(); if (!v) return (res.innerHTML = ''); const hits = DB.filter('products', (p) => p.name.toLowerCase().includes(v) || String(p.barcode || '') === v).slice(0, 8);
-      res.innerHTML = hits.map((p) => `<button type="button" data-pp="${p.id}"><b>${esc(p.name)}</b><span class="faint">${L('متاح', 'stock')}: ${p.qty} · ${money(p.price, false)}</span></button>`).join('');
+      res.innerHTML = hits.map((p) => `<button type="button" data-pp="${p.id}"><b>${esc(p.name)}</b><span class="faint">${L('متاح', 'stock')}: ${Stock.qty(p)} · ${money(p.price, false)}</span></button>`).join('');
       $$('[data-pp]', res).forEach((b) => (b.onclick = () => { prod = DB.get('products', b.dataset.pp); $('[name=name]', md.el).value = prod.name; $('[name=cost]', md.el).value = prod.cost || 0; $('[name=price]', md.el).value = prod.price || 0; res.innerHTML = ''; q.value = prod.name; })); };
   },
   payDialog(r) {
@@ -6504,7 +6570,7 @@ const CCTV = {
   checklist() { const c = this.cfg().checklist; return Array.isArray(c) && c.length ? c : ['ضبط زوايا الكاميرات', 'المشاهدة شغالة على موبايل العميل', 'تسمية الكاميرات', 'ضبط التاريخ والوقت', 'التسجيل شغال على الهارد', 'تدريب العميل على البرنامج', 'تغيير الباسورد الافتراضي', 'تنظيف مكان الشغل']; },
   /* شاشة/تقرير المخزون */
   stockRows() {
-    return this.products().map((p) => { const q = Number(p.qty) || 0, r = this.reserved(p.id), cost = Number(p.cost) || 0, price = Number(p.price) || 0;
+    return this.products().map((p) => { const q = Stock.qty(p), r = this.reserved(p.id), cost = Number(p.cost) || 0, price = Number(p.price) || 0;
       return { p, q, r, free: round2(q - r), cost, price, vCost: round2(Math.max(0, q) * cost), vPrice: round2(Math.max(0, q) * price), prof: round2(Math.max(0, q) * (price - cost)), margin: price ? round2(((price - cost) / price) * 100) : 0, low: p.trackStock !== false && q - r <= (Number(p.minQty) || 0) }; });
   },
   report(from, to, canCost) {
@@ -6695,7 +6761,7 @@ Modules.cctv = {
     const el = m.el;
     const drawItems = () => {
       $('#cvItems', el).innerHTML = items.length ? `<div class="table-wrap"><table class="tbl cv-it"><thead><tr><th>${L('الصنف', 'Item')}</th><th style="width:86px">${L('الكمية', 'Qty')}</th><th style="width:110px">${L('السعر', 'Price')}</th>${canCost ? `<th style="width:90px">${L('التكلفة', 'Cost')}</th>` : ''}<th style="width:100px">${L('الإجمالي', 'Total')}</th>${isQuote ? '' : `<th>${L('السيريالات', 'Serials')}</th>`}<th style="width:80px">${L('ضمان (ش)', 'Warr. (m)')}</th><th style="width:34px"></th></tr></thead><tbody>
-        ${items.map((i, k) => { const p = i.productId && DB.get('products', i.productId); const short = p && p.trackStock !== false && i.qty > (Number(p.qty) || 0); return `<tr><td><b>${esc(i.name)}</b>${short ? `<div class="neg" style="font-size:11px">⚠️ ${L('المتاح', 'In stock')} ${num(p.qty)}</div>` : ''}</td>
+        ${items.map((i, k) => { const p = i.productId && DB.get('products', i.productId); const short = p && p.trackStock !== false && i.qty > Stock.qty(p); return `<tr><td><b>${esc(i.name)}</b>${short ? `<div class="neg" style="font-size:11px">⚠️ ${L('المتاح', 'In stock')} ${num(p.qty)}</div>` : ''}</td>
           <td><input type="number" step="any" min="0" data-k="${k}" data-f="qty" value="${i.qty}"></td><td><input type="number" step="any" min="0" data-k="${k}" data-f="price" value="${i.price}"></td>${canCost ? `<td><input type="number" step="any" min="0" data-k="${k}" data-f="cost" value="${i.cost || 0}" ${i.productId ? 'readonly title="' + L('من المخزون', 'From stock') + '"' : ''}></td>` : ''}
           <td class="num"><b>${money(i.qty * i.price, false)}</b></td>${isQuote ? '' : `<td><input data-k="${k}" data-f="serials" dir="ltr" value="${esc((i.serials || []).join(', '))}" placeholder="${L('افصل بفاصلة', 'comma separated')}"></td>`}
           <td><input type="number" min="0" data-k="${k}" data-f="warrantyMonths" value="${i.warrantyMonths ?? ''}" placeholder="${$('[name=warrantyMonths]', el)?.value || ''}"></td><td><button type="button" class="btn ghost sm" data-del="${k}" style="color:var(--err)">${icon('x')}</button></td></tr>`; }).join('')}</tbody></table></div>` : `<div class="faint tc" style="padding:14px">${L('ضيف الكاميرات وجهاز التسجيل والهارد والسلك والباور…', 'Add cameras, recorder, HDD, cable, power…')}</div>`;
@@ -6825,7 +6891,7 @@ Modules.cctv = {
     $$('#cvPm [data-pm]', m.el).forEach((b) => (b.onclick = () => { $$('#cvPm [data-pm]', m.el).forEach((x) => x.classList.toggle('active', x === b)); $('[name=amount]', m.el).value = b.dataset.pm === 'full' ? tot : b.dataset.pm === 'none' ? 0 : round2(tot / 2); }));
   },
   install(j) {
-    const short = (j.items || []).filter((i) => { const p = i.productId && DB.get('products', i.productId); return p && p.trackStock !== false && i.qty > (Number(p.qty) || 0); });
+    const short = (j.items || []).filter((i) => { const p = i.productId && DB.get('products', i.productId); return p && p.trackStock !== false && i.qty > Stock.qty(p); });
     const s = DB.settings(); const due = CCTV.due(j);
     const m = UI.modal({ title: L('تأكيد التركيب', 'Confirm installation') + ' — ' + j.no, icon: 'check', size: 'md', body: `${short.length ? `<div class="tag ${s.allowNegativeStock ? 'warn' : 'err'}" style="display:block;white-space:normal;padding:10px;margin-bottom:10px">⚠️ ${L('الكمية مش كفاية في المخزون:', 'Not enough stock:')} ${short.map((i) => esc(i.name)).join('، ')}${s.allowNegativeStock ? '' : '<br>' + L('زوّد المخزون (فاتورة شراء) أو عدّل الكميات الأول', 'Add stock first')}</div>` : ''}
       <p class="faint">${L('هيتخصم كل الأجهزة والمستلزمات من المخزون ويبدأ الضمان من تاريخ التركيب.', 'Items will be deducted from stock and warranty starts now.')}</p>
@@ -9321,7 +9387,7 @@ Modules.installments = {
     draw(); const ctl = this.bindPlan(m.el, price);
     const save = (x) => {
       if (!items.length || price() <= 0) return UI.toast(L('ضيف الأصناف وأسعارها', 'Add items with prices'), 'err');
-      for (const i of items) { const p = i.productId && DB.get('products', i.productId); if (p && p.trackStock !== false && p.qty < i.qty && !DB.settings().allowNegativeStock) return UI.toast(L(`الكمية مش متاحة: ${p.name}`, `Not enough stock: ${p.name}`), 'err'); }
+      for (const i of items) { const p = i.productId && DB.get('products', i.productId); if (p && p.trackStock !== false && Stock.qty(p) < i.qty && !DB.settings().allowNegativeStock) return UI.toast(L(`الكمية مش متاحة: ${p.name}`, `Not enough stock: ${p.name}`), 'err'); }
       const v = ctl.read(); if (!v) return;
       const payments = []; if (v.down > 0) payments.push({ method: 'cash', amount: v.down }); if (v.financed > 0) payments.push({ method: 'installment', amount: v.financed });
       const sale = Sales.create({ items: items.map((i) => ({ productId: i.productId, name: i.name, qty: i.qty, price: i.price, cost: i.cost || 0, discount: 0, custom: !!i.custom })), discount: 0, taxRate: 0, payments, customerId: v.customerId, notes: L('بيع بالتقسيط', 'Installment sale') });
@@ -10303,7 +10369,7 @@ Modules.settings = {
   title: () => L('الإعدادات', 'Settings'), icon: 'settings', perm: 'settings', tab: 'store',
   render(el) {
     el.innerHTML = `<div class="row mb"><div id="stTabs"></div></div><div id="stBody"></div>`;
-    UI.tabs($('#stTabs'), [{ id: 'store', label: L('بيانات المحل', 'Store'), icon: 'factory' }, { id: 'general', label: L('عام', 'General'), icon: 'settings' }, { id: 'features', label: L('المميزات', 'Features'), icon: 'layers' }, ...(Session.can('owner') ? [{ id: 'admin', label: L('الإدارة والأمان', 'Admin & security'), icon: 'shield' }] : []), { id: 'display', label: L('شاشة العرض', 'Display'), icon: 'pos' }, { id: 'receipt', label: L('تصميم الإيصال', 'Receipt'), icon: 'receipt' }, { id: 'label', label: L('ملصق الباركود', 'Barcode label'), icon: 'barcode' }, { id: 'lists', label: L('القوائم', 'Lists'), icon: 'layers' }, { id: 'wa', label: L('واتساب', 'WhatsApp'), icon: 'whatsapp' }, { id: 'ai', label: L('المساعد الذكي', 'AI'), icon: 'sparkles' }, { id: 'license', label: L('الترخيص', 'License'), icon: 'key' }, { id: 'about', label: L('حول البرنامج', 'About'), icon: 'info' }], this.tab, (t) => { this.tab = t; this.body(); });
+    UI.tabs($('#stTabs'), [{ id: 'store', label: L('بيانات المحل', 'Store'), icon: 'factory' }, { id: 'general', label: L('عام', 'General'), icon: 'settings' }, { id: 'features', label: L('المميزات', 'Features'), icon: 'layers' }, ...(Session.can('owner') ? [{ id: 'admin', label: L('الإدارة والأمان', 'Admin & security'), icon: 'shield' }] : []), ...((typeof Plan === 'undefined' || Plan.allowed('display')) ? [{ id: 'display', label: L('شاشة العرض', 'Display'), icon: 'pos' }] : []), { id: 'receipt', label: L('تصميم الإيصال', 'Receipt'), icon: 'receipt' }, { id: 'label', label: L('ملصق الباركود', 'Barcode label'), icon: 'barcode' }, { id: 'lists', label: L('القوائم', 'Lists'), icon: 'layers' }, ...((typeof Plan === 'undefined' || Plan.allowed('whatsapp')) ? [{ id: 'wa', label: L('واتساب', 'WhatsApp'), icon: 'whatsapp' }] : []), ...((typeof Plan === 'undefined' || Plan.allowed('ai')) ? [{ id: 'ai', label: L('المساعد الذكي', 'AI'), icon: 'sparkles' }] : []), { id: 'license', label: L('الترخيص', 'License'), icon: 'key' }, { id: 'about', label: L('حول البرنامج', 'About'), icon: 'info' }], this.tab, (t) => { this.tab = t; this.body(); });
     try { const a = $('#stTabs .active, #stTabs [aria-selected="true"]'); if (a) a.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (_) {}
     this.body();
   },
@@ -10389,7 +10455,7 @@ Modules.settings = {
         '-',
         ['roundFee5', L('تقريب العمولة لأعلى مضاعف 5', 'Round fee up to a multiple of 5'), L('مثال: 11 ← 15، 17 ← 20', 'e.g. 11 → 15, 17 → 20')]
       ];
-      b.innerHTML = `<div class="card ftr">${rows.map((r) => r === '-' ? '<div class="ftr-sep"></div>' : (() => { const lk = typeof Plan !== 'undefined' && !r[0].startsWith('__') && Plan.lockedFeat(r[0]); return `<div class="ftr-row ${r[4] ? 'sub' : ''} ${lk ? 'locked' : ''}"><div><b>${r[1]}</b><small>${r[2]}</small></div>${lk ? `<button class="btn sm" data-ftlock="${lk.k}">${icon('lock')}${L('مش ضمن باقتك', 'Not in plan')}</button>` : `<label class="switch"><input type="checkbox" data-ft="${r[0]}" ${(r[0].startsWith('__') ? r[3] : F[r[0]]) ? 'checked' : ''}><span></span></label>`}</div>`; })()).join('')}</div>`;
+      b.innerHTML = `<div class="card ftr">${rows.filter((r) => r === '-' || typeof Plan === 'undefined' || r[0].startsWith('__') || !Plan.lockedFeat(r[0])).map((r) => r === '-' ? '<div class="ftr-sep"></div>' : (() => { const lk = typeof Plan !== 'undefined' && !r[0].startsWith('__') && Plan.lockedFeat(r[0]); return `<div class="ftr-row ${r[4] ? 'sub' : ''} ${lk ? 'locked' : ''}"><div><b>${r[1]}</b><small>${r[2]}</small></div>${lk ? `<button class="btn sm" data-ftlock="${lk.k}">${icon('lock')}${L('مش ضمن باقتك', 'Not in plan')}</button>` : `<label class="switch"><input type="checkbox" data-ft="${r[0]}" ${(r[0].startsWith('__') ? r[3] : F[r[0]]) ? 'checked' : ''}><span></span></label>`}</div>`; })()).join('')}</div>`;
       $$('[data-ftlock]', b).forEach((x) => (x.onclick = () => Plan.deny(x.dataset.ftlock)));
       $$('[data-ft]', b).forEach((x) => (x.onchange = () => {
         if (x.dataset.ft === '__shift') DB.saveSettings({ requireShift: x.checked }); else if (x.dataset.ft === '__autoPayroll') DB.saveSettings({ autoPayroll: x.checked }); else if (x.dataset.ft === '__autoAtt') DB.saveSettings({ autoAttendance: x.checked }); else DB.saveSettings({ features: { [x.dataset.ft]: x.checked } });
@@ -10474,6 +10540,17 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.7.0', d: '2026-10-31', items: [
+    ['factory', L('مخزون منفصل لكل فرع: كل فرع بيبيع من رصيده، والمخزون والجرد والنواقص بتتحسب للفرع اللي انت فيه — وتحويل بضاعة بين الفروع بإذن تحويل وتأكيد استلام', 'Per-branch stock with transfers and receipt confirmation')],
+    ['chart', L('مقارنة الفروع: المبيعات والربح والمصروفات وقيمة المخزون لكل فرع جنب بعض', 'Branch comparison report')],
+    ['truck', L('الطلبات والتوصيل: طلبات الكتالوج الأونلاين بتوصل البرنامج لوحدها، وطلبات التليفون بتتسجل — بيتجهز / خرج للتوصيل / اتسلّم مع رسالة للعميل، وتحويل الطلب لفاتورة بضغطة', 'Orders & delivery with statuses, customer messages and one-tap invoicing')],
+    ['file', L('عروض الأسعار لأي منتجات: طباعة A4 احترافية أو واتساب، وتتحول لفاتورة لما العميل يوافق', 'Quotations for any products')],
+    ['send', L('رسائل واتساب جماعية للعملاء بشرائح (الكل، العملاء البعاد، أعلى العملاء، قسم معيّن…) مع حماية من الحظر وإلغاء الاشتراك', 'WhatsApp campaigns by customer segment with opt-out')],
+    ['box', L('وحدات الشراء: تشتري بالكرتونة والمخزون يتحسب بالقطعة وتكلفة القطعة تتحسب لوحدها', 'Buy by carton, stock by piece')],
+    ['receipt', L('منظومة الإيصال الإلكتروني (مصلحة الضرائب): الإيصال بيتبعت لوحده بعد كل فاتورة وعليه QR المنظومة — للمحلات المسجّلة في القيمة المضافة', 'Egyptian e-Receipt submission with QR')],
+    ['cloud', L('النسخ التلقائي على Google Drive بجدول: كل ساعة / كل كام ساعة / يومياً في ساعة محددة / مع غلق الوردية، وتحدد عدد النسخ اللي تتحفظ', 'Scheduled Google Drive backups with retention')],
+    ['shield', L('عند تفعيل نسخة لعميل: المطور يختار الأقسام بالظبط (حتى الأساسية)، والأقسام اللي مش مختارة بتختفي عند العميل خالص', 'Exact module selection on activation; unselected modules are fully hidden')],
+    ['menu', L('القائمة الرئيسية اتنظمت: المبيعات والطلبات، العملاء والتسويق، المخزون والمشتريات، المالية والتقارير', 'Reorganized main menu')]] },
   { v: '1.6.1', d: '2026-10-30', items: [
     ['money', L('درج النقدية الخارجي: بيفتح لوحده مع أي حركة كاش، أو يدوي من زرار فوق / F10 — عن طريق الطابعة الحرارية (منفذ DK)، أو طابعة شبكة IP (من الكمبيوتر والموبايل)، أو منفذ COM. الإعداد من الإعدادات ← الإيصال ← درج النقدية', 'External cash drawer: auto-open on cash, manual button / F10; via receipt printer, network IP or COM')],
     ['fingerprint', L('الدخول بالبصمة: على الموبايل ببصمة الصباع أو الوش، وعلى الويندوز بـ Windows Hello — كل مستخدم يفعّلها من قائمة اسمه ← «الدخول بالبصمة»', 'Biometric sign-in: fingerprint/face on Android, Windows Hello on Windows')],
@@ -11412,7 +11489,7 @@ grant execute on function public.pos_backup_get(text, bigint) to anon, authentic
   async onShiftClose() {
     const c = this.cfg();
     if (c.onShift !== false && this.ready()) setTimeout(() => this.run(true, true).then((ok) => ok && UI.toast(L('☁️ اترفعت نسخة احتياطية مع غلق الوردية', '☁️ Backup uploaded on shift close'), 'ok', 4000)), 1500);
-    if (c.drive && this.pass()) setTimeout(() => this.toDrive(true), 3000);
+    if (c.drive && c.driveOnShift !== false && this.pass()) setTimeout(() => this.toDrive(true), 3000);
   },
   /* Google Drive: على الكمبيوتر بتتحفظ في مجلد Google Drive، وعلى الموبايل بتتشارك لتطبيق Drive */
   async driveFile() { const txt = await SecureBackup.encrypt(Backup.payload(), this.pass()); return { name: `MarkazAhllan-drive-${dayKey()}-${pad(new Date().getHours())}${pad(new Date().getMinutes())}.mahx`, txt }; },
@@ -11422,7 +11499,7 @@ grant execute on function public.pos_backup_get(text, bigint) to anon, authentic
       const f = await this.driveFile();
       if (DB.desktop && window.api.sys.writeBackup) {
         if (!c.driveDir) { if (!silent) this.pickDrive(); return; }
-        const r = await window.api.sys.writeBackup({ dir: c.driveDir, name: f.name, content: f.txt, keep: 10 });
+        const r = await window.api.sys.writeBackup({ dir: c.driveDir, name: f.name, content: f.txt, keep: Math.max(2, Number(c.driveKeep) || 10) });
         if (r.ok) { DB.saveSettings({ cloud: { driveAt: nowISO(), driveErr: '' } }); if (!silent) UI.toast(L('اتحفظت نسخة في مجلد Google Drive ✓', 'Saved to Google Drive folder ✓')); }
         else { DB.saveSettings({ cloud: { driveErr: r.error || '' } }); if (!silent) UI.toast(L('مجلد Google Drive مش موجود — اختاره تاني', 'Drive folder not found'), 'err'); }
         return;
@@ -11446,13 +11523,13 @@ grant execute on function public.pos_backup_get(text, bigint) to anon, authentic
       <div class="row wrap" style="gap:8px">${!on ? `<button class="btn primary" id="cbOn">${icon('cloud')}${L('تفعيل النسخ السحابي', 'Enable cloud backup')}</button>` : `<button class="btn primary" id="cbNow">${icon('upload')}${L('نسخة دلوقتي', 'Back up now')}</button>${!hasP ? `<button class="btn" id="cbPass">${icon('lock')}${L('إدخال كلمة السر', 'Enter password')}</button>` : ''}<button class="btn" id="cbCode">${icon('key')}${L('عرض الكود', 'Show code')}</button><label class="check"><input type="checkbox" id="cbAuto" ${c.auto ? 'checked' : ''}>${L('تلقائي كل يوم', 'Daily auto')}</label><label class="check"><input type="checkbox" id="cbShift" ${c.onShift !== false ? 'checked' : ''}>${L('مع غلق كل وردية', 'On every shift close')}</label>`}
         <div class="spacer"></div><button class="btn" id="cbRes">${icon('download')}${L('استرجاع من السحابة', 'Restore from cloud')}</button>${Session.can('owner') ? `<button class="btn ghost sm" id="cbSql" title="${L('للمطور', 'For developer')}">${icon('database')}SQL</button>` : ''}</div>
       <div class="cb-drive"><div class="cb-drive-ic">${icon('cloud')}</div><div style="flex:1;min-width:200px"><b>Google Drive</b><div class="faint">${DB.desktop ? (c.driveDir ? `${L('بيتحفظ في', 'Saving to')}: <span dir="ltr">${esc(c.driveDir)}</span>${c.driveAt ? ' · ' + L('آخر نسخة', 'last') + ' ' + fmtDT(c.driveAt) : ''}` : L('نسخة مشفّرة في مجلد Google Drive على الكمبيوتر مع كل غلق وردية', 'Encrypted copy in your Google Drive folder on every shift close')) : L('احفظ نسخة مشفّرة على Google Drive بضغطة (اختار Drive من قايمة المشاركة)', 'Share an encrypted copy to Google Drive')}</div></div>
-        ${DB.desktop ? `${c.driveDir ? `<label class="check"><input type="checkbox" id="cbDrv" ${c.drive ? 'checked' : ''}>${L('تلقائي', 'Auto')}</label>` : ''}<button class="btn sm" id="cbDrvPick">${icon('settings')}${c.driveDir ? L('تغيير الفولدر', 'Change folder') : L('اختيار فولدر Drive', 'Choose Drive folder')}</button>` : ''}<button class="btn sm primary" id="cbDrvNow" ${!hasP ? 'disabled' : ''}>${icon('upload')}${L('نسخة على Drive الآن', 'Save to Drive now')}</button></div></div></div>`;
+        ${DB.desktop ? `${c.driveDir ? `<button class="btn sm" id="cbDrvSch">${icon('clock')}${DriveSchedule.label(c)}</button>` : ''}<button class="btn sm" id="cbDrvPick">${icon('settings')}${c.driveDir ? L('تغيير الفولدر', 'Change folder') : L('اختيار فولدر Drive', 'Choose Drive folder')}</button>` : ''}<button class="btn sm primary" id="cbDrvNow" ${!hasP ? 'disabled' : ''}>${icon('upload')}${L('نسخة على Drive الآن', 'Save to Drive now')}</button></div></div></div>`;
   },
   bind(el) {
     const q = (id) => $('#' + id, el);
     q('cbOn') && (q('cbOn').onclick = () => this.setup());
     q('cbShift') && (q('cbShift').onchange = (e) => DB.saveSettings({ cloud: { onShift: e.target.checked } })); q('cbDrv') && (q('cbDrv').onchange = (e) => DB.saveSettings({ cloud: { drive: e.target.checked } }));
-    q('cbDrvPick') && (q('cbDrvPick').onclick = () => this.pickDrive()); q('cbDrvNow') && (q('cbDrvNow').onclick = () => this.toDrive(false)); q('cbNow') && (q('cbNow').onclick = () => this.run(false, true)); q('cbPass') && (q('cbPass').onclick = () => this.askPass());
+    q('cbDrvPick') && (q('cbDrvPick').onclick = () => this.pickDrive()); q('cbDrvSch') && (q('cbDrvSch').onclick = () => DriveSchedule.dialog()); q('cbDrvNow') && (q('cbDrvNow').onclick = () => this.toDrive(false)); q('cbNow') && (q('cbNow').onclick = () => this.run(false, true)); q('cbPass') && (q('cbPass').onclick = () => this.askPass());
     q('cbRes') && (q('cbRes').onclick = () => this.restore()); q('cbAuto') && (q('cbAuto').onchange = (e) => DB.saveSettings({ cloud: { auto: e.target.checked } }));
     q('cbCode') && (q('cbCode').onclick = () => UI.modal({ title: L('كود الاسترجاع', 'Recovery code'), icon: 'key', size: 'sm', body: `<div class="mid-box" style="font-size:16px">${esc(this.cfg().code)}</div><p class="faint">${L('الكود ده + كلمة السر = نسختك. احفظهم في مكان آمن ومتبعتهمش لحد.', 'Code + password = your backup. Keep them safe.')}</p>`, actions: [{ label: L('نسخ', 'Copy'), icon: 'copy', onClick: async () => (await copyText(this.cfg().code)) && UI.toast(L('اتنسخ ✓', 'Copied ✓')) }, { label: L('تمام', 'OK'), cls: 'primary', onClick: (m) => m.close() }] }));
     q('cbSql') && (q('cbSql').onclick = async () => { (await copyText(this.SQL)) ? UI.toast(L('اتنسخ كود SQL — شغّله مرة واحدة في Supabase ← SQL Editor', 'SQL copied — run it once in Supabase'), 'ok', 6000) : UI.toast(L('تعذر النسخ', 'Copy failed'), 'err'); });
@@ -13923,11 +14000,11 @@ const Catalog = {
     const c = this.cfg(); if (!Cloud.ok()) return !silent && UI.toast(L('الكتالوج محتاج السيرفر الأونلاين', 'Needs the online server'), 'err');
     if (!c.slug) return !silent && UI.toast(L('اختار اسم الرابط الأول', 'Choose a link name first'), 'warn');
     const list = this.items(c); const st = DB.settings().store; const cats = {};
-    const items = []; for (const p of list) { const cn = DB.get('categories', p.categoryId)?.name || ''; if (cn) cats[cn] = 1; items.push({ n: p.name, p: Number(p.price), c: cn, i: await Cloud.thumb(p.image, 180), s: p.trackStock === false || Number(p.qty) > 0 ? 1 : 0 }); }
+    const items = []; for (const p of list) { const cn = DB.get('categories', p.categoryId)?.name || ''; if (cn) cats[cn] = 1; items.push({ id: p.id, n: p.name, p: Number(p.price), c: cn, i: await Cloud.thumb(p.image, 180), s: p.trackStock === false || Number(p.qty) > 0 ? 1 : 0 }); }
     const data = { v: 1, store: { name: st.name, phone: c.phone || st.phone || '', address: st.address || '', logo: await Cloud.thumb(st.logo || 'assets/logo.png', 120) }, title: c.title, note: c.note, cur: DB.settings().currency || 'ج.م', cats: Object.keys(cats), items, at: nowISO() };
     try {
       if (!silent) UI.toast(L('جاري نشر الكتالوج…', 'Publishing…'), 'info', 2500);
-      const mid = await License.machineId(); await Cloud.rpc('pos_catalog_put', { p_mid: mid, p_slug: c.slug, p_data: data });
+      const mid = await License.machineId(); await Cloud.rpc('pos_catalog_put', { p_mid: mid, p_slug: c.slug, p_data: data }); try { if (typeof Orders !== 'undefined') await Cloud.rpc('pos_catalog_key', { p_mid: mid, p_slug: c.slug, p_key: Orders.key() }); } catch (_) {}
       DB.saveSettings({ catalog: { lastAt: nowISO(), lastHash: this.hash(list), count: items.length, lastErr: '' } }); if (!silent) UI.toast(L(`اتنشر الكتالوج ✓ (${items.length} صنف)`, `Published ✓ (${items.length})`), 'ok', 4000); return true;
     } catch (e) { DB.saveSettings({ catalog: { lastErr: e.message.slice(0, 200) } }); if (!silent) UI.toast(/taken/.test(e.message) ? L('اسم الرابط ده محجوز لمحل تاني — اختار اسم تاني', 'Link name taken') : L('تعذر النشر: ', 'Publish failed: ') + e.message, 'err', 6000); return false; }
     finally { if (App.current === 'catalog' && !silent) App.go('catalog'); }
@@ -14374,7 +14451,7 @@ const Drawer = {
   cfg() { return { on: false, mode: 'printer', printer: '', pin: '2', com: 'COM1', baud: 9600, host: '', port: 9100, auto: true, btn: true, custom: '', ...(DB.settings().drawer || {}) }; },
   native() { const C = window.Capacitor; return !!(C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.ApkInstaller && C.Plugins.ApkInstaller.rawTcp); },
   desk() { return !!(window.api && window.api.drawer); },
-  supported() { return this.desk() || this.native(); },
+  supported() { return (this.desk() || this.native()) && (typeof Plan === 'undefined' || Plan.allowed('drawer')); },
   ready() { const c = this.cfg(); return c.on && this.supported() && (this.desk() || c.mode === 'net'); },
   /* ESC p m t1 t2 — النبضة على السن 2 أو 5 */
   bytes(c = this.cfg()) {
@@ -14473,9 +14550,718 @@ const Drawer = {
   const brt = App.refreshTop.bind(App); App.refreshTop = function (...a) { const r = brt(...a); try { Drawer.topBtn(); } catch (_) {} return r; };
   document.addEventListener('keydown', (e) => { if (e.key === 'F10' && Session.user && Drawer.ready() && Drawer.cfg().btn) { e.preventDefault(); Drawer.manual(); } });
   /* إعدادات الإيصال: كارت «درج النقدية» فوق */
-  try { const bb = Modules.settings.body.bind(Modules.settings); Modules.settings.body = async function (...a) { const r = await bb(...a); try { if (this.tab === 'receipt' && Session.can('settings') && !$('#dwSet')) { const b = $('#stBody'); const c = Drawer.cfg(); b.insertAdjacentHTML('afterbegin', `<div class="card card-b mb dw-card"><div class="dw-ic">${icon('money')}</div><div style="flex:1;min-width:0"><b>${L('درج النقدية', 'Cash drawer')}</b><small>${c.on ? L('مفعّل', 'On') + ' — ' + ({ printer: L('عن طريق الطابعة', 'via printer'), com: 'COM', net: 'IP' }[c.mode] || '') + (c.auto ? ' — ' + L('بيفتح لوحده مع الكاش', 'opens on cash') : '') : L('مش مفعّل — الدرج اللي متوصل بالطابعة أو الكمبيوتر يفتح لوحده مع البيع النقدي', 'Off — open the drawer automatically on cash sales')}</small></div><button class="btn" id="dwSet">${icon('settings')}${L('إعداد', 'Setup')}</button></div>`); $('#dwSet').onclick = () => Drawer.settings(); } } catch (e) { console.warn(e); } return r; }; } catch (_) {}
+  try { const bb = Modules.settings.body.bind(Modules.settings); Modules.settings.body = async function (...a) { const r = await bb(...a); try { if (this.tab === 'receipt' && Session.can('settings') && !$('#dwSet') && (typeof Plan === 'undefined' || Plan.allowed('drawer'))) { const b = $('#stBody'); const c = Drawer.cfg(); b.insertAdjacentHTML('afterbegin', `<div class="card card-b mb dw-card"><div class="dw-ic">${icon('money')}</div><div style="flex:1;min-width:0"><b>${L('درج النقدية', 'Cash drawer')}</b><small>${c.on ? L('مفعّل', 'On') + ' — ' + ({ printer: L('عن طريق الطابعة', 'via printer'), com: 'COM', net: 'IP' }[c.mode] || '') + (c.auto ? ' — ' + L('بيفتح لوحده مع الكاش', 'opens on cash') : '') : L('مش مفعّل — الدرج اللي متوصل بالطابعة أو الكمبيوتر يفتح لوحده مع البيع النقدي', 'Off — open the drawer automatically on cash sales')}</small></div><button class="btn" id="dwSet">${icon('settings')}${L('إعداد', 'Setup')}</button></div>`); $('#dwSet').onclick = () => Drawer.settings(); } } catch (e) { console.warn(e); } return r; }; } catch (_) {}
   try { const ba = CmdK.actions.bind(CmdK); CmdK.actions = function () { const A = ba(); if (Drawer.ready()) A.unshift({ id: 'a:drawer', grp: 'act', icon: 'money', t: L('فتح درج النقدية', 'Open cash drawer'), kw: 'drawer درج كاش', run: () => Drawer.manual() }); return A; }; } catch (_) {}
 })();
+
+</script>
+  <script>
+/* =========================================================
+   الإصدار 1.7 — مركز أهلاً
+   1) مخزون لكل فرع + تحويل البضاعة بين الفروع + مقارنة الفروع
+   2) طلبات الكتالوج الأونلاين (وطلبات التليفون) — حالات + توصيل + تحويل لفاتورة
+   3) رسائل واتساب جماعية للعملاء (حملات) — بشرائح وإلغاء اشتراك وحماية من الحظر
+   4) عرض سعر لأي منتجات — طباعة / واتساب / تحويل لفاتورة
+   5) وحدات الشراء (كرتونة = عدد قطع)
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+
+/* ---------- أداة اختيار الأصناف (بتتستخدم في التحويل وعرض السعر والطلبات) ---------- */
+const ItemPicker = {
+  html(id, { price = true, branch } = {}) {
+    return `<div class="ip-wrap" id="${id}"><div class="ph-search">${icon('search')}<input class="ip-q" placeholder="${L('اكتب اسم الصنف أو امسح الباركود…', 'Type a product name or scan a barcode…')}" autocomplete="off"></div><div class="ip-res"></div>
+      <div class="tbl-wrap"><table class="tbl ip-tbl"><thead><tr><th>${L('الصنف', 'Item')}</th>${branch !== undefined ? `<th>${L('المتاح', 'Avail.')}</th>` : ''}<th style="width:110px">${L('الكمية', 'Qty')}</th>${price ? `<th style="width:120px">${L('السعر', 'Price')}</th><th>${L('الإجمالي', 'Total')}</th>` : ''}<th></th></tr></thead><tbody></tbody></table></div>
+      <div class="ip-empty faint tc" style="padding:14px">${L('لسه مفيش أصناف', 'No items yet')}</div>${price ? `<div class="ip-sum"></div>` : ''}</div>`;
+  },
+  bind(root, { price = true, branch, items = [], onChange } = {}) {
+    const st = { items: items.map((x) => ({ ...x })) };
+    const q = $('.ip-q', root), res = $('.ip-res', root), tb = $('tbody', root);
+    const add = (p) => { const ex = st.items.find((i) => i.productId === p.id); if (ex) ex.qty += 1; else st.items.push({ productId: p.id, name: p.name, qty: 1, price: Number(p.price) || 0, cost: Number(p.cost) || 0 }); q.value = ''; res.innerHTML = ''; draw(); q.focus(); };
+    const draw = () => {
+      tb.innerHTML = st.items.map((i, k) => { const p = i.productId && DB.get('products', i.productId); const av = branch !== undefined && p ? Stock.qty(p, branch) : null;
+        return `<tr><td><b>${esc(i.name)}</b></td>${branch !== undefined ? `<td><span class="tag ${av != null && av < i.qty ? 'err' : 'ok'}">${av == null || av === Infinity ? '—' : num(av)}</span></td>` : ''}<td><input type="number" min="0" step="any" data-iq="${k}" value="${i.qty}"></td>${price ? `<td><input type="number" min="0" step="any" data-ipr="${k}" value="${i.price}"></td><td class="num"><b>${money(i.qty * i.price, false)}</b></td>` : ''}<td><button type="button" class="icon-btn" data-irm="${k}">${icon('trash')}</button></td></tr>`; }).join('');
+      $('.ip-empty', root).style.display = st.items.length ? 'none' : '';
+      if (price && $('.ip-sum', root)) $('.ip-sum', root).innerHTML = st.items.length ? `${L('الإجمالي', 'Total')}: <b class="num">${money(sum(st.items, (i) => i.qty * i.price))}</b>` : '';
+      $$('[data-iq]', root).forEach((x) => (x.onchange = () => { st.items[x.dataset.iq].qty = Math.max(0, Number(x.value) || 0); setTimeout(draw, 0); }));
+      $$('[data-ipr]', root).forEach((x) => (x.onchange = () => { st.items[x.dataset.ipr].price = Math.max(0, Number(x.value) || 0); setTimeout(draw, 0); }));
+      $$('[data-irm]', root).forEach((x) => (x.onclick = () => { st.items.splice(+x.dataset.irm, 1); draw(); }));
+      onChange && onChange(st.items);
+    };
+    q.oninput = () => { const v = q.value.trim().toLowerCase(); if (v.length < 2) { res.innerHTML = ''; return; }
+      const hits = DB.filter('products', (p) => p.active !== false && (p.name.toLowerCase().includes(v) || String(p.barcode || '').includes(v) || String(p.sku || '').toLowerCase().includes(v))).slice(0, 8);
+      res.innerHTML = hits.map((p) => `<button type="button" data-pk="${p.id}">${icon('box')}<span>${esc(p.name)}</span><span class="faint num">${money(p.price, false)}${branch !== undefined && p.trackStock !== false ? ' · ' + L('متاح', 'avail') + ' ' + num(Stock.qty(p, branch)) : ''}</span></button>`).join('');
+      $$('[data-pk]', res).forEach((b) => (b.onclick = () => add(DB.get('products', b.dataset.pk)))); };
+    q.onkeydown = (e) => { if (e.key !== 'Enter') return; e.preventDefault(); const p = findProductByCode(q.value.trim()); if (p) add(p); else { const b = $('[data-pk]', res); if (b) b.click(); } };
+    draw(); return { get items() { return st.items.filter((i) => i.qty > 0); }, set branch(b) { branch = b; draw(); } };
+  }
+};
+
+/* =========================================================
+   1) الفروع
+   ========================================================= */
+(function () {
+  /* أي عملية جديدة بتتسجل باسم فرع الجهاز ده — عشان تقارير كل فرع */
+  const TAG = ['sales', 'expenses', 'shifts', 'cashMoves', 'walletTx', 'machineTx', 'purchases', 'repairs', 'installments', 'orders', 'quotes', 'losses', 'cctvJobs'];
+  const bi = DB.insert.bind(DB);
+  DB.insert = function (col, doc, ...rest) {
+    try { if (doc && TAG.includes(col) && doc.branchId === undefined && Branch.on()) doc.branchId = Branch.cur(); } catch (_) {}
+    return bi(col, doc, ...rest);
+  };
+  const bm = moveName; window.moveName = function (t) { return ({ 'transfer-out': L('تحويل لفرع', 'Transfer out'), 'transfer-in': L('استلام من فرع', 'Transfer in'), 'transfer-cancel': L('إلغاء تحويل', 'Transfer cancelled') })[t] || bm(t); };
+})();
+
+const Transfers = {
+  incoming(b = Branch.cur()) { return DB.filter('transfers', (t) => t.status === 'sent' && t.to === b); },
+  async create() {
+    if (!Branch.on()) return UI.toast(L('التحويل محتاج فرعين على الأقل — ضيفهم من الإعدادات ← الإدارة ← الفروع', 'Add at least two branches first'), 'warn', 6000);
+    const bs = Branch.list(); const cur = Branch.cur(); const owner = Session.can('owner');
+    const opts = (ex) => bs.filter((b) => b.id !== ex).map((b) => `<option value="${b.id}">${esc(b.name)}</option>`).join('');
+    let picker;
+    const m = UI.modal({ title: L('تحويل بضاعة لفرع تاني', 'Transfer stock to another branch'), icon: 'swap', size: 'lg', body: `
+      <div class="grid g2 mb"><div><label class="lbl">${L('من فرع', 'From')}</label><select id="trFrom" ${owner ? '' : 'disabled'}>${bs.map((b) => `<option value="${b.id}" ${b.id === cur ? 'selected' : ''}>${esc(b.name)}</option>`).join('')}</select></div>
+      <div><label class="lbl">${L('إلى فرع', 'To')}</label><select id="trTo">${opts(cur)}</select></div></div>
+      ${ItemPicker.html('trItems', { price: false, branch: cur })}
+      <label class="lbl mt">${L('ملاحظة (اختياري)', 'Note (optional)')}</label><input id="trNote" placeholder="${L('مثال: مع المندوب أحمد', 'e.g. with the courier')}">
+      <div class="faint mt" style="line-height:1.8">${L('البضاعة بتتخصم من الفرع المرسل أول ما تبعت، وبتتضاف للفرع التاني لما يأكد الاستلام من جهازه.', 'Stock leaves the source now and arrives when the destination confirms receipt.')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('إرسال التحويل', 'Send transfer'), cls: 'primary', icon: 'send', onClick: (x) => this.send(x, picker) }] });
+    picker = ItemPicker.bind($('#trItems', m.el), { price: false, branch: cur });
+    $('#trFrom', m.el).onchange = () => { const f = $('#trFrom', m.el).value; $('#trTo', m.el).innerHTML = opts(f); picker.branch = f; };
+  },
+  send(m, picker) {
+    const from = $('#trFrom', m.el).value, to = $('#trTo', m.el).value; const items = picker.items;
+    if (!to || from === to) return UI.toast(L('اختار الفرع اللي هتحوّله', 'Choose the destination'), 'warn');
+    if (!items.length) return UI.toast(L('ضيف الأصناف والكميات', 'Add items'), 'warn');
+    const short = items.filter((i) => { const p = DB.get('products', i.productId); return p && p.trackStock !== false && Stock.qty(p, from) < i.qty; });
+    if (short.length && !DB.settings().allowNegativeStock) return UI.toast(L('الكمية مش كفاية في الفرع المرسل: ', 'Not enough stock: ') + short.map((i) => i.name).join('، '), 'err', 6000);
+    const no = DB.nextNo('transfer', 'TR-');
+    const t = DB.insert('transfers', { no, from, to, items: items.map((i) => ({ productId: i.productId, name: i.name, qty: i.qty })), status: 'sent', sentAt: nowISO(), sentBy: Session.user?.name || '', note: $('#trNote', m.el).value.trim() });
+    items.forEach((i) => Stock.move(i.productId, -i.qty, 'transfer-out', no, Branch.name(to), from));
+    audit('transfer.send', `${no} ${Branch.name(from)} → ${Branch.name(to)} (${items.length})`); m.close();
+    UI.toast(L(`اتبعت التحويل ${no} ✓ — مستني استلام ${Branch.name(to)}`, `Transfer ${no} sent ✓`), 'ok', 5000);
+    if (App.current === 'transfers' || App.current === 'inventory') App.reload();
+    return t;
+  },
+  receive(t) {
+    if (t.status !== 'sent') return;
+    const m = UI.modal({ title: `${L('استلام تحويل', 'Receive transfer')} ${t.no}`, icon: 'download', body: `<div class="faint mb">${L('من', 'From')} <b>${esc(Branch.name(t.from))}</b> — ${fmtDT(t.sentAt)} — ${esc(t.sentBy || '')}${t.note ? ' — ' + esc(t.note) : ''}</div>
+      <table class="tbl"><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('المبعوت', 'Sent')}</th><th style="width:120px">${L('اللي وصل فعلاً', 'Received')}</th></tr></thead><tbody>${t.items.map((i, k) => `<tr><td>${esc(i.name)}</td><td class="num">${num(i.qty)}</td><td><input type="number" min="0" step="any" data-rq="${k}" value="${i.qty}"></td></tr>`).join('')}</tbody></table>
+      <div class="faint mt">${L('لو فيه نقص، اكتب الكمية اللي وصلت بس — الفرق بيتسجل في التحويل.', 'If something is missing, enter what arrived — the difference is recorded.')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد الاستلام', 'Confirm receipt'), cls: 'primary', icon: 'check', onClick: (x) => {
+        const got = t.items.map((i, k) => ({ ...i, got: Math.max(0, Number($(`[data-rq="${k}"]`, x.el).value) || 0) }));
+        got.forEach((i) => i.got && Stock.move(i.productId, i.got, 'transfer-in', t.no, Branch.name(t.from), t.to));
+        const diff = got.filter((i) => i.got !== i.qty);
+        DB.update('transfers', t.id, { status: 'received', items: got, receivedAt: nowISO(), receivedBy: Session.user?.name || '', diff: diff.length ? diff.map((i) => `${i.name}: ${i.got - i.qty}`).join('، ') : '' });
+        audit('transfer.receive', `${t.no}${diff.length ? ' — فرق ' + diff.length : ''}`); x.close(); UI.toast(L('اتضافت البضاعة لمخزون الفرع ✓', 'Added to this branch ✓')); App.reload();
+      } }] });
+    return m;
+  },
+  async cancel(t) {
+    if (t.status !== 'sent' || !(await UI.confirm(L(`إلغاء التحويل ${t.no} ورجوع البضاعة لـ ${Branch.name(t.from)}؟`, `Cancel ${t.no}?`)))) return;
+    t.items.forEach((i) => Stock.move(i.productId, i.qty, 'transfer-cancel', t.no, '', t.from));
+    DB.update('transfers', t.id, { status: 'cancelled', cancelledAt: nowISO(), cancelledBy: Session.user?.name || '' }); audit('transfer.cancel', t.no); App.reload();
+  },
+  print(t) {
+    const st = DB.settings().store;
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:A4;margin:14mm}body{font-family:'Cairo',Tahoma,Arial,sans-serif;color:#111;font-size:13px}h2{margin:0}table{width:100%;border-collapse:collapse;margin-top:12px}td,th{border:1px solid #bbb;padding:7px;text-align:right}th{background:#f1f1f1}.m{color:#555}.sg{display:flex;justify-content:space-between;margin-top:50px}</style></head><body>
+      <h2>${esc(st.name)} — ${L('إذن تحويل بضاعة', 'Stock transfer note')} ${esc(t.no)}</h2><div class="m">${L('من', 'From')}: <b>${esc(Branch.name(t.from))}</b> &nbsp; ← &nbsp; ${L('إلى', 'To')}: <b>${esc(Branch.name(t.to))}</b> &nbsp; | &nbsp; ${fmtDT(t.sentAt)} — ${esc(t.sentBy || '')}${t.note ? '<br>' + esc(t.note) : ''}</div>
+      <table><thead><tr><th>#</th><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th>${t.status === 'received' ? `<th>${L('المستلم', 'Received')}</th>` : ''}</tr></thead><tbody>${t.items.map((i, k) => `<tr><td>${k + 1}</td><td>${esc(i.name)}</td><td>${num(i.qty)}</td>${t.status === 'received' ? `<td>${num(i.got ?? i.qty)}</td>` : ''}</tr>`).join('')}</tbody></table>
+      <div class="sg"><div>${L('توقيع المرسل', 'Sender')}: ..................</div><div>${L('توقيع المستلم', 'Receiver')}: ..................</div></div><p class="m" style="margin-top:30px;font-size:11px">${COPYRIGHT_AR}</p></body></html>`, { type: 'a4' });
+  }
+};
+const TR_ST = { sent: [L('في الطريق', 'In transit'), 'warn'], received: [L('اتسلّم', 'Received'), 'ok'], cancelled: [L('ملغي', 'Cancelled'), 'err'] };
+Modules.transfers = {
+  title: () => L('تحويلات الفروع', 'Branch transfers'), icon: 'swap', perm: 'inventory', tab: 'in',
+  enabled: () => Branch.on(),
+  badge: () => (Branch.on() ? Transfers.incoming().length : 0),
+  render(el) {
+    const cur = Branch.cur(); const all = DB.all('transfers').sort((a, b) => (a.sentAt < b.sentAt ? 1 : -1));
+    const inc = Transfers.incoming(cur);
+    el.innerHTML = `${inc.length ? `<div class="card card-b mb tr-alert">${icon('download')}<div style="flex:1"><b>${L(`فيه ${inc.length} تحويل جاي لفرعك`, `${inc.length} incoming transfer(s)`)}</b><small>${L('أكّد الاستلام لما البضاعة توصل عشان تتضاف لمخزونك', 'Confirm on arrival to add them to your stock')}</small></div></div>` : ''}
+      <div class="row mb wrap" style="gap:8px"><div id="trTabs"></div><div class="spacer"></div><span class="tag p">${icon('factory')} ${L('فرع الجهاز ده', 'This device')}: ${esc(Branch.name(cur))}</span><button class="btn" id="trCmp">${icon('chart')}${L('مقارنة الفروع', 'Compare branches')}</button><button class="btn primary" id="trNew">${icon('plus')}${L('تحويل جديد', 'New transfer')}</button></div><div id="trBody"></div>`;
+    UI.tabs($('#trTabs'), [{ id: 'in', icon: 'download', label: L('جاي لفرعي', 'Incoming') + (inc.length ? ` <span class="tag warn" style="padding:0 7px">${inc.length}</span>` : '') }, { id: 'out', icon: 'upload', label: L('مبعوت من فرعي', 'Outgoing') }, { id: 'all', icon: 'history', label: L('الكل', 'All') }], this.tab, (t) => { this.tab = t; App.go('transfers'); });
+    $('#trNew').onclick = () => Transfers.create(); $('#trCmp').onclick = () => BranchReport.open();
+    const rows = this.tab === 'in' ? all.filter((t) => t.to === cur) : this.tab === 'out' ? all.filter((t) => t.from === cur) : all;
+    UI.table($('#trBody'), { rows, exportName: 'transfers', emptyIcon: 'swap', searchText: (t) => `${t.no} ${t.items.map((i) => i.name).join(' ')} ${t.note || ''}`,
+      columns: [{ key: 'no', label: L('رقم', 'No.'), render: (t) => `<b>${esc(t.no)}</b>` }, { key: 'sentAt', label: L('التاريخ', 'Date'), render: (t) => fmtDT(t.sentAt) },
+        { label: L('من ← إلى', 'From → To'), render: (t) => `${esc(Branch.name(t.from))} ← ${esc(Branch.name(t.to))}`, exportVal: (t) => `${Branch.name(t.from)} → ${Branch.name(t.to)}` },
+        { label: L('الأصناف', 'Items'), render: (t) => `${t.items.length} ${L('صنف', 'items')} · ${num(sum(t.items, (i) => i.qty))} ${L('قطعة', 'pcs')}<div class="faint">${esc(t.items.slice(0, 3).map((i) => i.name).join('، '))}${t.items.length > 3 ? '…' : ''}</div>` },
+        { key: 'status', label: L('الحالة', 'Status'), render: (t) => `<span class="tag ${TR_ST[t.status][1]}">${TR_ST[t.status][0]}</span>${t.diff ? `<div class="faint" style="color:var(--err)">${L('فرق', 'Diff')}: ${esc(t.diff)}</div>` : ''}`, exportVal: (t) => TR_ST[t.status][0] }],
+      actions: (t) => (t.status === 'sent' && (t.to === cur || Session.can('owner')) ? UI.act('rcv', 'check', L('استلام', 'Receive'), 'ok') : '') + UI.act('print', 'printer', L('طباعة', 'Print')) + (t.status === 'sent' && (t.from === cur || Session.can('owner')) ? UI.act('cancel', 'x', L('إلغاء', 'Cancel'), 'danger') : ''),
+      onAction: (a, t) => { if (a === 'rcv') Transfers.receive(t); if (a === 'print') Transfers.print(t); if (a === 'cancel') Transfers.cancel(t); } });
+  }
+};
+const BranchReport = {
+  open() {
+    const m = UI.modal({ title: L('مقارنة الفروع', 'Branch comparison'), icon: 'chart', size: 'lg', body: `<div class="row mb wrap" style="gap:8px"><select id="brP"><option value="today">${L('النهارده', 'Today')}</option><option value="week">${L('آخر 7 أيام', 'Last 7 days')}</option><option value="month" selected>${L('الشهر ده', 'This month')}</option><option value="last">${L('الشهر اللي فات', 'Last month')}</option></select></div><div id="brOut"></div>` });
+    const draw = () => {
+      const p = $('#brP', m.el).value; const now = new Date(); let from, to = new Date();
+      if (p === 'today') from = new Date(now.getFullYear(), now.getMonth(), now.getDate()); else if (p === 'week') from = addDays(now, -6); else if (p === 'month') from = new Date(now.getFullYear(), now.getMonth(), 1); else { from = new Date(now.getFullYear(), now.getMonth() - 1, 1); to = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59); }
+      const inP = (d) => { const t = Date.parse(d); return t >= from.getTime() && t <= to.getTime(); }; const main = Branch.mainId();
+      const of = (x, b) => (x.branchId || main) === b;
+      const rows = Branch.list().map((b) => { const ss = DB.filter('sales', (s) => s.status !== 'cancelled' && inP(s.date) && of(s, b.id)); const ex = DB.filter('expenses', (e) => inP(e.date) && of(e, b.id));
+        const stock = round2(sum(DB.filter('products', (x) => x.trackStock !== false), (x) => Math.max(0, Stock.qty(x, b.id)) * (Number(x.cost) || 0)));
+        return { b, n: ss.length, net: round2(sum(ss, Sales.net)), profit: round2(sum(ss, Sales.netProfit)), exp: round2(sum(ex, (e) => Number(e.amount) || 0)), stock }; });
+      const mx = Math.max(1, ...rows.map((r) => r.net));
+      $('#brOut', m.el).innerHTML = `<div class="br-cmp">${rows.map((r) => `<div class="card card-b"><div class="row" style="justify-content:space-between"><b style="font-size:16px">${esc(r.b.name)}</b>${r.b.id === Branch.cur() ? `<span class="tag p">${L('الجهاز ده', 'This device')}</span>` : ''}</div>
+        <div class="br-bar"><i style="width:${Math.round((r.net / mx) * 100)}%"></i></div>
+        <div class="br-st"><div><small>${L('المبيعات', 'Sales')}</small><b class="num">${money(r.net)}</b><span class="faint">${r.n} ${L('فاتورة', 'inv.')}</span></div>${Session.can('reports') ? `<div><small>${L('الربح', 'Profit')}</small><b class="num">${money(r.profit)}</b></div>` : ''}<div><small>${L('المصروفات', 'Expenses')}</small><b class="num">${money(r.exp)}</b></div>${Session.can('inventory.cost') ? `<div><small>${L('قيمة المخزون', 'Stock value')}</small><b class="num">${money(r.stock)}</b></div>` : ''}</div></div>`).join('')}</div>
+        <div class="faint mt">${L('العمليات القديمة قبل تفعيل الفروع بتتحسب على الفرع الرئيسي.', 'Older records count toward the main branch.')}</div>`;
+    };
+    $('#brP', m.el).onchange = draw; draw();
+  }
+};
+
+/* =========================================================
+   2) طلبات الأونلاين
+   ========================================================= */
+const OR_ST = { new: [L('جديد', 'New'), 'info', 'bell'], preparing: [L('بيتجهز', 'Preparing'), 'warn', 'box'], out: [L('خرج للتوصيل', 'Out for delivery'), 'p', 'truck'], delivered: [L('اتسلّم', 'Delivered'), 'ok', 'check'], cancelled: [L('ملغي', 'Cancelled'), 'err', 'x'] };
+const Orders = {
+  cfg() { return { pull: true, fee: 0, msgPreparing: 'أهلاً {name} 🌹 طلبك رقم {no} من {store} اتأكد وبيتجهز دلوقتي.', msgOut: 'طلبك رقم {no} خرج للتوصيل 🚚 — الإجمالي {total}. هيوصلك قريب إن شاء الله.', msgDelivered: 'وصل طلبك رقم {no} ✅ شكراً لثقتك في {store} 🌹', msgCancelled: 'للأسف طلبك رقم {no} اتلغى — كلمنا لو محتاج أي حاجة.', ...(DB.settings().orders || {}) }; },
+  key() { const c = Catalog.cfg(); if (c.okey) return c.okey; const k = Cloud.token(24); DB.saveSettings({ catalog: { okey: k } }); return k; },
+  total(o) { return round2(sum(o.items || [], (i) => (Number(i.q) || 0) * (Number(i.p) || 0)) + (Number(o.fee) || 0)); },
+  fill(t, o) { return String(t || '').replace(/{name}/g, o.name || '').replace(/{no}/g, o.no || '').replace(/{store}/g, DB.settings().store.name || '').replace(/{total}/g, money(this.total(o))); },
+  _busy: false,
+  async pull(manual) {
+    const c = Catalog.cfg(); if (!c.slug || !Cloud.ok() || this._busy || (!manual && !navigator.onLine)) return;
+    this._busy = true;
+    try {
+      const mid = await License.machineId(); const last = DB.settings().orders?.after || '1970-01-01T00:00:00Z';
+      const r = await Cloud.rpc('pos_orders_pull', { p_mid: mid, p_slug: c.slug, p_key: this.key(), p_after: last });
+      const rows = (r && r.rows) || []; let n = 0, mx = last;
+      for (const row of rows) {
+        if (row.created_at > mx) mx = row.created_at;
+        if (DB.find('orders', (o) => o.oid === row.id)) continue;
+        const d = row.data || {}; const items = (Array.isArray(d.items) ? d.items : []).slice(0, 100).map((i) => ({ id: String(i.id || ''), n: String(i.n || '').slice(0, 120), p: Number(i.p) || 0, q: Math.max(0, Number(i.q) || 0) }));
+        DB.insert('orders', { oid: row.id, no: row.no || DB.nextNo('order', 'WEB-'), src: 'web', name: String(d.name || '').slice(0, 80), phone: String(d.phone || '').slice(0, 20), address: String(d.address || '').slice(0, 300), note: String(d.note || '').slice(0, 300), items, fee: Number(this.cfg().fee) || 0, status: 'new', createdAt: row.created_at || nowISO() }); n++;
+      }
+      if (mx !== last) DB.saveSettings({ orders: { after: mx } });
+      if (n) { UI.toast(L(`🛒 وصلك ${n} طلب جديد من الكتالوج`, `🛒 ${n} new online order(s)`), 'ok', 8000); try { new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=').play().catch(() => {}); } catch (_) {} App.refreshTop?.(); if (App.current === 'orders') App.reload(); }
+      else if (manual) UI.toast(L('مفيش طلبات جديدة', 'No new orders'), 'info');
+    } catch (e) { if (manual) UI.toast(L('تعذر جلب الطلبات: ', 'Could not fetch orders: ') + e.message, 'err', 6000); }
+    finally { this._busy = false; }
+  },
+  setStatus(o, st, silent) {
+    const patch = { status: st, [st + 'At']: nowISO() }; DB.update('orders', o.id, patch); audit('order.' + st, o.no);
+    const c = this.cfg(); const t = { preparing: c.msgPreparing, out: c.msgOut, delivered: c.msgDelivered, cancelled: c.msgCancelled }[st];
+    if (!silent && t && o.phone) { const msg = this.fill(t, { ...o, ...patch }); if (typeof WaLink !== 'undefined' && WaLink.ready()) { WaLink.queue(o.phone, msg, { kind: 'order', ref: o.no, prio: 1 }); UI.toast(L('اتبعت للعميل على واتساب ✓', 'Sent to the customer ✓')); } else sendWhatsApp(o.phone, msg); }
+    if (App.current === 'orders') App.reload();
+  },
+  toPOS(o) {
+    if (!Session.can('pos')) return UI.toast(L('محتاج صلاحية نقطة البيع', 'Needs POS permission'), 'err');
+    const P = Modules.pos; P.cart = []; const miss = [];
+    for (const i of o.items || []) {
+      const p = (i.id && DB.get('products', i.id)) || DB.find('products', (x) => x.name === i.n);
+      if (p) P.cart.push({ productId: p.id, name: p.name, qty: i.q, price: Number(i.p) || Number(p.price), cost: Number(p.cost) || 0, discount: 0, barcode: p.barcode });
+      else { miss.push(i.n); P.cart.push({ productId: null, name: i.n, qty: i.q, price: Number(i.p) || 0, cost: 0, discount: 0, custom: true }); }
+    }
+    if (Number(o.fee)) P.cart.push({ productId: null, name: L('مصاريف توصيل', 'Delivery fee'), qty: 1, price: Number(o.fee), cost: 0, discount: 0, custom: true });
+    let cu = o.customerId && DB.get('customers', o.customerId);
+    if (!cu && o.phone) cu = DB.find('customers', (c) => waPhone(c.phone) === waPhone(o.phone));
+    if (!cu && o.phone && o.name) cu = DB.insert('customers', { name: o.name, phone: o.phone, address: o.address || '', createdAt: nowISO(), source: 'web' });
+    P.customerId = cu ? cu.id : null; P._from = { col: 'orders', id: o.id, no: o.no }; P.notes = `${L('طلب', 'Order')} ${o.no}${o.address ? ' — ' + o.address : ''}`;
+    App.go('pos'); if (miss.length) UI.toast(L('أصناف مش لاقيها في المخزون (اتضافت كبند حر): ', 'Not found in stock: ') + miss.join('، '), 'warn', 7000);
+  },
+  edit(o) {
+    let picker; const isNew = !o; o = o || { items: [], fee: Number(this.cfg().fee) || 0 };
+    const m = UI.modal({ title: isNew ? L('طلب جديد (تليفون / واتساب)', 'New order (phone / WhatsApp)') : `${L('طلب', 'Order')} ${o.no}`, icon: 'truck', size: 'lg', body: UI.form([
+      { name: 'name', label: L('اسم العميل', 'Customer'), col: 4, required: true }, { name: 'phone', label: L('الموبايل', 'Mobile'), col: 4, required: true }, { name: 'fee', label: L('مصاريف التوصيل', 'Delivery fee'), type: 'number', col: 4 },
+      { name: 'address', label: L('العنوان', 'Address'), col: 12 }, { name: 'note', label: L('ملاحظات', 'Notes'), col: 12 }], o) + ItemPicker.html('orItems'),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); const items = picker.items.map((i) => ({ id: i.productId || '', n: i.name, p: i.price, q: i.qty }));
+        if (!items.length) return UI.toast(L('ضيف أصناف الطلب', 'Add items'), 'warn');
+        const doc = { name: v.name.trim(), phone: v.phone.trim(), address: v.address || '', note: v.note || '', fee: Number(v.fee) || 0, items };
+        if (isNew) DB.insert('orders', { ...doc, no: DB.nextNo('order', 'ORD-'), src: 'manual', status: 'new', createdAt: nowISO(), by: Session.user?.name || '' }); else DB.update('orders', o.id, doc);
+        x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.go('orders');
+      } }] });
+    picker = ItemPicker.bind($('#orItems', m.el), { items: (o.items || []).map((i) => ({ productId: i.id || null, name: i.n, qty: i.q, price: i.p })) });
+  },
+  view(o) {
+    const st = OR_ST[o.status] || OR_ST.new; const next = { new: 'preparing', preparing: 'out', out: 'delivered' }[o.status];
+    UI.modal({ title: `${L('طلب', 'Order')} ${o.no}`, icon: 'truck', size: 'lg', body: `<div class="row wrap mb" style="gap:8px"><span class="tag ${st[1]}">${st[0]}</span><span class="tag">${o.src === 'web' ? '🌐 ' + L('من الكتالوج', 'Catalog') : '📞 ' + L('تليفون / واتساب', 'Phone')}</span><span class="faint">${fmtDT(o.createdAt)}</span>${o.saleNo ? `<span class="tag ok">${L('فاتورة', 'Invoice')} ${esc(o.saleNo)}</span>` : ''}</div>
+      <div class="grid g3 mb"><div class="stat-mini"><span class="l">${L('العميل', 'Customer')}</span><span class="v">${esc(o.name)}</span></div><div class="stat-mini"><span class="l">${L('الموبايل', 'Mobile')}</span><span class="v" dir="ltr">${esc(o.phone)}</span></div><div class="stat-mini"><span class="l">${L('الإجمالي', 'Total')}</span><span class="v num">${money(this.total(o))}</span></div></div>
+      ${o.address ? `<div class="mb">📍 ${esc(o.address)}</div>` : ''}${o.note ? `<div class="mb">📝 ${esc(o.note)}</div>` : ''}
+      <table class="tbl"><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('السعر', 'Price')}</th><th>${L('الإجمالي', 'Total')}</th></tr></thead><tbody>${(o.items || []).map((i) => `<tr><td>${esc(i.n)}</td><td>${num(i.q)}</td><td class="num">${money(i.p, false)}</td><td class="num">${money(i.p * i.q, false)}</td></tr>`).join('')}${Number(o.fee) ? `<tr><td>${L('مصاريف التوصيل', 'Delivery')}</td><td></td><td></td><td class="num">${money(o.fee, false)}</td></tr>` : ''}</tbody></table>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() },
+        ...(o.phone ? [{ label: L('واتساب', 'WhatsApp'), icon: 'whatsapp', onClick: () => sendWhatsApp(o.phone, `أهلاً ${o.name} 🌹 بخصوص طلبك رقم ${o.no} من ${DB.settings().store.name}`) }] : []),
+        ...(o.status !== 'cancelled' && o.status !== 'delivered' ? [{ label: L('إلغاء الطلب', 'Cancel order'), cls: 'danger', onClick: async (x) => { if (await UI.confirm(L('إلغاء الطلب وإبلاغ العميل؟', 'Cancel and notify?'))) { x.close(); this.setStatus(o, 'cancelled'); } } }] : []),
+        ...(!o.saleNo && o.status !== 'cancelled' ? [{ label: L('تحويل لفاتورة', 'Create invoice'), icon: 'receipt', onClick: (x) => { x.close(); this.toPOS(o); } }] : []),
+        ...(next ? [{ label: OR_ST[next][0], cls: 'primary', icon: OR_ST[next][2], onClick: (x) => { x.close(); this.setStatus(o, next); } }] : [])] });
+  },
+  settings() {
+    const c = this.cfg();
+    UI.modal({ title: L('إعدادات الطلبات', 'Order settings'), icon: 'settings', size: 'lg', body: UI.form([
+      { name: 'pull', label: L('استلام طلبات الكتالوج في البرنامج تلقائياً (كل دقيقة)', 'Receive catalog orders automatically'), type: 'checkbox', col: 12 },
+      { name: 'fee', label: L('مصاريف التوصيل الافتراضية', 'Default delivery fee'), type: 'number', col: 4 },
+      { type: 'html', col: 8, html: `<div class="faint" style="padding-top:28px">${L('الرسايل: {name} اسم العميل، {no} رقم الطلب، {total} الإجمالي، {store} اسم المحل', 'Placeholders: {name} {no} {total} {store}')}</div>` },
+      { name: 'msgPreparing', label: L('رسالة «بيتجهز»', '«Preparing» message'), type: 'textarea', col: 6 }, { name: 'msgOut', label: L('رسالة «خرج للتوصيل»', '«Out» message'), type: 'textarea', col: 6 },
+      { name: 'msgDelivered', label: L('رسالة «اتسلّم»', '«Delivered» message'), type: 'textarea', col: 6 }, { name: 'msgCancelled', label: L('رسالة «اتلغى»', '«Cancelled» message'), type: 'textarea', col: 6 }], c),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { const v = UI.read(x.el); DB.saveSettings({ orders: { ...v, pull: !!v.pull, fee: Number(v.fee) || 0 } }); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } }] });
+  }
+};
+Modules.orders = {
+  title: () => L('الطلبات والتوصيل', 'Orders & delivery'), icon: 'truck', perm: 'pos', tab: 'open',
+  badge: () => DB.filter('orders', (o) => o.status === 'new').length,
+  render(el) {
+    const all = DB.all('orders').sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)); const cnt = (s) => all.filter((o) => o.status === s).length; const c = Catalog.cfg();
+    el.innerHTML = `<div class="grid g4 mb">${UI.kpi(L('طلبات جديدة', 'New'), cnt('new'), 'bell', 'hero')}${UI.kpi(L('بيتجهز', 'Preparing'), cnt('preparing'), 'box', 'c-warn')}${UI.kpi(L('في التوصيل', 'Out'), cnt('out'), 'truck', 'c-info')}${UI.kpi(L('اتسلّم الشهر ده', 'Delivered this month'), all.filter((o) => o.status === 'delivered' && monthKey(o.deliveredAt || o.createdAt) === monthKey()).length, 'check', 'c-ok')}</div>
+      ${!c.slug ? `<div class="card card-b mb">${L('🌐 فعّل «الكتالوج الأونلاين» عشان طلبات العملاء من النت توصلك هنا لوحدها. تقدر برضه تسجّل طلبات التليفون والواتساب من «طلب جديد».', 'Enable the online catalog to receive web orders here.')} <button class="btn sm" id="orCat">${L('الكتالوج', 'Catalog')}</button></div>` : ''}
+      <div class="row mb wrap" style="gap:8px"><div id="orTabs"></div><div class="spacer"></div>${c.slug ? `<button class="btn" id="orPull">${icon('refresh')}${L('تحديث', 'Refresh')}</button>` : ''}<button class="btn" id="orCfg">${icon('settings')}</button><button class="btn primary" id="orNew">${icon('plus')}${L('طلب جديد', 'New order')}</button></div><div id="orBody"></div>`;
+    UI.tabs($('#orTabs'), [{ id: 'open', icon: 'bell', label: L('الجارية', 'Open') }, { id: 'done', icon: 'check', label: L('المنتهية', 'Done') }, { id: 'all', icon: 'history', label: L('الكل', 'All') }], this.tab, (t) => { this.tab = t; App.go('orders'); });
+    $('#orNew').onclick = () => Orders.edit(); $('#orCfg').onclick = () => Orders.settings(); $('#orPull') && ($('#orPull').onclick = () => Orders.pull(true)); $('#orCat') && ($('#orCat').onclick = () => App.go('catalog'));
+    const rows = this.tab === 'open' ? all.filter((o) => ['new', 'preparing', 'out'].includes(o.status)) : this.tab === 'done' ? all.filter((o) => ['delivered', 'cancelled'].includes(o.status)) : all;
+    UI.table($('#orBody'), { rows, exportName: 'orders', emptyIcon: 'truck', searchText: (o) => `${o.no} ${o.name} ${o.phone} ${o.address}`,
+      columns: [{ key: 'no', label: L('رقم', 'No.'), render: (o) => `<b>${esc(o.no)}</b><div class="faint">${o.src === 'web' ? '🌐' : '📞'} ${fmtDT(o.createdAt)}</div>` },
+        { key: 'name', label: L('العميل', 'Customer'), render: (o) => `<b>${esc(o.name)}</b><div class="faint" dir="ltr" style="text-align:start">${esc(o.phone)}</div>` },
+        { label: L('العنوان', 'Address'), render: (o) => `<span style="font-size:13px">${esc(o.address || '—')}</span>` },
+        { label: L('الإجمالي', 'Total'), render: (o) => `<b class="num">${money(Orders.total(o))}</b><div class="faint">${(o.items || []).length} ${L('صنف', 'items')}</div>`, exportVal: (o) => Orders.total(o) },
+        { key: 'status', label: L('الحالة', 'Status'), render: (o) => `<span class="tag ${OR_ST[o.status][1]}">${OR_ST[o.status][0]}</span>${o.saleNo ? `<div class="faint">${esc(o.saleNo)}</div>` : ''}`, exportVal: (o) => OR_ST[o.status][0] }],
+      actions: (o) => UI.act('view', 'eye', L('عرض', 'View')) + (o.status === 'new' && !o.oid ? UI.act('edit', 'edit', L('تعديل', 'Edit')) : '') + (o.phone ? UI.act('wa', 'whatsapp', 'WhatsApp') : ''),
+      onAction: (a, o) => { if (a === 'view') Orders.view(o); if (a === 'edit') Orders.edit(o); if (a === 'wa') sendWhatsApp(o.phone, `أهلاً ${o.name} 🌹 بخصوص طلبك رقم ${o.no}`); } });
+  }
+};
+setTimeout(() => Orders.pull(), 20000); setInterval(() => { if (Orders.cfg().pull && Session.user) Orders.pull(); }, 60e3);
+
+/* =========================================================
+   3) حملات واتساب
+   ========================================================= */
+const Campaigns = {
+  cfg() { return { optOut: 'لو مش حابب توصلك عروضنا ابعت كلمة «إلغاء»', ...(DB.settings().campaigns || {}) }; },
+  segs() {
+    return [['all', L('كل العملاء اللي ليهم رقم', 'All customers with a number')], ['recent', L('اشتروا آخر 30 يوم', 'Bought in the last 30 days')], ['lapsed', L('ما اشتروش من 60 يوم (عملاء بعاد)', 'No purchase in 60 days')], ['top', L('أعلى 50 عميل شراء', 'Top 50 buyers')], ['credit', L('عليهم فلوس (آجل)', 'With balances due')], ['loyal', L('أعضاء نقاط الولاء', 'Loyalty members')], ['cat', L('اشتروا من قسم معيّن', 'Bought from a category')]];
+  },
+  audience(seg, cat) {
+    const ok = DB.filter('customers', (c) => c.phone && waPhone(c.phone) && !c.noMarketing && c.active !== false);
+    const sales = DB.filter('sales', (s) => s.customerId && s.status !== 'cancelled'); const last = {}, tot = {};
+    sales.forEach((s) => { if (!last[s.customerId] || s.date > last[s.customerId]) last[s.customerId] = s.date; tot[s.customerId] = (tot[s.customerId] || 0) + Sales.net(s); });
+    const d30 = addDays(new Date(), -30).toISOString(), d60 = addDays(new Date(), -60).toISOString();
+    if (seg === 'recent') return ok.filter((c) => last[c.id] && last[c.id] >= d30);
+    if (seg === 'lapsed') return ok.filter((c) => last[c.id] && last[c.id] < d60);
+    if (seg === 'top') return ok.filter((c) => tot[c.id]).sort((a, b) => tot[b.id] - tot[a.id]).slice(0, 50);
+    if (seg === 'credit') return ok.filter((c) => Customers.balance(c) > 0);
+    if (seg === 'loyal') return ok.filter((c) => typeof Loyalty !== 'undefined' && Loyalty.balance && Loyalty.balance(c.id) > 0);
+    if (seg === 'cat') { const ids = new Set(); sales.forEach((s) => (s.items || []).forEach((i) => { const p = i.productId && DB.get('products', i.productId); if (p && p.categoryId === cat) ids.add(s.customerId); })); return ok.filter((c) => ids.has(c.id)); }
+    return ok;
+  },
+  fill(t, c) { return String(t).replace(/{name}/g, (c.name || '').split(' ')[0]).replace(/{store}/g, DB.settings().store.name || '').replace(/{catalog}/g, (typeof Catalog !== 'undefined' && Catalog.url()) || ''); },
+  compose() {
+    const cats = DB.all('categories'); const c = this.cfg();
+    const m = UI.modal({ title: L('رسالة واتساب لعملاءك', 'WhatsApp campaign'), icon: 'whatsapp', size: 'lg', body: `
+      <div class="grid g2"><div><label class="lbl">${L('هتبعت لمين؟', 'Audience')}</label><select id="cpSeg">${this.segs().map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div><div id="cpCatW" style="display:none"><label class="lbl">${L('القسم', 'Category')}</label><select id="cpCat">${cats.map((x) => `<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></div></div>
+      <div class="cp-count mt" id="cpCount"></div>
+      <label class="lbl mt">${L('الرسالة', 'Message')} <span class="faint">— {name} ${L('اسم العميل', 'first name')} · {store} · {catalog} ${L('رابط الكتالوج', 'catalog link')}</span></label>
+      <textarea id="cpText" style="min-height:150px">${esc(c.last || `أهلاً {name} 🌹\nعندنا في ${DB.settings().store.name} عروض جديدة الأسبوع ده على الإكسسوارات 🔥\n\nشوف المنتجات والأسعار: {catalog}`)}</textarea>
+      <div class="cp-prev mt"><small>${L('معاينة', 'Preview')}</small><div id="cpPrev"></div></div>
+      <div class="tag warn mt" style="white-space:normal;line-height:1.9;padding:10px">🛡️ ${L('للحماية من حظر رقم المحل: الرسايل بتطلع واحدة واحدة بفواصل عشوائية (25–40 ثانية) وفي مواعيد الشغل بس وبحد يومي، ومش بتروح للي طلبوا الإلغاء. ابعت للعملاء اللي يعرفوك بس، ومتبعتش أكتر من حملة في الأسبوع.', 'Sent one by one with random gaps, within work hours and a daily cap; opted-out customers are skipped.')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('إرسال', 'Send'), cls: 'primary', icon: 'send', onClick: (x) => this.send(x) }] });
+    const upd = () => { const seg = $('#cpSeg', m.el).value; $('#cpCatW', m.el).style.display = seg === 'cat' ? '' : 'none'; const a = this.audience(seg, $('#cpCat', m.el).value); this._aud = a;
+      $('#cpCount', m.el).innerHTML = `<b class="num">${a.length}</b> ${L('عميل هتوصلهم الرسالة', 'customers will receive it')}${a.length ? ` <span class="faint">— ${esc(a.slice(0, 4).map((x) => x.name).join('، '))}${a.length > 4 ? '…' : ''}</span>` : ''}${a.length > 150 ? `<div class="faint">${L('هتخلص على كذا يوم بسبب الحد اليومي', 'Will take several days due to the daily cap')}</div>` : ''}`;
+      const t = $('#cpText', m.el).value; $('#cpPrev', m.el).textContent = this.fill(t, a[0] || { name: 'محمد' }) + (c.optOut ? '\n\n' + c.optOut : ''); };
+    $('#cpSeg', m.el).onchange = upd; $('#cpCat', m.el).onchange = upd; $('#cpText', m.el).oninput = upd; upd();
+  },
+  async send(m) {
+    const a = this._aud || []; const t = $('#cpText', m.el).value.trim(); if (!a.length) return UI.toast(L('مفيش عملاء في الشريحة دي', 'No customers in this audience'), 'warn'); if (t.length < 5) return UI.toast(L('اكتب الرسالة', 'Write the message'), 'warn');
+    if (!(await UI.confirm(L(`إرسال الرسالة لـ ${a.length} عميل؟`, `Send to ${a.length} customers?`), { danger: false }))) return;
+    const c = this.cfg(); const seg = $('#cpSeg', m.el).value; const segName = (this.segs().find((s) => s[0] === seg) || [])[1];
+    const cp = DB.insert('campaigns', { name: segName, seg, text: t, count: a.length, at: nowISO(), by: Session.user?.name || '' });
+    DB.saveSettings({ campaigns: { last: t } });
+    const linked = typeof WaLink !== 'undefined' && WaLink.ready();
+    if (linked) { a.forEach((cu) => WaLink.queue(cu.phone, this.fill(t, cu) + (c.optOut ? '\n\n' + c.optOut : ''), { kind: 'campaign', ref: cp.id })); m.close(); UI.toast(L(`اتجهزت ${a.length} رسالة ✓ — هتطلع واحدة واحدة من واتساب المحل`, `${a.length} messages queued ✓`), 'ok', 7000); audit('campaign', `${segName} ${a.length}`); App.go('campaigns'); return; }
+    m.close(); this.manual(cp, a, t);
+  },
+  /* من غير واتساب مربوط: زرار لكل عميل يفتح المحادثة جاهزة */
+  manual(cp, a, t) {
+    const c = this.cfg(); const done = new Set(cp.manualDone || []);
+    const mm = UI.modal({ title: L('إرسال يدوي', 'Manual sending'), icon: 'whatsapp', size: 'lg', body: `<div class="tag warn mb" style="white-space:normal">${L('واتساب مش مربوط بالبرنامج — دوس على كل عميل وهتتفتح المحادثة والرسالة جاهزة. للإرسال التلقائي اربط واتساب من الإعدادات ← واتساب.', 'WhatsApp is not linked — tap each customer to open a ready chat.')}</div><div class="cp-man">${a.map((cu) => `<button class="btn ${done.has(cu.id) ? 'ok' : ''}" data-cm="${cu.id}">${icon('whatsapp')}${esc(cu.name)}</button>`).join('')}</div>` });
+    $$('[data-cm]', mm.el).forEach((b) => (b.onclick = () => { const cu = DB.get('customers', b.dataset.cm); sendWhatsApp(cu.phone, this.fill(t, cu) + (c.optOut ? '\n\n' + c.optOut : '')); done.add(cu.id); b.classList.add('ok'); DB.update('campaigns', cp.id, { manualDone: [...done] }); }));
+  },
+  stats(cp) { const q = DB.filter('waQueue', (m) => m.kind === 'campaign' && m.ref === cp.id); return { sent: q.filter((m) => m.status === 'sent').length + (cp.manualDone || []).length, failed: q.filter((m) => m.status === 'failed').length, pending: q.filter((m) => m.status === 'pending').length }; },
+  stop(cp) { DB.filter('waQueue', (m) => m.kind === 'campaign' && m.ref === cp.id && m.status === 'pending').forEach((m) => DB.update('waQueue', m.id, { status: 'failed', error: 'stopped' })); DB.update('campaigns', cp.id, { stopped: true }); audit('campaign.stop', cp.name); App.reload(); },
+  /* العميل بعت «إلغاء» */
+  onIncoming(msg) {
+    try { const tx = String(msg.text || '').trim(); if (!/^(إلغاء|الغاء|الغاء الاشتراك|stop|unsubscribe)$/i.test(tx)) return; const ph = waPhone(msg.from); if (!ph) return;
+      const cs = DB.filter('customers', (c) => waPhone(c.phone) === ph && !c.noMarketing); if (!cs.length) return;
+      cs.forEach((c) => DB.update('customers', c.id, { noMarketing: true, noMarketingAt: nowISO() }));
+      WaLink.queue(ph, `تمام 🌹 مش هيوصلك عروض تاني من ${DB.settings().store.name}. لو احتجت أي حاجة إحنا موجودين.`, { kind: 'campaign-optout', prio: 1 }); audit('campaign.optout', ph);
+    } catch (_) {}
+  }
+};
+try { if (window.api && window.api.wa && window.api.wa.onMsg) window.api.wa.onMsg((m) => Campaigns.onIncoming(m)); } catch (_) {}
+Modules.campaigns = {
+  title: () => L('رسائل للعملاء', 'Customer messages'), icon: 'send', perm: 'customers',
+  render(el) {
+    const cps = DB.all('campaigns').sort((a, b) => (a.at < b.at ? 1 : -1)); const opt = DB.filter('customers', (c) => c.noMarketing).length; const reach = Campaigns.audience('all').length; const linked = typeof WaLink !== 'undefined' && WaLink.ready();
+    el.innerHTML = `<div class="grid g4 mb">${UI.kpi(L('عملاء ممكن توصلهم', 'Reachable customers'), reach, 'users', 'hero')}${UI.kpi(L('حملات اتبعتت', 'Campaigns'), cps.length, 'send', 'c-info')}${UI.kpi(L('رسايل اتبعتت', 'Messages sent'), sum(cps, (c) => Campaigns.stats(c).sent), 'check', 'c-ok')}${UI.kpi(L('طلبوا الإلغاء', 'Opted out'), opt, 'x', 'c-err')}</div>
+      <div class="row mb wrap" style="gap:8px"><span class="tag ${linked ? 'ok' : 'warn'}">${icon('whatsapp')} ${linked ? L('واتساب مربوط — الإرسال تلقائي', 'WhatsApp linked — automatic') : L('واتساب مش مربوط — الإرسال يدوي', 'Not linked — manual sending')}</span><div class="spacer"></div><button class="btn primary" id="cpNew">${icon('plus')}${L('رسالة جديدة', 'New message')}</button></div><div id="cpBody"></div>`;
+    $('#cpNew').onclick = () => Campaigns.compose();
+    UI.table($('#cpBody'), { rows: cps, emptyIcon: 'send', exportName: 'campaigns', searchText: (c) => `${c.name} ${c.text}`,
+      columns: [{ key: 'at', label: L('التاريخ', 'Date'), render: (c) => fmtDT(c.at) }, { key: 'name', label: L('الشريحة', 'Audience'), render: (c) => `<b>${esc(c.name)}</b><div class="faint">${esc(c.by || '')}</div>` },
+        { label: L('الرسالة', 'Message'), render: (c) => `<span style="font-size:13px">${esc(c.text.slice(0, 90))}${c.text.length > 90 ? '…' : ''}</span>` },
+        { label: L('التقدم', 'Progress'), render: (c) => { const s = Campaigns.stats(c); return `<span class="tag ok">${s.sent} / ${c.count}</span>${s.pending ? ` <span class="tag warn">${s.pending} ${L('مستني', 'pending')}</span>` : ''}${s.failed ? ` <span class="tag err">${s.failed} ${L('فشل', 'failed')}</span>` : ''}${c.stopped ? ` <span class="tag">${L('اتوقفت', 'stopped')}</span>` : ''}`; } }],
+      actions: (c) => (Campaigns.stats(c).pending ? UI.act('stop', 'stop', L('إيقاف', 'Stop'), 'danger') : '') + UI.act('again', 'copy', L('ابعتها تاني', 'Reuse')),
+      onAction: (a, c) => { if (a === 'stop') Campaigns.stop(c); if (a === 'again') { DB.saveSettings({ campaigns: { last: c.text } }); Campaigns.compose(); } } });
+  }
+};
+
+/* =========================================================
+   4) عرض سعر
+   ========================================================= */
+const QT_ST = { open: [L('مفتوح', 'Open'), 'info'], won: [L('اتحوّل لفاتورة', 'Converted'), 'ok'], lost: [L('مرفوض', 'Lost'), 'err'] };
+const Quotes = {
+  total(q) { return round2(sum(q.items || [], (i) => i.qty * i.price) - (Number(q.discount) || 0)); },
+  edit(q) {
+    let picker; const isNew = !q; q = q || { items: [], validDays: 7, discount: 0 };
+    const cs = DB.all('customers');
+    const m = UI.modal({ title: isNew ? L('عرض سعر جديد', 'New quotation') : `${L('عرض سعر', 'Quotation')} ${q.no}`, icon: 'file', size: 'lg', body: `
+      <div class="grid g3"><div><label class="lbl">${L('العميل', 'Customer')}</label><input list="qtCs" id="qtCust" value="${esc(q.custName || '')}" placeholder="${L('اسم العميل', 'Customer name')}"><datalist id="qtCs">${cs.map((c) => `<option value="${esc(c.name)}">`).join('')}</datalist></div>
+      <div><label class="lbl">${L('الموبايل', 'Mobile')}</label><input id="qtPhone" value="${esc(q.phone || '')}" dir="ltr"></div><div><label class="lbl">${L('صالح لمدة (يوم)', 'Valid for (days)')}</label><input type="number" id="qtValid" value="${q.validDays || 7}"></div></div>
+      <div class="mt">${ItemPicker.html('qtItems')}</div>
+      <div class="grid g2 mt"><div><label class="lbl">${L('خصم على الإجمالي', 'Discount')}</label><input type="number" id="qtDisc" value="${q.discount || 0}"></div><div><label class="lbl">${L('ملاحظات / شروط', 'Notes / terms')}</label><input id="qtNote" value="${esc(q.note || '')}" placeholder="${L('مثال: الأسعار شاملة التركيب', 'e.g. prices include installation')}"></div></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ وطباعة', 'Save & print'), icon: 'printer', onClick: (x) => { const r = save(x); if (r) this.print(r); } }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => save(x) }] });
+    picker = ItemPicker.bind($('#qtItems', m.el), { items: q.items || [] });
+    $('#qtCust', m.el).onchange = () => { const c = DB.find('customers', (x) => x.name === $('#qtCust', m.el).value); if (c && c.phone) $('#qtPhone', m.el).value = c.phone; };
+    const save = (x) => {
+      const items = picker.items; if (!items.length) { UI.toast(L('ضيف الأصناف', 'Add items'), 'warn'); return null; }
+      const name = $('#qtCust', x.el).value.trim(); const cu = DB.find('customers', (c) => c.name === name);
+      const doc = { custName: name, customerId: cu ? cu.id : null, phone: $('#qtPhone', x.el).value.trim(), validDays: Number($('#qtValid', x.el).value) || 7, discount: Number($('#qtDisc', x.el).value) || 0, note: $('#qtNote', x.el).value.trim(), items };
+      const r = isNew ? DB.insert('quotes', { ...doc, no: DB.nextNo('quote', 'QT-'), status: 'open', date: nowISO(), by: Session.user?.name || '' }) : DB.update('quotes', q.id, doc);
+      audit(isNew ? 'quote.create' : 'quote.update', r.no); x.close(); UI.toast(L('اتحفظ عرض السعر ✓', 'Quotation saved ✓')); if (App.current === 'quotes') App.reload(); return r;
+    };
+  },
+  html(q) {
+    const s = DB.settings(); const st = s.store; const until = addDays(new Date(q.date), q.validDays || 7); const sub = sum(q.items, (i) => i.qty * i.price);
+    return `<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:A4;margin:12mm}body{font-family:'Cairo',Tahoma,Arial,sans-serif;color:#1d1d1d;font-size:13px;margin:0}
+      .hd{display:flex;align-items:center;gap:14px;border-bottom:3px solid #8B1A2B;padding-bottom:10px}.hd img{width:70px;height:70px;object-fit:contain}.hd h1{margin:0;font-size:22px;color:#8B1A2B}.m{color:#666;font-size:12px}
+      .ttl{display:flex;justify-content:space-between;margin:14px 0}.ttl b{font-size:20px}table{width:100%;border-collapse:collapse}th{background:#8B1A2B;color:#fff;padding:8px;text-align:right}td{border-bottom:1px solid #e5e5e5;padding:8px}tr:nth-child(even) td{background:#faf6f6}
+      .tot{margin-top:12px;margin-inline-start:auto;width:280px}.tot div{display:flex;justify-content:space-between;padding:5px 0}.tot .g{border-top:2px solid #8B1A2B;font-size:17px;font-weight:800;color:#8B1A2B}.nt{margin-top:16px;padding:10px;background:#f6f2f2;border-radius:8px}.ft{margin-top:30px;font-size:11px;color:#888;text-align:center}</style></head><body>
+      <div class="hd"><img src="${logoSrc()}"><div><h1>${esc(st.name)}</h1><div class="m">${esc(st.address || '')}${st.phone ? ' — ' + esc(st.phone) : ''}</div></div></div>
+      <div class="ttl"><div><b>${L('عرض سعر', 'Quotation')}</b> <span class="m">${esc(q.no)}</span><div>${L('السادة', 'To')}: <b>${esc(q.custName || '—')}</b>${q.phone ? ` — <span dir="ltr">${esc(q.phone)}</span>` : ''}</div></div><div class="m" style="text-align:left">${L('التاريخ', 'Date')}: ${fmtDate(q.date)}<br>${L('صالح حتى', 'Valid until')}: ${fmtDate(until)}</div></div>
+      <table><thead><tr><th>#</th><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('السعر', 'Price')}</th><th>${L('الإجمالي', 'Total')}</th></tr></thead><tbody>${q.items.map((i, k) => `<tr><td>${k + 1}</td><td>${esc(i.name)}</td><td>${num(i.qty)}</td><td>${money(i.price, false)}</td><td>${money(i.qty * i.price, false)}</td></tr>`).join('')}</tbody></table>
+      <div class="tot"><div><span>${L('الإجمالي', 'Subtotal')}</span><span>${money(sub)}</span></div>${q.discount ? `<div><span>${L('خصم', 'Discount')}</span><span>− ${money(q.discount)}</span></div>` : ''}<div class="g"><span>${L('الصافي', 'Total')}</span><span>${money(this.total(q))}</span></div></div>
+      ${q.note ? `<div class="nt">${esc(q.note)}</div>` : ''}<div class="ft">${L('الأسعار سارية حتى التاريخ الموضح وحسب توفر الكميات', 'Prices valid until the date shown, subject to availability')}<br>${COPYRIGHT_AR}</div></body></html>`;
+  },
+  print(q) { printHTML(this.html(q), { type: 'a4' }); },
+  async send(q) {
+    const txt = `أهلاً ${q.custName || ''} 🌹\nعرض السعر رقم ${q.no} من ${DB.settings().store.name}:\n${q.items.map((i) => `• ${i.name} × ${num(i.qty)} = ${money(i.qty * i.price)}`).join('\n')}${q.discount ? `\nخصم: ${money(q.discount)}` : ''}\n\n💰 الإجمالي: *${money(this.total(q))}*\nصالح لمدة ${q.validDays || 7} أيام.`;
+    if (!q.phone) return UI.toast(L('اكتب رقم العميل الأول', 'Add the customer number'), 'warn');
+    if (typeof WaLink !== 'undefined' && WaLink.ready()) { let doc = null; try { if (typeof PrintCenter !== 'undefined' && PrintCenter.pdfBase64) doc = { data: await PrintCenter.pdfBase64(this.html(q)), name: `عرض-سعر-${q.no}.pdf`, mime: 'application/pdf' }; } catch (_) {} WaLink.queue(q.phone, txt, { kind: 'quote', ref: q.no, prio: 1, doc }); UI.toast(L('اتبعت للعميل ✓', 'Sent ✓')); }
+    else sendWhatsApp(q.phone, txt);
+  },
+  toPOS(q) {
+    if (!Session.can('pos')) return UI.toast(L('محتاج صلاحية نقطة البيع', 'Needs POS permission'), 'err');
+    const P = Modules.pos; P.cart = q.items.map((i) => { const p = i.productId && DB.get('products', i.productId); return p ? { productId: p.id, name: p.name, qty: i.qty, price: i.price, cost: Number(p.cost) || 0, discount: 0, barcode: p.barcode } : { productId: null, name: i.name, qty: i.qty, price: i.price, cost: 0, discount: 0, custom: true }; });
+    P.customerId = q.customerId || null; P.discount = Number(q.discount) || 0; P.discountType = 'amount'; P._from = { col: 'quotes', id: q.id, no: q.no }; App.go('pos');
+  }
+};
+Modules.quotes = {
+  title: () => L('عروض الأسعار', 'Quotations'), icon: 'file', perm: 'pos', tab: 'open',
+  render(el) {
+    const all = DB.all('quotes').sort((a, b) => (a.date < b.date ? 1 : -1)); const open = all.filter((q) => q.status === 'open');
+    const won = all.filter((q) => q.status === 'won'); const rate = all.length ? Math.round((won.length / all.length) * 100) : 0;
+    el.innerHTML = `<div class="grid g4 mb">${UI.kpi(L('عروض مفتوحة', 'Open'), open.length, 'file', 'hero', money(sum(open, (q) => Quotes.total(q))))}${UI.kpi(L('اتحولت لفواتير', 'Converted'), won.length, 'check', 'c-ok')}${UI.kpi(L('نسبة النجاح', 'Win rate'), rate + '%', 'trend', 'c-info')}${UI.kpi(L('منتهية الصلاحية', 'Expired'), open.filter((q) => addDays(new Date(q.date), q.validDays || 7) < new Date()).length, 'clock', 'c-warn')}</div>
+      <div class="row mb wrap" style="gap:8px"><div id="qtTabs"></div><div class="spacer"></div><button class="btn primary" id="qtNew">${icon('plus')}${L('عرض سعر جديد', 'New quotation')}</button></div><div id="qtBody"></div>`;
+    UI.tabs($('#qtTabs'), [{ id: 'open', label: L('المفتوحة', 'Open'), icon: 'file' }, { id: 'all', label: L('الكل', 'All'), icon: 'history' }], this.tab, (t) => { this.tab = t; App.go('quotes'); });
+    $('#qtNew').onclick = () => Quotes.edit();
+    UI.table($('#qtBody'), { rows: this.tab === 'open' ? open : all, exportName: 'quotes', emptyIcon: 'file', searchText: (q) => `${q.no} ${q.custName} ${q.phone} ${q.items.map((i) => i.name).join(' ')}`,
+      columns: [{ key: 'no', label: L('رقم', 'No.'), render: (q) => `<b>${esc(q.no)}</b><div class="faint">${fmtDate(q.date)}</div>` }, { key: 'custName', label: L('العميل', 'Customer'), render: (q) => `<b>${esc(q.custName || '—')}</b><div class="faint" dir="ltr" style="text-align:start">${esc(q.phone || '')}</div>` },
+        { label: L('الأصناف', 'Items'), render: (q) => `<span style="font-size:13px">${esc(q.items.slice(0, 3).map((i) => i.name).join('، '))}${q.items.length > 3 ? '…' : ''}</span>` },
+        { label: L('الإجمالي', 'Total'), render: (q) => `<b class="num">${money(Quotes.total(q))}</b>`, exportVal: (q) => Quotes.total(q) },
+        { key: 'status', label: L('الحالة', 'Status'), render: (q) => { const exp = q.status === 'open' && addDays(new Date(q.date), q.validDays || 7) < new Date(); return `<span class="tag ${exp ? 'warn' : QT_ST[q.status][1]}">${exp ? L('انتهت صلاحيته', 'Expired') : QT_ST[q.status][0]}</span>${q.saleNo ? `<div class="faint">${esc(q.saleNo)}</div>` : ''}`; } }],
+      actions: (q) => UI.act('print', 'printer', L('طباعة', 'Print')) + UI.act('wa', 'whatsapp', 'WhatsApp') + (q.status === 'open' ? UI.act('edit', 'edit', L('تعديل', 'Edit')) + UI.act('pos', 'receipt', L('تحويل لفاتورة', 'To invoice'), 'ok') + UI.act('lost', 'x', L('مرفوض', 'Lost'), 'danger') : ''),
+      onAction: (a, q) => { if (a === 'print') Quotes.print(q); if (a === 'wa') Quotes.send(q); if (a === 'edit') Quotes.edit(q); if (a === 'pos') Quotes.toPOS(q); if (a === 'lost') { DB.update('quotes', q.id, { status: 'lost' }); App.reload(); } } });
+  }
+};
+
+/* لما الطلب أو عرض السعر يتحوّل لفاتورة — نربطهم ببعض */
+(function () {
+  const bc = Sales.create.bind(Sales);
+  Sales.create = function (...a) {
+    const s = bc(...a);
+    try { const f = Modules.pos._from; if (s && s.no && f) { const patch = { saleNo: s.no, saleId: s.id }; if (f.col === 'quotes') patch.status = 'won'; DB.update(f.col, f.id, patch); DB.update('sales', s.id, { fromRef: f.no }); Modules.pos._from = null; if (f.col === 'orders') { const o = DB.get('orders', f.id); if (o && o.status === 'new') DB.update('orders', o.id, { status: 'preparing', preparingAt: nowISO() }); } } } catch (e) { console.warn(e); }
+    return s;
+  };
+  const br = Modules.pos.reset.bind(Modules.pos); Modules.pos.reset = function (...a) { const keep = this._from && this.cart && this.cart.length; const r = br(...a); if (!keep) this._from = null; return r; };
+})();
+
+/* =========================================================
+   5) وحدات الشراء (كرتونة / علبة = عدد قطع)
+   ========================================================= */
+(function () {
+  /* حقل في تعديل المنتج */
+  const be = Modules.inventory.edit.bind(Modules.inventory);
+  Modules.inventory.edit = function (p, ...a) {
+    const r = be(p, ...a);
+    setTimeout(() => {
+      try {
+        const m = $$('.modal-bg').pop(); const form = m && $('.modal-b', m); if (!form || $('[name=packName]', form)) return;
+        form.insertAdjacentHTML('beforeend', `<div class="pk-box"><b>${icon('box')} ${L('وحدة الشراء (اختياري)', 'Purchase unit (optional)')}</b><small>${L('لو بتشتري الصنف ده بالكرتونة: اكتب اسمها وفيها كام قطعة — في فاتورة الشراء تختار «كرتونة» والمخزون يتحسب بالقطعة', 'If you buy it by the carton: name it and how many pieces it holds')}</small>
+          <div class="grid g2"><input name="packName" placeholder="${L('مثال: كرتونة / علبة / دستة', 'e.g. Carton / Box / Dozen')}" value="${esc((p && p.packName) || '')}"><input name="packQty" type="number" min="0" placeholder="${L('عدد القطع فيها', 'Pieces inside')}" value="${(p && p.packQty) || ''}"></div></div>`);
+        const save = [...$$('.modal-f button', m)].find((b) => /حفظ|Save/.test(b.textContent));
+        if (save) save.addEventListener('click', () => setTimeout(() => {
+          const nm = $('[name=packName]', form)?.value.trim() || '', q = Math.max(0, Number($('[name=packQty]', form)?.value) || 0);
+          const tgt = p ? DB.get('products', p.id) : DB.all('products').sort((x, y) => ((x.createdAt || '') < (y.createdAt || '') ? 1 : -1))[0];
+          if (tgt && (tgt.packName !== nm || Number(tgt.packQty || 0) !== q)) DB.update('products', tgt.id, { packName: q > 1 ? nm || L('كرتونة', 'Carton') : '', packQty: q > 1 ? q : 0 });
+        }, 60), true);
+      } catch (e) { console.warn(e); }
+    }, 30);
+    return r;
+  };
+})();
+const PackUnits = {
+  /* زرار «بالكرتونة» جنب كل صنف في فاتورة الشراء: بيحوّل الكمية والسعر */
+  open(cb) {
+    const ps = DB.filter('products', (p) => Number(p.packQty) > 1);
+    if (!ps.length) return UI.toast(L('مفيش أصناف ليها وحدة شراء — حددها من تعديل المنتج ← وحدة الشراء', 'No products with a purchase unit yet'), 'info', 6000);
+    const m = UI.modal({ title: L('إضافة بالكرتونة', 'Add by carton'), icon: 'box', body: `<label class="lbl">${L('الصنف', 'Product')}</label><select id="pkP">${ps.map((p) => `<option value="${p.id}">${esc(p.name)} — ${esc(p.packName)} = ${p.packQty} ${L('قطعة', 'pcs')}</option>`).join('')}</select>
+      <div class="grid g2 mt"><div><label class="lbl" id="pkL">${L('عدد الكراتين', 'Cartons')}</label><input type="number" id="pkN" value="1" min="1"></div><div><label class="lbl">${L('سعر الكرتونة', 'Carton price')}</label><input type="number" id="pkC" min="0"></div></div><div class="pk-calc mt" id="pkOut"></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('إضافة', 'Add'), cls: 'primary', icon: 'plus', onClick: (x) => { const p = DB.get('products', $('#pkP', x.el).value); const n = Number($('#pkN', x.el).value) || 0, c = Number($('#pkC', x.el).value) || 0; if (!n) return; x.close(); cb({ product: p, qty: n * p.packQty, cost: round2(c / p.packQty), note: `${n} ${p.packName}` }); } }] });
+    const upd = () => { const p = DB.get('products', $('#pkP', m.el).value); const n = Number($('#pkN', m.el).value) || 0, c = Number($('#pkC', m.el).value); $('#pkL', m.el).textContent = L(`عدد ${p.packName}`, `${p.packName} count`); if (!$('#pkC', m.el).value && p.cost) $('#pkC', m.el).placeholder = money(p.cost * p.packQty, false); $('#pkOut', m.el).innerHTML = `= <b class="num">${num(n * p.packQty)}</b> ${L('قطعة', 'pcs')}${c ? ` — ${L('تكلفة القطعة', 'cost / pc')} <b class="num">${money(c / p.packQty)}</b>` : ''}`; };
+    ['pkP', 'pkN', 'pkC'].forEach((i) => ($('#' + i, m.el).oninput = upd)); $('#pkP', m.el).onchange = upd; upd();
+  }
+};
+
+/* =========================================================
+   6) جدول النسخ التلقائي على Google Drive (الكمبيوتر)
+   - مع غلق كل وردية، و/أو كل كام ساعة، و/أو يومياً في ساعة محددة — وعدد النسخ اللي بتتحفظ
+   ========================================================= */
+const DriveSchedule = {
+  cfg() { const c = CloudBackup.cfg(); return { drive: !!c.drive, driveOnShift: c.driveOnShift !== false, driveEvery: Number(c.driveEvery) || 0, driveDaily: c.driveDaily || '', driveKeep: Number(c.driveKeep) || 10, driveAt: c.driveAt || '', driveDir: c.driveDir || '' }; },
+  label(c = this.cfg()) {
+    if (!c.drive) return L('النسخ التلقائي مقفول', 'Auto off');
+    const p = []; if (c.driveEvery) p.push(({ 1: L('كل ساعة', 'hourly'), 2: L('كل ساعتين', 'every 2h'), 24: L('كل يوم', 'daily'), 72: L('كل 3 أيام', 'every 3 days'), 168: L('كل أسبوع', 'weekly') })[c.driveEvery] || L(`كل ${c.driveEvery} ساعات`, `every ${c.driveEvery}h`)); if (c.driveDaily) p.push(L(`الساعة ${c.driveDaily}`, `at ${c.driveDaily}`)); if (c.driveOnShift) p.push(L('مع غلق الوردية', 'on shift close'));
+    return L('تلقائي: ', 'Auto: ') + (p.join(' + ') || L('يدوي', 'manual'));
+  },
+  next(c = this.cfg()) {
+    if (!c.drive) return null; const last = Date.parse(c.driveAt || 0) || 0; const cand = [];
+    if (c.driveEvery) cand.push(last ? last + c.driveEvery * 3600e3 : Date.now());
+    if (c.driveDaily) { const [h, m] = c.driveDaily.split(':').map(Number); const d = new Date(); d.setHours(h || 0, m || 0, 0, 0); if (d.getTime() <= last) d.setDate(d.getDate() + 1); cand.push(d.getTime()); }
+    return cand.length ? Math.min(...cand) : null;
+  },
+  async tick() {
+    try { if (!DB.desktop || !Session.user || !CloudBackup.pass || !CloudBackup.pass()) return; const c = this.cfg(); if (!c.drive || !c.driveDir) return; const n = this.next(c); if (n && Date.now() >= n && !this._busy) { this._busy = true; try { await CloudBackup.toDrive(true); } finally { this._busy = false; } } } catch (e) { console.warn(e); }
+  },
+  dialog() {
+    const c = this.cfg();
+    const m = UI.modal({ title: L('النسخ التلقائي على Google Drive', 'Automatic Google Drive backup'), icon: 'cloud', body: UI.form([
+      { name: 'drive', label: L('تشغيل النسخ التلقائي على Google Drive', 'Enable automatic Drive backup'), type: 'checkbox', col: 12 },
+      { name: 'driveEvery', label: L('نسخة كل', 'Every'), type: 'select', col: 6, options: [[0, L('— من غير —', '— none —')], [1, L('ساعة', '1 hour')], [2, L('ساعتين', '2 hours')], [3, L('3 ساعات', '3 hours')], [6, L('6 ساعات', '6 hours')], [12, L('12 ساعة', '12 hours')], [24, L('يوم', '1 day')], [72, L('3 أيام', '3 days')], [168, L('أسبوع', '1 week')]] },
+      { name: 'driveDaily', label: L('ونسخة يومياً الساعة (اختياري)', 'And daily at (optional)'), type: 'time', col: 6 },
+      { name: 'driveOnShift', label: L('ونسخة مع غلق كل وردية', 'And on every shift close'), type: 'checkbox', col: 12 },
+      { name: 'driveKeep', label: L('عدد النسخ اللي بتتحفظ (الأقدم بيتمسح)', 'Copies to keep (oldest deleted)'), type: 'select', col: 6, options: [[5, '5'], [10, '10'], [20, '20'], [30, '30'], [60, '60'], [100, '100']] },
+      { type: 'html', col: 6, html: `<div class="faint" style="padding-top:26px">${c.driveAt ? L('آخر نسخة', 'Last copy') + ': ' + fmtDT(c.driveAt) : L('لسه مفيش نسخ', 'No copies yet')}</div>` },
+      { type: 'html', col: 12, html: `<div class="faint" style="line-height:1.9">${L('النسخة مشفّرة بكلمة سر النسخ السحابي، وبتتحفظ في فولدر Google Drive على الكمبيوتر — وبرنامج Google Drive بيرفعها للسحابة لوحده. البرنامج لازم يكون مفتوح وقت النسخة.', 'Encrypted with your backup password and saved in the Google Drive folder, which syncs it automatically. The app must be open.')}</div>` }], c),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { const v = UI.read(x.el); DB.saveSettings({ cloud: { drive: !!v.drive, driveOnShift: !!v.driveOnShift, driveEvery: Number(v.driveEvery) || 0, driveDaily: v.driveDaily || '', driveKeep: Number(v.driveKeep) || 10 } }); audit('drive.schedule', DriveSchedule.label()); x.close(); UI.toast(L('اتحفظ ✓ — ', 'Saved ✓ — ') + DriveSchedule.label(), 'ok', 5000); if (App.current === 'backup') App.reload(); } }] });
+    return m;
+  }
+};
+setInterval(() => DriveSchedule.tick(), 5 * 60e3); setTimeout(() => DriveSchedule.tick(), 60e3);
+
+</script>
+  <script>
+/* =========================================================
+   منظومة الإيصال الإلكتروني — مصلحة الضرائب المصرية (e-Receipt B2C) — 1.7
+   - بيبني الإيصال بصيغة المنظومة (Receipt v1.2) ويحسب الـ UUID (تسلسل + SHA-256)
+   - بيبعته لوحده بعد كل فاتورة (ولو النت قاطع بيستنى ويبعت بعدين)
+   - QR المنظومة بيتطبع على الإيصال
+   ⚠️ لازم يتجرب على بيئة الاختبار (Pre-production) ببيانات تسجيل المحل قبل التشغيل الفعلي
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const ETA = {
+  HOST: { preprod: { id: 'https://id.preprod.eta.gov.eg', api: 'https://api.preprod.invoicing.eta.gov.eg', web: 'https://preprod.invoicing.eta.gov.eg' }, prod: { id: 'https://id.eta.gov.eg', api: 'https://api.invoicing.eta.gov.eg', web: 'https://invoicing.eta.gov.eg' } },
+  cfg() {
+    return { on: false, env: 'preprod', clientId: '', clientSecret: '', posSerial: '', osVersion: 'windows', modelFramework: '1', presharedKey: '', rin: '', tradeName: '', branchCode: '0', activityCode: '', country: 'EG', governate: '', regionCity: '', street: '', buildingNumber: '', itemType: 'EGS', itemCode: '', unitType: 'EA', taxRate: 14, inclusive: true, payment: 'C', sendReturns: true, lastUuid: '', ...(DB.settings().eta || {}) };
+  },
+  supported() { return !!((window.api && window.api.http) || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorHttp)); },
+  ready() { const c = this.cfg(); return c.on && (typeof Plan === 'undefined' || Plan.allowed('eta')) && this.supported() && c.clientId && c.clientSecret && c.posSerial && c.rin; },
+  /* ---------- HTTP (المنظومة مش بتقبل طلبات من المتصفح مباشرة) ---------- */
+  async http(method, url, headers, body) {
+    if (window.api && window.api.http) return window.api.http({ method, url, headers, body });
+    const H = window.Capacitor.Plugins.CapacitorHttp; const r = await H.request({ method, url, headers, data: body, connectTimeout: 20000, readTimeout: 30000 });
+    return { status: r.status, body: typeof r.data === 'string' ? r.data : JSON.stringify(r.data), headers: r.headers };
+  },
+  _tok: null,
+  async token(force) {
+    const c = this.cfg(); if (!force && this._tok && Date.now() < this._tok.exp) return this._tok.v;
+    const body = `grant_type=client_credentials&client_id=${encodeURIComponent(c.clientId)}&client_secret=${encodeURIComponent(c.clientSecret)}`;
+    const r = await this.http('POST', this.HOST[c.env].id + '/connect/token', { 'Content-Type': 'application/x-www-form-urlencoded', posserial: c.posSerial, pososversion: c.osVersion || 'windows', posmodelframework: c.modelFramework || '1', presharedkey: c.presharedKey || '' }, body);
+    let j = {}; try { j = JSON.parse(r.body || '{}'); } catch (_) {}
+    if (r.status !== 200 || !j.access_token) throw new Error(j.error_description || j.error || ('HTTP ' + r.status));
+    this._tok = { v: j.access_token, exp: Date.now() + Math.max(60, (Number(j.expires_in) || 3600) - 120) * 1000 }; return this._tok.v;
+  },
+  /* ---------- التسلسل الرسمي: أسماء الخصائص Capital + كل قيمة بين علامتين "" + عناصر المصفوفة مسبوقة باسمها ---------- */
+  serialize(o) {
+    if (o === null || o === undefined) return '""';
+    if (typeof o !== 'object') return '"' + (typeof o === 'number' ? JSON.stringify(o) : String(o)) + '"';
+    let s = '';
+    for (const [k, v] of Object.entries(o)) {
+      const K = '"' + k.toUpperCase() + '"';
+      if (Array.isArray(v)) { s += K; for (const el of v) s += K + this.serialize(el); }
+      else s += K + this.serialize(v);
+    }
+    return s;
+  },
+  async sha256hex(text) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join(''); },
+  r5(n) { return Math.round((Number(n) || 0) * 1e5) / 1e5; },
+  /* ---------- بناء الإيصال من الفاتورة ---------- */
+  async build(sale, { ret, lines } = {}) {
+    const c = this.cfg(); const rate = Number(c.taxRate) || 0; const f = c.inclusive ? 1 + rate / 100 : 1;
+    const src = ret ? lines : sale.items.filter((i) => !i.tradeIn && !i.reserveDep && Number(i.price) > 0);
+    const items = src.map((i) => {
+      const p = i.productId && DB.get('products', i.productId); const q = this.r5(i.qty);
+      const unit = this.r5(Number(i.price) / f); const totalSale = this.r5(unit * q); const disc = this.r5((Number(i.discount) || 0) * (ret ? q / (i.soldQty || q) : 1) / f);
+      const net = this.r5(totalSale - disc); const tax = this.r5((net * rate) / 100);
+      const it = { internalCode: String((p && (p.sku || p.barcode)) || i.productId || i.phoneId || 'ITEM').slice(0, 50), description: String(i.name).slice(0, 500), itemType: (p && p.etaType) || c.itemType || 'EGS', itemCode: (p && p.etaCode) || c.itemCode, unitType: (p && p.etaUnit) || c.unitType || 'EA', quantity: q, unitPrice: unit, netSale: net, totalSale, total: this.r5(net + tax) };
+      if (disc) it.itemDiscountData = [{ amount: disc, description: 'خصم' }];
+      if (rate) it.taxableItems = [{ taxType: 'T1', amount: tax, subType: 'V009', rate }];
+      return it;
+    });
+    const totalSales = this.r5(sum(items, (i) => i.totalSale)); const net = this.r5(sum(items, (i) => i.netSale)); const taxT = this.r5(sum(items, (i) => (i.taxableItems ? i.taxableItems[0].amount : 0)));
+    const itemsDisc = this.r5(sum(items, (i) => (i.itemDiscountData ? i.itemDiscountData[0].amount : 0)));
+    const extra = ret ? 0 : this.r5((Number(sale.discountAmount ?? sale.discount) || 0));
+    const cu = sale.customerId && DB.get('customers', sale.customerId); const total = this.r5(net + taxT - extra);
+    const buyer = { type: 'P' }; if (cu) { buyer.name = String(cu.name || '').slice(0, 100); if (cu.phone) buyer.mobileNumber = String(cu.phone).replace(/\D/g, '').slice(0, 30); if (cu.nationalId) buyer.id = String(cu.nationalId); }
+    const no = ret ? arguments[1].no || `${sale.no}-R${(sale.returns || []).length || 1}` : sale.no;
+    const r = {
+      header: { dateTimeIssued: new Date(ret ? Date.now() : sale.date).toISOString().replace(/\.\d{3}Z$/, 'Z'), receiptNumber: no, uuid: '', previousUUID: c.lastUuid || '', ...(ret ? { referenceUUID: sale.eta?.uuid || '' } : {}), currency: 'EGP' },
+      documentType: { receiptType: ret ? 'R' : 'S', typeVersion: '1.2' },
+      seller: { rin: c.rin, companyTradeName: c.tradeName || DB.settings().store.name, branchCode: c.branchCode || '0', branchAddress: { country: c.country || 'EG', governate: c.governate, regionCity: c.regionCity, street: c.street, buildingNumber: c.buildingNumber }, deviceSerialNumber: c.posSerial, activityCode: c.activityCode },
+      buyer, itemData: items, totalSales, totalItemsDiscount: itemsDisc, ...(extra ? { extraReceiptDiscountData: [{ amount: extra, description: 'خصم الفاتورة' }] } : {}),
+      netAmount: net, feesAmount: 0, totalAmount: total, ...(rate ? { taxTotals: [{ taxType: 'T1', amount: taxT }] } : {}), paymentMethod: c.payment || 'C'
+    };
+    r.header.uuid = await this.sha256hex(this.serialize(r));
+    return r;
+  },
+  qrUrl(e, c = this.cfg()) { return e && e.uuid ? `${this.HOST[c.env].web}/receipts/search/${e.uuid}/share/${e.issued}#Total:${e.total},IssuerRIN:${c.rin}` : ''; },
+  /* ---------- الإرسال ---------- */
+  async submit(receipts) {
+    const c = this.cfg(); const tok = await this.token();
+    const r = await this.http('POST', this.HOST[c.env].api + '/api/v1/receiptsubmissions', { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, JSON.stringify({ receipts }));
+    let j = {}; try { j = JSON.parse(r.body || '{}'); } catch (_) {}
+    if (r.status === 401) { this._tok = null; throw new Error('unauthorized'); }
+    if (r.status !== 202 && r.status !== 200) throw new Error((j.error && (j.error.message || j.error.details?.[0]?.message)) || j.message || ('HTTP ' + r.status));
+    return j;
+  },
+  _busy: false,
+  /* الإيصالات المعلّقة في مجموعة eReceipts (بيع + مرتجع) */
+  async flush() {
+    if (!this.ready() || this._busy || !navigator.onLine) return; this._busy = true;
+    try {
+      const pend = DB.filter('eReceipts', (r) => r.status === 'pending' && r.doc).sort((a, b) => (a.issued < b.issued ? -1 : 1)).slice(0, 20);
+      if (!pend.length) return;
+      const res = await this.submit(pend.map((r) => r.doc));
+      const acc = new Map((res.acceptedDocuments || []).map((d) => [d.uuid, d])); const rej = new Map((res.rejectedDocuments || []).map((d) => [d.uuid, d]));
+      for (const r of pend) {
+        if (acc.has(r.uuid)) { DB.update('eReceipts', r.id, { status: 'accepted', longId: acc.get(r.uuid).longId || '', sub: res.submissionUUID || '', doc: null, at: nowISO(), error: '' }); if (r.type === 'S' && r.saleId) { const s = DB.get('sales', r.saleId); if (s && s.eta) DB.update('sales', s.id, { eta: { ...s.eta, status: 'accepted' } }); } }
+        else if (rej.has(r.uuid)) { const e = rej.get(r.uuid).error || {}; DB.update('eReceipts', r.id, { status: 'rejected', error: String(e.message || (e.details && e.details.map((d) => d.message).join(' | ')) || 'rejected').slice(0, 600), at: nowISO() }); }
+      }
+      DB.saveSettings({ eta: { lastFlush: nowISO(), lastErr: '' } });
+    } catch (e) { DB.saveSettings({ eta: { lastErr: String(e.message || e).slice(0, 300), lastErrAt: nowISO() } }); try { ErrLog.add('eta: ' + e.message, 'eta'); } catch (_) {} }
+    finally { this._busy = false; }
+  },
+  async queueSale(s, opts = {}) {
+    if (!this.ready() || !s) return;
+    try {
+      const doc = await this.build(s, opts); const c = this.cfg(); const h = doc.header;
+      const rec = { saleId: s.id, saleNo: s.no, no: h.receiptNumber, type: doc.documentType.receiptType, uuid: h.uuid, issued: h.dateTimeIssued, total: doc.totalAmount, env: c.env, status: 'pending', doc, ...(opts.ret ? { lines: opts.lines, refUuid: h.referenceUUID || '' } : {}) };
+      DB.insert('eReceipts', rec); DB.saveSettings({ eta: { lastUuid: h.uuid } });
+      if (!opts.ret) DB.update('sales', s.id, { eta: { uuid: h.uuid, issued: h.dateTimeIssued, total: doc.totalAmount, env: c.env, status: 'pending' } });
+      setTimeout(() => this.flush(), 1500);
+    } catch (err) { console.warn(err); try { ErrLog.add('eta build: ' + err.message, 'eta'); } catch (_) {} }
+  },
+  /* إعادة بناء الإيصال المرفوض بعد تصحيح البيانات (UUID جديد) */
+  async retry(r) {
+    const s = DB.get('sales', r.saleId); if (!s) return;
+    let opts = {}; if (r.type === 'R') { if (!r.lines) return UI.toast(L('مش قادر أعيد بناء المرتجع ده', 'Cannot rebuild this return'), 'err'); opts = { ret: true, lines: r.lines, no: r.no }; }
+    const doc = await this.build(s, opts); const h = doc.header;
+    DB.update('eReceipts', r.id, { status: 'pending', doc, uuid: h.uuid, issued: h.dateTimeIssued, total: doc.totalAmount, error: '' }); DB.saveSettings({ eta: { lastUuid: h.uuid } });
+    if (r.type === 'S') DB.update('sales', s.id, { eta: { ...(s.eta || {}), uuid: h.uuid, issued: h.dateTimeIssued, total: doc.totalAmount, status: 'pending' } });
+    await this.flush(); if (App.current === 'eta') App.reload();
+  },
+  async test() {
+    try { this._tok = null; await this.token(true); UI.toast(L('الاتصال بالمنظومة شغال ✓ — اتعمل تسجيل دخول للـ POS', 'Connected to ETA ✓'), 'ok', 6000); return true; }
+    catch (e) { UI.toast(L('فشل الاتصال بالمنظومة: ', 'ETA connection failed: ') + e.message, 'err', 9000); return false; }
+  },
+  settings() {
+    const c = this.cfg();
+    const m = UI.modal({ title: L('منظومة الإيصال الإلكتروني', 'Egyptian e-Receipt'), icon: 'receipt', size: 'lg', body: `
+      <div class="tag warn mb" style="white-space:normal;line-height:1.9;padding:10px">⚠️ ${L('مطلوبة بس للمحلات المسجّلة في ضريبة القيمة المضافة ومعاها كود B2C. البيانات دي بتيجي من بوابة المنظومة بعد تسجيل جهاز الكاشير (POS). جرّب الأول على «بيئة الاختبار» وبعد ما الإيصالات تتقبل حوّلها لـ «التشغيل الفعلي».', 'Only for VAT-registered shops with the B2C tag. Test on pre-production first.')}</div>
+      ${!this.supported() ? `<div class="tag err mb" style="white-space:normal">${L('الإرسال للمنظومة شغال من برنامج الكمبيوتر وتطبيق الموبايل بس.', 'Works in the Windows and Android apps only.')}</div>` : ''}
+      ${UI.form([
+        { name: 'on', label: L('تشغيل إرسال الإيصالات للمنظومة', 'Send receipts to ETA'), type: 'checkbox', col: 6 }, { name: 'env', label: L('البيئة', 'Environment'), type: 'select', options: [['preprod', L('اختبار (Pre-production)', 'Pre-production')], ['prod', L('التشغيل الفعلي (Production)', 'Production')]], col: 6 },
+        { type: 'html', col: 12, html: `<div class="rd-sec"><b>${L('بيانات جهاز الكاشير (POS) من البوابة', 'POS registration')}</b></div>` },
+        { name: 'clientId', label: 'Client ID', col: 6 }, { name: 'clientSecret', label: 'Client Secret', type: 'password', col: 6 },
+        { name: 'posSerial', label: L('سيريال جهاز الكاشير (POS Serial)', 'POS serial'), col: 4 }, { name: 'presharedKey', label: 'Pre-shared key', type: 'password', col: 4 }, { name: 'osVersion', label: 'POS OS version', col: 2 }, { name: 'modelFramework', label: 'Model framework', col: 2 },
+        { type: 'html', col: 12, html: `<div class="rd-sec"><b>${L('بيانات الممول', 'Taxpayer')}</b></div>` },
+        { name: 'rin', label: L('رقم التسجيل الضريبي (RIN)', 'Tax registration no. (RIN)'), col: 4 }, { name: 'tradeName', label: L('الاسم التجاري', 'Trade name'), col: 4 }, { name: 'activityCode', label: L('كود النشاط', 'Activity code'), col: 2 }, { name: 'branchCode', label: L('كود الفرع', 'Branch code'), col: 2 },
+        { name: 'governate', label: L('المحافظة', 'Governorate'), col: 3 }, { name: 'regionCity', label: L('المدينة / المنطقة', 'City'), col: 3 }, { name: 'street', label: L('الشارع', 'Street'), col: 4 }, { name: 'buildingNumber', label: L('رقم العقار', 'Building'), col: 2 },
+        { type: 'html', col: 12, html: `<div class="rd-sec"><b>${L('الأصناف والضريبة', 'Items & tax')}</b></div>` },
+        { name: 'itemType', label: L('نوع كود الصنف', 'Item code type'), type: 'select', options: [['EGS', 'EGS'], ['GS1', 'GS1']], col: 3 }, { name: 'itemCode', label: L('كود الصنف الافتراضي (للأصناف اللي ملهاش كود)', 'Default item code'), col: 5, placeholder: 'EG-123456789-0001' }, { name: 'unitType', label: L('الوحدة', 'Unit'), col: 2 }, { name: 'taxRate', label: L('ضريبة %', 'VAT %'), type: 'number', col: 2 },
+        { name: 'inclusive', label: L('أسعار البيع شاملة الضريبة', 'Prices include VAT'), type: 'checkbox', col: 6 }, { name: 'sendReturns', label: L('إرسال إيصالات المرتجع', 'Send return receipts'), type: 'checkbox', col: 6 },
+        { name: 'payment', label: L('طريقة الدفع الافتراضية', 'Payment method'), type: 'select', options: [['C', L('كاش (C)', 'Cash (C)')], ['V', L('فيزا (V)', 'Visa (V)')], ['O', L('أخرى (O)', 'Other (O)')]], col: 6 }], c)}
+      <div class="faint" style="line-height:1.8">${L('كود كل صنف في المنظومة (EGS/GS1) بيتكتب من تعديل المنتج ← «كود المنظومة». الأصناف اللي ملهاش كود بتتبعت بالكود الافتراضي.', 'Set each product code in the product editor; others use the default code.')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('اختبار الاتصال', 'Test connection'), icon: 'play', onClick: async (x) => { save(x, true); await this.test(); } }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { save(x); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } }] });
+    const save = (x, keep) => { const v = UI.read(x.el); const prev = this.cfg(); if (prev.env !== v.env) v.lastUuid = ''; DB.saveSettings({ eta: { ...v, on: !!v.on, inclusive: !!v.inclusive, sendReturns: !!v.sendReturns, taxRate: Number(v.taxRate) || 0 } }); this._tok = null; audit('eta.settings', `${v.env} ${v.on}`); };
+  }
+};
+
+(function () {
+  /* بعد كل فاتورة */
+  const bc = Sales.create.bind(Sales);
+  Sales.create = function (...a) { const s = bc(...a); try { if (s && ETA.ready()) ETA.queueSale(s); } catch (_) {} return s; };
+  const br = Sales.returnItems.bind(Sales);
+  Sales.returnItems = function (sale, lines, method) {
+    const amt = br(sale, lines, method);
+    try { const c = ETA.cfg(); if (ETA.ready() && c.sendReturns && sale.eta && sale.eta.uuid) { const ls = lines.map((l) => { const it = sale.items[l.idx]; return { ...it, qty: l.qty, soldQty: it.qty }; }); ETA.queueSale(DB.get('sales', sale.id) || sale, { ret: true, lines: ls }); } } catch (e) { console.warn(e); }
+    return amt;
+  };
+  /* QR المنظومة على الإيصال */
+  const bh = receiptHTML;
+  receiptHTML = async function (sale, o) {
+    let html = await bh(sale, o);
+    try {
+      if (sale && sale.eta && sale.eta.uuid) {
+        const u = ETA.qrUrl(sale.eta); const q = await qrDataURL(u, 130);
+        const blk = `<div class="c" style="margin:6px 0;border-top:1px dashed #000;padding-top:6px"><div class="sm b">${L('إيصال إلكتروني — مصلحة الضرائب', 'e-Receipt — Egyptian Tax Authority')}</div>${q ? `<img src="${q}" style="width:30mm;height:30mm">` : ''}<div class="sm" dir="ltr" style="word-break:break-all;font-size:8px">${esc(sale.eta.uuid)}</div></div>`;
+        const k = html.lastIndexOf('<div class="c b" style="margin-top:4px">'); html = k > 0 ? html.slice(0, k) + blk + html.slice(k) : html + blk;
+      }
+    } catch (e) { console.warn(e); }
+    return html;
+  };
+  /* كود المنظومة في تعديل المنتج */
+  const be = Modules.inventory.edit.bind(Modules.inventory);
+  Modules.inventory.edit = function (p, ...a) {
+    const r = be(p, ...a);
+    if (ETA.cfg().on) setTimeout(() => { try { const m = $$('.modal-bg').pop(); const form = m && $('.modal-b', m); if (!form || $('[name=etaCode]', form)) return;
+      form.insertAdjacentHTML('beforeend', `<div class="pk-box"><b>${icon('receipt')} ${L('كود المنظومة الضريبية', 'ETA item code')}</b><div class="grid g2"><input name="etaCode" placeholder="EG-123456789-0001" dir="ltr" value="${esc((p && p.etaCode) || '')}"><select name="etaType"><option value="EGS">EGS</option><option value="GS1" ${p && p.etaType === 'GS1' ? 'selected' : ''}>GS1</option></select></div></div>`);
+      const save = [...$$('.modal-f button', m)].find((b) => /حفظ|Save/.test(b.textContent));
+      if (save) save.addEventListener('click', () => setTimeout(() => { const code = $('[name=etaCode]', form)?.value.trim() || '', ty = $('[name=etaType]', form)?.value || 'EGS'; const tgt = p ? DB.get('products', p.id) : DB.all('products').sort((x, y) => ((x.createdAt || '') < (y.createdAt || '') ? 1 : -1))[0]; if (tgt && (tgt.etaCode || '') !== code) DB.update('products', tgt.id, { etaCode: code, etaType: ty }); }, 80), true);
+    } catch (e) { console.warn(e); } }, 40);
+    return r;
+  };
+  setInterval(() => { if (Session.user) ETA.flush(); }, 120e3);
+  /* كارت في إعدادات الإيصال */
+  try { const bb = Modules.settings.body.bind(Modules.settings); Modules.settings.body = async function (...a) { const r = await bb(...a); try { if (this.tab === 'receipt' && Session.can('settings') && !$('#etSet') && (typeof Plan === 'undefined' || Plan.allowed('eta'))) { const c = ETA.cfg(); $('#stBody').insertAdjacentHTML('afterbegin', `<div class="card card-b mb dw-card"><div class="dw-ic">${icon('receipt')}</div><div style="flex:1;min-width:0"><b>${L('الإيصال الإلكتروني (مصلحة الضرائب)', 'Egyptian e-Receipt')}</b><small>${c.on ? L('شغال', 'On') + ' — ' + (c.env === 'prod' ? L('تشغيل فعلي', 'production') : L('بيئة الاختبار', 'pre-production')) : L('للمحلات المسجّلة في القيمة المضافة — الإيصالات بتتبعت للمنظومة لوحدها وعليها QR', 'For VAT-registered shops — receipts are submitted automatically with a QR')}</small></div><button class="btn" id="etSet">${icon('settings')}${L('إعداد', 'Setup')}</button></div>`); $('#etSet').onclick = () => ETA.settings(); } } catch (e) { console.warn(e); } return r; }; } catch (_) {}
+})();
+
+Modules.eta = {
+  title: () => L('الإيصال الإلكتروني', 'e-Receipts'), icon: 'receipt', perm: 'reports',
+  enabled: () => ETA.cfg().on,
+  badge: () => DB.filter('eReceipts', (r) => r.status === 'rejected').length,
+  render(el) {
+    const c = ETA.cfg(); const rows = DB.all('eReceipts').sort((a, b) => (a.issued < b.issued ? 1 : -1));
+    const cnt = (st) => rows.filter((r) => r.status === st).length;
+    el.innerHTML = `<div class="grid g4 mb">${UI.kpi(L('اتقبلت', 'Accepted'), cnt('accepted'), 'check', 'c-ok')}${UI.kpi(L('مستنية الإرسال', 'Pending'), cnt('pending'), 'clock', 'c-warn')}${UI.kpi(L('مرفوضة', 'Rejected'), cnt('rejected'), 'alert', 'c-err')}${UI.kpi(L('البيئة', 'Environment'), c.env === 'prod' ? L('تشغيل فعلي', 'Production') : L('اختبار', 'Pre-prod'), 'shield', c.env === 'prod' ? 'hero' : '')}</div>
+      ${c.lastErr ? `<div class="tag err mb" style="white-space:normal;padding:10px">${L('آخر خطأ', 'Last error')}: ${esc(c.lastErr)} — ${fmtDT(c.lastErrAt)}</div>` : ''}
+      <div class="row mb wrap" style="gap:8px"><div class="spacer"></div><button class="btn" id="etFlush">${icon('send')}${L('إرسال المعلّق دلوقتي', 'Send pending now')}</button><button class="btn" id="etCfg">${icon('settings')}${L('الإعدادات', 'Settings')}</button></div><div id="etBody"></div>`;
+    $('#etCfg').onclick = () => ETA.settings(); $('#etFlush').onclick = async () => { await ETA.flush(); App.reload(); };
+    const ST = { accepted: [L('اتقبل', 'Accepted'), 'ok'], pending: [L('مستني', 'Pending'), 'warn'], rejected: [L('مرفوض', 'Rejected'), 'err'] };
+    UI.table($('#etBody'), { rows, exportName: 'e-receipts', emptyIcon: 'receipt', searchText: (r) => `${r.no} ${r.uuid}`,
+      columns: [{ key: 'no', label: L('الإيصال', 'Receipt'), render: (r) => `<b>${esc(r.no)}</b><div class="faint">${fmtDT(r.issued)} ${r.type === 'R' ? '· ' + L('مرتجع', 'Return') : ''} ${r.env === 'preprod' ? '· ' + L('اختبار', 'test') : ''}</div>` }, { label: L('الإجمالي', 'Total'), render: (r) => `<b class="num">${money(r.total)}</b>`, exportVal: (r) => r.total },
+        { label: 'UUID', render: (r) => `<span class="mono" style="font-size:11px" dir="ltr">${esc(String(r.uuid).slice(0, 16))}…</span>`, exportVal: (r) => r.uuid },
+        { key: 'status', label: L('الحالة', 'Status'), render: (r) => `<span class="tag ${ST[r.status][1]}">${ST[r.status][0]}</span>${r.error ? `<div class="faint" style="color:var(--err);font-size:12px;max-width:340px">${esc(r.error)}</div>` : ''}`, exportVal: (r) => r.status }],
+      actions: (r) => (r.status === 'rejected' ? UI.act('retry', 'refresh', L('إعادة الإرسال', 'Resend')) : '') + (r.status === 'accepted' ? UI.act('open', 'eye', L('عرض في المنظومة', 'Open in portal')) : ''),
+      onAction: (a, r) => { if (a === 'retry') ETA.retry(r); if (a === 'open') { const u = ETA.qrUrl(r); window.api?.sys?.openExternal ? window.api.sys.openExternal(u) : window.open(u, '_blank'); } } });
+  }
+};
 
 </script>
   <script>
@@ -14499,13 +15285,25 @@ const PLAN_MODS = [
   { k: 'lines', ic: 'sim', ar: 'خطوط الشركات', en: 'Mobile lines', d: 'خطوط المفوض والتحصيل والشرايح', mods: ['lines'], perms: ['lines', 'lines.manage'], feats: ['lines', 'simSales'] },
   { k: 'cctv', ic: 'cctv', ar: 'كاميرات المراقبة', en: 'CCTV installs', d: 'تركيبات وعرابين وضمان وزيارات', mods: ['cctv'], perms: ['cctv', 'cctv.manage'], feats: ['cctv'] },
   { k: 'hr', ic: 'users', ar: 'الموارد البشرية', en: 'HR & payroll', d: 'حضور وانصراف ومرتبات وتارجت وعمولات', mods: ['attendance', 'payroll', 'targets'], perms: ['attendance', 'payroll'], keys: { autoAttendance: false, autoPayroll: false } },
-  { k: 'whatsapp', ic: 'whatsapp', ar: 'واتساب التلقائي', en: 'Automatic WhatsApp', d: 'ربط رقم المحل بالـ QR وتذكيرات وتقييم العملاء', mods: ['ratings'] },
-  { k: 'offers', ic: 'tag', ar: 'العروض والكوبونات', en: 'Offers & coupons', d: 'خصومات وكوبونات وكتالوج أونلاين للطلبات على واتساب', mods: ['offers', 'catalog'] },
+  { k: 'whatsapp', ic: 'whatsapp', ar: 'واتساب التلقائي', en: 'Automatic WhatsApp', d: 'ربط رقم المحل بالـ QR وتذكيرات وتقييم العملاء ورسائل العروض الجماعية', mods: ['ratings', 'campaigns'] },
+  { k: 'offers', ic: 'tag', ar: 'العروض والكوبونات', en: 'Offers & coupons', d: 'خصومات وكوبونات وكتالوج أونلاين وإدارة الطلبات والتوصيل', mods: ['offers', 'catalog', 'orders'] },
   { k: 'cloud', ic: 'cloud', ar: 'النسخ الاحتياطي السحابي', en: 'Cloud backup', d: 'نسخة مشفّرة يومية ومع كل وردية' },
   { k: 'owner', ic: 'eye', ar: 'لوحة المالك وتقرير الوردية', en: 'Owner live view & reports', d: 'أرقام لحظية وتقرير واتساب عند الغلق', mods: ['ownerLive'] },
   { k: 'ai', ic: 'sparkles', ar: 'المساعد الذكي', en: 'AI assistant', d: 'اسأل عن أرقام محلك بالعربي', perms: ['ai'] }
 ];
-const PLAN_ALL = PLAN_MODS.map((m) => m.k);
+/* الأقسام الأساسية — مفتوحة في كل الباقات، والمطور يقدر يشيل أي واحد منها عند التفعيل (حقل x في الترخيص) */
+const PLAN_CORE_MODS = [
+  { k: 'sales', core: true, ic: 'cart', ar: 'نقطة البيع والمبيعات', en: 'POS & sales', d: 'بيع بالباركود وفواتير ومرتجعات', mods: ['pos', 'sales'], perms: ['pos', 'sales', 'sales.delete', 'discount.unlimited'] },
+  { k: 'stock', core: true, ic: 'box', ar: 'المخزون والمشتريات والموردين', en: 'Stock, purchases & suppliers', d: 'أصناف وباركود وجرد وفواتير شراء وموردين وتالف', mods: ['inventory', 'purchases', 'suppliers', 'losses'], perms: ['inventory', 'inventory.cost', 'purchases', 'suppliers'] },
+  { k: 'branches', core: true, ic: 'factory', ar: 'الفروع وتحويل البضاعة', en: 'Branches & transfers', d: 'مخزون لكل فرع وتحويلات ومقارنة الفروع', mods: ['transfers'] },
+  { k: 'quotes', core: true, ic: 'file', ar: 'عروض الأسعار', en: 'Quotations', d: 'عرض سعر لأي منتجات وتحويله لفاتورة', mods: ['quotes'] },
+  { k: 'finance', core: true, ic: 'bank', ar: 'المصروفات ورأس المال', en: 'Expenses & capital', d: 'مصروفات وشركاء ورأس مال', mods: ['expenses', 'capital'], perms: ['expenses', 'capital'] },
+  { k: 'reports', core: true, ic: 'chart', ar: 'التقارير والأرباح', en: 'Reports & profit', d: 'تقارير المبيعات والأرباح والمخزون', mods: ['reports'], perms: ['reports'] },
+  { k: 'eta', core: true, ic: 'receipt', ar: 'الإيصال الإلكتروني (الضرائب)', en: 'e-Receipt (ETA)', d: 'إرسال الإيصالات لمنظومة مصلحة الضرائب', mods: ['eta'] },
+  { k: 'drawer', core: true, ic: 'money', ar: 'درج النقدية', en: 'Cash drawer', d: 'فتح الدرج مع البيع النقدي', perms: ['drawer.open'] }
+];
+PLAN_MODS.push(...PLAN_CORE_MODS);
+const PLAN_ALL = PLAN_MODS.filter((m) => !m.core).map((m) => m.k);
 const PLANS = [
   { id: 'start', ar: 'الأساسية', en: 'Start', emoji: '🟢', d: 'نقطة بيع ومخزون ومشتريات ومصروفات وورديات وتقارير', f: [] },
   { id: 'cash', ar: 'الكاش', en: 'Cash', emoji: '🔵', d: 'الأساسية + المحافظ والماكينات وشاشة العرض والآجل', f: ['wallets', 'machines', 'display', 'credit'] },
@@ -14518,9 +15316,11 @@ const Plan = {
   info() { const s = App.licenseState; return s && s.state === 'active' && s.info ? s.info : null; },
   /* null = كل حاجة مفتوحة (تجربة أو ترخيص قديم من غير أقسام) */
   list() { const i = this.info(); return i && Array.isArray(i.f) ? i.f : null; },
-  full() { return !this.list(); },
-  key() { const l = this.list(); return l ? l.join(',') : '*'; },
-  allowed(k) { const l = this.list(); return !l || l.includes(k); },
+  full() { return !this.list() && !this.off().length; },
+  key() { const l = this.list(); return (l ? l.join(',') : '*') + '|' + this.off().join(','); },
+  /* الأقسام الأساسية المقفولة (حقل x) */
+  off() { const i = this.info(); return i && Array.isArray(i.x) ? i.x : []; },
+  allowed(k) { const m = this.mod(k); if (m && m.core) return !this.off().includes(k); const l = this.list(); return !l || l.includes(k); },
   mod(k) { return PLAN_MODS.find((m) => m.k === k); },
   byModule(id) { return PLAN_MODS.find((m) => (m.mods || []).includes(id)); },
   byPerm(p) { return PLAN_MODS.find((m) => (m.perms || []).includes(p)); },
@@ -14546,11 +15346,14 @@ const Plan = {
   },
   /* صفحة «باقتي» */
   view() {
-    const row = (m) => { const on = this.allowed(m.k); return `<div class="pl-row ${on ? 'on' : 'off'}"><span class="pl-i">${icon(m.ic)}</span><div><b>${L(m.ar, m.en)}</b><small>${m.d}</small></div>${on ? `<span class="tag ok">✓</span>` : `<button class="btn sm" data-plreq="${m.k}">${icon('lock')}${L('اطلب', 'Request')}</button>`}</div>`; };
-    const md = UI.modal({ title: L('باقتي', 'My plan'), icon: 'award', body: `<div class="pl-head"><div><small class="faint">${L('الباقة الحالية', 'Current plan')}</small><b>${this.name()}</b></div><span class="tag ${this.full() ? 'ok' : 'info'}">${this.full() ? L('كل الأقسام مفتوحة', 'Everything unlocked') : `${this.list().length} / ${PLAN_MODS.length} ${L('قسم إضافي', 'add-ons')}`}</span></div>
-      <div class="pl-core"><b>${L('أساسي في كل الباقات', 'Included in every plan')}</b><div>${PLAN_CORE.map((c) => `<span class="tag">${c}</span>`).join('')}</div></div>
-      <div class="pl-grid">${PLAN_MODS.map(row).join('')}</div>` });
-    $$('[data-plreq]', md.el).forEach((b) => (b.onclick = () => this.request(this.mod(b.dataset.plreq))));
+    /* العميل بيشوف الأقسام اللي عنده بس — اللي مش ضمن باقته مش بيظهر خالص */
+    const mine = PLAN_MODS.filter((m) => this.allowed(m.k));
+    const row = (m) => `<div class="pl-row on"><span class="pl-i">${icon(m.ic)}</span><div><b>${L(m.ar, m.en)}</b><small>${m.d}</small></div><span class="tag ok">✓</span></div>`;
+    const md = UI.modal({ title: L('باقتي', 'My plan'), icon: 'award', body: `<div class="pl-head"><div><small class="faint">${L('الباقة الحالية', 'Current plan')}</small><b>${this.name()}</b></div><span class="tag ${this.full() ? 'ok' : 'info'}">${mine.length} ${L('قسم مفتوح', 'modules')}</span></div>
+      <div class="pl-core"><b>${L('موجود دايماً', 'Always included')}</b><div>${[L('لوحة التحكم', 'Dashboard'), L('الورديات والدرج', 'Shifts'), L('المستخدمين والصلاحيات', 'Users'), L('النسخ الاحتياطي', 'Backup'), L('الإعدادات', 'Settings')].map((c) => `<span class="tag">${c}</span>`).join('')}</div></div>
+      <div class="pl-grid">${mine.map(row).join('')}</div>
+      <button class="btn block mt" id="plAsk">${icon('whatsapp')}${L('محتاج قسم زيادة؟ كلّم المطور', 'Need another module? Contact the developer')}</button>` });
+    $('#plAsk', md.el).onclick = () => this.request(null);
   }
 };
 

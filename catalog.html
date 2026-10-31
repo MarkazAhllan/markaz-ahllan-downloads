@@ -27,7 +27,7 @@ header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:
 .cart.on{display:flex}.empty{text-align:center;color:var(--t2);padding:40px 10px}.foot{text-align:center;color:var(--t2);font-size:12px;margin:18px 0}
 .ov{position:fixed;inset:0;background:#0007;display:none;align-items:flex-end;justify-content:center;z-index:9}.ov.on{display:flex}
 .sh{background:var(--s);width:100%;max-width:560px;border-radius:22px 22px 0 0;padding:18px;max-height:85vh;overflow:auto}.sh h3{margin:0 0 10px}.ln{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px dashed var(--l);font-size:14.5px}
-.sh input,.sh textarea{width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--l);background:var(--bg);color:var(--t);font:inherit;margin-top:8px}.go{width:100%;margin-top:12px;border:none;background:#25D366;color:#fff;border-radius:14px;padding:14px;font:inherit;font-weight:900;font-size:16px;cursor:pointer}
+.sh input,.sh textarea{width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--l);background:var(--bg);color:var(--t);font:inherit;margin-top:8px}.done{max-width:1100px;margin:10px auto 0;background:#e7f5ee;color:#0d5a3c;border-radius:14px;padding:12px 14px;text-align:center;line-height:1.8}.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#231719;color:#fff;padding:10px 18px;border-radius:12px;z-index:20;font-weight:700}.go{width:100%;margin-top:12px;border:none;background:#25D366;color:#fff;border-radius:14px;padding:14px;font:inherit;font-weight:900;font-size:16px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -36,7 +36,7 @@ header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:
 <div class="grid" id="grid"><div class="empty">⏳ جاري التحميل…</div></div>
 <div class="foot" id="foot"></div>
 <button class="cart" id="cart"><span>🛒 <b id="cn">0</b> منتج — اطلب على واتساب</span><b id="ct"></b></button>
-<div class="ov" id="ov"><div class="sh"><h3>🛒 طلبك</h3><div id="lines"></div><input id="nm" placeholder="اسمك"><textarea id="ad" rows="2" placeholder="العنوان / ملاحظات (اختياري)"></textarea><button class="go" id="go">💬 ابعت الطلب على واتساب</button></div></div>
+<div class="ov" id="ov"><div class="sh"><h3>🛒 طلبك</h3><div id="lines"></div><input id="nm" placeholder="اسمك"><input id="ph" type="tel" inputmode="tel" dir="ltr" placeholder="رقم موبايلك (عشان نأكد الطلب)"><textarea id="ad" rows="2" placeholder="العنوان / ملاحظات (اختياري)"></textarea><button class="go" id="go">💬 ابعت الطلب على واتساب</button></div></div>
 <script>
 const SUPA = 'https://inxlleknypxzegzgzmfl.supabase.co', ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlueGxsZWtueXB4emVnemd6bWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMzcwMzQsImV4cCI6MjEwNzkxMzAzNH0.JzWJf2nE5rhYGKQBtPRbf9RBA-0C7lIGw-IM0uTtu2s';
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -74,9 +74,18 @@ function cart() { const ks = Object.keys(CART); const n = ks.reduce((a, k) => a 
 $('#q').oninput = (e) => { Q = e.target.value; draw(); };
 $('#cart').onclick = () => { const { ks, t } = cart(); $('#lines').innerHTML = ks.map((k) => `<div class="ln"><span>${esc(D.items[k].n)} × ${CART[k]}</span><b>${fm(CART[k] * D.items[k].p)}</b></div>`).join('') + `<div class="ln"><b>الإجمالي</b><b>${fm(t)}</b></div>`; $('#ov').classList.add('on'); };
 $('#ov').onclick = (e) => { if (e.target.id === 'ov') $('#ov').classList.remove('on'); };
-$('#go').onclick = () => { const { ks, t } = cart(); const nm = $('#nm').value.trim(), ad = $('#ad').value.trim();
-  const msg = `🛒 *طلب جديد من الكتالوج*\n${ks.map((k) => `• ${D.items[k].n} × ${CART[k]} = ${fm(CART[k] * D.items[k].p)}`).join('\n')}\n\n💰 الإجمالي: *${fm(t)}*${nm ? `\n👤 ${nm}` : ''}${ad ? `\n📍 ${ad}` : ''}`;
+$('#go').onclick = async () => {
+  const { ks, t } = cart(); const nm = $('#nm').value.trim(), ad = $('#ad').value.trim(), ph = $('#ph').value.replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 1632).replace(/\D/g, '');
+  if (!nm) { $('#nm').focus(); return alertMsg('اكتب اسمك'); } if (ph.length < 10) { $('#ph').focus(); return alertMsg('اكتب رقم موبايلك صح'); }
+  const b = $('#go'); b.disabled = true; b.textContent = '⏳ جاري إرسال الطلب…'; let no = '';
+  // الطلب بيتسجل عند المحل في البرنامج — ولو النت وقع بيكمل على واتساب عادي
+  try { const ctl = new AbortController(); setTimeout(() => ctl.abort(), 7000); const r = await fetch(SUPA + '/rest/v1/rpc/pos_order_put', { method: 'POST', signal: ctl.signal, headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_slug: new URLSearchParams(location.search).get('s'), p_data: { name: nm, phone: ph, address: ad, items: ks.map((k) => ({ id: D.items[k].id || '', n: D.items[k].n, p: D.items[k].p, q: CART[k] })), total: t } }) }); const j = await r.json(); if (j && j.no) no = j.no; } catch (_) {}
+  const msg = `🛒 *طلب جديد من الكتالوج*${no ? ` — رقم *${no}*` : ''}\n${ks.map((k) => `• ${D.items[k].n} × ${CART[k]} = ${fm(CART[k] * D.items[k].p)}`).join('\n')}\n\n💰 الإجمالي: *${fm(t)}*\n👤 ${nm}\n📞 ${ph}${ad ? `\n📍 ${ad}` : ''}`;
+  try { localStorage.removeItem('cart:' + new URLSearchParams(location.search).get('s')); } catch (_) {} CART = {};
+  b.disabled = false; b.textContent = '💬 ابعت الطلب على واتساب'; $('#ov').classList.remove('on'); draw();
+  if (no) $('#grid').insertAdjacentHTML('beforebegin', `<div class="done">✅ طلبك وصل للمحل — رقم الطلب <b>${no}</b><br>هيتواصلوا معاك قريب لتأكيد الطلب والتوصيل</div>`);
   location.href = `https://wa.me/${wa(D.store?.phone)}?text=${encodeURIComponent(msg)}`; };
+function alertMsg(t) { const e = document.createElement('div'); e.className = 'toast'; e.textContent = t; document.body.appendChild(e); setTimeout(() => e.remove(), 2500); }
 load();
 </script>
 </body>

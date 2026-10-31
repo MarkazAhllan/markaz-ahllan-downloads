@@ -174,6 +174,8 @@ const TN = { full: 'دائم', year: 'سنوي', half: '6 شهور', month: 'ش�
 /* الباقات — لازم تفضل مطابقة لـ renderer/js/plan.js في البرنامج */
 const PMODS = [['wallets', '💳', 'المحافظ والكاش'], ['machines', '⚡', 'الماكينات والكروت'], ['display', '📺', 'شاشة العرض'], ['credit', '📒', 'عملاء الآجل'], ['installments', '📅', 'التقسيط'], ['loyalty', '⭐', 'نقاط الولاء'], ['phones', '📱', 'الموبايلات'], ['repairs', '🛠️', 'الصيانة'], ['lines', '📶', 'خطوط الشركات'], ['cctv', '📹', 'كاميرات المراقبة'], ['hr', '👥', 'الموارد البشرية'], ['whatsapp', '💬', 'واتساب التلقائي'], ['offers', '🏷️', 'العروض والكوبونات'], ['cloud', '☁️', 'النسخ السحابي'], ['owner', '👁️', 'لوحة المالك والتقارير'], ['ai', '✨', 'المساعد الذكي']];
 const PALL = PMODS.map((m) => m[0]);
+/* الأقسام الأساسية: مفتوحة دايماً إلا لو شلتها (بتتحفظ في x) */
+const PCORE = [['sales', '🛒', 'نقطة البيع والمبيعات'], ['stock', '📦', 'المخزون والمشتريات والموردين'], ['branches', '🏢', 'الفروع وتحويل البضاعة'], ['quotes', '📄', 'عروض الأسعار'], ['finance', '💰', 'المصروفات ورأس المال'], ['reports', '📊', 'التقارير والأرباح'], ['eta', '🧾', 'الإيصال الإلكتروني (الضرائب)'], ['drawer', '🗄️', 'درج النقدية']];
 const PLANS = [['start', '🟢', 'الأساسية', []], ['cash', '🔵', 'الكاش', ['wallets', 'machines', 'display', 'credit']], ['business', '🟣', 'البيزنس', ['wallets', 'machines', 'display', 'credit', 'phones', 'repairs', 'lines', 'installments', 'loyalty', 'hr', 'whatsapp', 'offers']], ['premium', '👑', 'البريميوم', PALL]];
 const planOf = (l) => { const p = PLANS.find((x) => x[0] === l.p); if (!p) return Array.isArray(l.f) ? '🧩 مخصصة' : '👑 كل الأقسام'; const f = Array.isArray(l.f) ? l.f : PALL; const custom = f.length !== p[3].length || p[3].some((k) => !f.includes(k)); return `${p[1]} ${p[2]}${custom ? ' (مخصصة)' : ''}`; };
 const PL = { android: 'أندرويد', pwa: 'تطبيق ويب', web: 'متصفح', desktop: 'كمبيوتر' };
@@ -453,7 +455,9 @@ function activate(r) {
     <div class="lim"><div class="f"><label>🏢 عدد الفروع</label><input id="lb" type="number" inputmode="numeric" min="0" value="${lic(r).b || 0}"></div><div class="f"><label>👥 المستخدمين / الموظفين</label><input id="lu" type="number" inputmode="numeric" min="0" value="${lic(r).u || 0}"></div><small>0 = من غير حد — تقدر تغيّرهم في أي تجديد</small></div>
     <div class="plh"><b>📦 الباقة</b><small id="plN"></small></div>
     <div class="plans">${PLANS.map(([k, e, n, f]) => `<button data-pl="${k}"><i>${e}</i>${n}<small>${k === 'premium' ? 'كل الأقسام' : f.length + ' قسم إضافي'}</small></button>`).join('')}</div>
-    <div class="plcore">✅ أساسي في كل الباقات: نقطة البيع، المبيعات، المخزون، المشتريات، الموردين، التالف، المصروفات، الورديات، التقارير، المستخدمين، النسخ المحلي. وتحت الأقسام الإضافية — شيل أو زوّد أي واحد:</div>
+    <div class="plcore">✅ <b>الأقسام الأساسية</b> — مفتوحة في كل الباقات، شيل العلامة من أي قسم العميل مش محتاجه وهيختفي عنده خالص:</div>
+    <div class="mods">${PCORE.map(([k, e, n]) => `<label data-xk="${k}"><input type="checkbox" value="${k}">${e} ${n}</label>`).join('')}</div>
+    <div class="plcore">➕ <b>الأقسام الإضافية</b> — حسب الباقة، وتقدر تزوّد أو تشيل أي واحد (اللي مش متعلّم عليه مش هيظهر عند العميل):</div>
     <div class="mods">${PMODS.map(([k, e, n]) => `<label data-mk="${k}"><input type="checkbox" value="${k}">${e} ${n}</label>`).join('')}</div>
     <div class="f"><label>اسم المحل (بيظهر في البرنامج)</label><input id="nm" value="${esc(r.store_name || '')}"></div>
     <div class="f"><label>ملاحظة (اختياري) — مثلاً: دفع 300 فودافون كاش</label><input id="nt" value="${esc(r.note || '')}"></div>
@@ -465,21 +469,23 @@ function activate(r) {
     $$('[data-ty]', ov).forEach((b) => (b.onclick = () => { type = b.dataset.ty; $$('[data-ty]', ov).forEach((x) => x.classList.toggle('on', x === b)); $('#cd', ov).classList.toggle('hidden', type !== 'custom'); pv(); }));
     $('#days', ov).oninput = pv; pv();
     /* الباقة: من الترخيص الحالي، أو البريميوم لو أول تفعيل */
-    const L0 = lic(r); let plan = PLANS.some((x) => x[0] === L0.p) ? L0.p : 'premium'; let sel = new Set(Array.isArray(L0.f) ? L0.f : (PLANS.find((x) => x[0] === plan) || PLANS[3])[3]);
+    const L0 = lic(r); let plan = PLANS.some((x) => x[0] === L0.p) ? L0.p : 'premium'; let sel = new Set(Array.isArray(L0.f) ? L0.f : (PLANS.find((x) => x[0] === plan) || PLANS[3])[3]); let xoff = new Set(Array.isArray(L0.x) ? L0.x : []);
     const drawPl = () => {
       $$('[data-pl]', ov).forEach((b) => b.classList.toggle('on', b.dataset.pl === plan));
       $$('[data-mk]', ov).forEach((l) => { const on = sel.has(l.dataset.mk); l.classList.toggle('on', on); l.querySelector('input').checked = on; });
-      $('#plN', ov).textContent = `${planOf({ p: plan, f: [...sel] })} · ${sel.size}/${PALL.length}`;
+      $$('[data-xk]', ov).forEach((l) => { const on = !xoff.has(l.dataset.xk); l.classList.toggle('on', on); l.querySelector('input').checked = on; });
+      $('#plN', ov).textContent = `${planOf({ p: plan, f: [...sel] })} · ${sel.size}/${PALL.length}${xoff.size ? ` · ${PCORE.length - xoff.size}/${PCORE.length} أساسي` : ''}`;
     };
     $$('[data-pl]', ov).forEach((b) => (b.onclick = () => { plan = b.dataset.pl; sel = new Set(PLANS.find((x) => x[0] === plan)[3]); drawPl(); }));
     $$('[data-mk] input', ov).forEach((c) => (c.onchange = () => { c.checked ? sel.add(c.value) : sel.delete(c.value); drawPl(); }));
+    $$('[data-xk] input', ov).forEach((c) => (c.onchange = () => { c.checked ? xoff.delete(c.value) : xoff.add(c.value); drawPl(); }));
     drawPl();
     $('#go', ov).onclick = async () => {
       const b = $('#go', ov); b.disabled = true; b.textContent = '⏳ جاري التفعيل…';
       try {
         const d = days(); const e = d ? base() + d * 864e5 : 0;
         const lb = Math.max(0, Math.round(Number($('#lb', ov).value) || 0)), lu = Math.max(0, Math.round(Number($('#lu', ov).value) || 0));
-        const key = await sign({ n: $('#nm', ov).value.trim() || r.store_name, m: r.mid, t: type === 'custom' ? 'month' : type, e, i: Date.now(), ...(lb ? { b: lb } : {}), ...(lu ? { u: lu } : {}), p: plan, ...(sel.size === PALL.length ? {} : { f: PALL.filter((k) => sel.has(k)) }) });
+        const key = await sign({ n: $('#nm', ov).value.trim() || r.store_name, m: r.mid, t: type === 'custom' ? 'month' : type, e, i: Date.now(), ...(lb ? { b: lb } : {}), ...(lu ? { u: lu } : {}), p: plan, ...(sel.size === PALL.length ? {} : { f: PALL.filter((k) => sel.has(k)) }), ...(xoff.size ? { x: PCORE.map((c) => c[0]).filter((k) => xoff.has(k)) } : {}) });
         await patch(r.mid, { status: 'active', license_key: key, license_type: type, expires_at: e ? new Date(e).toISOString() : null, note: $('#nt', ov).value.trim() || null, store_name: $('#nm', ov).value.trim() || r.store_name });
         logAct(`✅ ${cur ? 'تجديد' : 'تفعيل'} ${r.store_name} — ${TN[type]}${e ? ' لحد ' + fdate(e) : ''}${lb ? ' · فروع ' + lb : ''}${lu ? ' · مستخدمين ' + lu : ''} · ${planOf({ p: plan, f: [...sel] })}`); close(); toast('اتفعّل ✓ — الجهاز هيتفعّل لوحده', 'ok');
         await load(); const fr = ROWS.find((x) => x.mid === r.mid) || r; waDlg(fr, 'act');

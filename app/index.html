@@ -2267,7 +2267,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.7.0', build: '', trialHours: 168 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.8.0', build: '', trialHours: 168 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2331,7 +2331,7 @@ const AVATAR_COLORS = ['#8B1A2B', '#1F5FA8', '#16825D', '#B26A00', '#6B2C91', '#
 function avatarColor(s) { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return AVATAR_COLORS[h % AVATAR_COLORS.length]; }
 
 /* ---------------- Database (Realm via Electron IPC / browser fallback) ---------------- */
-const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx', 'ratings', 'promos', 'transfers', 'orders', 'quotes', 'campaigns', 'eReceipts'];
+const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx', 'ratings', 'promos', 'transfers', 'orders', 'quotes', 'campaigns', 'eReceipts', 'eInvoices'];
 
 const DEFAULT_SETTINGS = {
   appName: 'Markaz Ahllan POS',
@@ -2367,7 +2367,8 @@ const DEFAULT_SETTINGS = {
   ratings: { on: false },
   catalog: { on: false },
   monthlyPL: { auto: true },
-  eta: { on: false, env: 'preprod', taxRate: 14, inclusive: true, sendReturns: true },
+  eta: { on: false, env: 'preprod', taxRate: 14, inclusive: true, sendReturns: true, payment: 'auto', buyerLimit: 150000 },
+  einv: { on: false, auto: true, env: 'preprod', personLimit: 50000 },
   orders: { pull: true, fee: 0, after: '' },
   campaigns: {},
   drawer: { on: false, mode: 'printer', printer: '', pin: '2', com: 'COM1', baud: 9600, host: '', port: 9100, auto: true, btn: true, custom: '' },
@@ -2444,7 +2445,7 @@ const DB = {
     if (this._settings) return this._settings;
     const s = this.maps.settings.get('main') || {};
     const merged = { ...DEFAULT_SETTINGS, ...s };
-    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings', 'catalog', 'monthlyPL', 'bio', 'drawer', 'orders', 'campaigns', 'eta']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
+    for (const k of ['store', 'receipt', 'label', 'whatsapp', 'ai', 'sync', 'backup', 'features', 'security', 'repair', 'cctv', 'phones', 'control', 'ownerReport', 'cloud', 'inst', 'wa', 'loyalty', 'ratings', 'catalog', 'monthlyPL', 'bio', 'drawer', 'orders', 'campaigns', 'eta', 'einv']) merged[k] = { ...DEFAULT_SETTINGS[k], ...(s[k] || {}) };
     this._settings = merged; return merged;
   },
   saveSettings(patch) {
@@ -3812,7 +3813,7 @@ const NAV = [
   { id: 'crm', grp: ['العملاء والتسويق', 'Customers & marketing'], icon: 'star', items: ['customers', 'loyalty', 'campaigns', 'ratings', 'catalog'] },
   { id: 'stock', grp: ['المخزون والمشتريات', 'Stock & purchasing'], icon: 'box', items: ['inventory', 'purchases', 'transfers', 'losses'] },
   { id: 'supp', grp: ['', ''], items: ['suppliers'], fixed: true },
-  { id: 'finance', grp: ['المالية والتقارير', 'Finance & reports'], icon: 'bank', items: ['reports', 'shifts', 'expenses', 'capital', 'eta'] },
+  { id: 'finance', grp: ['المالية والتقارير', 'Finance & reports'], icon: 'bank', items: ['reports', 'shifts', 'expenses', 'capital', 'eta', 'einv'] },
   { id: 'hr', grp: ['الموارد البشرية', 'HR'], icon: 'users', items: ['users', 'attendance', 'payroll', 'targets'] },
   { id: 'system', grp: ['النظام', 'System'], icon: 'settings', items: ['settings', 'backup'] }
 ];
@@ -10540,6 +10541,16 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.8.0', d: '2026-11-02', items: [
+    ['receipt', L('الفاتورة الإلكترونية للشركات: البيع لعميل نوعه «شركة» بيطلع فاتورة ضريبية إلكترونية موقّعة بفلاشة التوقيع (USB Token) وبتتبعت للمصلحة لوحدها، والمرتجع بيطلع إشعار دائن مربوط بيها — مع متابعة الحالة (صالحة / غير صالحة) والإلغاء والطباعة A4 بالـ QR', 'B2B e-invoices signed with the USB token, credit notes, status tracking, cancel and A4 print')],
+    ['phone', L('الفواتير بتتسجّل من الموبايل كمان، والكمبيوتر اللي عليه الفلاشة بيوقّعها ويبعتها', 'Invoices can be recorded on mobile and signed on the PC with the token')],
+    ['user', L('بيانات العميل للمنظومة: نوعه (فرد / شركة / أجنبي) ورقم التسجيل الضريبي والرقم القومي والعنوان بالتفصيل', 'Customer tax data: type, tax no., national ID and address')],
+    ['percent', L('ضريبة لكل صنف: النسبة العامة أو معفي أو نسبة خاصة (0% / 5% / 10% / 14%) — من تعديل المنتج', 'Per-item VAT: general, exempt or a special rate')],
+    ['card', L('طريقة الدفع في الإيصال الإلكتروني بتتاخد من الفاتورة نفسها (نقدي / فيزا / محفظة)', 'e-Receipt payment method taken from the sale')],
+    ['shield', L('الفاتورة الكبيرة (150 ألف وأكتر — قابل للتعديل) بتطلب اسم المشتري ورقمه القومي قبل ما البيع يتم، زي ما المنظومة بتشترط', 'Buyer name and ID required on large receipts')],
+    ['printer', L('رقم التسجيل الضريبي ورقم الإيصال بيتطبعوا جنب الـ QR في الإيصال', 'Tax reg. no. and receipt no. printed next to the QR')],
+    ['award', L('الباقة بقت بتحدد «مع» أو «بدون» الفاتورة الإلكترونية — ولو بدون، الإيصال وفواتير الشركات مش بيظهروا خالص', 'Plans now come with or without e-invoicing')]
+  ] },
   { v: '1.7.0', d: '2026-10-31', items: [
     ['factory', L('مخزون منفصل لكل فرع: كل فرع بيبيع من رصيده، والمخزون والجرد والنواقص بتتحسب للفرع اللي انت فيه — وتحويل بضاعة بين الفروع بإذن تحويل وتأكيد استلام', 'Per-branch stock with transfers and receipt confirmation')],
     ['chart', L('مقارنة الفروع: المبيعات والربح والمصروفات وقيمة المخزون لكل فرع جنب بعض', 'Branch comparison report')],
@@ -15068,7 +15079,7 @@ setInterval(() => DriveSchedule.tick(), 5 * 60e3); setTimeout(() => DriveSchedul
 const ETA = {
   HOST: { preprod: { id: 'https://id.preprod.eta.gov.eg', api: 'https://api.preprod.invoicing.eta.gov.eg', web: 'https://preprod.invoicing.eta.gov.eg' }, prod: { id: 'https://id.eta.gov.eg', api: 'https://api.invoicing.eta.gov.eg', web: 'https://invoicing.eta.gov.eg' } },
   cfg() {
-    return { on: false, env: 'preprod', clientId: '', clientSecret: '', posSerial: '', osVersion: 'windows', modelFramework: '1', presharedKey: '', rin: '', tradeName: '', branchCode: '0', activityCode: '', country: 'EG', governate: '', regionCity: '', street: '', buildingNumber: '', itemType: 'EGS', itemCode: '', unitType: 'EA', taxRate: 14, inclusive: true, payment: 'C', sendReturns: true, lastUuid: '', ...(DB.settings().eta || {}) };
+    return { on: false, env: 'preprod', clientId: '', clientSecret: '', posSerial: '', osVersion: 'windows', modelFramework: '1', presharedKey: '', rin: '', tradeName: '', branchCode: '0', activityCode: '', country: 'EG', governate: '', regionCity: '', street: '', buildingNumber: '', itemType: 'EGS', itemCode: '', unitType: 'EA', taxRate: 14, inclusive: true, payment: 'auto', buyerLimit: 150000, sendReturns: true, lastUuid: '', ...(DB.settings().eta || {}) };
   },
   supported() { return !!((window.api && window.api.http) || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorHttp)); },
   ready() { const c = this.cfg(); return c.on && (typeof Plan === 'undefined' || Plan.allowed('eta')) && this.supported() && c.clientId && c.clientSecret && c.posSerial && c.rin; },
@@ -15101,31 +15112,55 @@ const ETA = {
   },
   async sha256hex(text) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join(''); },
   r5(n) { return Math.round((Number(n) || 0) * 1e5) / 1e5; },
+  /* ضريبة الصنف: من المنتج (معفي / نسبة خاصة) أو النسبة العامة — كود V009 عام، V010 نسبة أخرى، V003 معفي */
+  taxOf(p, c = this.cfg()) {
+    const v = p && p.etaVat != null && p.etaVat !== '' ? String(p.etaVat) : '';
+    if (v === 'exempt') return { rate: 0, sub: 'V003', exempt: true };
+    const rate = v !== '' && !isNaN(Number(v)) ? Number(v) : Number(c.taxRate) || 0;
+    return { rate, sub: rate === 14 ? 'V009' : 'V010' };
+  },
+  /* طريقة الدفع من الفاتورة نفسها (الأكبر قيمة لو الدفع متعدد) */
+  PAYC: { cash: 'C', card: 'V', wallet: 'O', instapay: 'O', credit: 'O', installment: 'O' },
+  payOf(sale, c = this.cfg()) {
+    if (c.payment && c.payment !== 'auto') return c.payment;
+    const by = {}; for (const p of (sale && sale.payments) || []) { const k = this.PAYC[p.method] || 'O'; by[k] = (by[k] || 0) + (Number(p.amount) || 0); }
+    const best = Object.entries(by).sort((a, b) => b[1] - a[1])[0]; return best ? best[0] : 'C';
+  },
+  /* بيانات المشتري: اللي اتكتبت وقت البيع (فوق الحد) ← بيانات العميل */
+  buyerOf(sale) {
+    const cu = sale.customerId && DB.get('customers', sale.customerId); const eb = sale.etaBuyer || {};
+    const kind = eb.type || (cu && cu.etaKind) || 'P'; const b = { type: kind };
+    const name = eb.name || (cu && cu.name) || ''; if (name) b.name = String(name).slice(0, 100);
+    const id = eb.id || (cu && (kind === 'B' ? cu.rin : cu.nationalId)) || ''; if (id) b.id = String(id).replace(/\s/g, '');
+    if (cu && cu.phone) b.mobileNumber = String(cu.phone).replace(/\D/g, '').slice(0, 30);
+    return b;
+  },
   /* ---------- بناء الإيصال من الفاتورة ---------- */
   async build(sale, { ret, lines } = {}) {
-    const c = this.cfg(); const rate = Number(c.taxRate) || 0; const f = c.inclusive ? 1 + rate / 100 : 1;
+    const c = this.cfg();
     const src = ret ? lines : sale.items.filter((i) => !i.tradeIn && !i.reserveDep && Number(i.price) > 0);
     const items = src.map((i) => {
       const p = i.productId && DB.get('products', i.productId); const q = this.r5(i.qty);
+      const tx = this.taxOf(p, c); const rate = tx.rate; const f = c.inclusive ? 1 + rate / 100 : 1;
       const unit = this.r5(Number(i.price) / f); const totalSale = this.r5(unit * q); const disc = this.r5((Number(i.discount) || 0) * (ret ? q / (i.soldQty || q) : 1) / f);
       const net = this.r5(totalSale - disc); const tax = this.r5((net * rate) / 100);
       const it = { internalCode: String((p && (p.sku || p.barcode)) || i.productId || i.phoneId || 'ITEM').slice(0, 50), description: String(i.name).slice(0, 500), itemType: (p && p.etaType) || c.itemType || 'EGS', itemCode: (p && p.etaCode) || c.itemCode, unitType: (p && p.etaUnit) || c.unitType || 'EA', quantity: q, unitPrice: unit, netSale: net, totalSale, total: this.r5(net + tax) };
       if (disc) it.itemDiscountData = [{ amount: disc, description: 'خصم' }];
-      if (rate) it.taxableItems = [{ taxType: 'T1', amount: tax, subType: 'V009', rate }];
+      if (rate || tx.exempt) it.taxableItems = [{ taxType: 'T1', amount: tax, subType: tx.sub, rate }];
       return it;
     });
     const totalSales = this.r5(sum(items, (i) => i.totalSale)); const net = this.r5(sum(items, (i) => i.netSale)); const taxT = this.r5(sum(items, (i) => (i.taxableItems ? i.taxableItems[0].amount : 0)));
     const itemsDisc = this.r5(sum(items, (i) => (i.itemDiscountData ? i.itemDiscountData[0].amount : 0)));
     const extra = ret ? 0 : this.r5((Number(sale.discountAmount ?? sale.discount) || 0));
-    const cu = sale.customerId && DB.get('customers', sale.customerId); const total = this.r5(net + taxT - extra);
-    const buyer = { type: 'P' }; if (cu) { buyer.name = String(cu.name || '').slice(0, 100); if (cu.phone) buyer.mobileNumber = String(cu.phone).replace(/\D/g, '').slice(0, 30); if (cu.nationalId) buyer.id = String(cu.nationalId); }
+    const total = this.r5(net + taxT - extra);
+    const buyer = this.buyerOf(sale);
     const no = ret ? arguments[1].no || `${sale.no}-R${(sale.returns || []).length || 1}` : sale.no;
     const r = {
       header: { dateTimeIssued: new Date(ret ? Date.now() : sale.date).toISOString().replace(/\.\d{3}Z$/, 'Z'), receiptNumber: no, uuid: '', previousUUID: c.lastUuid || '', ...(ret ? { referenceUUID: sale.eta?.uuid || '' } : {}), currency: 'EGP' },
       documentType: { receiptType: ret ? 'R' : 'S', typeVersion: '1.2' },
       seller: { rin: c.rin, companyTradeName: c.tradeName || DB.settings().store.name, branchCode: c.branchCode || '0', branchAddress: { country: c.country || 'EG', governate: c.governate, regionCity: c.regionCity, street: c.street, buildingNumber: c.buildingNumber }, deviceSerialNumber: c.posSerial, activityCode: c.activityCode },
       buyer, itemData: items, totalSales, totalItemsDiscount: itemsDisc, ...(extra ? { extraReceiptDiscountData: [{ amount: extra, description: 'خصم الفاتورة' }] } : {}),
-      netAmount: net, feesAmount: 0, totalAmount: total, ...(rate ? { taxTotals: [{ taxType: 'T1', amount: taxT }] } : {}), paymentMethod: c.payment || 'C'
+      netAmount: net, feesAmount: 0, totalAmount: total, ...(items.some((i) => i.taxableItems) ? { taxTotals: [{ taxType: 'T1', amount: taxT }] } : {}), paymentMethod: this.payOf(sale, c)
     };
     r.header.uuid = await this.sha256hex(this.serialize(r));
     return r;
@@ -15176,6 +15211,21 @@ const ETA = {
     if (r.type === 'S') DB.update('sales', s.id, { eta: { ...(s.eta || {}), uuid: h.uuid, issued: h.dateTimeIssued, total: doc.totalAmount, status: 'pending' } });
     await this.flush(); if (App.current === 'eta') App.reload();
   },
+  _buyer: null,
+  askBuyer(cu, total) {
+    return new Promise((res) => {
+      let done = false; const fin = (v) => { if (!done) { done = true; res(v); } };
+      const m = UI.modal({ title: L('بيانات المشتري — مطلوبة للمنظومة', 'Buyer details — required by ETA'), icon: 'user', size: 'sm', onClose: () => fin(null), body: `
+        <div class="tag warn mb" style="white-space:normal;line-height:1.9;padding:10px;display:block">${L(`الفاتورة دي <b class="num">${money(total)}</b> — المنظومة بتطلب اسم المشتري ورقمه القومي للفواتير اللي توصل لـ <b class="num">${money(this.cfg().buyerLimit)}</b>.`, `This sale is ${money(total)} — ETA requires the buyer's name and ID.`)}</div>
+        ${UI.form([{ name: 'type', label: L('نوع المشتري', 'Buyer type'), type: 'select', options: [['P', L('فرد (رقم قومي)', 'Person (national ID)')], ['F', L('أجنبي (رقم جواز)', 'Foreigner (passport)')], ['B', L('شركة (رقم تسجيل ضريبي)', 'Company (tax reg.)')]], col: 12 }, { name: 'name', label: L('الاسم', 'Name'), required: true, col: 12, value: (cu && cu.name) || '' }, { name: 'id', label: L('الرقم القومي / الجواز / التسجيل الضريبي', 'National ID / passport / tax no.'), required: true, col: 12, value: (cu && cu.nationalId) || '' }], {})}`,
+        actions: [{ label: L('إلغاء البيع', 'Cancel'), onClick: (x) => { fin(null); x.close(); } }, { label: L('متابعة', 'Continue'), cls: 'primary', icon: 'check', onClick: (x) => {
+          if (!UI.validate(x.el)) return; const v = UI.read(x.el); v.id = String(v.id).replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\s/g, '');
+          if (v.type === 'P' && !/^\d{14}$/.test(v.id)) return UI.toast(L('الرقم القومي لازم يكون 14 رقم', 'National ID must be 14 digits'), 'err');
+          if (v.type === 'B' && !/^\d{9}$/.test(v.id)) return UI.toast(L('رقم التسجيل الضريبي 9 أرقام', 'Tax reg. no. is 9 digits'), 'err');
+          fin(v); x.close(); } }] });
+      void m;
+    });
+  },
   async test() {
     try { this._tok = null; await this.token(true); UI.toast(L('الاتصال بالمنظومة شغال ✓ — اتعمل تسجيل دخول للـ POS', 'Connected to ETA ✓'), 'ok', 6000); return true; }
     catch (e) { UI.toast(L('فشل الاتصال بالمنظومة: ', 'ETA connection failed: ') + e.message, 'err', 9000); return false; }
@@ -15196,17 +15246,44 @@ const ETA = {
         { type: 'html', col: 12, html: `<div class="rd-sec"><b>${L('الأصناف والضريبة', 'Items & tax')}</b></div>` },
         { name: 'itemType', label: L('نوع كود الصنف', 'Item code type'), type: 'select', options: [['EGS', 'EGS'], ['GS1', 'GS1']], col: 3 }, { name: 'itemCode', label: L('كود الصنف الافتراضي (للأصناف اللي ملهاش كود)', 'Default item code'), col: 5, placeholder: 'EG-123456789-0001' }, { name: 'unitType', label: L('الوحدة', 'Unit'), col: 2 }, { name: 'taxRate', label: L('ضريبة %', 'VAT %'), type: 'number', col: 2 },
         { name: 'inclusive', label: L('أسعار البيع شاملة الضريبة', 'Prices include VAT'), type: 'checkbox', col: 6 }, { name: 'sendReturns', label: L('إرسال إيصالات المرتجع', 'Send return receipts'), type: 'checkbox', col: 6 },
-        { name: 'payment', label: L('طريقة الدفع الافتراضية', 'Payment method'), type: 'select', options: [['C', L('كاش (C)', 'Cash (C)')], ['V', L('فيزا (V)', 'Visa (V)')], ['O', L('أخرى (O)', 'Other (O)')]], col: 6 }], c)}
-      <div class="faint" style="line-height:1.8">${L('كود كل صنف في المنظومة (EGS/GS1) بيتكتب من تعديل المنتج ← «كود المنظومة». الأصناف اللي ملهاش كود بتتبعت بالكود الافتراضي.', 'Set each product code in the product editor; others use the default code.')}</div>`,
+        { name: 'payment', label: L('طريقة الدفع في الإيصال', 'Payment method'), type: 'select', options: [['auto', L('تلقائي من الفاتورة (نقدي/فيزا/محفظة)', 'Auto from the sale')], ['C', L('كاش دايماً (C)', 'Always cash (C)')], ['V', L('فيزا دايماً (V)', 'Always visa (V)')], ['O', L('أخرى (O)', 'Other (O)')]], col: 6 },
+        { name: 'buyerLimit', label: L('الفاتورة اللي توصل للمبلغ ده تطلب الرقم القومي للمشتري (ج.م)', 'Buyer ID required from this total (EGP)'), type: 'number', col: 6 }], c)}
+      <div class="faint" style="line-height:1.8">${L('كود كل صنف في المنظومة (EGS/GS1) وضريبته (عامة / معفي / نسبة خاصة) بيتحددوا من تعديل المنتج ← «المنظومة الضريبية». الأصناف اللي ملهاش كود بتتبعت بالكود الافتراضي والنسبة العامة.', 'Set each product code and VAT in the product editor; others use the defaults.')}</div>`,
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('اختبار الاتصال', 'Test connection'), icon: 'play', onClick: async (x) => { save(x, true); await this.test(); } }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { save(x); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } }] });
-    const save = (x, keep) => { const v = UI.read(x.el); const prev = this.cfg(); if (prev.env !== v.env) v.lastUuid = ''; DB.saveSettings({ eta: { ...v, on: !!v.on, inclusive: !!v.inclusive, sendReturns: !!v.sendReturns, taxRate: Number(v.taxRate) || 0 } }); this._tok = null; audit('eta.settings', `${v.env} ${v.on}`); };
+    const save = (x, keep) => { const v = UI.read(x.el); const prev = this.cfg(); if (prev.env !== v.env) v.lastUuid = ''; DB.saveSettings({ eta: { ...v, on: !!v.on, inclusive: !!v.inclusive, sendReturns: !!v.sendReturns, taxRate: Number(v.taxRate) || 0, buyerLimit: Number(v.buyerLimit) || 0 } }); this._tok = null; audit('eta.settings', `${v.env} ${v.on}`); };
   }
 };
 
 (function () {
   /* بعد كل فاتورة */
   const bc = Sales.create.bind(Sales);
-  Sales.create = function (...a) { const s = bc(...a); try { if (s && ETA.ready()) ETA.queueSale(s); } catch (_) {} return s; };
+  Sales.create = function (...a) {
+    const s = bc(...a);
+    try {
+      if (s && ETA._buyer) { DB.update('sales', s.id, { etaBuyer: ETA._buyer }); s.etaBuyer = ETA._buyer; }
+      ETA._buyer = null;
+      const cu = s && s.customerId && DB.get('customers', s.customerId);
+      if (s && cu && cu.etaKind === 'B' && cu.rin && typeof EInv !== 'undefined' && EInv.ready() && EInv.cfg().auto) EInv.queueSale(s);
+      else if (s && ETA.ready()) ETA.queueSale(s);
+    } catch (e) { console.warn(e); }
+    return s;
+  };
+  /* الفاتورة اللي توصل للحد: لازم اسم المشتري ورقمه القومي قبل ما البيع يتم */
+  if (typeof Approve !== 'undefined') {
+    const bk = Approve.checkout.bind(Approve);
+    Approve.checkout = async function (cart, t) {
+      const ok = await bk(cart, t); if (!ok) return ok; ETA._buyer = null;
+      try {
+        const c = ETA.cfg(); const lim = Number(c.buyerLimit) || 0; const tot = Number(t && t.total) || 0;
+        if (!ETA.ready() || !lim || tot < lim) return true;
+        const cid = ($('#payCust') && $('#payCust').value) || (Modules.pos && Modules.pos.customerId) || ''; const cu = cid && DB.get('customers', cid);
+        if (cu && ((cu.etaKind === 'B' && cu.rin) || (cu.etaKind !== 'B' && /^\d{14}$/.test(String(cu.nationalId || ''))))) return true;
+        const v = await ETA.askBuyer(cu, tot); if (!v) return false;
+        ETA._buyer = v; if (cu && v.type === 'P' && !cu.nationalId) DB.update('customers', cu.id, { nationalId: v.id, etaKind: 'P' });
+        return true;
+      } catch (e) { console.warn(e); return true; }
+    };
+  }
   const br = Sales.returnItems.bind(Sales);
   Sales.returnItems = function (sale, lines, method) {
     const amt = br(sale, lines, method);
@@ -15220,7 +15297,7 @@ const ETA = {
     try {
       if (sale && sale.eta && sale.eta.uuid) {
         const u = ETA.qrUrl(sale.eta); const q = await qrDataURL(u, 130);
-        const blk = `<div class="c" style="margin:6px 0;border-top:1px dashed #000;padding-top:6px"><div class="sm b">${L('إيصال إلكتروني — مصلحة الضرائب', 'e-Receipt — Egyptian Tax Authority')}</div>${q ? `<img src="${q}" style="width:30mm;height:30mm">` : ''}<div class="sm" dir="ltr" style="word-break:break-all;font-size:8px">${esc(sale.eta.uuid)}</div></div>`;
+        const blk = `<div class="c" style="margin:6px 0;border-top:1px dashed #000;padding-top:6px"><div class="sm b">${L('إيصال إلكتروني — مصلحة الضرائب', 'e-Receipt — Egyptian Tax Authority')}</div>${q ? `<img src="${q}" style="width:30mm;height:30mm">` : ''}<div class="sm" dir="ltr" style="word-break:break-all;font-size:8px">${esc(sale.eta.uuid)}</div>${ETA.cfg().rin ? `<div class="sm">${L('رقم التسجيل الضريبي', 'Tax reg. no.')}: <span dir="ltr">${esc(ETA.cfg().rin)}</span> — ${L('إيصال', 'Receipt')} <span dir="ltr">${esc(sale.no)}</span></div>` : ''}</div>`;
         const k = html.lastIndexOf('<div class="c b" style="margin-top:4px">'); html = k > 0 ? html.slice(0, k) + blk + html.slice(k) : html + blk;
       }
     } catch (e) { console.warn(e); }
@@ -15230,10 +15307,10 @@ const ETA = {
   const be = Modules.inventory.edit.bind(Modules.inventory);
   Modules.inventory.edit = function (p, ...a) {
     const r = be(p, ...a);
-    if (ETA.cfg().on) setTimeout(() => { try { const m = $$('.modal-bg').pop(); const form = m && $('.modal-b', m); if (!form || $('[name=etaCode]', form)) return;
-      form.insertAdjacentHTML('beforeend', `<div class="pk-box"><b>${icon('receipt')} ${L('كود المنظومة الضريبية', 'ETA item code')}</b><div class="grid g2"><input name="etaCode" placeholder="EG-123456789-0001" dir="ltr" value="${esc((p && p.etaCode) || '')}"><select name="etaType"><option value="EGS">EGS</option><option value="GS1" ${p && p.etaType === 'GS1' ? 'selected' : ''}>GS1</option></select></div></div>`);
+    if (ETA.cfg().on || (typeof EInv !== 'undefined' && EInv.cfg().on)) setTimeout(() => { try { const m = $$('.modal-bg').pop(); const form = m && $('.modal-b', m); if (!form || $('[name=etaCode]', form)) return;
+      form.insertAdjacentHTML('beforeend', `<div class="pk-box"><b>${icon('receipt')} ${L('المنظومة الضريبية — كود الصنف وضريبته', 'ETA item code & VAT')}</b><div class="grid g2"><input name="etaCode" placeholder="EG-123456789-0001" dir="ltr" value="${esc((p && p.etaCode) || '')}"><select name="etaType"><option value="EGS">EGS</option><option value="GS1" ${p && p.etaType === 'GS1' ? 'selected' : ''}>GS1</option></select></div><label class="lbl mt">${L('ضريبة الصنف', 'Item VAT')}</label><select name="etaVat">${[['', L('النسبة العامة', 'General rate') + ' (' + (ETA.cfg().taxRate) + '%)'], ['exempt', L('معفي من الضريبة', 'Exempt')], ['0', L('خاضع بنسبة 0%', 'Zero rate')], ['5', '5%'], ['10', '10%'], ['14', '14%']].map(([v, l]) => `<option value="${v}" ${String((p && p.etaVat) ?? '') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>`);
       const save = [...$$('.modal-f button', m)].find((b) => /حفظ|Save/.test(b.textContent));
-      if (save) save.addEventListener('click', () => setTimeout(() => { const code = $('[name=etaCode]', form)?.value.trim() || '', ty = $('[name=etaType]', form)?.value || 'EGS'; const tgt = p ? DB.get('products', p.id) : DB.all('products').sort((x, y) => ((x.createdAt || '') < (y.createdAt || '') ? 1 : -1))[0]; if (tgt && (tgt.etaCode || '') !== code) DB.update('products', tgt.id, { etaCode: code, etaType: ty }); }, 80), true);
+      if (save) save.addEventListener('click', () => setTimeout(() => { const code = $('[name=etaCode]', form)?.value.trim() || '', ty = $('[name=etaType]', form)?.value || 'EGS', vat = $('[name=etaVat]', form)?.value || ''; const tgt = p ? DB.get('products', p.id) : DB.all('products').sort((x, y) => ((x.createdAt || '') < (y.createdAt || '') ? 1 : -1))[0]; if (tgt && ((tgt.etaCode || '') !== code || (tgt.etaType || 'EGS') !== ty || String(tgt.etaVat ?? '') !== vat)) DB.update('products', tgt.id, { etaCode: code, etaType: ty, etaVat: vat }); }, 80), true);
     } catch (e) { console.warn(e); } }, 40);
     return r;
   };
@@ -15260,6 +15337,268 @@ Modules.eta = {
         { key: 'status', label: L('الحالة', 'Status'), render: (r) => `<span class="tag ${ST[r.status][1]}">${ST[r.status][0]}</span>${r.error ? `<div class="faint" style="color:var(--err);font-size:12px;max-width:340px">${esc(r.error)}</div>` : ''}`, exportVal: (r) => r.status }],
       actions: (r) => (r.status === 'rejected' ? UI.act('retry', 'refresh', L('إعادة الإرسال', 'Resend')) : '') + (r.status === 'accepted' ? UI.act('open', 'eye', L('عرض في المنظومة', 'Open in portal')) : ''),
       onAction: (a, r) => { if (a === 'retry') ETA.retry(r); if (a === 'open') { const u = ETA.qrUrl(r); window.api?.sys?.openExternal ? window.api.sys.openExternal(u) : window.open(u, '_blank'); } } });
+  }
+};
+
+</script>
+  <script>
+/* =========================================================
+   الفاتورة الإلكترونية للشركات (B2B) — مصلحة الضرائب المصرية — 1.8
+   - البيع لعميل «شركة» (ليه رقم تسجيل ضريبي) بيطلع فاتورة إلكترونية بدل الإيصال
+   - التوقيع الإلكتروني بالفلاشة (USB Token) على برنامج الكمبيوتر — CAdES-BES
+   - الموبايل بيسجّل الفاتورة، والكمبيوتر اللي عليه الفلاشة بيوقّعها ويبعتها
+   - المرتجع بيطلع إشعار دائن (Credit note) مربوط بالفاتورة الأصلية
+   - متابعة حالة الفاتورة (صالحة / غير صالحة) + إلغاء + فتح في البوابة + طباعة A4
+   ⚠️ لازم يتجرب على بيئة الاختبار (Pre-production) ببيانات تسجيل الممول قبل التشغيل الفعلي
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const EInv = {
+  cfg() { return { on: false, auto: true, env: 'preprod', clientId: '', clientSecret: '', certThumb: '', certName: '', personLimit: 50000, lastErr: '', ...(DB.settings().einv || {}) }; },
+  canSign() { return !!(window.api && window.api.sign); },
+  supported() { return typeof ETA !== 'undefined' && ETA.supported(); },
+  ready() { const c = this.cfg(); const e = ETA.cfg(); return c.on && (typeof Plan === 'undefined' || Plan.allowed('eta')) && this.supported() && c.clientId && c.clientSecret && e.rin; },
+  host() { return ETA.HOST[this.cfg().env] || ETA.HOST.preprod; },
+  r5: (n) => Math.round((Number(n) || 0) * 1e5) / 1e5,
+  _tok: null,
+  async token(force) {
+    const c = this.cfg(); if (!force && this._tok && Date.now() < this._tok.exp) return this._tok.v;
+    const body = `grant_type=client_credentials&client_id=${encodeURIComponent(c.clientId)}&client_secret=${encodeURIComponent(c.clientSecret)}`;
+    const r = await ETA.http('POST', this.host().id + '/connect/token', { 'Content-Type': 'application/x-www-form-urlencoded' }, body);
+    let j = {}; try { j = JSON.parse(r.body || '{}'); } catch (_) {}
+    if (r.status !== 200 || !j.access_token) throw new Error(j.error_description || j.error || r.error || ('HTTP ' + r.status));
+    this._tok = { v: j.access_token, exp: Date.now() + Math.max(60, (Number(j.expires_in) || 3600) - 120) * 1000 }; return this._tok.v;
+  },
+  async api(method, path, body) {
+    const tok = await this.token();
+    const r = await ETA.http(method, this.host().api + path, { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body == null ? null : JSON.stringify(body));
+    if (r.status === 401) this._tok = null;
+    let j = {}; try { j = JSON.parse(r.body || '{}'); } catch (_) {}
+    return { status: r.status, j, err: r.error };
+  },
+  /* ---------- بيانات المستلم (العميل الشركة) ---------- */
+  receiver(cu) {
+    const kind = (cu && cu.etaKind) || 'P';
+    const r = { address: { country: 'EG', governate: (cu && cu.governate) || '', regionCity: (cu && cu.city) || '', street: (cu && (cu.street || cu.address)) || '', buildingNumber: (cu && cu.building) || '0' }, type: kind, id: String((cu && (kind === 'B' ? cu.rin : cu.nationalId)) || '').replace(/\s/g, ''), name: String((cu && cu.name) || '').slice(0, 200) };
+    return r;
+  },
+  missing(cu) {
+    const L2 = []; if (!cu) return [L('العميل', 'Customer')];
+    if (cu.etaKind === 'B') { if (!/^\d{9}$/.test(String(cu.rin || ''))) L2.push(L('رقم التسجيل الضريبي (9 أرقام)', 'Tax reg. no. (9 digits)')); if (!cu.governate) L2.push(L('المحافظة', 'Governorate')); if (!cu.city) L2.push(L('المدينة', 'City')); if (!(cu.street || cu.address)) L2.push(L('الشارع', 'Street')); }
+    return L2;
+  },
+  /* ---------- بناء الفاتورة (I) أو الإشعار الدائن (C) — Document v1.0 ---------- */
+  build(sale, { ret, lines, no, customerId } = {}) {
+    const c = ETA.cfg(); const st = DB.settings().store || {};
+    const cu = DB.get('customers', customerId || sale.customerId);
+    const src = ret ? lines : sale.items.filter((i) => !i.tradeIn && !i.reserveDep && Number(i.price) > 0);
+    const r5 = this.r5;
+    const invoiceLines = src.map((i) => {
+      const p = i.productId && DB.get('products', i.productId); const tx = ETA.taxOf(p, c); const f = c.inclusive ? 1 + tx.rate / 100 : 1;
+      const q = r5(i.qty); const unit = r5(Number(i.price) / f); const salesTotal = r5(unit * q);
+      const disc = r5((Number(i.discount) || 0) * (ret ? q / (i.soldQty || q) : 1) / f); const netTotal = r5(salesTotal - disc); const tax = r5((netTotal * tx.rate) / 100);
+      return { description: String(i.name).slice(0, 500), itemType: (p && p.etaType) || c.itemType || 'EGS', itemCode: (p && p.etaCode) || c.itemCode, unitType: (p && p.etaUnit) || c.unitType || 'EA', quantity: q,
+        internalCode: String((p && (p.sku || p.barcode)) || i.productId || i.phoneId || 'ITEM').slice(0, 50), salesTotal, total: r5(netTotal + tax), valueDifference: 0, totalTaxableFees: 0, netTotal, itemsDiscount: 0,
+        unitValue: { currencySold: 'EGP', amountEGP: unit }, discount: { rate: 0, amount: disc }, taxableItems: [{ taxType: 'T1', amount: tax, subType: tx.sub, rate: tx.rate }] };
+    });
+    const S = (fn) => r5(invoiceLines.reduce((a, l) => a + fn(l), 0));
+    const totalSales = S((l) => l.salesTotal); const totalDisc = S((l) => l.discount.amount); const net = S((l) => l.netTotal); const taxT = S((l) => l.taxableItems[0].amount);
+    const extra = ret ? 0 : r5(Number(sale.discountAmount ?? sale.discount) || 0);
+    const doc = {
+      issuer: { address: { branchID: String(c.branchCode || '0'), country: c.country || 'EG', governate: c.governate || '', regionCity: c.regionCity || '', street: c.street || '', buildingNumber: c.buildingNumber || '0' }, type: 'B', id: String(c.rin), name: c.tradeName || st.name || '' },
+      receiver: this.receiver(cu),
+      documentType: ret ? 'C' : 'I', documentTypeVersion: '1.0',
+      dateTimeIssued: new Date(ret ? Date.now() : sale.date).toISOString().replace(/\.\d{3}Z$/, 'Z'),
+      taxpayerActivityCode: String(c.activityCode || ''), internalID: String(no || sale.no),
+      ...(ret ? { references: [sale.einv && sale.einv.uuid].filter(Boolean) } : {}),
+      invoiceLines, totalDiscountAmount: totalDisc, totalSalesAmount: totalSales, netAmount: net,
+      taxTotals: [{ taxType: 'T1', amount: taxT }], totalAmount: r5(net + taxT - extra), extraDiscountAmount: extra, totalItemsDiscountAmount: 0
+    };
+    return doc;
+  },
+  /* ---------- التوقيع بالفلاشة (Windows) ---------- */
+  async certs() { if (!this.canSign()) return []; try { return (await window.api.sign.certs()) || []; } catch (_) { return []; } },
+  async sign(doc) {
+    const c = this.cfg(); if (!this.canSign()) throw new Error(L('التوقيع بيتعمل من برنامج الكمبيوتر بس', 'Signing works on the Windows app only'));
+    if (!c.certThumb) throw new Error(L('اختار شهادة التوقيع (الفلاشة) من الإعدادات', 'Choose the signing certificate in settings'));
+    const data = ETA.serialize(doc);
+    const r = await window.api.sign.cms({ thumb: c.certThumb, data });
+    if (!r || !r.sig) throw new Error((r && r.error) || 'sign failed');
+    return { ...doc, signatures: [{ signatureType: 'I', value: r.sig }] };
+  },
+  /* ---------- التسجيل والإرسال ---------- */
+  queueSale(s, opts = {}) {
+    try {
+      const cu = DB.get('customers', opts.customerId || s.customerId);
+      const doc = this.build(s, opts); const miss = this.missing(cu);
+      const rec = { saleId: s.id, saleNo: s.no, no: doc.internalID, type: doc.documentType, issued: doc.dateTimeIssued, total: doc.totalAmount, customerId: cu ? cu.id : null, customerName: cu ? cu.name : '', env: this.cfg().env, status: miss.length ? 'data' : 'sign', doc, error: miss.length ? L('بيانات العميل ناقصة: ', 'Missing customer data: ') + miss.join('، ') : '', refUuid: (doc.references || [])[0] || '', ...(opts.ret ? { lines: opts.lines } : {}), ...(opts.customerId ? { custOverride: opts.customerId } : {}) };
+      const r = DB.insert('eInvoices', rec);
+      if (!opts.ret) DB.update('sales', s.id, { einv: { id: r.id, status: rec.status, env: rec.env } });
+      setTimeout(() => this.flush(), 1200); return r;
+    } catch (e) { console.warn(e); try { ErrLog.add('einv build: ' + e.message, 'eta'); } catch (_) {} }
+  },
+  _busy: false,
+  async flush() {
+    if (!this.ready() || this._busy || !navigator.onLine) return; this._busy = true;
+    try {
+      /* 1) توقيع وإرسال (الكمبيوتر اللي عليه الفلاشة بس) */
+      if (this.canSign() && this.cfg().certThumb) {
+        const pend = DB.filter('eInvoices', (r) => r.status === 'sign' && r.doc && r.env === this.cfg().env).sort((a, b) => (a.issued < b.issued ? -1 : 1)).slice(0, 20);
+        const signed = [];
+        for (const r of pend) {
+          // الإشعار الدائن لازم الفاتورة الأصلية تكون اتقبلت الأول
+          if (r.type === 'C' && !r.refUuid) { const s = DB.get('sales', r.saleId); const u = s && s.einv && s.einv.uuid; if (!u) continue; r.doc.references = [u]; r.refUuid = u; DB.update('eInvoices', r.id, { doc: r.doc, refUuid: u }); }
+          try { signed.push({ r, d: await this.sign(r.doc) }); }
+          catch (e) { DB.saveSettings({ einv: { lastErr: L('التوقيع: ', 'Signing: ') + String(e.message || e).slice(0, 300), lastErrAt: nowISO() } }); break; }
+        }
+        if (signed.length) {
+          const res = await this.api('POST', '/api/v1/documentsubmissions', { documents: signed.map((x) => x.d) });
+          if (res.status !== 202 && res.status !== 200) throw new Error((res.j.error && (res.j.error.message || res.j.error.details?.[0]?.message)) || res.err || ('HTTP ' + res.status));
+          const acc = new Map((res.j.acceptedDocuments || []).map((d) => [String(d.internalId), d])); const rej = new Map((res.j.rejectedDocuments || []).map((d) => [String(d.internalId), d]));
+          for (const { r } of signed) {
+            if (acc.has(r.no)) { const d = acc.get(r.no); DB.update('eInvoices', r.id, { status: 'submitted', uuid: d.uuid, longId: d.longId || '', sub: res.j.submissionId || '', at: nowISO(), error: '' }); this.mark(r, { uuid: d.uuid, longId: d.longId || '', status: 'submitted' }); }
+            else if (rej.has(r.no)) { const e = rej.get(r.no).error || {}; DB.update('eInvoices', r.id, { status: 'rejected', error: this.errText(e), at: nowISO() }); this.mark(r, { status: 'rejected' }); }
+          }
+        }
+      }
+      /* 2) متابعة التحقق (صالحة / غير صالحة) — من أي جهاز */
+      const wait = DB.filter('eInvoices', (r) => r.status === 'submitted' && r.uuid && r.env === this.cfg().env).slice(0, 15);
+      for (const r of wait) {
+        const res = await this.api('GET', `/api/v1/documents/${r.uuid}/details`); if (res.status !== 200) continue;
+        const st = String(res.j.status || '').toLowerCase();
+        if (st === 'valid') { DB.update('eInvoices', r.id, { status: 'valid', longId: res.j.longId || r.longId, doc: null, error: '' }); this.mark(r, { status: 'valid', longId: res.j.longId || r.longId }); }
+        else if (st === 'invalid' || st === 'rejected') { DB.update('eInvoices', r.id, { status: 'invalid', error: this.stepsText(res.j.validationResults) }); this.mark(r, { status: 'invalid' }); }
+        else if (st === 'cancelled') { DB.update('eInvoices', r.id, { status: 'cancelled' }); this.mark(r, { status: 'cancelled' }); }
+      }
+      DB.saveSettings({ einv: { lastFlush: nowISO(), lastErr: '' } });
+    } catch (e) { DB.saveSettings({ einv: { lastErr: String(e.message || e).slice(0, 300), lastErrAt: nowISO() } }); try { ErrLog.add('einv: ' + e.message, 'eta'); } catch (_) {} }
+    finally { this._busy = false; }
+  },
+  mark(r, o) { if (r.type !== 'I' || !r.saleId) return; const s = DB.get('sales', r.saleId); if (s) DB.update('sales', s.id, { einv: { ...(s.einv || {}), id: r.id, ...o } }); },
+  errText(e) { return String((e && (e.message || '')) + (e && e.details ? ' | ' + e.details.map((d) => d.message || d.propertyPath || '').join(' | ') : '') || 'rejected').slice(0, 600); },
+  stepsText(v) { try { return (v.validationSteps || []).filter((s) => String(s.status).toLowerCase() === 'invalid').map((s) => (s.name || '') + ': ' + ((s.error && (s.error.innerError || []).map((x) => x.error).join(' / ')) || (s.error && s.error.error) || '')).join(' | ').slice(0, 600) || 'invalid'; } catch (_) { return 'invalid'; } },
+  /* إعادة البناء بعد تصحيح البيانات */
+  async retry(r) {
+    const s = DB.get('sales', r.saleId); if (!s) return;
+    const opts = r.type === 'C' ? { ret: true, lines: r.lines, no: r.no } : { no: r.no, customerId: r.custOverride };
+    if (r.type === 'C' && !r.lines) return UI.toast(L('مش قادر أعيد بناء الإشعار ده', 'Cannot rebuild this note'), 'err');
+    const doc = this.build(s, opts); const cu = DB.get('customers', r.custOverride || s.customerId); const miss = this.missing(cu);
+    DB.update('eInvoices', r.id, { status: miss.length ? 'data' : 'sign', doc, issued: doc.dateTimeIssued, total: doc.totalAmount, error: miss.length ? L('بيانات العميل ناقصة: ', 'Missing customer data: ') + miss.join('، ') : '', uuid: '', longId: '' });
+    if (miss.length) { UI.toast(L('كمّل بيانات العميل الأول: ', 'Complete the customer first: ') + miss.join('، '), 'err', 7000); if (cu) Modules.customers.edit(cu, () => App.reload()); return; }
+    await this.flush(); if (App.current === 'einv') App.reload();
+  },
+  async cancel(r) {
+    const reason = await new Promise((res) => { let d = false; const f = (v) => { if (!d) { d = true; res(v); } }; UI.modal({ title: L('إلغاء الفاتورة في المنظومة', 'Cancel in ETA'), icon: 'alert', size: 'sm', onClose: () => f(''), body: UI.form([{ name: 'reason', label: L('سبب الإلغاء', 'Reason'), required: true, col: 12 }], {}), actions: [{ label: L('رجوع', 'Back'), onClick: (x) => x.close() }, { label: L('إلغاء الفاتورة', 'Cancel invoice'), cls: 'danger', onClick: (x) => { if (!UI.validate(x.el)) return; f(UI.read(x.el).reason); x.close(); } }] }); });
+    if (!reason) return;
+    try { const res = await this.api('PUT', `/api/v1.0/documents/state/${r.uuid}/state`, { status: 'cancelled', reason });
+      if (res.status === 200 || res.status === 202 || res.status === 204) { DB.update('eInvoices', r.id, { status: 'cancelling', cancelReason: reason }); audit('einv.cancel', r.no); UI.toast(L('اتبعت طلب الإلغاء — العميل لازم ميرفضوش', 'Cancellation requested'), 'ok', 6000); }
+      else UI.toast(this.errText(res.j.error || {}) || ('HTTP ' + res.status), 'err', 8000);
+    } catch (e) { UI.toast(e.message, 'err'); }
+    App.reload();
+  },
+  shareUrl(r) { return r.uuid && r.longId ? `${(ETA.HOST[r.env] || ETA.HOST.preprod).web}/documents/${r.uuid}/share/${r.longId}` : ''; },
+  open(r) { const u = this.shareUrl(r); if (!u) return; window.api?.sys?.openExternal ? window.api.sys.openExternal(u) : window.open(u, '_blank'); },
+  /* ---------- طباعة A4 ---------- */
+  async print(r) {
+    const s = DB.get('sales', r.saleId); if (!s) return;
+    const d = r.doc || this.build(s, r.type === 'C' ? { ret: true, lines: r.lines || [], no: r.no } : { no: r.no, customerId: r.custOverride });
+    const c = ETA.cfg(); const st = DB.settings().store || {}; const u = this.shareUrl(r); const q = u ? await qrDataURL(u, 160) : '';
+    const rows = d.invoiceLines.map((l, i) => `<tr><td>${i + 1}</td><td>${esc(l.description)}<div class="m" dir="ltr">${esc(l.itemCode || '')}</div></td><td>${num(l.quantity)}</td><td>${money(l.unitValue.amountEGP, false)}</td><td>${money(l.discount.amount, false)}</td><td>${money(l.netTotal, false)}</td><td>${l.taxableItems[0].rate}%<br>${money(l.taxableItems[0].amount, false)}</td><td><b>${money(l.total, false)}</b></td></tr>`).join('');
+    const title = r.type === 'C' ? L('إشعار دائن إلكتروني', 'Electronic credit note') : L('فاتورة ضريبية إلكترونية', 'Electronic tax invoice');
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:A4;margin:12mm}body{font-family:'Cairo',Tahoma,Arial,sans-serif;color:#111;font-size:12.5px}h1{margin:0;font-size:20px}table{width:100%;border-collapse:collapse;margin-top:10px}td,th{border:1px solid #bbb;padding:6px;text-align:right;vertical-align:top}th{background:#f1f1f1}.m{color:#555;font-size:11px}.hd{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.box{border:1px solid #bbb;border-radius:8px;padding:8px 10px;flex:1}.tot td{border:0;padding:3px 6px}.ft{margin-top:24px;text-align:center;color:#777;font-size:10.5px}</style></head><body>
+      <div class="hd"><div><h1>${title}</h1><div class="m">${L('رقم', 'No.')} <b dir="ltr">${esc(d.internalID)}</b> — ${fmtDT(d.dateTimeIssued)}</div>${r.uuid ? `<div class="m" dir="ltr">UUID: ${esc(r.uuid)}</div>` : `<div class="m">${L('لسه متبعتتش للمنظومة', 'Not submitted yet')}</div>`}${d.references && d.references[0] ? `<div class="m" dir="ltr">${L('مرجع الفاتورة', 'Ref')}: ${esc(d.references[0])}</div>` : ''}</div>${q ? `<img src="${q}" style="width:34mm;height:34mm">` : ''}</div>
+      <div class="hd" style="margin-top:10px"><div class="box"><b>${L('البائع', 'Seller')}</b><div>${esc(d.issuer.name)}</div><div class="m">${L('رقم التسجيل الضريبي', 'Tax reg. no.')}: <b dir="ltr">${esc(d.issuer.id)}</b></div><div class="m">${esc([c.street, c.regionCity, c.governate].filter(Boolean).join(' — '))}</div>${st.phone ? `<div class="m" dir="ltr">${esc(st.phone)}</div>` : ''}</div>
+        <div class="box"><b>${L('المشتري', 'Buyer')}</b><div>${esc(d.receiver.name)}</div><div class="m">${d.receiver.type === 'B' ? L('رقم التسجيل الضريبي', 'Tax reg. no.') : L('الرقم القومي', 'National ID')}: <b dir="ltr">${esc(d.receiver.id || '—')}</b></div><div class="m">${esc([d.receiver.address.street, d.receiver.address.regionCity, d.receiver.address.governate].filter(Boolean).join(' — '))}</div></div></div>
+      <table><tr><th>#</th><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('سعر الوحدة', 'Unit')}</th><th>${L('خصم', 'Disc.')}</th><th>${L('الصافي', 'Net')}</th><th>${L('الضريبة', 'VAT')}</th><th>${L('الإجمالي', 'Total')}</th></tr>${rows}</table>
+      <table class="tot" style="width:46%;margin-inline-start:auto"><tr><td>${L('إجمالي المبيعات', 'Sales total')}</td><td class="num">${money(d.totalSalesAmount)}</td></tr><tr><td>${L('الخصومات', 'Discounts')}</td><td class="num">${money(d.totalDiscountAmount + d.extraDiscountAmount)}</td></tr><tr><td>${L('الصافي', 'Net')}</td><td class="num">${money(d.netAmount)}</td></tr><tr><td>${L('ضريبة القيمة المضافة', 'VAT')}</td><td class="num">${money(d.taxTotals[0].amount)}</td></tr><tr><td><b>${L('الإجمالي', 'Total')}</b></td><td class="num"><b>${money(d.totalAmount)}</b></td></tr></table>
+      <div class="ft">${L('مستند إلكتروني مسجّل في منظومة الفاتورة الإلكترونية — مصلحة الضرائب المصرية', 'Registered on the Egyptian e-Invoicing system')}<br>جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007</div></body></html>`, { type: 'a4' });
+  },
+  /* ---------- فاتورة من عملية بيع قديمة ---------- */
+  fromSale() {
+    const comps = DB.filter('customers', (x) => x.etaKind === 'B');
+    UI.modal({ title: L('فاتورة إلكترونية من عملية بيع', 'e-Invoice from a sale'), icon: 'receipt', size: 'sm', body: UI.form([
+      { name: 'no', label: L('رقم الفاتورة في البرنامج', 'Sale number'), required: true, col: 12, placeholder: 'INV-…' },
+      { name: 'cid', label: L('الشركة (العميل)', 'Company'), type: 'select', options: [['', L('عميل الفاتورة نفسه', 'The sale customer')], ...comps.map((x) => [x.id, `${x.name} — ${x.rin || ''}`])], col: 12 },
+      { type: 'html', col: 12, html: `<div class="faint" style="line-height:1.8">${L('الشركة لازم تكون متسجلة كعميل نوعه «شركة» برقم تسجيل ضريبي وعنوان. لو الفاتورة دي اتبعت لها إيصال إلكتروني قبل كده، اعمل لها مرتجع في المنظومة الأول عشان المبيعات متتحسبش مرتين.', 'The company must be a customer of type «Company» with a tax no. and address.')}</div>` }], {}),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('إصدار', 'Issue'), cls: 'primary', icon: 'check', onClick: (m) => {
+        if (!UI.validate(m.el)) return; const v = UI.read(m.el); const q = String(v.no).trim().toLowerCase();
+        const s = DB.find('sales', (x) => String(x.no).toLowerCase() === q); if (!s) return UI.toast(L('مفيش فاتورة بالرقم ده', 'Sale not found'), 'err');
+        if (s.einv && s.einv.id && DB.get('eInvoices', s.einv.id) && !['rejected', 'invalid', 'cancelled'].includes(s.einv.status)) return UI.toast(L('الفاتورة دي ليها فاتورة إلكترونية بالفعل', 'Already has an e-invoice'), 'err');
+        const cid = v.cid || s.customerId; const cu = cid && DB.get('customers', cid); if (!cu || cu.etaKind !== 'B') return UI.toast(L('اختار عميل نوعه «شركة»', 'Choose a company customer'), 'err');
+        this.queueSale(s, { customerId: cid }); m.close(); audit('einv.fromSale', s.no); UI.toast(L('اتسجلت ✓ — هتتوقّع وتتبعت من الكمبيوتر اللي عليه الفلاشة', 'Queued ✓'), 'ok', 6000); App.reload();
+      } }] });
+  },
+  async test() {
+    try { this._tok = null; await this.token(true); UI.toast(L('الاتصال بمنظومة الفاتورة شغال ✓', 'Connected ✓'), 'ok', 6000); }
+    catch (e) { UI.toast(L('فشل الاتصال: ', 'Connection failed: ') + e.message, 'err', 9000); }
+  },
+  async settings() {
+    const c = this.cfg(); const certs = await this.certs();
+    const opts = [['', certs.length ? L('— اختار الشهادة —', '— choose —') : (this.canSign() ? L('مفيش شهادات — ركّب الفلاشة وبرنامجها', 'No certificates — plug the token') : L('التوقيع من برنامج الكمبيوتر', 'Sign on the Windows app'))], ...certs.map((x) => [x.t, `${x.s.replace(/^CN=/, '').split(',')[0]} — ${L('لحد', 'until')} ${String(x.na || '').slice(0, 10)}`])];
+    if (c.certThumb && !certs.some((x) => x.t === c.certThumb)) opts.push([c.certThumb, c.certName || c.certThumb]);
+    const m = UI.modal({ title: L('الفاتورة الإلكترونية للشركات', 'e-Invoice (B2B)'), icon: 'receipt', size: 'lg', body: `
+      <div class="tag warn mb" style="white-space:normal;line-height:1.9;padding:10px">⚠️ ${L('للبيع للشركات بفاتورة ضريبية. محتاج: تسجيل «نظام ERP» على بوابة الفاتورة الإلكترونية (بيدّيك Client ID و Secret) + فلاشة التوقيع الإلكتروني (USB Token) مركّبة على الكمبيوتر وبرنامجها متسطّب. بيانات الممول والعنوان وأكواد الأصناف بتتاخد من إعدادات «الإيصال الإلكتروني».', 'For B2B tax invoices. Needs an ERP registration on the portal + a USB signing token on the Windows PC.')}</div>
+      ${!this.canSign() ? `<div class="tag mb" style="white-space:normal;line-height:1.8">${L('الجهاز ده مش بيوقّع — الفواتير بتتسجّل هنا وبتتوقّع وتتبعت من الكمبيوتر اللي عليه الفلاشة (لازم المزامنة تكون شغالة).', 'This device does not sign — the PC with the token signs and sends.')}</div>` : ''}
+      ${UI.form([
+        { name: 'on', label: L('تشغيل الفاتورة الإلكترونية', 'Enable e-Invoice'), type: 'checkbox', col: 6 }, { name: 'env', label: L('البيئة', 'Environment'), type: 'select', options: [['preprod', L('اختبار (Pre-production)', 'Pre-production')], ['prod', L('التشغيل الفعلي (Production)', 'Production')]], col: 6 },
+        { name: 'auto', label: L('البيع لعميل «شركة» يطلع فاتورة إلكترونية تلقائي', 'Auto e-invoice for company customers'), type: 'checkbox', col: 12 },
+        { name: 'clientId', label: 'Client ID (ERP)', col: 6 }, { name: 'clientSecret', label: 'Client Secret (ERP)', type: 'password', col: 6 },
+        { name: 'certThumb', label: L('شهادة التوقيع (الفلاشة)', 'Signing certificate'), type: 'select', options: opts, col: 12 }], c)}
+      <div class="row wrap" style="gap:8px"><button class="btn sm" id="eiEta">${icon('settings')}${L('بيانات الممول وأكواد الأصناف', 'Taxpayer data & item codes')}</button><button class="btn sm" id="eiRef">${icon('refresh')}${L('تحديث قائمة الشهادات', 'Refresh certificates')}</button></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('اختبار الاتصال', 'Test connection'), icon: 'play', onClick: async () => { save(); await this.test(); } }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { save(); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.reload(); } }] });
+    const save = () => { const v = UI.read(m.el); const ce = certs.find((x) => x.t === v.certThumb); DB.saveSettings({ einv: { on: !!v.on, auto: !!v.auto, env: v.env, clientId: v.clientId, clientSecret: v.clientSecret, certThumb: v.certThumb, certName: ce ? ce.s : c.certName } }); this._tok = null; audit('einv.settings', `${v.env} ${v.on}`); };
+    $('#eiEta', m.el).onclick = () => ETA.settings(); $('#eiRef', m.el).onclick = () => { m.close(); this.settings(); };
+  }
+};
+
+(function () {
+  /* بيانات المنظومة في تعديل العميل */
+  const ce = Modules.customers.edit.bind(Modules.customers);
+  Modules.customers.edit = function (c, ...a) {
+    const r = ce(c, ...a);
+    if ((typeof ETA !== 'undefined' && ETA.cfg().on) || EInv.cfg().on) setTimeout(() => { try {
+      const m = $$('.modal-bg').pop(); const form = m && $('.modal-b', m); if (!form || $('[name=etaKind]', form)) return; const v = c || {};
+      form.insertAdjacentHTML('beforeend', `<div class="pk-box"><b>${icon('receipt')} ${L('بيانات المنظومة الضريبية', 'Tax system data')}</b>
+        <div class="grid g2"><div><label class="lbl">${L('نوع العميل', 'Customer type')}</label><select name="etaKind"><option value="P">${L('فرد', 'Person')}</option><option value="B" ${v.etaKind === 'B' ? 'selected' : ''}>${L('شركة (فاتورة إلكترونية)', 'Company (e-invoice)')}</option><option value="F" ${v.etaKind === 'F' ? 'selected' : ''}>${L('أجنبي', 'Foreigner')}</option></select></div>
+        <div><label class="lbl">${L('رقم التسجيل الضريبي (للشركة)', 'Tax reg. no. (company)')}</label><input name="rin" dir="ltr" inputmode="numeric" maxlength="9" value="${esc(v.rin || '')}"></div>
+        <div><label class="lbl">${L('الرقم القومي / الجواز', 'National ID / passport')}</label><input name="nationalId" dir="ltr" maxlength="20" value="${esc(v.nationalId || '')}"></div>
+        <div><label class="lbl">${L('المحافظة', 'Governorate')}</label><input name="governate" value="${esc(v.governate || '')}"></div>
+        <div><label class="lbl">${L('المدينة / المنطقة', 'City')}</label><input name="city" value="${esc(v.city || '')}"></div>
+        <div><label class="lbl">${L('الشارع', 'Street')}</label><input name="street" value="${esc(v.street || '')}"></div>
+        <div><label class="lbl">${L('رقم العقار', 'Building')}</label><input name="building" value="${esc(v.building || '')}"></div></div></div>`);
+    } catch (e) { console.warn(e); } }, 40);
+    return r;
+  };
+  /* المرتجع من فاتورة شركة ← إشعار دائن */
+  const br = Sales.returnItems.bind(Sales);
+  Sales.returnItems = function (sale, lines, method) {
+    const amt = br(sale, lines, method);
+    try { if (EInv.ready() && sale.einv && sale.einv.id && !['rejected', 'invalid', 'cancelled'].includes(sale.einv.status)) { const ls = lines.map((l) => { const it = sale.items[l.idx]; return { ...it, qty: l.qty, soldQty: it.qty }; }); const s = DB.get('sales', sale.id) || sale; EInv.queueSale(s, { ret: true, lines: ls, no: `${s.no}-CN${(s.returns || []).length || 1}`, customerId: (DB.get('eInvoices', sale.einv.id) || {}).custOverride }); } } catch (e) { console.warn(e); }
+    return amt;
+  };
+  setInterval(() => { if (Session.user) EInv.flush(); }, 150e3);
+  /* كارت في إعدادات الإيصال */
+  try { const bb = Modules.settings.body.bind(Modules.settings); Modules.settings.body = async function (...a) { const r = await bb(...a); try { if (this.tab === 'receipt' && Session.can('settings') && !$('#eiSet') && (typeof Plan === 'undefined' || Plan.allowed('eta'))) { const c = EInv.cfg(); const host = $('#etSet') ? $('#etSet').closest('.card') : null; const html = `<div class="card card-b mb dw-card"><div class="dw-ic">${icon('receipt')}</div><div style="flex:1;min-width:0"><b>${L('الفاتورة الإلكترونية للشركات (B2B)', 'e-Invoice for companies (B2B)')}</b><small>${c.on ? L('شغالة', 'On') + ' — ' + (c.env === 'prod' ? L('تشغيل فعلي', 'Production') : L('اختبار', 'Pre-prod')) : L('فاتورة ضريبية موقّعة بالفلاشة للبيع للشركات', 'Signed tax invoices for B2B sales')}</small></div><button class="btn sm" id="eiSet">${icon('settings')}${L('الإعداد', 'Setup')}</button></div>`; host ? host.insertAdjacentHTML('afterend', html) : $('#stBody').insertAdjacentHTML('afterbegin', html); $('#eiSet').onclick = () => EInv.settings(); } } catch (e) { console.warn(e); } return r; }; } catch (_) {}
+})();
+
+Modules.einv = {
+  title: () => L('فواتير الشركات', 'B2B e-Invoices'), icon: 'receipt', perm: 'reports',
+  enabled: () => EInv.cfg().on,
+  badge: () => DB.filter('eInvoices', (r) => ['rejected', 'invalid', 'data'].includes(r.status)).length,
+  render(el) {
+    const c = EInv.cfg(); const rows = DB.all('eInvoices').sort((a, b) => (a.issued < b.issued ? 1 : -1));
+    const cnt = (...st) => rows.filter((r) => st.includes(r.status)).length;
+    el.innerHTML = `<div class="grid g4 mb">${UI.kpi(L('صالحة', 'Valid'), cnt('valid'), 'check', 'c-ok')}${UI.kpi(L('مستنية توقيع / تحقق', 'Waiting'), cnt('sign', 'submitted', 'cancelling'), 'clock', 'c-warn')}${UI.kpi(L('محتاجة تصحيح', 'Needs fixing'), cnt('rejected', 'invalid', 'data'), 'alert', 'c-err')}${UI.kpi(L('البيئة', 'Environment'), c.env === 'prod' ? L('تشغيل فعلي', 'Production') : L('اختبار', 'Pre-prod'), 'shield', c.env === 'prod' ? 'hero' : '')}</div>
+      ${c.lastErr ? `<div class="tag err mb" style="white-space:normal;padding:10px">${L('آخر خطأ', 'Last error')}: ${esc(c.lastErr)} — ${fmtDT(c.lastErrAt)}</div>` : ''}
+      ${!EInv.canSign() && cnt('sign') ? `<div class="tag warn mb" style="white-space:normal;padding:10px">${L('فيه فواتير مستنية التوقيع — افتح البرنامج على الكمبيوتر اللي عليه الفلاشة وهتتبعت لوحدها.', 'Invoices are waiting to be signed on the PC with the token.')}</div>` : ''}
+      <div class="row mb wrap" style="gap:8px"><div class="spacer"></div><button class="btn" id="eiNew">${icon('plus')}${L('فاتورة من عملية بيع', 'From a sale')}</button><button class="btn" id="eiFlush">${icon('send')}${L('توقيع وإرسال دلوقتي', 'Sign & send now')}</button><button class="btn" id="eiCfg">${icon('settings')}${L('الإعدادات', 'Settings')}</button></div><div id="eiBody"></div>`;
+    $('#eiCfg').onclick = () => EInv.settings(); $('#eiNew').onclick = () => EInv.fromSale(); $('#eiFlush').onclick = async () => { await EInv.flush(); App.reload(); };
+    const ST = { data: [L('بيانات ناقصة', 'Missing data'), 'err'], sign: [L('مستنية التوقيع', 'To sign'), 'warn'], submitted: [L('اتبعتت — بتتراجع', 'Submitted'), 'warn'], valid: [L('صالحة', 'Valid'), 'ok'], invalid: [L('غير صالحة', 'Invalid'), 'err'], rejected: [L('مرفوضة', 'Rejected'), 'err'], cancelling: [L('طلب إلغاء', 'Cancelling'), 'warn'], cancelled: [L('ملغية', 'Cancelled'), ''] };
+    UI.table($('#eiBody'), { rows, exportName: 'e-invoices', emptyIcon: 'receipt', searchText: (r) => `${r.no} ${r.uuid || ''} ${r.customerName || ''}`,
+      columns: [{ key: 'no', label: L('المستند', 'Document'), render: (r) => `<b>${esc(r.no)}</b><div class="faint">${fmtDT(r.issued)} · ${r.type === 'C' ? L('إشعار دائن', 'Credit note') : L('فاتورة', 'Invoice')} ${r.env === 'preprod' ? '· ' + L('اختبار', 'test') : ''}</div>` },
+        { key: 'customerName', label: L('الشركة', 'Company') }, { label: L('الإجمالي', 'Total'), render: (r) => `<b class="num">${money(r.total)}</b>`, exportVal: (r) => r.total },
+        { key: 'status', label: L('الحالة', 'Status'), render: (r) => `<span class="tag ${(ST[r.status] || ['', ''])[1]}">${(ST[r.status] || [r.status])[0]}</span>${r.error ? `<div class="faint" style="color:var(--err);font-size:12px;max-width:340px">${esc(r.error)}</div>` : ''}`, exportVal: (r) => r.status }],
+      actions: (r) => UI.act('print', 'printer', L('طباعة', 'Print')) + (['rejected', 'invalid', 'data'].includes(r.status) ? UI.act('retry', 'refresh', L('تصحيح وإعادة الإرسال', 'Fix & resend')) : '') + (r.longId ? UI.act('open', 'eye', L('عرض في البوابة', 'Open in portal')) : '') + (r.status === 'valid' && Date.now() - new Date(r.issued).getTime() < 7 * 864e5 ? UI.act('cancel', 'x', L('إلغاء في المنظومة', 'Cancel')) : ''),
+      onAction: (a, r) => { if (a === 'print') EInv.print(r); if (a === 'retry') EInv.retry(r); if (a === 'open') EInv.open(r); if (a === 'cancel') EInv.cancel(r); } });
   }
 };
 
@@ -15299,7 +15638,7 @@ const PLAN_CORE_MODS = [
   { k: 'quotes', core: true, ic: 'file', ar: 'عروض الأسعار', en: 'Quotations', d: 'عرض سعر لأي منتجات وتحويله لفاتورة', mods: ['quotes'] },
   { k: 'finance', core: true, ic: 'bank', ar: 'المصروفات ورأس المال', en: 'Expenses & capital', d: 'مصروفات وشركاء ورأس مال', mods: ['expenses', 'capital'], perms: ['expenses', 'capital'] },
   { k: 'reports', core: true, ic: 'chart', ar: 'التقارير والأرباح', en: 'Reports & profit', d: 'تقارير المبيعات والأرباح والمخزون', mods: ['reports'], perms: ['reports'] },
-  { k: 'eta', core: true, ic: 'receipt', ar: 'الإيصال الإلكتروني (الضرائب)', en: 'e-Receipt (ETA)', d: 'إرسال الإيصالات لمنظومة مصلحة الضرائب', mods: ['eta'] },
+  { k: 'eta', core: true, ic: 'receipt', ar: 'الإيصال والفاتورة الإلكترونية (الضرائب)', en: 'e-Receipt & e-Invoice (ETA)', d: 'إرسال الإيصالات وفواتير الشركات الموقّعة لمنظومة مصلحة الضرائب', mods: ['eta', 'einv'] },
   { k: 'drawer', core: true, ic: 'money', ar: 'درج النقدية', en: 'Cash drawer', d: 'فتح الدرج مع البيع النقدي', perms: ['drawer.open'] }
 ];
 PLAN_MODS.push(...PLAN_CORE_MODS);
@@ -15316,11 +15655,13 @@ const Plan = {
   info() { const s = App.licenseState; return s && s.state === 'active' && s.info ? s.info : null; },
   /* null = كل حاجة مفتوحة (تجربة أو ترخيص قديم من غير أقسام) */
   list() { const i = this.info(); return i && Array.isArray(i.f) ? i.f : null; },
-  full() { return !this.list() && !this.off().length; },
-  key() { const l = this.list(); return (l ? l.join(',') : '*') + '|' + this.off().join(','); },
+  full() { return !this.list() && !this.off().length && this.gov() !== false; },
+  key() { const l = this.list(); return (l ? l.join(',') : '*') + '|' + this.off().join(',') + '|' + this.gov(); },
+  /* منظومة الفاتورة الإلكترونية (حقل g في الترخيص): true مع / false بدون / null ترخيص قديم (بيمشي على الأساسي) */
+  gov() { const i = this.info(); return i && typeof i.g === 'number' ? i.g === 1 : null; },
   /* الأقسام الأساسية المقفولة (حقل x) */
   off() { const i = this.info(); return i && Array.isArray(i.x) ? i.x : []; },
-  allowed(k) { const m = this.mod(k); if (m && m.core) return !this.off().includes(k); const l = this.list(); return !l || l.includes(k); },
+  allowed(k) { const m = this.mod(k); if (k === 'eta' && this.gov() !== null) return this.gov() && !this.off().includes(k); if (m && m.core) return !this.off().includes(k); const l = this.list(); return !l || l.includes(k); },
   mod(k) { return PLAN_MODS.find((m) => m.k === k); },
   byModule(id) { return PLAN_MODS.find((m) => (m.mods || []).includes(id)); },
   byPerm(p) { return PLAN_MODS.find((m) => (m.perms || []).includes(p)); },

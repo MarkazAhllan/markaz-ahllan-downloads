@@ -5803,7 +5803,7 @@ Modules.repairs = {
         { name: 'techId', label: L('الفني المسئول', 'Technician'), type: 'select', col: 3, options: [['', '—'], ...DB.filter('users', (u) => u.active !== false).map((u) => [u.id, u.name])] },
         { name: 'priority', label: L('الأولوية', 'Priority'), type: 'select', col: 3, options: [['normal', L('عادي', 'Normal')], ['urgent', L('مستعجل', 'Urgent')]] },
         { name: 'notes', label: L('ملاحظات داخلية', 'Internal notes'), col: isEdit ? 6 : 6 },
-        ...(isEdit ? [] : [{ name: 'sendWA', label: L('إرسال رسالة استلام على واتساب', 'Send WhatsApp receipt message'), type: 'checkbox', col: 6, value: c.autoWA }, { name: 'print', label: L('طباعة إيصال الاستلام', 'Print intake ticket'), type: 'checkbox', col: 6, value: true }])
+        ...(isEdit ? [] : [{ name: 'sendWA', label: L('إرسال رسالة استلام على واتساب', 'Send WhatsApp receipt message'), type: 'checkbox', col: 6, value: c.autoWA }, { name: 'print', label: L('طباعة إيصال الاستلام', 'Print intake ticket'), type: 'checkbox', col: 6, value: true }, { name: 'plabel', label: L('طباعة ملصق يتلزق على الجهاز', 'Print device sticker'), type: 'checkbox', col: 6, value: c.autoLabel !== false }])
       ], r || (warrantyOf ? { ...warrantyOf, issue: '', estimate: 0, notes: L('ضمان على إيصال ', 'Warranty of ') + warrantyOf.no } : { deviceType: c.deviceTypes[0], priority: 'normal', ...(prefill || {}) })),
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: isEdit ? L('حفظ', 'Save') : L('استلام الجهاز', 'Receive device'), cls: 'primary', icon: 'check', onClick: (x) => {
         if (!UI.validate(x.el)) return; const v = UI.read(x.el);
@@ -5819,7 +5819,7 @@ Modules.repairs = {
         audit('repair.receive', `${no} ${v.customerName}`); x.close(); UI.toast(L(`تم استلام الجهاز — إيصال رقم ${no}`, `Received — ticket ${no}`));
         const fresh = DB.get('repairs', rec.id);
         if (v.sendWA && v.phone) this.sendWA(fresh, 'received');
-        if (v.print) this.printTicket(fresh);
+        (async () => { try { if (v.print) await this.printTicket(fresh); if (v.plabel) { if (v.print) await new Promise((ok) => setTimeout(ok, 900)); await this.printLabel(fresh); } } catch (e) { console.warn(e); } })();
         if (App.current === 'repairs' || App.current === 'dashboard') App.reload();
       } }] });
     const ph = $('[name=phone]', md.el);
@@ -5869,7 +5869,8 @@ Modules.repairs = {
         { label: L('حذف', 'Delete'), cls: 'ghost', icon: 'trash', onClick: () => this.remove(r) },
         { label: L('تعديل', 'Edit'), icon: 'edit', onClick: (x) => { x.close(); this.receive(r); } },
         { label: L('الإيصال', 'Ticket'), icon: 'printer', onClick: () => this.printTicket(DB.get('repairs', r.id)) },
-        { label: L('ملصق', 'Label'), icon: 'barcode', onClick: () => this.printLabel(DB.get('repairs', r.id)) },
+        { label: L('ملصق الجهاز', 'Device sticker'), icon: 'barcode', onClick: () => this.printLabel(DB.get('repairs', r.id)) },
+        ...(r.warrantyUntil ? [{ label: L('ملصق الضمان', 'Warranty sticker'), icon: 'shield', onClick: () => this.printWarranty(DB.get('repairs', r.id)) }] : []),
         ...(r.phone ? [{ label: L('واتساب', 'WhatsApp'), cls: 'wa', icon: 'whatsapp', onClick: () => this.sendWA(DB.get('repairs', r.id), r.stage) }] : []),
         ...(del ? [{ label: L('استلام بالضمان', 'Warranty intake'), icon: 'refresh', onClick: (x) => { x.close(); this.receive(null, r); } }]
           : [{ label: L('دفعة', 'Payment'), icon: 'money', onClick: () => this.payDialog(DB.get('repairs', r.id)) }, { label: L('تغيير المرحلة', 'Change stage'), icon: 'swap', onClick: () => this.stageDialog(DB.get('repairs', r.id)) },
@@ -5959,7 +5960,8 @@ Modules.repairs = {
       ${due < 0 ? `<div class="tag warn mb">${L('المدفوع أكبر من الإجمالي — سيتم رد الفرق للعميل من الدرج', 'Overpaid — difference refunded from drawer')}: ${money(-due)}</div>` : ''}` + UI.form([
       ...(due > 0 ? [{ name: 'amount', label: L('المحصّل الآن', 'Collected now'), type: 'number', col: 6, value: due }, { name: 'src', label: L('استلام في', 'Received in'), type: 'select', col: 6, options: [...this.recvSrc(), ...(feat('credit') ? [['credit', L('الباقي آجل على العميل', 'Rest on customer credit')]] : [])] }] : []),
       { name: 'warrantyDays', label: L('مدة الضمان (يوم)', 'Warranty (days)'), type: 'number', col: 6, value: r.stage === 'unrepairable' ? 0 : c.warrantyDays },
-      { name: 'send', label: L('إرسال رسالة شكر وتسليم على واتساب', 'Send WhatsApp delivery message'), type: 'checkbox', col: 6, value: c.autoWA && !!r.phone }]),
+      { name: 'send', label: L('إرسال رسالة شكر وتسليم على واتساب', 'Send WhatsApp delivery message'), type: 'checkbox', col: 6, value: c.autoWA && !!r.phone },
+      { name: 'wlabel', label: L('طباعة ملصق الضمان (يتلزق على الجهاز)', 'Print warranty sticker'), type: 'checkbox', col: 6, value: c.autoWarrantyLabel !== false && r.stage !== 'unrepairable' }]),
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد التسليم', 'Confirm delivery'), cls: 'primary', icon: 'check', onClick: (x) => {
         const v = UI.read(x.el);
         if (due > 0) {
@@ -5974,6 +5976,7 @@ Modules.repairs = {
         DB.update('repairs', r.id, { stage: 'delivered', deliveredAt: nowISO(), warrantyUntil: wd ? dayKey(addDays(new Date(), wd)) : null, history: [...cur.history, h] });
         audit('repair.deliver', `${r.no} ${total}`); x.close(); UI.toast(L('تم تسليم الجهاز', 'Device delivered'));
         if (h.sent) this.sendWA(DB.get('repairs', r.id), 'delivered', '', true);
+        if (v.wlabel && wd) this.printWarranty(DB.get('repairs', r.id));
         if (App.current === 'repairs') App.reload();
       } }] });
   },
@@ -5989,7 +5992,7 @@ Modules.repairs = {
   printTicket(r) {
     const st = DB.settings().store, c = this.cfg();
     const row = (a, b) => (b ? `<tr><td>${a}</td><td><b>${b}</b></td></tr>` : '');
-    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>
+    return printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>
       @page{size:80mm auto;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Cairo',Tahoma,Arial,sans-serif;color:#000;font-size:12px}
       .w{width:76mm;margin:2mm auto;padding:2mm}.c{text-align:center}.logo{width:22mm;height:22mm;object-fit:contain}.st{font-size:17px;font-weight:900}
       .tt{border:2px solid #000;border-radius:3mm;padding:1.5mm;margin:2mm 0;font-size:15px;font-weight:900;text-align:center}
@@ -6004,11 +6007,30 @@ Modules.repairs = {
       <div class="sig"><span>توقيع العميل: ..........</span><span>المستلم: ${esc(Session.user?.name || '')}</span></div>
       <div class="c bye">سعداء بزيارتكم<br><small>${esc(st.name)}</small></div></div></body></html>`);
   },
+  /* ملصق الجهاز عند الاستلام — بيتلزق على الجهاز عشان ميتلخبطش مع غيره */
   printLabel(r) {
-    const lb = DB.settings().label;
-    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:${lb.width}mm ${lb.height}mm;margin:0}body{margin:0;font-family:'Cairo',Tahoma,sans-serif}
-      .l{width:${lb.width}mm;height:${lb.height}mm;padding:1mm;box-sizing:border-box;text-align:center;overflow:hidden;font-size:9px;line-height:1.25}.n{font-weight:900;font-size:11px}</style></head><body>
-      <div class="l"><div class="n">${esc(r.no)} — ${esc(r.customerName)}</div><div>${esc(r.phone || '')} · ${esc(Repairs.device(r)).slice(0, 30)}</div>${barcodeSVG(r.no, { height: 22, module: 1.3, fontSize: 8 })}</div></body></html>`, { type: 'label' });
+    const lb = DB.settings().label; const st = DB.settings().store || {}; const sm = lb.height < 30;
+    return printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:${lb.width}mm ${lb.height}mm;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Cairo',Tahoma,sans-serif;color:#000}
+      .l{width:${lb.width}mm;height:${lb.height}mm;padding:.8mm 1.2mm;text-align:center;overflow:hidden;font-size:${sm ? 7.5 : 8.5}px;line-height:1.25;display:flex;flex-direction:column;justify-content:space-between}
+      .h{display:flex;justify-content:space-between;align-items:center;font-weight:900;border-bottom:1px solid #000;padding-bottom:.4mm}.h .no{font-size:${sm ? 10 : 12}px}.h small{font-size:7px;font-weight:700}
+      .d{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.i{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bc svg{max-width:100%;height:auto}</style></head><body>
+      <div class="l"><div class="h"><span class="no">${esc(r.no)}</span><small>${esc(fmtDate(r.date))}</small></div>
+      <div class="d">${esc(r.customerName)} · <span dir="ltr">${esc(r.phone || '')}</span></div><div class="i">${esc(Repairs.device(r))}${r.issue && !sm ? ' — ' + esc(String(r.issue).slice(0, 40)) : ''}</div>
+      <div class="bc">${barcodeSVG(r.no, { height: sm ? 16 : 20, module: 1.2, showText: false })}</div>${!sm ? `<div style="font-size:7px">${esc(st.name || '')}</div>` : ''}</div></body></html>`, { type: 'label' });
+  },
+  /* ملصق الضمان عند التسليم */
+  printWarranty(r) {
+    if (!r || !r.warrantyUntil) return UI.toast(L('الجهاز ده ملوش ضمان', 'No warranty on this device'), 'err');
+    const lb = DB.settings().label; const st = DB.settings().store || {}; const sm = lb.height < 30;
+    return printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:${lb.width}mm ${lb.height}mm;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Cairo',Tahoma,sans-serif;color:#000}
+      .l{width:${lb.width}mm;height:${lb.height}mm;border:.6mm solid #000;border-radius:1.5mm;overflow:hidden;text-align:center;display:flex;flex-direction:column;line-height:1.2}
+      .t{background:#000;color:#fff;font-weight:900;font-size:${sm ? 9 : 11}px;padding:.5mm 1mm;display:flex;align-items:center;justify-content:center;gap:1.2mm}.t .lg{width:${sm ? 4.5 : 6}mm;height:${sm ? 4.5 : 6}mm;border-radius:50%;background:#fff;object-fit:contain;padding:.2mm;flex:none}.b{flex:1;display:flex;flex-direction:column;justify-content:space-around;padding:.4mm 1mm;font-size:${sm ? 7.5 : 8.5}px}
+      .u{font-weight:900;font-size:${sm ? 10 : 12}px}.s{font-size:6.5px;font-weight:700;border-top:1px dashed #000;padding-top:.3mm}</style></head><body>
+      <div class="l"><div class="t"><img class="lg" src="${logoSrc()}"><span>ضمان صيانة — ${esc(st.name || '')}</span></div><div class="b">
+      <div>إيصال <b dir="ltr">${esc(r.no)}</b> · ${esc(Repairs.device(r)).slice(0, 26)}</div>
+      <div class="u">ساري حتى ${esc(fmtDate(r.warrantyUntil))}</div>
+      ${!sm ? `<div>اتسلّم ${esc(fmtDate(r.deliveredAt || nowISO()))} ${st.phone ? '· <span dir="ltr">' + esc(st.phone) + '</span>' : ''}</div>` : ''}
+      <div class="s">الضمان يسقط بإزالة الملصق أو فتح الجهاز خارج المحل</div></div></div></body></html>`, { type: 'label' });
   },
 
   /* ---------------- الإعدادات ---------------- */
@@ -6018,6 +6040,8 @@ Modules.repairs = {
       { name: 'autoWA', label: L('إرسال واتساب تلقائياً بعد كل مرحلة', 'Auto-send WhatsApp after every stage'), type: 'checkbox', col: 4, value: c.autoWA },
       { name: 'warrantyDays', label: L('مدة الضمان الافتراضية (يوم)', 'Default warranty (days)'), type: 'number', col: 4, value: c.warrantyDays },
       { name: 'inspectionFee', label: L('رسوم فحص الأجهزة اللي تعذر إصلاحها', 'Inspection fee (unrepairable)'), type: 'number', col: 4, value: c.inspectionFee },
+      { name: 'autoLabel', label: L('طباعة ملصق الجهاز تلقائياً عند الاستلام', 'Auto-print device sticker on intake'), type: 'checkbox', col: 6, value: c.autoLabel !== false },
+      { name: 'autoWarrantyLabel', label: L('طباعة ملصق الضمان تلقائياً عند التسليم', 'Auto-print warranty sticker on delivery'), type: 'checkbox', col: 6, value: c.autoWarrantyLabel !== false },
       { name: 'autoPickup', label: L('تذكير تلقائي للأجهزة الجاهزة اللي ما اتستلمتش (لما واتساب يكون مربوط)', 'Auto-remind uncollected ready devices (WhatsApp linked)'), type: 'checkbox', col: 4, value: c.autoPickup !== false },
       { name: 'pickupDays', label: L('ابعت التذكير كل (يوم)', 'Remind every (days)'), type: 'number', col: 4, value: c.pickupDays || 3 },
       { name: 'pickupMax', label: L('أقصى عدد تذكيرات للجهاز', 'Max reminders per device'), type: 'number', col: 4, value: c.pickupMax || 3 },
@@ -6033,7 +6057,7 @@ Modules.repairs = {
     $('#rpSave').onclick = () => {
       const v = UI.read(el); const lines = (x) => String(x || '').split('\n').map((s) => s.trim()).filter(Boolean);
       const templates = {}; $$('[data-tpl]', el).forEach((t) => (templates[t.dataset.tpl] = t.value));
-      DB.saveSettings({ repair: { track: !!v.track, autoPickup: !!v.autoPickup, pickupDays: Math.max(1, Number(v.pickupDays) || 3), pickupMax: Math.max(1, Number(v.pickupMax) || 3), autoWA: !!v.autoWA, warrantyDays: Number(v.warrantyDays) || 0, inspectionFee: Number(v.inspectionFee) || 0, deviceTypes: lines(v.deviceTypes), accessories: lines(v.accessories), terms: v.terms, templates } });
+      DB.saveSettings({ repair: { autoLabel: !!v.autoLabel, autoWarrantyLabel: !!v.autoWarrantyLabel, track: !!v.track, autoPickup: !!v.autoPickup, pickupDays: Math.max(1, Number(v.pickupDays) || 3), pickupMax: Math.max(1, Number(v.pickupMax) || 3), autoWA: !!v.autoWA, warrantyDays: Number(v.warrantyDays) || 0, inspectionFee: Number(v.inspectionFee) || 0, deviceTypes: lines(v.deviceTypes), accessories: lines(v.accessories), terms: v.terms, templates } });
       audit('repair.settings'); UI.toast(L('تم الحفظ', 'Saved'));
     };
   }
@@ -10542,6 +10566,7 @@ Modules.settings = {
    ========================================================= */
 const CHANGELOG = [
   { v: '1.8.0', d: '2026-11-02', items: [
+    ['tool', L('الصيانة: ملصق يتلزق على الجهاز بيطبع لوحده بعد الاستلام (رقم الإيصال والعميل والجهاز وباركود)، وملصق «ضمان صيانة» بلوجو المحل وتاريخ انتهاء الضمان بيطبع عند التسليم', 'Repairs: device sticker on intake and warranty sticker on delivery')],
     ['receipt', L('الفاتورة الإلكترونية للشركات: البيع لعميل نوعه «شركة» بيطلع فاتورة ضريبية إلكترونية موقّعة بفلاشة التوقيع (USB Token) وبتتبعت للمصلحة لوحدها، والمرتجع بيطلع إشعار دائن مربوط بيها — مع متابعة الحالة (صالحة / غير صالحة) والإلغاء والطباعة A4 بالـ QR', 'B2B e-invoices signed with the USB token, credit notes, status tracking, cancel and A4 print')],
     ['phone', L('الفواتير بتتسجّل من الموبايل كمان، والكمبيوتر اللي عليه الفلاشة بيوقّعها ويبعتها', 'Invoices can be recorded on mobile and signed on the PC with the token')],
     ['user', L('بيانات العميل للمنظومة: نوعه (فرد / شركة / أجنبي) ورقم التسجيل الضريبي والرقم القومي والعنوان بالتفصيل', 'Customer tax data: type, tax no., national ID and address')],

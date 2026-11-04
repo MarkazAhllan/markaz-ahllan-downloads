@@ -2096,6 +2096,9 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .wpc-prev { background: #eee; border-radius: 14px; padding: 10px; display: flex; justify-content: center; }
 .wpc-prev iframe { width: 302px; height: 520px; border: 0; background: #fff; border-radius: 8px; }
 @media (max-width: 760px) { .wpc { grid-template-columns: 1fr; } .wpc-prev { order: -1; } .wpc-prev iframe { height: 420px; } }
+
+/* سطر إشعارات الجهاز في لوحة الجرس */
+.sn-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 6px 14px 2px; padding: 8px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); font-size: 13px; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -10878,6 +10881,8 @@ Modules.settings = {
    ========================================================= */
 const CHANGELOG = [
   { v: '1.8.0', d: '2026-11-02', items: [
+    ['bell', L('إشعارات في ستارة الموبايل وإشعارات ويندوز: كل عملية محفظة من رسالة الشركة، والكاش اللي لسه متأكدش، وفروق الرصيد، والنواقص والليمت — وزرار تشغيل/إيقاف في لوحة الجرس 🔔', 'System notifications on Android & Windows')],
+    ['send', L('تطبيق «مركز أهلاً SMS»: إشعار في الستارة لكل رسالة، وإشعار ثابت فيه عدّاد النهارده (عدد الرسائل والوارد والصادر والتحذيرات)، وبيطلب كل الأذونات لوحده أول ما يفتح ويطلب استثناء البطارية عشان الموبايل مايقفلوش', 'SMS helper: per-message notifications, pinned live counter, auto permissions')],
     ['printer', L('طباعة كارت المحفظة بقت بنافذة اختيارات ومعاينة: تختار تظهر إيه (اللوجو، اسم المحل، نوع المحفظة، اسم المالك، اسم المحفظة، موديل الموبايل، QR، الوقت والتاريخ، جملة الترحيب والسطر الأخير وتكتبهم بنفسك) وحجم الكارت صغير أو عادي — واختياراتك بتتحفظ', 'Wallet card print options with live preview')],
     ['printer', L('كل المطبوعات (الإيصالات، الفواتير، الملصقات، كارت المحفظة، التقارير) بقت بخط Cairo مضمون حتى على الموبايل ومن غير إنترنت — وكارت المحفظة اتصغّر واسم المالك بقى كبير وواضح', 'All printouts now embed the Cairo font; smaller wallet card with a bigger owner name')],
     ['bank', L('الشركاء وتوزيع الأرباح: لكل شريك طريقة أرباح (حسب حصته، أو نسبة % من صافي الربح أو من أرباح الكاش، أو مبلغ ثابت كل شهر) — «صرف أرباح» بإيصال يمضي عليه ومش بيقلل رأس ماله، و«سحب من رأس المال» بيقلل حصته، واعتماد مستحقات الشهر 🔒، وكشف حساب لكل شريك', 'Partners: profit rules, payouts with receipts, capital withdrawals, monthly approval and statements')],
@@ -16721,6 +16726,97 @@ const Partners = {
   /* حذف حركة: نرجّع الفلوس للدرج / المحفظة */
   const e0 = CP.entry.bind(CP);
   CP.entry = function (type) { if (type === 'withdrawal') return Partners.withdraw(null, 'capital'); return e0(type); };
+})();
+
+</script>
+  <script>
+/* =========================================================
+   إشعارات النظام (ستارة الموبايل / إشعارات ويندوز)
+   - كل تنبيه جديد في جرس البرنامج بيوصل إشعار (مرة واحدة كل 12 ساعة لنفس التنبيه)
+   - كل عملية محفظة اتسجلت من رسالة الشركة بتوصل إشعار فوري
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const SysNotify = {
+  KEY: 'mah:sysNotify', SEEN: 'mah:sysNotifySeen',
+  cfg() { try { return { on: true, ops: true, ...(JSON.parse(localStorage.getItem(this.KEY) || '{}')) }; } catch (_) { return { on: true, ops: true }; } },
+  save(c) { try { localStorage.setItem(this.KEY, JSON.stringify({ ...this.cfg(), ...c })); } catch (_) {} },
+  plug() { const C = window.Capacitor; return C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.LocalNotify ? C.Plugins.LocalNotify : null; },
+  supported() { return !!this.plug() || typeof window.Notification === 'function'; },
+  async status() {
+    const p = this.plug(); if (p) { try { return await p.status(); } catch (_) { return { granted: false, enabled: false }; } }
+    if (typeof window.Notification !== 'function') return { granted: false, enabled: false };
+    const g = Notification.permission === 'granted'; return { granted: g, enabled: g };
+  },
+  async request() {
+    const p = this.plug(); if (p) { try { const r = await p.request(); if (r && r.granted && !r.enabled) await p.settings(); return r; } catch (_) { return { granted: false }; } }
+    if (typeof window.Notification !== 'function') return { granted: false };
+    try { const r = await Notification.requestPermission(); return { granted: r === 'granted', enabled: r === 'granted' }; } catch (_) { return { granted: false }; }
+  },
+  _id: 1000,
+  async show(title, text, level = 'info') {
+    if (!this.cfg().on) return false;
+    const p = this.plug();
+    if (p) { try { const r = await p.show({ id: (this._id = (this._id % 90000) + 1) + 1000, title, text, level }); return !!(r && r.shown); } catch (_) { return false; } }
+    if (typeof window.Notification === 'function' && Notification.permission === 'granted') {
+      try { const n = new Notification(title, { body: text, icon: 'assets/logo.png', tag: 'mah-' + title, silent: level !== 'alert' }); n.onclick = () => { try { window.focus(); n.close(); } catch (_) {} }; return true; } catch (_) {}
+    }
+    return false;
+  },
+  seen() { try { return JSON.parse(localStorage.getItem(this.SEEN) || '{}'); } catch (_) { return {}; } },
+  /* التنبيهات الجديدة في الجرس → إشعار */
+  async tick() {
+    if (!Session.user || !this.cfg().on) return;
+    let items = []; try { items = Notify.list(); } catch (_) { return; }
+    const seen = this.seen(); const now = Date.now(); const fresh = [];
+    items.forEach((n) => { const k = String(n.t).slice(0, 120); if (!seen[k] || now - seen[k] > 12 * 3600e3) fresh.push(n); seen[k] = seen[k] && now - seen[k] <= 12 * 3600e3 ? seen[k] : now; });
+    Object.keys(seen).forEach((k) => { if (now - seen[k] > 3 * 864e5) delete seen[k]; });
+    try { localStorage.setItem(this.SEEN, JSON.stringify(seen)); } catch (_) {}
+    if (!fresh.length) return;
+    const st = DB.settings().store?.name || 'مركز أهلاً';
+    for (const n of fresh.slice(0, 3)) await this.show((n.type === 'err' ? '⚠️ ' : '🔔 ') + n.t, [n.s, st].filter(Boolean).join(' — '), n.type === 'err' ? 'alert' : 'info');
+    if (fresh.length > 3) await this.show(`🔔 ${fresh.length - 3} ${L('تنبيهات تانية', 'more alerts')}`, L('افتح البرنامج وشوف جرس التنبيهات', 'Open the app to see all alerts'));
+  },
+  start() {
+    if (this._t) return; this._t = setInterval(() => this.tick(), 60 * 1000); setTimeout(() => this.tick(), 8000);
+    // أول مرة على الموبايل: نطلب إذن الإشعارات لوحده
+    setTimeout(async () => { try { if (!this.cfg().on || !this.supported()) return; const s = await this.status(); if (!s.granted && !localStorage.getItem('mah:sysNotifyAsked')) { localStorage.setItem('mah:sysNotifyAsked', '1'); await this.request(); } } catch (_) {} }, 4000);
+  },
+  /* زرار في لوحة الجرس */
+  async panelRow(p) {
+    if (!this.supported()) return;
+    const s = await this.status(); const c = this.cfg(); const on = c.on && s.enabled;
+    const row = document.createElement('div'); row.className = 'sn-row';
+    row.innerHTML = `<span>${on ? '🔔' : '🔕'} ${L('إشعارات الجهاز', 'Device notifications')}: <b>${on ? L('شغالة', 'On') : L('مقفولة', 'Off')}</b></span><button class="btn sm ${on ? '' : 'primary'}">${on ? L('إيقاف', 'Turn off') : L('تشغيل', 'Turn on')}</button>`;
+    $('button', row).onclick = async (e) => {
+      e.stopPropagation();
+      if (on) { this.save({ on: false }); UI.toast(L('اتقفلت إشعارات الجهاز', 'Device notifications off')); }
+      else { this.save({ on: true }); const r = await this.request(); if (r.granted) { await this.show('🔔 ' + L('الإشعارات شغالة', 'Notifications on'), L('هتوصلك هنا تنبيهات المحافظ والكاش والنواقص', 'Wallet, cash and stock alerts will appear here')); UI.toast(L('اشتغلت ✓ — بص على الستارة', 'On ✓')); } else UI.toast(L('اسمح بالإشعارات من إعدادات الموبايل للبرنامج', 'Allow notifications in system settings'), 'warn'); }
+      row.remove(); this.panelRow(p);
+    };
+    const h = $('.card-h', p); if (h) h.insertAdjacentElement('afterend', row); else p.prepend(row);
+  }
+};
+
+(() => {
+  // عملية محفظة من رسالة الشركة → إشعار فوري
+  if (typeof SmsLink !== 'undefined' && SmsLink.record) {
+    const r0 = SmsLink.record.bind(SmsLink);
+    SmsLink.record = function (sms, p, w, opt = {}) {
+      const t = r0(sms, p, w, opt);
+      try {
+        if (t && SysNotify.cfg().ops) {
+          const typ = t.type === 'deposit' ? L('إيداع', 'Deposit') : t.type === 'withdraw' ? L('سحب', 'Withdraw') : L('تحويل', 'Transfer');
+          const bal = w && typeof Wallets !== 'undefined' ? Wallets.balance(DB.get('wallets', w.id) || w) : null;
+          SysNotify.show(`💸 ${typ} ${money(t.amount)} — ${w ? w.name : ''}`, [t.clientName || t.clientPhone || '', bal != null ? L('رصيد المحفظة: ', 'Balance: ') + money(bal) : '', t.cashPending ? L('⚠️ أكّد استلام الكاش', '⚠️ Confirm cash') : ''].filter(Boolean).join(' · '), t.cashPending ? 'alert' : 'info');
+        }
+      } catch (_) {}
+      return t;
+    };
+  }
+  // سطر التحكم في لوحة الجرس
+  if (typeof Notify !== 'undefined') { const tg = Notify.toggle.bind(Notify); Notify.toggle = function () { tg(); const p = $('.notif-panel'); if (p) SysNotify.panelRow(p); }; }
+  // تشغيل بعد الدخول
+  const iv = setInterval(() => { if (typeof Session !== 'undefined' && Session.user) { clearInterval(iv); SysNotify.start(); } }, 3000);
 })();
 
 </script>

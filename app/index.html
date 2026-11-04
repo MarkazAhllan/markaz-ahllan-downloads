@@ -2038,6 +2038,58 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .wx-elegant .wx-id b, .wx-compact .wx-mid b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .wx-elegant .wx-3 button { overflow: hidden; text-overflow: ellipsis; padding: 0 4px; }
 @media (max-width: 900px) { .wgrid:has(> .wx) { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- New wallet styles: narrow cards (2+ per row on phones, many per row on desktop) ---- */
+.wcard.wx { container-type: inline-size; min-width: 0; }
+@container (max-width: 300px) {
+  .wx .wx-lg { width: 36px; height: 36px; border-radius: 11px; font-size: 12px; }
+  .wx .wx-ic { width: 28px; height: 28px; border-radius: 8px; } .wx .wx-ic svg { width: 14px; height: 14px; }
+  .wx .wx-idx { min-width: 24px; height: 24px; font-size: 12px; }
+  .wx .wx-b { height: 38px; font-size: 13px; border-radius: 11px; gap: 4px; } .wx .wx-b svg { width: 15px; height: 15px; }
+  .wx .wx-chip { height: 22px; padding: 0 6px; font-size: 11px; }
+  .wx .wx-sms, .wx .wx-low { font-size: 10.5px; padding: 2px 7px; }
+  .wx .wc-sync { font-size: 12px; padding: 6px; }
+  .wx small span[dir="ltr"] { white-space: normal; }
+  .wx-elegant .wx-h { flex-wrap: wrap; gap: 6px; }
+  .wx-elegant .wx-icons { margin-inline-start: auto; gap: 4px; }
+  .wx-elegant .wx-id { order: 5; flex: 1 1 100%; }
+  .wx-elegant .wx-id b { font-size: 14px; } .wx-elegant .wx-id small { font-size: 11.5px; } .wx-elegant .wx-id small span[dir="ltr"] { font-size: 13px; }
+  .wx-elegant .wx-bal b { font-size: 24px; }
+  .wx-elegant .wx-lr { grid-template-columns: 1fr auto; gap: 3px 6px; font-size: 11.5px; }
+  .wx-elegant .wx-lr .wx-bar { grid-column: 1 / -1; order: 3; }
+  .wx-elegant .wx-lr b { min-width: 0; font-size: 12.5px; }
+  .wx-elegant .wx-2 { gap: 6px; }
+  .wx-elegant .wx-3 { grid-template-columns: 1fr; gap: 5px; } .wx-elegant .wx-3 button { height: 32px; font-size: 12px; }
+  .wcard.wx-bank { padding: 12px; }
+  .wx-bank .wx-r1 { flex-wrap: wrap; gap: 6px; } .wx-bank .wx-nt { font-size: 13px; }
+  .wx-bank .wx-no { font-size: 17px; letter-spacing: .5px; white-space: normal; text-align: center; }
+  .wx-bank .wx-own { font-size: 11px; flex-direction: column; gap: 2px; }
+  .wx-bank .wx-balr b { font-size: 22px; }
+  .wx-bank .wx-lg4 { grid-template-columns: 1fr; gap: 5px; } .wx-bank .wx-lg4 > div { padding: 5px 8px; }
+  .wx-bank .wx-acts { grid-template-columns: 1fr 1fr 34px; gap: 5px; }
+  .wcard.wx-compact { padding: 10px; }
+  .wx-compact .wx-r { flex-wrap: wrap; gap: 8px; }
+  .wx-compact .wx-lg { width: 34px; height: 34px; font-size: 11.5px; }
+  .wx-compact .wx-mid { flex: 1 1 0; } .wx-compact .wx-mid b { font-size: 13px; } .wx-compact .wx-mid small { font-size: 11px; }
+  .wx-compact .wx-bal { flex: 1 1 100%; text-align: start; display: flex; align-items: baseline; gap: 8px; } .wx-compact .wx-bal b { font-size: 18px; }
+  .wx-compact .wx-lm { grid-template-columns: 1fr; gap: 5px; }
+  .wx-compact .wx-q { flex-wrap: wrap; gap: 5px; } .wx-compact .wx-q .wx-chips { display: none; }
+  .wx-compact .wx-q .wx-b { height: 34px; font-size: 12.5px; } .wx-compact .wx-q .wx-b.more { flex: 0 0 32px; }
+}
+@container (max-width: 175px) {
+  .wcard.wx { padding: 8px !important; gap: 6px; border-radius: 14px; }
+  .wx .wx-b { height: 32px; font-size: 12px; } .wx .wx-b svg { width: 13px; height: 13px; }
+  .wx-elegant .wx-2, .wx-bank .wx-acts { grid-template-columns: 1fr; gap: 5px; }
+  .wx-bank .wx-acts .wx-b.more { height: 28px; }
+  .wx-elegant .wx-bal b, .wx-bank .wx-balr b { font-size: 19px; } .wx-elegant .wx-bal span { display: none; }
+  .wx-elegant .wx-lr { font-size: 10.5px; } .wx-elegant .wx-lr b { font-size: 11.5px; }
+  .wx-elegant .wx-icons .wx-ic[data-act="print"] { display: none; }
+  .wx-bank .wx-no { font-size: 14px; } .wx-bank .wx-lg4 b { font-size: 12px; } .wx-bank .wx-lg4 small { font-size: 10px; }
+  .wx-compact .wx-mid b { white-space: normal; flex-wrap: wrap; }
+  .wx-compact .wx-lg { display: none; }
+  .wx-compact .wx-bal b { font-size: 16px; } .wx-compact .wx-lm small { font-size: 10px; }
+  .wx-compact .wx-q { flex-direction: column; align-items: stretch; } .wx-compact .wx-q .wx-b.more { flex: 0 0 28px; }
+}
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)

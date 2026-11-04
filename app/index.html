@@ -1919,6 +1919,12 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
   .topbar h1 { max-width: 220px; }
   #trialPill .trial-badge { max-width: 170px; }
 }
+/* 1.8 — مالية وتقارير الأقسام */
+.rf-bars { display: flex; align-items: flex-end; gap: 4px; height: 170px; padding-top: 6px; }
+.rf-b { flex: 1; min-width: 8px; max-width: 46px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; }
+.rf-b i { width: 100%; border-radius: 6px 6px 2px 2px; background: linear-gradient(180deg, var(--p), var(--p-700, #5e0f1c)); display: block; }
+.rf-b small { font-size: 10px; color: var(--muted); }
+.cs-seg button small { opacity: .7; margin-inline-start: 4px; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2493,7 +2499,7 @@ const feat = (k) => !!DB.settings().features[k];
 /* ---------------- Session & permissions ---------------- */
 const PERMS = [
   ['dashboard', 'لوحة التحكم', 'Dashboard'], ['pos', 'نقطة البيع', 'POS'], ['sales', 'المبيعات', 'Sales'], ['sales.delete', 'حذف/مرتجع فواتير', 'Delete/return invoices'], ['discount.unlimited', 'خصم بدون حد (من غير موافقة)', 'Unlimited discount'], ['approve', 'الموافقة على طلبات الكاشير (خصم / مرتجع)', 'Approve cashier requests'], ['installments', 'البيع بالتقسيط: إنشاء وتحصيل', 'Installments'],
-  ['purchases', 'المشتريات', 'Purchases'], ['inventory', 'المخزون', 'Inventory'], ['inventory.cost', 'رؤية سعر التكلفة', 'View cost price'], ['suppliers', 'الموردين', 'Suppliers'],
+  ['purchases', 'المشتريات', 'Purchases'], ['inventory', 'المخزون', 'Inventory'], ['inventory.cost', 'رؤية سعر التكلفة والأرباح (للمدير ومدير الفرع بس)', 'View cost & profit (admin & branch manager only)'], ['suppliers', 'الموردين', 'Suppliers'],
   ['customers', 'العملاء والآجل', 'Customers & credit'], ['machines', 'ماكينات الشحن', 'Charging machines'], ['wallets', 'معاملات الكاش', 'Cash wallets'], ['wallets.manage', 'تعديل وحذف عمليات المحافظ', 'Edit/delete wallet ops'],
   ['expenses', 'المصروفات', 'Expenses'], ['reports', 'التقارير', 'Reports'], ['capital', 'رأس المال', 'Capital'], ['shifts', 'الورديات', 'Shifts'],
   ['users', 'المستخدمين', 'Users'], ['attendance', 'الحضور والانصراف', 'Attendance'], ['payroll', 'المرتبات', 'Payroll'], ['backup', 'النسخ الاحتياطي', 'Backup'],
@@ -2510,7 +2516,10 @@ const ROLE_NAMES = { admin: ['مدير النظام', 'Administrator'], manager:
 function roleName(r) { if (ROLE_NAMES[r]) return L(...ROLE_NAMES[r]); const c = (DB.settings().roles || []).find((x) => x.id === r); return c ? c.name : L(...ROLE_NAMES.custom); }
 const Session = {
   user: null,
-  can(p) { if (!this.user) return false; if (this.user.role === 'admin' || this.user.username === 'admin') return true; return (this.user.perms || []).includes(p); },
+  can(p) { if (!this.user) return false; if (this.user.role === 'admin' || this.user.username === 'admin') return true;
+    /* أسعار التكلفة والأرباح: مدير النظام (المالك) ومدير الفرع بس — حتى لو الصلاحية متعلّمة لدور تاني */
+    if (p === 'inventory.cost' && this.user.role !== 'manager') return false;
+    return (this.user.perms || []).includes(p); },
   shift() { return this.user ? DB.find('shifts', (s) => s.status === 'open' && s.userId === this.user.id) : null; },
   anyOpenShift() { return DB.find('shifts', (s) => s.status === 'open'); }
 };
@@ -5892,7 +5901,7 @@ Modules.repairs = {
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('إضافة', 'Add'), cls: 'primary', onClick: (x) => {
         if (!UI.validate(x.el)) return; const v = UI.read(x.el); const qty = Math.max(1, Number(v.qty) || 1);
         if (prod && prod.trackStock !== false && Stock.qty(prod) < qty && !DB.settings().allowNegativeStock) return UI.toast(L('الكمية غير متوفرة في المخزون', 'Not enough stock'), 'err');
-        const part = { id: uid(), productId: prod?.id || null, name: v.name, qty, cost: Number(v.cost) || 0, price: Number(v.price) || 0 };
+        const part = { id: uid(), productId: prod?.id || null, name: v.name, qty, cost: Number(v.cost) || 0, price: Number(v.price) || 0, date: nowISO() };
         if (prod) Stock.move(prod.id, -qty, 'repair', r.no, L('قطعة غيار صيانة', 'Repair part'));
         DB.update('repairs', r.id, { parts: [...(DB.get('repairs', r.id).parts || []), part] }); audit('repair.part', `${r.no} ${v.name}`); x.close(); this.refresh(r.id);
       } }] });
@@ -6174,13 +6183,14 @@ Modules.phones = {
         </div>
       </div>
       <div class="row wrap mb" style="gap:8px">
-        <div class="tabs" id="phTabs">${[['stock', L('المخزون', 'Stock'), st.length], ['reserved', L('المحجوز', 'Reserved'), st.filter((p) => p.status === 'reserved').length], ['sold', L('المباع', 'Sold')], ['all', L('كل الأجهزة', 'All')]].map(([k, l, n]) => `<button data-t="${k}" class="${this.tab === k ? 'active' : ''}">${l}${n ? ` <span class="tag" style="padding:0 7px">${n}</span>` : ''}</button>`).join('')}</div>
+        <div class="tabs" id="phTabs">${[['stock', L('المخزون', 'Stock'), st.length], ['reserved', L('المحجوز', 'Reserved'), st.filter((p) => p.status === 'reserved').length], ['sold', L('المباع', 'Sold')], ['all', L('كل الأجهزة', 'All')], ['value', L('المخزون والأرباح', 'Stock & profit')], ...(Session.can('reports') ? [['reports', L('التقارير', 'Reports')]] : []), ...(Session.can('reports') || Session.can('expenses') ? [['finance', L('المالية', 'Finance')]] : [])].map(([k, l, n]) => `<button data-t="${k}" class="${this.tab === k ? 'active' : ''}">${l}${n ? ` <span class="tag" style="padding:0 7px">${n}</span>` : ''}</button>`).join('')}</div>
         <div class="spacer"></div>
         <select id="phBrand" style="width:auto;height:38px"><option value="">${L('كل الماركات', 'All brands')}</option>${brands.map((b) => `<option ${b === this.brand ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select>
         <div class="seg" id="phCond">${[['', L('الكل', 'All')], ...Object.entries(PH_COND).map(([k, v]) => [k, L(v[0], v[1])])].map(([k, l]) => `<button data-c="${k}" class="${this.cond === k ? 'on' : ''}">${l}</button>`).join('')}</div>
       </div>
       <div id="phList"></div>`;
-    const draw = () => this.list($('#phList', el));
+    const draw = () => (this.tab === 'value' && this.valueTab ? this.valueTab($('#phList', el)) : this.tab === 'reports' && this.reportsTab ? this.reportsTab($('#phList', el)) : this.tab === 'finance' && this.financeTab ? this.financeTab($('#phList', el)) : this.list($('#phList', el)));
+    if (['value', 'reports', 'finance'].includes(this.tab)) { const b = $('#phBrand', el), c = $('#phCond', el); if (this.tab !== 'value') { b && (b.style.display = 'none'); c && (c.style.display = 'none'); } }
     $('#phQ', el).oninput = debounce((e) => { this.q = e.target.value; draw(); }, 150);
     $('#phQ', el).onkeydown = (e) => { if (e.key === 'Enter') { const p = Phones.byCode(e.target.value); if (p) this.details(p); } };
     $('#phCam', el).onclick = () => Scanner.camera((code) => { const p = Phones.byCode(code); if (p) this.details(p); else { this.q = code; App.reload(); } });
@@ -6645,10 +6655,10 @@ Modules.cctv = {
           ${Session.can('cctv.manage') ? `<button class="btn ghost" id="cvCfg" title="${L('إعدادات القسم', 'Section settings')}">${icon('settings')}</button>` : ''}
         </div>
       </div>
-      <div class="tabs mb" id="cvTabs">${[['jobs', L('التركيبات', 'Installations'), 'cctv'], ['quotes', L('عروض الأسعار', 'Quotes'), 'receipt', quotes.length], ['stock', L('المخزون والأرباح', 'Stock & profit'), 'box'], ['care', L('الضمان والزيارات', 'Warranty & visits'), 'shield', soon.length + visits.length]].map(([k, l, ic, n]) => `<button data-t="${k}" class="${this.tab === k ? 'active' : ''}">${icon(ic)}${l}${n ? ` <span class="tag warn" style="padding:0 7px">${n}</span>` : ''}</button>`).join('')}</div>
+      <div class="tabs mb" id="cvTabs">${[['jobs', L('التركيبات', 'Installations'), 'cctv'], ['quotes', L('عروض الأسعار', 'Quotes'), 'receipt', quotes.length], ['stock', L('المخزون والأرباح', 'Stock & profit'), 'box'], ['care', L('الضمان والزيارات', 'Warranty & visits'), 'shield', soon.length + visits.length], ...(Session.can('reports') ? [['reports', L('التقارير', 'Reports'), 'chart']] : []), ...(Session.can('reports') || Session.can('expenses') ? [['finance', L('المالية', 'Finance'), 'bank']] : [])].map(([k, l, ic, n]) => `<button data-t="${k}" class="${this.tab === k ? 'active' : ''}">${icon(ic)}${l}${n ? ` <span class="tag warn" style="padding:0 7px">${n}</span>` : ''}</button>`).join('')}</div>
       <div id="cvBody"></div>`;
     const body = $('#cvBody', el);
-    const draw = () => (this.tab === 'stock' ? this.stock(body) : this.tab === 'care' ? this.care(body) : this.list(body));
+    const draw = () => (this.tab === 'stock' ? this.stock(body) : this.tab === 'care' ? this.care(body) : this.tab === 'reports' && this.reportsTab ? this.reportsTab(body) : this.tab === 'finance' && this.financeTab ? this.financeTab(body) : this.list(body));
     $('#cvQ', el).oninput = debounce((e) => { this.q = e.target.value; if (this.tab === 'stock' || this.tab === 'care') { this.tab = this.tab === 'stock' ? 'stock' : 'jobs'; } draw(); }, 150);
     $('#cvQ', el).onkeydown = (e) => { if (e.key === 'Enter') { const j = CCTV.find(e.target.value); if (j) this.view(j); } };
     $('#cvQuote', el) && ($('#cvQuote', el).onclick = () => this.form(null, { quote: true }));
@@ -10020,7 +10030,7 @@ function reportDoc(title, bodyHTML, landscape = false) {
 
 Modules.reports = {
   title: () => L('التقارير', 'Reports'), icon: 'chart', perm: 'reports', type: 'pl', st: { preset: 'month' },
-  types: () => [['pl', L('الأرباح والخسائر', 'Profit & loss'), 'trend'], ['sales', L('المبيعات', 'Sales'), 'cart'], ['products', L('الأصناف', 'Products'), 'box'], ['inventory', L('المخزون', 'Inventory'), 'layers'], ...(feat('phones') ? [['phones', L('الموبايلات', 'Phones'), 'phone']] : []), ...(feat('cctv') ? [['cctv', L('تركيبات الكاميرات', 'CCTV installations'), 'cctv']] : []), ['cash', L('خدمات الكاش', 'Cash services'), 'wallet'], ['debts', L('العملاء والموردين', 'Customers & suppliers'), 'credit'], ['expenses', L('المصروفات', 'Expenses'), 'expense'], ['shifts', L('الورديات والكاشير', 'Shifts & cashiers'), 'clock'], ['hr', L('الموظفين', 'Employees'), 'users']],
+  types: () => [...(Session.can('inventory.cost') ? [['pl', L('الأرباح والخسائر', 'Profit & loss'), 'trend']] : []), ['sales', L('المبيعات', 'Sales'), 'cart'], ['products', L('الأصناف', 'Products'), 'box'], ['inventory', L('المخزون', 'Inventory'), 'layers'], ...(feat('phones') ? [['phones', L('الموبايلات', 'Phones'), 'phone']] : []), ...(feat('cctv') ? [['cctv', L('تركيبات الكاميرات', 'CCTV installations'), 'cctv']] : []), ['cash', L('خدمات الكاش', 'Cash services'), 'wallet'], ['debts', L('العملاء والموردين', 'Customers & suppliers'), 'credit'], ['expenses', L('المصروفات', 'Expenses'), 'expense'], ['shifts', L('الورديات والكاشير', 'Shifts & cashiers'), 'clock'], ['hr', L('الموظفين', 'Employees'), 'users']],
   render(el) {
     el.innerHTML = `<div class="grid" style="grid-template-columns:230px 1fr;gap:16px;align-items:start">
       <div class="card" style="padding:8px;position:sticky;top:0">${this.types().map(([k, l, ic]) => `<a class="btn ghost block" style="justify-content:flex-start;margin-bottom:2px;${k === this.type ? 'background:var(--p-50);color:var(--p)' : ''}" data-rt="${k}">${icon(ic)}${l}</a>`).join('')}</div>
@@ -10050,6 +10060,7 @@ Modules.reports = {
     const { from, to } = this.st; const R = (fn) => (x) => inRange(x.date, from, to);
     const sales = DB.filter('sales', R()), wtx = DB.filter('walletTx', R()), mtx = DB.filter('machineTx', R()), exps = DB.filter('expenses', R()), purs = DB.filter('purchases', R());
     const canCost = Session.can('inventory.cost');
+    if (this.type === 'pl' && !canCost) this.type = 'sales';
     let r = { title: '', kpis: [], tables: [], chart: null };
     const days = (() => { const d = [...new Set([...sales, ...wtx, ...mtx, ...exps].map((x) => dayKey(x.date)))].sort(); return d; })();
     if (this.type === 'phones' && typeof Phones !== 'undefined') r = Phones.report(from, to, canCost);
@@ -10566,6 +10577,10 @@ Modules.settings = {
    ========================================================= */
 const CHANGELOG = [
   { v: '1.8.0', d: '2026-11-02', items: [
+    ['lock', L('أسعار التكلفة والأرباح بقت تظهر لمدير النظام (المالك) ومدير الفرع بس — الكاشير والمحاسب وأي دور تاني مش بيشوفوها حتى لو الصلاحية متعلّمة', 'Cost and profit visible to admin and branch manager only')],
+    ['cctv', L('كاميرات المراقبة: المخزون بقى مقسّم (أجهزة التسجيل، الكاميرات، الهارد، الباور سبلاي، الوصلات، الشبكات، المستلزمات) بالتكلفة وسعر البيع والربح المتوقع، والنواقص بطلبية للمورد، وتبويب «التقارير» و«المالية» للقسم', 'CCTV: grouped stock with cost/profit, shortages & order list, department reports and finance')],
+    ['phone', L('قسم الموبايلات: تبويب «المخزون والأرباح» (حسب الماركة والحالة والموديل وأعمار المخزون والنواقص) و«التقارير» و«المالية» للقسم', 'Phones: stock & profit, department reports and finance')],
+    ['expense', L('مصروف على القسم: سجّل مصروفات الكاميرات أو الموبايلات على قسمها، وصافي ربح كل قسم بيتحسب بعد مصروفاته — ومربوط بالتقارير الشاملة', 'Department expenses and net profit per department')],
     ['tool', L('الصيانة: ملصق يتلزق على الجهاز بيطبع لوحده بعد الاستلام (رقم الإيصال والعميل والجهاز وباركود)، وملصق «ضمان صيانة» بلوجو المحل وتاريخ انتهاء الضمان بيطبع عند التسليم', 'Repairs: device sticker on intake and warranty sticker on delivery')],
     ['receipt', L('الفاتورة الإلكترونية للشركات: البيع لعميل نوعه «شركة» بيطلع فاتورة ضريبية إلكترونية موقّعة بفلاشة التوقيع (USB Token) وبتتبعت للمصلحة لوحدها، والمرتجع بيطلع إشعار دائن مربوط بيها — مع متابعة الحالة (صالحة / غير صالحة) والإلغاء والطباعة A4 بالـ QR', 'B2B e-invoices signed with the USB token, credit notes, status tracking, cancel and A4 print')],
     ['phone', L('الفواتير بتتسجّل من الموبايل كمان، والكمبيوتر اللي عليه الفلاشة بيوقّعها ويبعتها', 'Invoices can be recorded on mobile and signed on the PC with the token')],
@@ -15626,6 +15641,452 @@ Modules.einv = {
       onAction: (a, r) => { if (a === 'print') EInv.print(r); if (a === 'retry') EInv.retry(r); if (a === 'open') EInv.open(r); if (a === 'cancel') EInv.cancel(r); } });
   }
 };
+
+</script>
+  <script>
+/* =========================================================
+   قسم كاميرات المراقبة — المخزون والنواقص والتقارير والمالية (1.8)
+   - المخزون مقسّم: أجهزة التسجيل، الكاميرات، الهارد، الباور سبلاي، الوصلات والكابلات، الشبكات، المستلزمات
+     بالتكلفة وسعر البيع والربح المتوقع والهامش + النواقص وطلبية للمورد
+   - تقارير القسم كاملة — ومربوطة بقسم التقارير الشامل (نوع «تركيبات الكاميرات» بقى بيستخدم نفس التقرير)
+   - مالية القسم: المحصّل (نقدي / محافظ / آجل)، العرابين، الزيارات، مصروفات القسم، صافي الربح، المتبقي عند العملاء
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const CvStock = {
+  /* الترتيب مهم: الباور سبلاي والوصلات قبل الكاميرات عشان «باور سبلاي كاميرات» و «كابل كاميرات» */
+  GROUPS: [
+    { k: 'dvr', e: '🖥️', ar: 'أجهزة التسجيل (DVR / NVR)', en: 'Recorders (DVR / NVR)', rx: /\b(DVR|NVR|XVR|HVR)\b|جهاز تسجيل|ريكوردر|recorder/i },
+    { k: 'hdd', e: '💽', ar: 'الهارد ديسك والتخزين', en: 'Hard disks & storage', rx: /هارد|\bHDD\b|\bSSD\b|hard ?dis|تيرا|\bTB\b|كارت ذاكرة|ميموري|micro ?sd/i },
+    { k: 'psu', e: '🔌', ar: 'الباور سبلاي والمحولات', en: 'Power supplies & adapters', rx: /باور ?سبلاي|باور ?صبلاي|power ?supply|\bPSU\b|محول|أدابتر|ادابتر|adapter|\bUPS\b|\d+\s*A\b|بطارية/i },
+    { k: 'conn', e: '🔗', ar: 'الوصلات والكابلات', en: 'Connectors & cables', rx: /وصل|كابل|سلك|\bBNC\b|\bRJ ?45\b|\bDC\b|بلج|جاك|كونكتور|connector|cable|balun|بالون|ترنك|خرطوم|مواسير/i },
+    { k: 'net', e: '📡', ar: 'الشبكات والراوترات', en: 'Networking', rx: /راوتر|سويتش|switch|router|\bPoE\b|access ?point|اكسس|نانو ستيشن/i },
+    { k: 'cam', e: '📹', ar: 'الكاميرات', en: 'Cameras', rx: /كامير|camera|\bcam\b|\bPTZ\b|bullet|dome|بولت|دوم/i },
+    { k: 'other', e: '📦', ar: 'مستلزمات أخرى', en: 'Other supplies', rx: null }
+  ],
+  catName(p) { return DB.get('categories', p.categoryId)?.name || ''; },
+  group(p) { for (const t of [p.name, this.catName(p)]) for (const g of this.GROUPS) if (g.rx && t && g.rx.test(t)) return g.k; return 'other'; },
+  gmeta(k) { return this.GROUPS.find((g) => g.k === k) || this.GROUPS[this.GROUPS.length - 1]; },
+  gname(k) { const g = this.gmeta(k); return `${g.e} ${L(g.ar, g.en)}`; },
+  used(from, to) { const m = {}; DB.filter('cctvJobs', (j) => j.status === 'installed' && inRange(j.installedAt, from, to)).forEach((j) => (j.items || []).forEach((i) => { if (i.productId) m[i.productId] = (m[i.productId] || 0) + (Number(i.qty) || 0); })); return m; },
+  rows() {
+    const mk = monthKey(); const used = this.used(mk + '-01', mk + '-31');
+    return CCTV.stockRows().map((x) => ({ ...x, g: this.group(x.p), unitProf: round2(x.price - x.cost), used: used[x.p.id] || 0,
+      need: Math.max(1, Math.ceil(Math.max((Number(x.p.minQty) || 0) * 2, used[x.p.id] || 0) - x.free)) }));
+  }
+};
+
+/* ---------------- مالية القسم ---------------- */
+const CvFin = {
+  srcKind(src) { if (!src || src === 'drawer') return 'cash'; if (src === 'credit') return 'credit'; if (String(src).startsWith('w:')) return 'wallet'; return 'other'; },
+  srcName(src) { if (!src || src === 'drawer') return L('نقدي (الدرج)', 'Cash'); if (src === 'credit') return L('آجل على العميل', 'Credit'); if (String(src).startsWith('w:')) return L('محفظة: ', 'Wallet: ') + (DB.get('wallets', src.slice(2))?.name || ''); return src; },
+  moves(from, to) {
+    const out = [];
+    CCTV.jobs().forEach((j) => (j.payments || []).forEach((p) => { if (inRange(p.date, from, to)) out.push({ date: p.date, no: j.no, jid: j.id, customer: j.customerName, amount: Number(p.amount) || 0, src: p.src, note: p.note || '', status: j.status }); }));
+    return out.sort((a, b) => (a.date < b.date ? 1 : -1));
+  },
+  expenses(from, to) { return DB.filter('expenses', (e) => e.dept === 'cctv' && inRange(e.date, from, to)).sort((a, b) => (a.date < b.date ? 1 : -1)); },
+  summary(from, to) {
+    const mv = this.moves(from, to); const ex = this.expenses(from, to);
+    const k = (kind) => round2(sum(mv.filter((m) => this.srcKind(m.src) === kind && m.amount > 0), (m) => m.amount));
+    const inst = DB.filter('cctvJobs', (j) => j.status === 'installed' && inRange(j.installedAt, from, to));
+    const visits = []; CCTV.jobs().forEach((j) => (j.visits || []).forEach((v) => { if (inRange(v.date, from, to)) visits.push({ ...v, j }); }));
+    const rev = round2(sum(inst, (j) => CCTV.jobTotal(j))), devCost = round2(sum(inst, (j) => CCTV.itemsCost(j))), labCost = round2(sum(inst, (j) => Number(j.laborCost) || 0));
+    const vFees = round2(sum(visits, (v) => Number(v.fee) || 0)); const gp = CCTV.profitIn(from, to); const exp = round2(sum(ex, (e) => e.amount));
+    const deposits = round2(sum(CCTV.jobs().filter((j) => j.status === 'scheduled'), (j) => CCTV.paid(j)));
+    const recv = CCTV.jobs().filter((j) => CCTV.due(j) > 0.01 && j.status === 'installed');
+    return { mv, ex, inst, visits, cash: k('cash'), wallet: k('wallet'), credit: k('credit'), refunds: round2(-sum(mv.filter((m) => m.amount < 0), (m) => m.amount)), rev, devCost, labCost, vFees, gp, exp, net: round2(gp - exp), deposits, recv, recvSum: round2(sum(recv, (j) => CCTV.due(j))) };
+  },
+  CATS: () => ['أدوات وعِدّة', 'مواصلات وتركيبات', 'عمولة فنيين', 'سلالم ومعدات', 'مستهلكات تركيب (مسامير، روابط، شريط)', 'دعاية للقسم', ...DB.settings().expenseCategories.filter((c) => c !== 'أخرى'), 'أخرى'],
+  addExpense(after) {
+    UI.modal({ title: L('مصروف على قسم الكاميرات', 'CCTV department expense'), icon: 'expense', size: 'sm', body: UI.form([
+      { name: 'category', label: L('البند', 'Category'), type: 'select', options: this.CATS(), col: 12 }, { name: 'amount', label: L('المبلغ', 'Amount'), type: 'number', required: true, col: 12 },
+      { name: 'src', label: L('الدفع من', 'Paid from'), type: 'select', options: typeof PAY_SRC === 'function' ? PAY_SRC() : [['drawer', L('الدرج', 'Drawer')]], col: 12 }, { name: 'note', label: L('البيان', 'Description'), col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (m) => {
+        if (!UI.validate(m.el)) return; const v = UI.read(m.el); if (!(Number(v.amount) > 0)) return UI.toast(L('اكتب المبلغ', 'Enter amount'), 'err'); if (v.src === 'drawer' && !App.needShift()) return;
+        const e = DB.insert('expenses', { ...v, amount: Number(v.amount), dept: 'cctv', note: v.note || L('قسم الكاميرات', 'CCTV dept'), date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null });
+        payFromSource(v.src, e.amount, 'expense', e.id); audit('cctv.expense', `${v.category} ${v.amount}`); m.close(); UI.toast(L('اتسجل المصروف على القسم ✓', 'Saved ✓')); after && after();
+      } }] });
+  }
+};
+
+/* ---------------- تقرير القسم الكامل (نفس التقرير في قسم التقارير الشامل) ---------------- */
+CCTV.report = function (from, to, canCost) {
+  const all = this.jobs(); const S = (arr, f) => round2(sum(arr, f));
+  const inst = all.filter((j) => j.status === 'installed' && inRange(j.installedAt, from, to));
+  const quotes = all.filter((j) => j.wasQuote && inRange(j.date, from, to)); const won = quotes.filter((j) => j.status !== 'quote' && j.status !== 'cancelled');
+  const sched = all.filter((j) => j.status === 'scheduled');
+  const F = CvFin.summary(from, to);
+  const devSale = S(inst, (j) => this.itemsTotal(j)), labor = S(inst, (j) => Number(j.labor) || 0), disc = S(inst, (j) => Number(j.discount) || 0);
+  const net = round2(F.gp - F.exp);
+  const tech = (j) => DB.get('users', j.techId)?.name || L('غير محدد', 'Unassigned');
+  const techs = {}; inst.forEach((j) => { const o = (techs[tech(j)] ||= { n: 0, cams: 0, rev: 0, prof: 0 }); o.n++; o.cams += this.camCount(j); o.rev += this.jobTotal(j); o.prof += this.expProfit(j); });
+  const groups = {}; inst.forEach((j) => (j.items || []).forEach((i) => { const p = i.productId && DB.get('products', i.productId); const g = p ? CvStock.group(p) : CvStock.group({ name: i.name }); const o = (groups[g] ||= { q: 0, v: 0, c: 0 }); o.q += Number(i.qty) || 0; o.v += (Number(i.qty) || 0) * (Number(i.price) || 0); o.c += (Number(i.qty) || 0) * (Number(i.cost) || 0); }));
+  const top = {}; inst.forEach((j) => (j.items || []).forEach((i) => { const o = (top[i.name] ||= { q: 0, v: 0, c: 0 }); o.q += i.qty; o.v += i.qty * i.price; o.c += i.qty * (i.cost || 0); }));
+  const st = CvStock.rows(); const G = CvStock.GROUPS.map((g) => [g, st.filter((x) => x.g === g.k)]).filter(([, a]) => a.length);
+  const soon = all.filter((j) => { const w = this.warrantyLeft(j); return w != null && w >= 0 && w <= 30; });
+  return {
+    title: L('تقرير قسم كاميرات المراقبة', 'CCTV department report'), landscape: true,
+    kpis: [[L('عروض أسعار', 'Quotes'), num(quotes.length)], [L('نسبة الموافقة', 'Win rate'), quotes.length ? Math.round((won.length / quotes.length) * 100) + '%' : '—'], [L('تركيبات تمت', 'Installations'), num(inst.length)], [L('كاميرات اتركبت', 'Cameras installed'), num(sum(inst, (j) => this.camCount(j)))],
+      [L('قيمة التركيبات', 'Installations value'), money(F.rev)], [L('مبيعات الأجهزة', 'Equipment sales'), money(devSale)], [L('المصنعية', 'Labor'), money(labor)], [L('رسوم الزيارات', 'Visit fees'), money(F.vFees)],
+      ...(canCost ? [[L('تكلفة الأجهزة', 'Equipment cost'), money(F.devCost)], [L('تكلفة المصنعية', 'Labor cost'), money(F.labCost)], [L('مجمل الربح', 'Gross profit'), money(F.gp)], [L('مصروفات القسم', 'Dept. expenses'), money(F.exp)], [L('صافي ربح القسم', 'Net profit'), `<span class="${net >= 0 ? 'pos' : 'neg'}">${money(net)}</span>`]] : []),
+      [L('المحصّل في الفترة', 'Collected'), money(F.cash + F.wallet)], [L('متبقي عند العملاء', 'Outstanding'), money(F.recvSum)], [L('تركيبات مجدولة', 'Scheduled'), `${num(sched.length)} · ${L('عرابين', 'deposits')} ${money(F.deposits, false)}`], [L('الخصومات', 'Discounts'), money(disc)]],
+    tables: [
+      { title: L('التركيبات', 'Installations'), money: true, cols: [L('التاريخ', 'Date'), L('الرقم', 'No'), L('العميل', 'Customer'), L('العنوان', 'Address'), L('الأجهزة', 'Devices'), L('الفني', 'Tech'), L('الإجمالي', 'Total'), L('المدفوع', 'Paid'), L('المتبقي', 'Due'), ...(canCost ? [L('التكلفة', 'Cost'), L('الربح', 'Profit')] : [])],
+        rows: inst.sort((a, b) => (a.installedAt < b.installedAt ? 1 : -1)).map((j) => [fmtDate(j.installedAt), esc(j.no), esc(j.customerName || ''), esc(j.address || ''), esc(this.summary(j)), esc(tech(j)), this.jobTotal(j), this.paid(j), Math.max(0, this.due(j)), ...(canCost ? [this.cost(j), this.expProfit(j)] : [])]),
+        foot: [L('الإجمالي', 'Total'), '', '', '', '', '', F.rev, S(inst, (j) => this.paid(j)), S(inst, (j) => Math.max(0, this.due(j))), ...(canCost ? [S(inst, (j) => this.cost(j)), S(inst, (j) => this.expProfit(j))] : [])] },
+      { title: L('المبيعات حسب المجموعة', 'Sales by group'), money: true, cols: [L('المجموعة', 'Group'), L('الكمية', 'Qty'), L('القيمة', 'Value'), ...(canCost ? [L('التكلفة', 'Cost'), L('الربح', 'Profit')] : [])],
+        rows: CvStock.GROUPS.filter((g) => groups[g.k]).map((g) => { const o = groups[g.k]; return [CvStock.gname(g.k), String(o.q), round2(o.v), ...(canCost ? [round2(o.c), round2(o.v - o.c)] : [])]; }) },
+      { title: L('أكتر الأجهزة تركيباً', 'Most installed items'), money: true, cols: [L('الصنف', 'Item'), L('الكمية', 'Qty'), L('القيمة', 'Value'), ...(canCost ? [L('الربح', 'Profit')] : [])], rows: Object.entries(top).sort((a, b) => b[1].q - a[1].q).slice(0, 25).map(([n, x]) => [esc(n), String(x.q), round2(x.v), ...(canCost ? [round2(x.v - x.c)] : [])]) },
+      { title: L('أداء الفنيين', 'Technicians'), money: true, cols: [L('الفني', 'Tech'), L('التركيبات', 'Installs'), L('الكاميرات', 'Cameras'), L('القيمة', 'Value'), ...(canCost ? [L('الربح', 'Profit')] : [])], rows: Object.entries(techs).sort((a, b) => b[1].rev - a[1].rev).map(([k, o]) => [esc(k), String(o.n), String(o.cams), round2(o.rev), ...(canCost ? [round2(o.prof)] : [])]) },
+      { title: L('عروض الأسعار', 'Quotes'), money: true, cols: [L('التاريخ', 'Date'), L('الرقم', 'No'), L('العميل', 'Customer'), L('الحالة', 'Status'), L('القيمة', 'Value')], rows: quotes.sort((a, b) => (a.date < b.date ? 1 : -1)).map((j) => [fmtDate(j.date), esc(j.no), esc(j.customerName || ''), j.status === 'quote' ? L('مفتوح', 'Open') : j.status === 'cancelled' ? L('ملغي', 'Cancelled') : L('اتوافق عليه', 'Won'), this.jobTotal(j)]) },
+      { title: L('زيارات الصيانة', 'Maintenance visits'), money: true, cols: [L('التاريخ', 'Date'), L('العملية', 'Job'), L('العميل', 'Customer'), L('ملاحظة', 'Note'), L('الرسوم', 'Fee')], rows: F.visits.map((v) => [fmtDate(v.date), esc(v.j.no), esc(v.j.customerName || ''), esc(v.note || ''), Number(v.fee) || 0]) },
+      { title: L('متبقي عند العملاء', 'Outstanding'), money: true, cols: [L('العملية', 'Job'), L('العميل', 'Customer'), L('الموبايل', 'Mobile'), L('اتركب', 'Installed'), L('المتبقي', 'Due')], rows: F.recv.map((j) => [esc(j.no), esc(j.customerName || ''), esc(j.phone || ''), fmtDate(j.installedAt), this.due(j)]), foot: [L('الإجمالي', 'Total'), '', '', '', F.recvSum] },
+      { title: L('ضمانات هتخلص خلال 30 يوم', 'Warranties ending in 30 days'), cols: [L('العملية', 'Job'), L('العميل', 'Customer'), L('الموبايل', 'Mobile'), L('ينتهي', 'Ends'), L('باقي (يوم)', 'Days left')], rows: soon.map((j) => [esc(j.no), esc(j.customerName || ''), esc(j.phone || ''), fmtDate(j.warrantyUntil), String(this.warrantyLeft(j))]) },
+      { title: L('مخزون القسم حسب المجموعة (دلوقتي)', 'Stock by group (now)'), money: true, cols: [L('المجموعة', 'Group'), L('الأصناف', 'Items'), L('القطع', 'Units'), ...(canCost ? [L('القيمة بالتكلفة', 'At cost')] : []), L('القيمة بالبيع', 'At retail'), ...(canCost ? [L('الربح المتوقع', 'Exp. profit')] : []), L('نواقص', 'Low')],
+        rows: G.map(([g, a]) => [CvStock.gname(g.k), String(a.length), String(num(sum(a, (x) => Math.max(0, x.q)))), ...(canCost ? [S(a, (x) => x.vCost)] : []), S(a, (x) => x.vPrice), ...(canCost ? [S(a, (x) => x.prof)] : []), String(a.filter((x) => x.low).length)]),
+        foot: [L('الإجمالي', 'Total'), String(st.length), String(num(sum(st, (x) => Math.max(0, x.q)))), ...(canCost ? [S(st, (x) => x.vCost)] : []), S(st, (x) => x.vPrice), ...(canCost ? [S(st, (x) => x.prof)] : []), String(st.filter((x) => x.low).length)] },
+      { title: L('مخزون الكاميرات ومستلزماتها بالتفصيل', 'Stock details'), money: true, cols: [L('الصنف', 'Item'), L('المجموعة', 'Group'), L('الكمية', 'Qty'), L('محجوز', 'Reserved'), ...(canCost ? [L('التكلفة', 'Cost')] : []), L('البيع', 'Price'), ...(canCost ? [L('القيمة بالتكلفة', 'At cost')] : []), L('القيمة بالبيع', 'At retail'), ...(canCost ? [L('الربح المتوقع', 'Exp. profit')] : [])],
+        rows: st.sort((a, b) => CvStock.GROUPS.findIndex((g) => g.k === a.g) - CvStock.GROUPS.findIndex((g) => g.k === b.g)).map((x) => [esc(x.p.name) + (x.low ? ' ⚠️' : ''), CvStock.gname(x.g), String(num(x.q)), String(x.r || '—'), ...(canCost ? [x.cost] : []), x.price, ...(canCost ? [x.vCost] : []), x.vPrice, ...(canCost ? [x.prof] : [])]) },
+      { title: L('النواقص', 'Shortages'), cols: [L('الصنف', 'Item'), L('المجموعة', 'Group'), L('المتاح', 'Free'), L('الحد الأدنى', 'Min'), L('الكمية المقترحة', 'Suggested')], rows: st.filter((x) => x.low).map((x) => [esc(x.p.name), CvStock.gname(x.g), String(num(x.free)), String(num(Number(x.p.minQty) || 0)), String(x.need)]) },
+      { title: L('مصروفات القسم', 'Department expenses'), money: true, cols: [L('التاريخ', 'Date'), L('البند', 'Category'), L('البيان', 'Note'), L('المبلغ', 'Amount')], rows: F.ex.map((e) => [fmtDate(e.date), esc(e.category), esc(e.note || ''), Number(e.amount) || 0]), foot: [L('الإجمالي', 'Total'), '', '', F.exp] }
+    ]
+  };
+};
+
+(function () {
+  const M = Modules.cctv; if (!M) return;
+  M.rst = M.rst || { preset: 'month' }; M.fst = M.fst || { preset: 'month' }; M.sg = M.sg || 'all';
+  const period = (st) => (st.from || st.to ? `${st.from ? fmtDate(st.from) : '...'} → ${st.to ? fmtDate(st.to) : '...'}` : L('كل الفترات', 'All time'));
+  const month = (st) => { if (!st.from && !st.to && st.preset === 'month') { st.from = monthKey() + '-01'; st.to = dayKey(); } };
+
+  /* ---------- المخزون والأرباح (مقسّم بالمجموعات) ---------- */
+  M.stock = function (box) {
+    const canCost = Session.can('inventory.cost'); const q = this.q.trim().toLowerCase(); const all = CvStock.rows();
+    const counts = {}; all.forEach((x) => (counts[x.g] = (counts[x.g] || 0) + 1));
+    const rows = all.filter((x) => (this.sg === 'all' || x.g === this.sg) && (!this.lowOnly || x.low) && (!q || `${x.p.name} ${x.p.barcode || ''}`.toLowerCase().includes(q)))
+      .sort((a, b) => CvStock.GROUPS.findIndex((g) => g.k === a.g) - CvStock.GROUPS.findIndex((g) => g.k === b.g) || b.vPrice - a.vPrice);
+    const T = (k, arr = all) => round2(sum(arr, (x) => x[k])); const low = all.filter((x) => x.low);
+    const selCats = CCTV.cfg().cats || [];
+    box.innerHTML = `<div class="ph-kpis">
+        <div class="ph-k hero cv"><span>📦</span><div><small>${L('أصناف القسم', 'Items')}</small><b class="num">${num(all.length)}</b><em>${num(sum(all, (x) => Math.max(0, x.q)))} ${L('قطعة في المخزون', 'units')}</em></div></div>
+        ${canCost ? `<div class="ph-k"><span>💰</span><div><small>${L('تكلفة المخزون', 'Stock cost')}</small><b class="num">${money(T('vCost'), false)}</b><em>${L('اللي دفعته في البضاعة', 'what you paid')}</em></div></div>` : ''}
+        <div class="ph-k"><span>🏷️</span><div><small>${L('قيمته بسعر البيع', 'Retail value')}</small><b class="num">${money(T('vPrice'), false)}</b><em>${L('لو اتباع كله', 'if all sold')}</em></div></div>
+        ${canCost ? `<div class="ph-k"><span>📈</span><div><small>${L('الربح المتوقع', 'Expected profit')}</small><b class="num pos">${money(T('prof'), false)}</b><em>${L('هامش', 'margin')} ${T('vPrice') ? Math.round((T('prof') / T('vPrice')) * 100) : 0}%</em></div></div>` : ''}
+        <div class="ph-k"><span>🔧</span><div><small>${L('اتركب الشهر ده', 'Installed this month')}</small><b class="num">${num(sum(all, (x) => x.used))}</b><em>${num(all.filter((x) => x.r > 0).length)} ${L('صنف محجوز لتركيبات', 'reserved')}</em></div></div>
+        <div class="ph-k ${low.length ? 'warn' : ''}" id="csLowK" style="cursor:pointer"><span>⚠️</span><div><small>${L('النواقص', 'Shortages')}</small><b class="num">${num(low.length)}</b><em>${low.length ? L('اضغط لقائمة الطلبية', 'tap for order list') : L('كله تمام', 'all good')}</em></div></div>
+      </div>
+      <div class="seg mb cs-seg" id="csG" style="flex-wrap:wrap"><button data-g="all" class="${this.sg === 'all' ? 'active' : ''}">${L('الكل', 'All')} <small>${all.length}</small></button>${CvStock.GROUPS.map((g) => `<button data-g="${g.k}" class="${this.sg === g.k ? 'active' : ''}">${g.e} ${L(g.ar, g.en)} <small>${counts[g.k] || 0}</small></button>`).join('')}</div>
+      <div class="row wrap mb" style="gap:8px">
+        <label class="check"><input type="checkbox" id="cvLow" ${this.lowOnly ? 'checked' : ''}> ${L('النواقص بس', 'Low only')}</label>
+        <button class="btn sm ${low.length ? 'danger' : ''}" id="csShort">${icon('alert')}${L('النواقص والطلبية', 'Shortages & order')}${low.length ? ` <span class="tag" style="padding:0 7px">${low.length}</span>` : ''}</button><span class="spacer"></span>
+        ${Session.can('inventory') ? `<button class="btn primary sm" id="cvAddP">${icon('plus')}${L('إضافة صنف', 'Add item')}</button>` : ''}
+        ${Session.can('purchases') ? `<button class="btn sm" id="cvBuy">${icon('truck')}${L('فاتورة شراء', 'Purchase')}</button>` : ''}
+        ${Session.can('settings') ? `<button class="btn sm" id="cvCats">${icon('settings')}${L('أقسام الكاميرات', 'CCTV categories')}</button>` : ''}
+        <button class="btn ghost sm" id="cvXl">${icon('excel')}Excel</button><button class="btn ghost sm" id="csPr">${icon('printer')}${L('جرد PDF', 'Stock PDF')}</button>
+      </div>
+      ${rows.length ? `<div class="table-wrap card"><table class="tbl cv-tbl"><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('المجموعة', 'Group')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('محجوز', 'Reserved')}</th><th>${L('المتاح', 'Free')}</th>${canCost ? `<th>${L('التكلفة', 'Cost')}</th>` : ''}<th>${L('البيع', 'Price')}</th>${canCost ? `<th>${L('ربح القطعة', 'Unit profit')}</th><th>${L('الهامش', 'Margin')}</th><th>${L('تكلفة المخزون', 'Stock cost')}</th>` : ''}<th>${L('قيمته بالبيع', 'Retail value')}</th>${canCost ? `<th>${L('الربح المتوقع', 'Exp. profit')}</th>` : ''}</tr></thead><tbody>
+        ${rows.map((x) => `<tr data-pid="${x.p.id}" class="${x.low ? 'low' : ''}"><td><b>${esc(x.p.name)}</b><div class="faint mono" style="font-size:11.5px">${esc(x.p.barcode || '')}${x.used ? ` · ${L('اتركب', 'used')} ${num(x.used)} ${L('الشهر ده', 'this month')}` : ''}</div></td><td><span class="tag">${CvStock.gname(x.g)}</span></td>
+          <td class="num"><b>${num(x.q, x.q % 1 ? 1 : 0)}</b> <small class="faint">${esc(x.p.unit || '')}</small></td><td class="num">${x.r ? `<span class="tag warn">${num(x.r)}</span>` : '—'}</td><td class="num">${x.low ? `<span class="tag err">${num(x.free)}</span>` : num(x.free)}</td>
+          ${canCost ? `<td class="num">${money(x.cost, false)}</td>` : ''}<td class="num">${money(x.price, false)}</td>${canCost ? `<td class="num ${x.unitProf >= 0 ? 'pos' : 'neg'}">${money(x.unitProf, false)}</td><td><div class="cv-m"><i style="width:${Math.max(0, Math.min(100, x.margin))}%"></i><span>${x.margin}%</span></div></td><td class="num">${money(x.vCost, false)}</td>` : ''}<td class="num">${money(x.vPrice, false)}</td>${canCost ? `<td class="num pos">${money(x.prof, false)}</td>` : ''}</tr>`).join('')}
+        </tbody><tfoot><tr><td colspan="2">${L('الإجمالي', 'Total')} (${num(rows.length)})</td><td class="num">${num(sum(rows, (x) => x.q))}</td><td class="num">${num(sum(rows, (x) => x.r))}</td><td></td>${canCost ? '<td></td>' : ''}<td></td>${canCost ? `<td></td><td></td><td class="num">${money(T('vCost', rows), false)}</td>` : ''}<td class="num">${money(T('vPrice', rows), false)}</td>${canCost ? `<td class="num pos">${money(T('prof', rows), false)}</td>` : ''}</tr></tfoot></table></div>`
+      : UI.empty(all.length ? L('مفيش أصناف مطابقة', 'No matching items') : L('مفيش أصناف كاميرات في المخزون — اضغط «إضافة صنف» أو اختار أقسام الكاميرات', 'No CCTV items yet'), 'cctv')}
+      <p class="faint mt" style="font-size:12px">💡 ${L('الأصناف بتتسحب من المخزون العام (نوع «كاميرات مراقبة» أو أقسام فيها كلمة كاميرات / DVR / NVR أو الأقسام اللي تختارها) وبتتقسم لوحدها بالاسم. المحجوز = كميات لتركيبات مجدولة لسه ماتمتش. الكمية المقترحة في النواقص = ضعف الحد الأدنى أو استهلاك الشهر (الأكبر) ناقص المتاح.', 'Items come from the main inventory and are grouped by name. Reserved = held for scheduled installs.')}</p>`;
+    $$('#csG [data-g]', box).forEach((b) => (b.onclick = () => { this.sg = b.dataset.g; this.stock(box); }));
+    $('#cvLow', box).onchange = (e) => { this.lowOnly = e.target.checked; this.stock(box); };
+    $('#csShort', box).onclick = () => this.shortages(); $('#csLowK', box).onclick = () => this.shortages();
+    $$('tr[data-pid]', box).forEach((r) => (r.onclick = () => Modules.inventory?.view?.(DB.get('products', r.dataset.pid))));
+    const camCat = DB.find('categories', (c) => CCTV.camRx && CCTV.camRx.test(c.name));
+    $('#cvAddP', box) && ($('#cvAddP', box).onclick = () => Modules.inventory.edit(null, () => this.stock(box), { type: 'camera', categoryId: selCats[0] || camCat?.id || '', warranty: CCTV.cfg().warrantyMonths || 12 }));
+    $('#cvBuy', box) && ($('#cvBuy', box).onclick = () => { App.go('purchases'); setTimeout(() => Modules.purchases?.edit?.(), 250); });
+    $('#cvXl', box).onclick = () => exportExcel(rows.map((x) => ({ [L('الصنف', 'Item')]: x.p.name, [L('الباركود', 'Barcode')]: x.p.barcode || '', [L('المجموعة', 'Group')]: L(CvStock.gmeta(x.g).ar, CvStock.gmeta(x.g).en), [L('الكمية', 'Qty')]: x.q, [L('محجوز', 'Reserved')]: x.r, [L('المتاح', 'Free')]: x.free, ...(canCost ? { [L('التكلفة', 'Cost')]: x.cost } : {}), [L('البيع', 'Price')]: x.price, ...(canCost ? { [L('ربح القطعة', 'Unit profit')]: x.unitProf, [L('الهامش %', 'Margin %')]: x.margin, [L('تكلفة المخزون', 'Stock cost')]: x.vCost } : {}), [L('قيمته بالبيع', 'Retail value')]: x.vPrice, ...(canCost ? { [L('الربح المتوقع', 'Exp. profit')]: x.prof } : {}), [L('ناقص', 'Low')]: x.low ? L('نعم', 'Yes') : '' })), 'cctv-stock');
+    $('#csPr', box).onclick = () => { const groups = CvStock.GROUPS.map((g) => [g, rows.filter((x) => x.g === g.k)]).filter(([, a]) => a.length);
+      printHTML(reportDoc(L('جرد مخزون قسم الكاميرات', 'CCTV stock count') + ' — ' + fmtDate(new Date()), `<div class="kp"><div><span>${L('الأصناف', 'Items')}</span><b>${num(rows.length)}</b></div><div><span>${L('القطع', 'Units')}</span><b>${num(sum(rows, (x) => Math.max(0, x.q)))}</b></div>${canCost ? `<div><span>${L('تكلفة المخزون', 'Stock cost')}</span><b>${money(T('vCost', rows))}</b></div>` : ''}<div><span>${L('قيمته بالبيع', 'Retail value')}</span><b>${money(T('vPrice', rows))}</b></div>${canCost ? `<div><span>${L('الربح المتوقع', 'Exp. profit')}</span><b>${money(T('prof', rows))}</b></div>` : ''}<div><span>${L('نواقص', 'Low')}</span><b>${num(rows.filter((x) => x.low).length)}</b></div></div>` +
+        groups.map(([g, a]) => `<h2>${g.e} ${L(g.ar, g.en)} (${a.length})</h2><table><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('محجوز', 'Reserved')}</th>${canCost ? `<th>${L('التكلفة', 'Cost')}</th>` : ''}<th>${L('البيع', 'Price')}</th>${canCost ? `<th>${L('تكلفة المخزون', 'Stock cost')}</th>` : ''}<th>${L('بالبيع', 'Retail')}</th>${canCost ? `<th>${L('الربح المتوقع', 'Profit')}</th>` : ''}<th>${L('الجرد الفعلي', 'Counted')}</th></tr></thead><tbody>${a.map((x) => `<tr><td>${esc(x.p.name)}${x.low ? ' ⚠️' : ''}</td><td>${num(x.q)}</td><td>${x.r || '—'}</td>${canCost ? `<td>${money(x.cost, false)}</td>` : ''}<td>${money(x.price, false)}</td>${canCost ? `<td>${money(x.vCost, false)}</td>` : ''}<td>${money(x.vPrice, false)}</td>${canCost ? `<td>${money(x.prof, false)}</td>` : ''}<td></td></tr>`).join('')}</tbody></table>`).join('') +
+        `<div class="sig"><div>${L('القائم بالجرد', 'Counted by')}</div><div>${L('مدير القسم', 'Dept. manager')}</div><div>${L('صاحب المحل', 'Owner')}</div></div>`, true), { type: 'report' }); };
+    $('#cvCats', box) && ($('#cvCats', box).onclick = () => {
+      const cats = DB.all('categories');
+      const m = UI.modal({ title: L('أقسام الكاميرات في المخزون', 'CCTV categories'), icon: 'settings', size: 'sm', body: `<p class="faint">${L('اختار الأقسام اللي أصنافها تظهر في مخزون الكاميرات (كاميرات، أجهزة تسجيل، هاردات، باور، وصلات، مستلزمات…). لو مختارتش حاجة البرنامج بيختار تلقائياً.', 'Choose the categories shown in CCTV stock.')}</p><div class="ph-chks">${cats.map((c) => `<label class="ph-chk ${selCats.includes(c.id) ? 'on' : ''}"><input type="checkbox" value="${c.id}" ${selCats.includes(c.id) ? 'checked' : ''}> ${esc(c.name)}</label>`).join('')}</div>`,
+        actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { DB.saveSettings({ cctv: { cats: $$('input:checked', x.el).map((i) => i.value) } }); x.close(); this.stock(box); } }] });
+      $$('.ph-chk input', m.el).forEach((i) => (i.onchange = () => i.parentElement.classList.toggle('on', i.checked)));
+    });
+  };
+
+  /* ---------- النواقص والطلبية ---------- */
+  M.shortages = function () {
+    const canCost = Session.can('inventory.cost'); const low = CvStock.rows().filter((x) => x.low).sort((a, b) => CvStock.GROUPS.findIndex((g) => g.k === a.g) - CvStock.GROUPS.findIndex((g) => g.k === b.g) || a.free - b.free);
+    const sup = (p) => DB.get('suppliers', p.supplierId) || null;
+    const m = UI.modal({ title: L('نواقص قسم الكاميرات', 'CCTV shortages'), icon: 'alert', size: 'lg', body: low.length ? `
+      <p class="faint" style="margin-top:0">${L('الكمية المقترحة = ضعف الحد الأدنى أو استهلاك الشهر (الأكبر) ناقص المتاح. عدّلها براحتك قبل الطباعة أو الإرسال.', 'Suggested = max(2× min, monthly use) − free.')}</p>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('المجموعة', 'Group')}</th><th>${L('المتاح', 'Free')}</th><th>${L('الحد الأدنى', 'Min')}</th><th>${L('استهلاك الشهر', 'Used')}</th><th>${L('المورد', 'Supplier')}</th><th>${L('الكمية المطلوبة', 'Order qty')}</th>${canCost ? `<th>${L('التكلفة المتوقعة', 'Est. cost')}</th>` : ''}</tr></thead><tbody>
+      ${low.map((x, i) => `<tr><td><b>${esc(x.p.name)}</b></td><td>${CvStock.gname(x.g)}</td><td class="num"><span class="tag err">${num(x.free)}</span></td><td class="num">${num(Number(x.p.minQty) || 0)}</td><td class="num">${num(x.used)}</td><td>${esc(sup(x.p)?.name || '—')}</td><td><input type="number" min="0" data-oq="${i}" value="${x.need}" style="width:90px"></td>${canCost ? `<td class="num" data-oc="${i}"></td>` : ''}</tr>`).join('')}
+      </tbody>${canCost ? `<tfoot><tr><td colspan="7">${L('إجمالي تكلفة الطلبية', 'Order total')}</td><td class="num" id="csOT"></td></tr></tfoot>` : ''}</table></div>` : UI.empty(L('مفيش نواقص — كل الأصناف فوق الحد الأدنى 👌', 'No shortages 👌'), 'check'),
+      actions: low.length ? [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('إرسال للمورد واتساب', 'Send to supplier'), cls: 'wa', icon: 'whatsapp', onClick: () => send() }, { label: L('طباعة الطلبية', 'Print order'), cls: 'primary', icon: 'printer', onClick: () => print() }] : [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }] });
+    const qty = (i) => Math.max(0, Number($(`[data-oq="${i}"]`, m.el)?.value) || 0);
+    const tot = () => { if (!canCost) return; let t = 0; low.forEach((x, i) => { const v = qty(i) * x.cost; t += v; const c = $(`[data-oc="${i}"]`, m.el); if (c) c.textContent = money(v, false); }); const o = $('#csOT', m.el); if (o) o.textContent = money(t, false); };
+    $$('[data-oq]', m.el).forEach((i) => (i.oninput = tot)); tot();
+    const lines = () => low.map((x, i) => [x, qty(i)]).filter(([, q]) => q > 0);
+    const print = () => printHTML(reportDoc(L('طلبية نواقص قسم الكاميرات', 'CCTV order list') + ' — ' + fmtDate(new Date()), `<table><thead><tr><th>#</th><th>${L('الصنف', 'Item')}</th><th>${L('المجموعة', 'Group')}</th><th>${L('المورد', 'Supplier')}</th><th>${L('الكمية', 'Qty')}</th>${canCost ? `<th>${L('التكلفة', 'Cost')}</th><th>${L('الإجمالي', 'Total')}</th>` : ''}</tr></thead><tbody>${lines().map(([x, q], i) => `<tr><td>${i + 1}</td><td>${esc(x.p.name)}</td><td>${CvStock.gname(x.g)}</td><td>${esc(sup(x.p)?.name || '')}</td><td>${num(q)}</td>${canCost ? `<td>${money(x.cost, false)}</td><td>${money(q * x.cost, false)}</td>` : ''}</tr>`).join('')}</tbody>${canCost ? `<tfoot><tr><td colspan="6">${L('الإجمالي', 'Total')}</td><td>${money(sum(lines(), ([x, q]) => q * x.cost), false)}</td></tr></tfoot>` : ''}</table><div class="sig"><div>${L('طلب بواسطة', 'Requested by')}</div><div>${L('اعتماد', 'Approved')}</div></div>`), { type: 'report' });
+    const send = () => {
+      const by = {}; lines().forEach(([x, q]) => { const s = sup(x.p); const k = s ? s.id : ''; (by[k] ||= { s, items: [] }).items.push([x, q]); });
+      const groups = Object.values(by); const g = groups.find((v) => v.s && v.s.phone) || groups[0]; if (!g) return;
+      const st = DB.settings().store || {};
+      const txt = [`${L('السلام عليكم', 'Hello')} ${g.s ? g.s.name : ''} 👋`, `${L('محتاجين الطلبية دي لو سمحت', 'Please supply the following')}:`, '', ...g.items.map(([x, q], i) => `${i + 1}) ${x.p.name} × ${q}`), '', `${st.name || ''}${st.phone ? ' — ' + st.phone : ''}`].join('\n');
+      if (groups.length > 1) UI.toast(L('الطلبية فيها أكتر من مورد — اتبعت لأول مورد، والباقي ابعته بعد ما تصفّر كميات المورد الأول', 'Multiple suppliers — sent to the first one'), 'warn', 7000);
+      sendWhatsApp(g.s && g.s.phone ? g.s.phone : '', txt);
+    };
+  };
+
+  /* ---------- التقارير (نفس تقرير قسم التقارير الشامل) ---------- */
+  M.reportsTab = function (box) {
+    box.innerHTML = `<div class="row mb wrap"><div id="crRange"></div><div class="spacer"></div><button class="btn" id="crX">${icon('excel')}Excel</button><button class="btn primary" id="crP">${icon('printer')}${L('طباعة / PDF', 'Print / PDF')}</button></div><div id="crBody"></div>`;
+    const R = Modules.reports; let data = null;
+    const draw = () => {
+      month(this.rst); data = CCTV.report(this.rst.from, this.rst.to, Session.can('inventory.cost'));
+      $('#crBody', box).innerHTML = `<div class="card mb" style="padding:18px"><h2 style="margin:0">${data.title}</h2><div class="faint">${period(this.rst)}</div><div class="grid g4 mt">${data.kpis.map(([l, v]) => `<div class="stat-mini"><span class="l">${l}</span><span class="v num">${v}</span></div>`).join('')}</div></div>` +
+        data.tables.map((t) => `<div class="card mb"><div class="card-h"><h3>${t.title}</h3><span class="tag">${t.rows.length}</span></div><div class="table-wrap">${R.tableHTML(t, false)}</div></div>`).join('');
+    };
+    dateRangeBar($('#crRange', box), this.rst, draw);
+    $('#crP', box).onclick = () => printHTML(reportDoc(`${data.title} — ${period(this.rst)}`, `<div class="kp">${data.kpis.map(([l, v]) => `<div><span>${l}</span><b>${v}</b></div>`).join('')}</div>` + data.tables.map((t) => `<h2>${t.title}</h2>${R.tableHTML(t, true)}`).join(''), true), { type: 'report' });
+    $('#crX', box).onclick = () => { const sv = [R.data, R.st, R.type]; R.data = data; R.st = this.rst; R.type = 'cctv'; try { R.exportAll(); } finally { [R.data, R.st, R.type] = sv; } };
+    draw();
+  };
+
+  /* ---------- المالية ---------- */
+  M.financeTab = function (box) {
+    const canCost = Session.can('inventory.cost');
+    box.innerHTML = `<div class="row mb wrap"><div id="cfRange"></div><div class="spacer"></div>${Session.can('expenses') ? `<button class="btn" id="cfExp">${icon('expense')}${L('مصروف على القسم', 'Dept. expense')}</button>` : ''}<button class="btn primary" id="cfP">${icon('printer')}${L('كشف مالي PDF', 'Statement PDF')}</button></div><div id="cfBody"></div>`;
+    let S = null;
+    const draw = () => {
+      month(this.fst); S = CvFin.summary(this.fst.from, this.fst.to); const b = $('#cfBody', box);
+      const byDay = {}; S.mv.filter((m) => m.amount > 0 && CvFin.srcKind(m.src) !== 'credit').forEach((m) => { const k = dayKey(m.date); byDay[k] = (byDay[k] || 0) + m.amount; });
+      const keys = Object.keys(byDay).sort(); const mx = Math.max(1, ...Object.values(byDay));
+      b.innerHTML = `<div class="ph-kpis">
+          <div class="ph-k hero cv"><span>💵</span><div><small>${L('المحصّل في الفترة', 'Collected')}</small><b class="num">${money(S.cash + S.wallet, false)}</b><em>${L('نقدي', 'Cash')} ${money(S.cash, false)} · ${L('محافظ', 'Wallets')} ${money(S.wallet, false)}</em></div></div>
+          <div class="ph-k"><span>📒</span><div><small>${L('اتسجل آجل على العملاء', 'Put on credit')}</small><b class="num">${money(S.credit, false)}</b><em>${L('مردود', 'Refunded')} ${money(S.refunds, false)}</em></div></div>
+          <div class="ph-k"><span>📹</span><div><small>${L('قيمة التركيبات', 'Installations value')}</small><b class="num">${money(S.rev, false)}</b><em>${num(S.inst.length)} ${L('تركيب', 'installs')} · ${L('زيارات', 'visits')} ${money(S.vFees, false)}</em></div></div>
+          ${canCost ? `<div class="ph-k"><span>🧾</span><div><small>${L('تكلفة الأجهزة والمصنعية', 'Equipment & labor cost')}</small><b class="num">${money(S.devCost + S.labCost, false)}</b><em>${L('أجهزة', 'equip.')} ${money(S.devCost, false)} · ${L('مصنعية', 'labor')} ${money(S.labCost, false)}</em></div></div>` : ''}
+          <div class="ph-k"><span>💸</span><div><small>${L('مصروفات القسم', 'Dept. expenses')}</small><b class="num neg">${money(S.exp, false)}</b><em>${num(S.ex.length)} ${L('بند', 'items')}</em></div></div>
+          ${canCost ? `<div class="ph-k ${S.net >= 0 ? '' : 'warn'}"><span>📈</span><div><small>${L('صافي ربح القسم', 'Net profit')}</small><b class="num ${S.net >= 0 ? 'pos' : 'neg'}">${money(S.net, false)}</b><em>${L('مجمل الربح', 'gross')} ${money(S.gp, false)} − ${L('المصروفات', 'expenses')}</em></div></div>` : ''}
+          <div class="ph-k ${S.recvSum > 0 ? 'warn' : ''}"><span>⏳</span><div><small>${L('متبقي عند العملاء', 'Outstanding')}</small><b class="num">${money(S.recvSum, false)}</b><em>${L('عرابين لتركيبات جاية', 'deposits held')} ${money(S.deposits, false)}</em></div></div>
+        </div>
+        <div class="card card-b mb"><h3 style="margin-top:0">${icon('chart')} ${L('المحصّل يوم بيوم (نقدي + محافظ)', 'Daily collections')}</h3>${keys.length ? `<div class="rf-bars">${keys.slice(-31).map((k) => `<div class="rf-b" title="${fmtDate(k)}: ${money(byDay[k])}"><i style="height:${Math.max(3, (byDay[k] / mx) * 100)}%"></i><small>${k.slice(8)}</small></div>`).join('')}</div>` : UI.empty(L('مفيش تحصيلات في الفترة دي', 'No collections'), 'chart')}</div>
+        <div class="grid g2" style="gap:14px;align-items:start"><div id="cfMv"></div><div><div id="cfRecv" class="mb"></div><div id="cfEx"></div></div></div>`;
+      UI.table($('#cfMv', b), { rows: S.mv, exportName: 'cctv-cash', emptyIcon: 'money', title: L('حركة الفلوس', 'Money movements'),
+        columns: [{ key: 'date', label: L('التاريخ', 'Date'), render: (m) => fmtDT(m.date) }, { key: 'no', label: L('العملية', 'Job'), render: (m) => `<b class="mono">${esc(m.no)}</b><div class="faint">${esc(m.customer || '')}</div>`, exportVal: (m) => `${m.no} ${m.customer || ''}` },
+          { label: L('البيان', 'Note'), render: (m) => `<span class="tag ${m.amount < 0 ? 'err' : CvFin.srcKind(m.src) === 'credit' ? 'warn' : m.status === 'scheduled' ? 'info' : 'ok'}">${esc(m.note || (m.status === 'scheduled' ? L('عربون', 'Deposit') : ''))}</span>`, exportVal: (m) => m.note }, { label: L('في', 'To'), render: (m) => esc(CvFin.srcName(m.src)), exportVal: (m) => CvFin.srcName(m.src) },
+          { key: 'amount', label: L('المبلغ', 'Amount'), render: (m) => `<b class="num ${m.amount < 0 ? 'neg' : ''}">${money(m.amount)}</b>`, exportVal: (m) => m.amount }],
+        footer: (r) => `<td colspan="4">${L('الإجمالي', 'Total')}</td><td class="num">${money(sum(r, (m) => m.amount))}</td>`,
+        actions: () => UI.act('open', 'eye', L('فتح العملية', 'Open')), onAction: (a, m) => this.view(DB.get('cctvJobs', m.jid)) });
+      UI.table($('#cfRecv', b), { rows: S.recv.sort((x, y) => CCTV.due(y) - CCTV.due(x)), exportName: 'cctv-due', emptyIcon: 'check', noTools: S.recv.length < 6, title: L('متبقي عند العملاء', 'Outstanding'),
+        columns: [{ key: 'no', label: L('العملية', 'Job'), render: (j) => `<b class="mono">${esc(j.no)}</b><div class="faint">${esc(j.customerName || '')} · <span dir="ltr">${esc(j.phone || '')}</span></div>` }, { label: L('المتبقي', 'Due'), render: (j) => `<b class="num neg">${money(CCTV.due(j))}</b>`, exportVal: (j) => CCTV.due(j) }],
+        actions: (j) => UI.act('pay', 'money', L('تحصيل', 'Collect')) + (j.phone ? UI.act('wa', 'whatsapp', L('تذكير', 'Remind')) : ''),
+        onAction: (a, j) => { if (a === 'pay') { this.payDialog(j); const iv = setInterval(() => { if (!$('.modal-bg')) { clearInterval(iv); if (App.current === 'cctv' && this.tab === 'finance') draw(); } }, 400); } if (a === 'wa') this.wa(j); } });
+      UI.table($('#cfEx', b), { rows: S.ex, exportName: 'cctv-expenses', emptyIcon: 'expense', noTools: S.ex.length < 6, title: L('مصروفات القسم', 'Dept. expenses'),
+        columns: [{ key: 'date', label: L('التاريخ', 'Date'), render: (e) => fmtDate(e.date) }, { key: 'category', label: L('البند', 'Category'), render: (e) => `<span class="tag p">${esc(e.category)}</span><div class="faint">${esc(e.note || '')}</div>`, exportVal: (e) => e.category }, { key: 'amount', label: L('المبلغ', 'Amount'), render: (e) => `<b class="num">${money(e.amount)}</b>`, exportVal: (e) => e.amount }],
+        footer: (r) => `<td colspan="2">${L('الإجمالي', 'Total')}</td><td class="num">${money(sum(r, (e) => e.amount))}</td>`,
+        actions: () => (Session.can('expenses') ? UI.act('del', 'trash', L('حذف', 'Delete'), 'del') : ''),
+        onAction: async (a, e) => { if (a === 'del' && (await UI.confirm(L('حذف المصروف ورجوع المبلغ للدرج لو كان منه؟', 'Delete and refund to drawer?')))) { DB.remove('expenses', e.id); if (e.src === 'drawer') cashMove(e.amount, 'expense', e.id, L('حذف مصروف', 'Expense deleted')); draw(); } } });
+    };
+    dateRangeBar($('#cfRange', box), this.fst, draw);
+    $('#cfExp', box) && ($('#cfExp', box).onclick = () => CvFin.addExpense(draw));
+    $('#cfP', box).onclick = () => {
+      const kp = [[L('المحصّل نقدي', 'Cash'), money(S.cash)], [L('المحصّل محافظ', 'Wallets'), money(S.wallet)], [L('آجل على العملاء', 'Credit'), money(S.credit)], [L('مردود للعملاء', 'Refunds'), money(S.refunds)], [L('قيمة التركيبات', 'Installations'), money(S.rev)], [L('رسوم الزيارات', 'Visit fees'), money(S.vFees)], ...(canCost ? [[L('تكلفة الأجهزة', 'Equipment cost'), money(S.devCost)], [L('تكلفة المصنعية', 'Labor cost'), money(S.labCost)], [L('مجمل الربح', 'Gross profit'), money(S.gp)]] : []), [L('مصروفات القسم', 'Expenses'), money(S.exp)], [L('متبقي عند العملاء', 'Outstanding'), money(S.recvSum)], [L('عرابين لتركيبات جاية', 'Deposits held'), money(S.deposits)]];
+      const tb = (cols, rows) => `<table><thead><tr>${cols.map((c) => `<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((v) => `<td>${v}</td>`).join('')}</tr>`).join('') || `<tr><td colspan="${cols.length}">—</td></tr>`}</tbody></table>`;
+      printHTML(reportDoc(`${L('الكشف المالي لقسم الكاميرات', 'CCTV financial statement')} — ${period(this.fst)}`, `<div class="kp">${kp.map(([l, v]) => `<div><span>${l}</span><b>${v}</b></div>`).join('')}</div>` + (canCost ? `<div class="netbox">${L('صافي ربح القسم', 'Net profit')}: ${money(S.net)}</div>` : '') +
+        `<h2>${L('حركة الفلوس', 'Money movements')}</h2>` + tb([L('التاريخ', 'Date'), L('العملية', 'Job'), L('العميل', 'Customer'), L('البيان', 'Note'), L('في', 'To'), L('المبلغ', 'Amount')], S.mv.map((m) => [fmtDT(m.date), esc(m.no), esc(m.customer || ''), esc(m.note), esc(CvFin.srcName(m.src)), money(m.amount, false)])) +
+        `<div class="grid2"><div><h2>${L('مصروفات القسم', 'Expenses')}</h2>${tb([L('التاريخ', 'Date'), L('البند', 'Category'), L('المبلغ', 'Amount')], S.ex.map((e) => [fmtDate(e.date), esc(e.category), money(e.amount, false)]))}</div><div><h2>${L('متبقي عند العملاء', 'Outstanding')}</h2>${tb([L('العملية', 'Job'), L('العميل', 'Customer'), L('المتبقي', 'Due')], S.recv.map((j) => [esc(j.no), esc(j.customerName || ''), money(CCTV.due(j), false)]))}</div></div>
+        <div class="sig"><div>${L('المحاسب', 'Accountant')}</div><div>${L('مدير القسم', 'Dept. manager')}</div><div>${L('صاحب المحل', 'Owner')}</div></div>`), { type: 'report' });
+    };
+    draw();
+  };
+
+})();
+
+</script>
+  <script>
+/* =========================================================
+   قسم الموبايلات — المخزون والأرباح والتقارير والمالية (1.8)
+   - المخزون والأرباح: تكلفة المخزون، قيمته بالبيع، الربح المتوقع والهامش، حسب الماركة والحالة والموديل،
+     أعمار المخزون (الراكد)، المحجوز والعرابين، والموديلات اللي خلصت وعليها طلب (النواقص)
+   - التقارير كاملة ومربوطة بقسم التقارير الشامل (نوع «الموبايلات» بقى بيستخدم نفس التقرير)
+   - المالية: المشتريات (نقدي / آجل / استبدال)، المبيعات، العرابين، المرتجع للمورد، مصروفات القسم، صافي الربح
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const PhX = {
+  cost: (p) => Number(p.buyPrice) || 0,
+  price: (p) => Number(p.price) || 0,
+  inStock() { return DB.filter('phones', (p) => ['stock', 'reserved', 'repair'].includes(p.status)); },
+  cond: (p) => L(...(PH_COND[p.condition || 'new'] || PH_COND.new).slice(0, 2)),
+  AGES: [[0, 15, '0 – 15'], [16, 30, '16 – 30'], [31, 60, '31 – 60'], [61, 1e9, '60+']],
+  agg(list, key) { const m = {}; list.forEach((p) => { const k = key(p) || '—'; const o = (m[k] ||= { n: 0, cost: 0, price: 0, days: 0 }); o.n++; o.cost += this.cost(p); o.price += this.price(p); o.days += Phones.days(p); }); return m; },
+  /* موديلات اتباعت آخر 30 يوم ومفيش منها في المخزون = نواقص */
+  shortages() {
+    const since = dayKey(addDays(new Date(), -30)); const sold = DB.filter('phones', (p) => p.status === 'sold' && dayKey(p.soldAt) >= since);
+    const have = new Set(this.inStock().map((p) => `${p.brand}|${p.model}|${p.storage || ''}`.toLowerCase()));
+    const m = {}; sold.forEach((p) => { const k = `${p.brand}|${p.model}|${p.storage || ''}`.toLowerCase(); if (have.has(k)) return; const o = (m[k] ||= { p, n: 0, prof: 0, last: p.soldAt }); o.n++; o.prof += (Number(p.soldPrice) || 0) - this.cost(p); if (p.soldAt > o.last) o.last = p.soldAt; });
+    return Object.values(m).sort((a, b) => b.n - a.n);
+  },
+  expenses(from, to) { return DB.filter('expenses', (e) => e.dept === 'phones' && inRange(e.date, from, to)).sort((a, b) => (a.date < b.date ? 1 : -1)); },
+  PAYN: (k) => ({ drawer: L('نقدي من الدرج', 'Cash'), credit: L('آجل على المورد', 'Supplier credit'), none: L('استبدال', 'Trade-in') })[k] || (String(k || '').startsWith('w:') ? L('محفظة', 'Wallet') : L('نقدي من الدرج', 'Cash')),
+  fin(from, to) {
+    const bought = DB.filter('phones', (p) => inRange(p.buyDate, from, to)); const sold = DB.filter('phones', (p) => p.status === 'sold' && inRange(p.soldAt, from, to));
+    const ret = DB.filter('phones', (p) => p.status === 'returned' && inRange(p.returnedAt, from, to));
+    const bySrc = (k) => round2(sum(bought.filter((p) => (p.source === 'tradein' ? 'none' : p.payFrom || 'drawer') === k), (p) => this.cost(p)));
+    const rev = round2(sum(sold, (p) => Number(p.soldPrice) || 0)), cogs = round2(sum(sold, (p) => this.cost(p))), gp = round2(rev - cogs);
+    const ex = this.expenses(from, to); const exp = round2(sum(ex, (e) => e.amount));
+    const res = DB.filter('phones', (p) => p.status === 'reserved' && p.reserve); const deps = round2(sum(res, (p) => Number(p.reserve.deposit) || 0));
+    return { bought, sold, ret, buyCash: bySrc('drawer'), buyCredit: bySrc('credit'), buyTrade: bySrc('none'), buyTotal: round2(sum(bought, (p) => this.cost(p))), rev, cogs, gp, ex, exp, net: round2(gp - exp), retVal: round2(sum(ret, (p) => this.cost(p))), res, deps, flow: round2(rev - sum(bought.filter((p) => p.source !== 'tradein'), (p) => this.cost(p))) };
+  },
+  addExpense(after) {
+    const cats = ['شحن ونقل أجهزة', 'إكسسوارات هدايا مع الأجهزة', 'فحص وصيانة أجهزة مستعملة', 'دعاية للقسم', 'عمولة بيع', ...DB.settings().expenseCategories.filter((c) => c !== 'أخرى'), 'أخرى'];
+    UI.modal({ title: L('مصروف على قسم الموبايلات', 'Phones department expense'), icon: 'expense', size: 'sm', body: UI.form([
+      { name: 'category', label: L('البند', 'Category'), type: 'select', options: cats, col: 12 }, { name: 'amount', label: L('المبلغ', 'Amount'), type: 'number', required: true, col: 12 },
+      { name: 'src', label: L('الدفع من', 'Paid from'), type: 'select', options: typeof PAY_SRC === 'function' ? PAY_SRC() : [['drawer', L('الدرج', 'Drawer')]], col: 12 }, { name: 'note', label: L('البيان', 'Description'), col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (m) => {
+        if (!UI.validate(m.el)) return; const v = UI.read(m.el); if (!(Number(v.amount) > 0)) return UI.toast(L('اكتب المبلغ', 'Enter amount'), 'err'); if (v.src === 'drawer' && !App.needShift()) return;
+        const e = DB.insert('expenses', { ...v, amount: Number(v.amount), dept: 'phones', note: v.note || L('قسم الموبايلات', 'Phones dept'), date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null });
+        payFromSource(v.src, e.amount, 'expense', e.id); audit('phones.expense', `${v.category} ${v.amount}`); m.close(); UI.toast(L('اتسجل المصروف على القسم ✓', 'Saved ✓')); after && after();
+      } }] });
+  }
+};
+
+/* ---------------- تقرير القسم الكامل (نفس التقرير في قسم التقارير الشامل) ---------------- */
+Phones.report = function (from, to, canCost) {
+  const F = PhX.fin(from, to); const st = PhX.inStock(); const S = (a, f) => round2(sum(a, f));
+  const stCost = S(st, PhX.cost), stPrice = S(st, PhX.price), stale = st.filter((p) => Phones.days(p) >= this.staleDays());
+  const trade = F.bought.filter((p) => p.source === 'tradein');
+  const avgSell = F.sold.length ? round2(sum(F.sold, (p) => Math.max(0, (new Date(p.soldAt) - new Date(p.buyDate || p.createdAt)) / 864e5)) / F.sold.length) : 0;
+  const grp = (list, key) => { const m = {}; list.forEach((p) => { const k = key(p) || '—'; const o = (m[k] ||= { n: 0, rev: 0, cost: 0 }); o.n++; o.rev += Number(p.soldPrice) || 0; o.cost += PhX.cost(p); }); return Object.entries(m).sort((a, b) => b[1].rev - a[1].rev); };
+  const row3 = ([k, o]) => [esc(k), String(o.n), round2(o.rev), ...(canCost ? [round2(o.cost), round2(o.rev - o.cost), o.rev ? Math.round(((o.rev - o.cost) / o.rev) * 100) + '%' : '—'] : [])];
+  const cols3 = (t) => [t, L('العدد', 'Count'), L('الإيراد', 'Revenue'), ...(canCost ? [L('التكلفة', 'Cost'), L('الربح', 'Profit'), L('الهامش', 'Margin')] : [])];
+  const short = PhX.shortages();
+  return {
+    title: L('تقرير قسم الموبايلات', 'Phones department report'), landscape: true,
+    kpis: [[L('أجهزة مباعة', 'Phones sold'), num(F.sold.length)], [L('إيراد البيع', 'Revenue'), money(F.rev)], ...(canCost ? [[L('تكلفة المباع', 'Cost of sold'), money(F.cogs)], [L('ربح الموبايلات', 'Gross profit'), money(F.gp)], [L('هامش الربح', 'Margin'), F.rev ? Math.round((F.gp / F.rev) * 100) + '%' : '—'], [L('مصروفات القسم', 'Dept. expenses'), money(F.exp)], [L('صافي ربح القسم', 'Net profit'), `<span class="${F.net >= 0 ? 'pos' : 'neg'}">${money(F.net)}</span>`]] : []),
+      [L('أجهزة اتشرت', 'Bought'), `${num(F.bought.length)}${canCost ? ' · ' + money(F.buyTotal, false) : ''}`], [L('استبدال من عملاء', 'Trade-ins'), num(trade.length)], [L('رجع للمورد', 'Returned'), num(F.ret.length)], [L('متوسط مدة البيع', 'Avg. days to sell'), `${num(avgSell, 1)} ${L('يوم', 'd')}`],
+      [L('في المخزون دلوقتي', 'In stock now'), num(st.length)], ...(canCost ? [[L('تكلفة المخزون', 'Stock cost'), money(stCost)], [L('الربح المتوقع للمخزون', 'Stock exp. profit'), money(stPrice - stCost)]] : [[L('قيمة المخزون بالبيع', 'Stock retail'), money(stPrice)]]), [L(`راكد +${this.staleDays()} يوم`, 'Stale'), num(stale.length)], [L('محجوز بعرابين', 'Reserved'), `${num(F.res.length)} · ${money(F.deps, false)}`]],
+    tables: [
+      { title: L('الأجهزة المباعة', 'Sold phones'), money: true, cols: [L('التاريخ', 'Date'), L('الجهاز', 'Phone'), 'IMEI', L('الحالة', 'Condition'), L('العميل', 'Customer'), L('الفاتورة', 'Invoice'), L('أيام في المخزون', 'Days'), L('سعر البيع', 'Price'), ...(canCost ? [L('التكلفة', 'Cost'), L('الربح', 'Profit')] : [])],
+        rows: F.sold.sort((a, b) => (a.soldAt < b.soldAt ? 1 : -1)).map((p) => [fmtDate(p.soldAt), esc(this.full(p)), esc(p.imei1 || ''), PhX.cond(p), esc(p.customerName || L('عميل نقدي', 'Walk-in')), esc(p.saleNo || ''), String(Math.round(Math.max(0, (new Date(p.soldAt) - new Date(p.buyDate || p.createdAt)) / 864e5))), Number(p.soldPrice) || 0, ...(canCost ? [PhX.cost(p), round2((Number(p.soldPrice) || 0) - PhX.cost(p))] : [])]),
+        foot: [L('الإجمالي', 'Total'), '', '', '', '', '', '', F.rev, ...(canCost ? [F.cogs, F.gp] : [])] },
+      { title: L('المبيعات حسب الماركة', 'Sales by brand'), money: true, cols: cols3(L('الماركة', 'Brand')), rows: grp(F.sold, (p) => p.brand).map(row3) },
+      { title: L('المبيعات حسب الحالة', 'Sales by condition'), money: true, cols: cols3(L('الحالة', 'Condition')), rows: grp(F.sold, (p) => PhX.cond(p)).map(row3) },
+      { title: L('أكتر الموديلات مبيعاً', 'Top models'), money: true, cols: cols3(L('الموديل', 'Model')), rows: grp(F.sold, (p) => [p.brand, p.model, p.storage].filter(Boolean).join(' ')).slice(0, 20).map(row3) },
+      { title: L('المشتريات في الفترة', 'Purchases in period'), money: true, cols: [L('التاريخ', 'Date'), L('رقم الشراء', 'No'), L('الجهاز', 'Phone'), 'IMEI', L('من', 'From'), L('الدفع', 'Paid by'), ...(canCost ? [L('التكلفة', 'Cost')] : []), L('سعر البيع', 'Price')],
+        rows: F.bought.sort((a, b) => (a.buyDate < b.buyDate ? 1 : -1)).map((p) => [fmtDate(p.buyDate), esc(p.buyNo || ''), esc(this.full(p)), esc(p.imei1 || ''), esc(p.source === 'tradein' ? L('استبدال', 'Trade-in') + (p.sellerName ? ' — ' + p.sellerName : '') : DB.get('suppliers', p.supplierId)?.name || p.sellerName || ''), PhX.PAYN(p.source === 'tradein' ? 'none' : p.payFrom), ...(canCost ? [PhX.cost(p)] : []), PhX.price(p)]),
+        foot: [L('الإجمالي', 'Total'), '', '', '', '', '', ...(canCost ? [F.buyTotal] : []), S(F.bought, PhX.price)] },
+      { title: L('المخزون الحالي', 'Current stock'), money: true, cols: [L('الكود', 'Code'), L('الجهاز', 'Phone'), 'IMEI', L('الحالة', 'Condition'), L('الوضع', 'Status'), L('أيام في المخزون', 'Days'), ...(canCost ? [L('التكلفة', 'Cost')] : []), L('سعر البيع', 'Price'), ...(canCost ? [L('الربح المتوقع', 'Exp. profit')] : [])],
+        rows: st.sort((a, b) => Phones.days(b) - Phones.days(a)).map((p) => [esc(p.code || ''), esc(this.full(p)), esc(p.imei1 || ''), PhX.cond(p), L(...(PH_STATUS[p.status] || PH_STATUS.stock).slice(0, 2)), String(Phones.days(p)), ...(canCost ? [PhX.cost(p)] : []), PhX.price(p), ...(canCost ? [round2(PhX.price(p) - PhX.cost(p))] : [])]),
+        foot: [L('الإجمالي', 'Total'), String(st.length), '', '', '', '', ...(canCost ? [stCost] : []), stPrice, ...(canCost ? [round2(stPrice - stCost)] : [])] },
+      { title: L('أعمار المخزون', 'Stock aging'), money: true, cols: [L('أيام في المخزون', 'Days in stock'), L('العدد', 'Count'), ...(canCost ? [L('التكلفة', 'Cost')] : []), L('بالبيع', 'Retail')], rows: PhX.AGES.map(([a, b, l]) => { const x = st.filter((p) => Phones.days(p) >= a && Phones.days(p) <= b); return [l, String(x.length), ...(canCost ? [S(x, PhX.cost)] : []), S(x, PhX.price)]; }) },
+      { title: L('النواقص — موديلات اتباعت آخر 30 يوم ومفيش منها', 'Shortages — sold in 30 days, none in stock'), cols: [L('الموديل', 'Model'), L('اتباع', 'Sold'), ...(canCost ? [L('ربحها', 'Profit')] : []), L('آخر بيع', 'Last sale')], money: true, rows: short.map((x) => [esc([x.p.brand, x.p.model, x.p.storage].filter(Boolean).join(' ')), String(x.n), ...(canCost ? [round2(x.prof)] : []), fmtDate(x.last)]) },
+      { title: L('مرتجع للمورد', 'Returned to supplier'), money: true, cols: [L('التاريخ', 'Date'), L('الجهاز', 'Phone'), 'IMEI', L('المورد', 'Supplier'), L('التكلفة', 'Cost')], rows: F.ret.map((p) => [fmtDate(p.returnedAt), esc(this.full(p)), esc(p.imei1 || ''), esc(DB.get('suppliers', p.supplierId)?.name || ''), PhX.cost(p)]) },
+      { title: L('مصروفات القسم', 'Department expenses'), money: true, cols: [L('التاريخ', 'Date'), L('البند', 'Category'), L('البيان', 'Note'), L('المبلغ', 'Amount')], rows: F.ex.map((e) => [fmtDate(e.date), esc(e.category), esc(e.note || ''), Number(e.amount) || 0]), foot: [L('الإجمالي', 'Total'), '', '', F.exp] }
+    ]
+  };
+};
+
+(function () {
+  const M = Modules.phones; if (!M) return;
+  M.rst = M.rst || { preset: 'month' }; M.fst = M.fst || { preset: 'month' };
+  const period = (st) => (st.from || st.to ? `${st.from ? fmtDate(st.from) : '...'} → ${st.to ? fmtDate(st.to) : '...'}` : L('كل الفترات', 'All time'));
+  const month = (st) => { if (!st.from && !st.to && st.preset === 'month') { st.from = monthKey() + '-01'; st.to = dayKey(); } };
+
+  /* ---------- المخزون والأرباح ---------- */
+  M.valueTab = function (box) {
+    const canCost = Session.can('inventory.cost'); const q = this.q.trim().toLowerCase();
+    const st = PhX.inStock().filter((p) => (!this.brand || p.brand === this.brand) && (!this.cond || p.condition === this.cond) && (!q || (Phones.full(p) + ' ' + (p.imei1 || '') + ' ' + (p.code || '')).toLowerCase().includes(q)));
+    const S = (a, f) => round2(sum(a, f)); const cost = S(st, PhX.cost), price = S(st, PhX.price), prof = round2(price - cost);
+    const res = st.filter((p) => p.status === 'reserved'); const stale = st.filter((p) => Phones.days(p) >= Phones.staleDays()); const short = PhX.shortages();
+    const tbl = (title, m, first) => `<div class="card mb"><div class="card-h"><h3>${title}</h3></div><div class="table-wrap"><table class="tbl"><thead><tr><th>${first}</th><th>${L('العدد', 'Count')}</th>${canCost ? `<th>${L('تكلفة المخزون', 'Cost')}</th>` : ''}<th>${L('بالبيع', 'Retail')}</th>${canCost ? `<th>${L('الربح المتوقع', 'Exp. profit')}</th><th>${L('الهامش', 'Margin')}</th>` : ''}<th>${L('متوسط الأيام', 'Avg days')}</th></tr></thead><tbody>
+      ${Object.entries(m).sort((a, b) => b[1].price - a[1].price).map(([k, o]) => { const mg = o.price ? Math.round(((o.price - o.cost) / o.price) * 100) : 0; return `<tr><td><b>${esc(k)}</b></td><td class="num">${num(o.n)}</td>${canCost ? `<td class="num">${money(o.cost, false)}</td>` : ''}<td class="num">${money(o.price, false)}</td>${canCost ? `<td class="num pos">${money(o.price - o.cost, false)}</td><td><div class="cv-m"><i style="width:${Math.max(0, Math.min(100, mg))}%"></i><span>${mg}%</span></div></td>` : ''}<td class="num">${num(o.days / o.n, 0)}</td></tr>`; }).join('') || `<tr><td colspan="7" class="faint">—</td></tr>`}</tbody></table></div></div>`;
+    box.innerHTML = `<div class="ph-kpis">
+        <div class="ph-k hero"><span>📱</span><div><small>${L('أجهزة في المخزون', 'Phones in stock')}</small><b class="num">${num(st.length)}</b><em>${Object.entries(PH_COND).map(([k, v]) => `${L(v[0], v[1])} ${st.filter((p) => (p.condition || 'new') === k).length}`).join(' · ')}</em></div></div>
+        ${canCost ? `<div class="ph-k"><span>💰</span><div><small>${L('تكلفة المخزون', 'Stock cost')}</small><b class="num">${money(cost, false)}</b><em>${L('اللي دفعته في الأجهزة', 'what you paid')}</em></div></div>` : ''}
+        <div class="ph-k"><span>🏷️</span><div><small>${L('قيمته بسعر البيع', 'Retail value')}</small><b class="num">${money(price, false)}</b><em>${L('لو اتباع كله', 'if all sold')}</em></div></div>
+        ${canCost ? `<div class="ph-k"><span>📈</span><div><small>${L('الربح المتوقع', 'Expected profit')}</small><b class="num pos">${money(prof, false)}</b><em>${L('هامش', 'margin')} ${price ? Math.round((prof / price) * 100) : 0}%</em></div></div>` : ''}
+        <div class="ph-k ${res.length ? '' : ''}"><span>🔖</span><div><small>${L('محجوز لعملاء', 'Reserved')}</small><b class="num">${num(res.length)}</b><em>${L('عرابين', 'deposits')} ${money(S(res, (p) => Number(p.reserve?.deposit) || 0), false)}</em></div></div>
+        <div class="ph-k ${stale.length ? 'warn' : ''}" id="pvStale" style="cursor:pointer"><span>⏳</span><div><small>${L(`راكد +${Phones.staleDays()} يوم`, 'Stale')}</small><b class="num">${num(stale.length)}</b><em>${canCost ? L('بتكلفة', 'cost') + ' ' + money(S(stale, PhX.cost), false) : ''}</em></div></div>
+        <div class="ph-k ${short.length ? 'warn' : ''}" id="pvShort" style="cursor:pointer"><span>⚠️</span><div><small>${L('موديلات خلصت وعليها طلب', 'Out-of-stock sellers')}</small><b class="num">${num(short.length)}</b><em>${L('اتباعت آخر 30 يوم', 'sold in 30 days')}</em></div></div>
+      </div>
+      <div class="row wrap mb" style="gap:8px"><span class="faint">${L('الفلاتر فوق (الماركة والحالة والبحث) بتشتغل هنا كمان.', 'Brand / condition / search filters apply here too.')}</span><span class="spacer"></span><button class="btn sm" id="pvShortB">${icon('alert')}${L('النواقص', 'Shortages')}</button><button class="btn ghost sm" id="pvXl">${icon('excel')}Excel</button><button class="btn ghost sm" id="pvPr">${icon('printer')}${L('جرد PDF', 'Stock PDF')}</button></div>
+      <div class="grid g2" style="gap:14px;align-items:start"><div>${tbl(L('حسب الماركة', 'By brand'), PhX.agg(st, (p) => p.brand), L('الماركة', 'Brand'))}${tbl(L('حسب الحالة', 'By condition'), PhX.agg(st, PhX.cond), L('الحالة', 'Condition'))}</div>
+        <div>${tbl(L('حسب الموديل', 'By model'), PhX.agg(st, (p) => [p.brand, p.model, p.storage].filter(Boolean).join(' ')), L('الموديل', 'Model'))}
+        <div class="card mb"><div class="card-h"><h3>${L('أعمار المخزون', 'Stock aging')}</h3></div><div class="card-b">${PhX.AGES.map(([a, b, l]) => { const x = st.filter((p) => Phones.days(p) >= a && Phones.days(p) <= b); const pc = st.length ? Math.round((x.length / st.length) * 100) : 0; return `<div class="row" style="gap:10px;margin:8px 0"><b style="width:80px">${l} ${L('يوم', 'd')}</b><div class="cv-m" style="flex:1"><i style="width:${pc}%;${a > 30 ? 'background:var(--warn)' : ''}"></i><span>${x.length}</span></div><span class="num faint" style="width:110px;text-align:end">${money(canCost ? S(x, PhX.cost) : S(x, PhX.price), false)}</span></div>`; }).join('')}</div></div></div></div>`;
+    const showShort = () => UI.modal({ title: L('نواقص الموبايلات', 'Phone shortages'), icon: 'alert', size: 'lg', body: short.length ? `<p class="faint" style="margin-top:0">${L('موديلات اتباعت في آخر 30 يوم ومفيش منها ولا جهاز في المخزون — يستاهل تجيبها تاني.', 'Models sold in the last 30 days with none left in stock.')}</p><div class="table-wrap"><table class="tbl"><thead><tr><th>${L('الموديل', 'Model')}</th><th>${L('اتباع', 'Sold')}</th>${canCost ? `<th>${L('ربحها', 'Profit')}</th>` : ''}<th>${L('آخر سعر شراء', 'Last cost')}</th><th>${L('آخر بيع', 'Last sale')}</th></tr></thead><tbody>${short.map((x) => `<tr><td><b>${esc([x.p.brand, x.p.model, x.p.storage].filter(Boolean).join(' '))}</b></td><td class="num">${x.n}</td>${canCost ? `<td class="num pos">${money(x.prof, false)}</td>` : ''}<td class="num">${canCost ? money(PhX.cost(x.p), false) : '—'}</td><td>${fmtDate(x.last)}</td></tr>`).join('')}</tbody></table></div>` : UI.empty(L('مفيش نواقص 👌', 'No shortages 👌'), 'check'),
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, ...(short.length && Session.can('phones.buy') ? [{ label: L('شراء جهاز', 'Buy a phone'), cls: 'primary', icon: 'plus', onClick: (x) => { x.close(); this.form(); } }] : [])] });
+    $('#pvShort', box).onclick = showShort; $('#pvShortB', box).onclick = showShort;
+    $('#pvStale', box).onclick = () => this.reprice();
+    $('#pvXl', box).onclick = () => exportExcel(st.map((p) => ({ [L('الكود', 'Code')]: p.code, [L('الجهاز', 'Phone')]: Phones.full(p), IMEI: p.imei1 || '', [L('الحالة', 'Condition')]: PhX.cond(p), [L('الوضع', 'Status')]: L(...(PH_STATUS[p.status] || PH_STATUS.stock).slice(0, 2)), [L('أيام في المخزون', 'Days')]: Phones.days(p), ...(canCost ? { [L('التكلفة', 'Cost')]: PhX.cost(p) } : {}), [L('سعر البيع', 'Price')]: PhX.price(p), ...(canCost ? { [L('الربح المتوقع', 'Exp. profit')]: round2(PhX.price(p) - PhX.cost(p)) } : {}) })), 'phones-stock');
+    $('#pvPr', box).onclick = () => { const by = PhX.agg(st, (p) => p.brand);
+      printHTML(reportDoc(L('جرد مخزون الموبايلات', 'Phones stock count') + ' — ' + fmtDate(new Date()), `<div class="kp"><div><span>${L('الأجهزة', 'Phones')}</span><b>${num(st.length)}</b></div>${canCost ? `<div><span>${L('تكلفة المخزون', 'Stock cost')}</span><b>${money(cost)}</b></div>` : ''}<div><span>${L('قيمته بالبيع', 'Retail value')}</span><b>${money(price)}</b></div>${canCost ? `<div><span>${L('الربح المتوقع', 'Exp. profit')}</span><b>${money(prof)}</b></div>` : ''}</div>` +
+        Object.keys(by).sort().map((b) => { const a = st.filter((p) => (p.brand || '—') === b); return `<h2>${esc(b)} (${a.length})</h2><table><thead><tr><th>${L('الكود', 'Code')}</th><th>${L('الجهاز', 'Phone')}</th><th>IMEI</th><th>${L('الحالة', 'Condition')}</th><th>${L('أيام', 'Days')}</th>${canCost ? `<th>${L('التكلفة', 'Cost')}</th>` : ''}<th>${L('البيع', 'Price')}</th><th>${L('موجود؟', 'Found?')}</th></tr></thead><tbody>${a.map((p) => `<tr><td>${esc(p.code || '')}</td><td>${esc(Phones.full(p))}</td><td dir="ltr">${esc(p.imei1 || '')}</td><td>${PhX.cond(p)}</td><td>${Phones.days(p)}</td>${canCost ? `<td>${money(PhX.cost(p), false)}</td>` : ''}<td>${money(PhX.price(p), false)}</td><td>☐</td></tr>`).join('')}</tbody></table>`; }).join('') +
+        `<div class="sig"><div>${L('القائم بالجرد', 'Counted by')}</div><div>${L('صاحب المحل', 'Owner')}</div></div>`, true), { type: 'report' }); };
+  };
+
+  /* ---------- التقارير ---------- */
+  M.reportsTab = function (box) {
+    box.innerHTML = `<div class="row mb wrap"><div id="prRange"></div><div class="spacer"></div><button class="btn" id="prX">${icon('excel')}Excel</button><button class="btn primary" id="prP">${icon('printer')}${L('طباعة / PDF', 'Print / PDF')}</button></div><div id="prBody"></div>`;
+    const R = Modules.reports; let data = null;
+    const draw = () => {
+      month(this.rst); data = Phones.report(this.rst.from, this.rst.to, Session.can('inventory.cost'));
+      $('#prBody', box).innerHTML = `<div class="card mb" style="padding:18px"><h2 style="margin:0">${data.title}</h2><div class="faint">${period(this.rst)}</div><div class="grid g4 mt">${data.kpis.map(([l, v]) => `<div class="stat-mini"><span class="l">${l}</span><span class="v num">${v}</span></div>`).join('')}</div></div>` +
+        data.tables.map((t) => `<div class="card mb"><div class="card-h"><h3>${t.title}</h3><span class="tag">${t.rows.length}</span></div><div class="table-wrap">${R.tableHTML(t, false)}</div></div>`).join('');
+    };
+    dateRangeBar($('#prRange', box), this.rst, draw);
+    $('#prP', box).onclick = () => printHTML(reportDoc(`${data.title} — ${period(this.rst)}`, `<div class="kp">${data.kpis.map(([l, v]) => `<div><span>${l}</span><b>${v}</b></div>`).join('')}</div>` + data.tables.map((t) => `<h2>${t.title}</h2>${R.tableHTML(t, true)}`).join(''), true), { type: 'report' });
+    $('#prX', box).onclick = () => { const sv = [R.data, R.st, R.type]; R.data = data; R.st = this.rst; R.type = 'phones'; try { R.exportAll(); } finally { [R.data, R.st, R.type] = sv; } };
+    draw();
+  };
+
+  /* ---------- المالية ---------- */
+  M.financeTab = function (box) {
+    const canCost = Session.can('inventory.cost');
+    box.innerHTML = `<div class="row mb wrap"><div id="pfRange"></div><div class="spacer"></div>${Session.can('expenses') ? `<button class="btn" id="pfExp">${icon('expense')}${L('مصروف على القسم', 'Dept. expense')}</button>` : ''}<button class="btn primary" id="pfP">${icon('printer')}${L('كشف مالي PDF', 'Statement PDF')}</button></div><div id="pfBody"></div>`;
+    let F = null;
+    const draw = () => {
+      month(this.fst); F = PhX.fin(this.fst.from, this.fst.to); const b = $('#pfBody', box);
+      const days = {}; F.sold.forEach((p) => { const k = dayKey(p.soldAt); (days[k] ||= { in: 0, out: 0 }).in += Number(p.soldPrice) || 0; }); F.bought.filter((p) => p.source !== 'tradein').forEach((p) => { const k = dayKey(p.buyDate); (days[k] ||= { in: 0, out: 0 }).out += PhX.cost(p); });
+      const keys = Object.keys(days).sort().slice(-31); const mx = Math.max(1, ...keys.map((k) => Math.max(days[k].in, days[k].out)));
+      b.innerHTML = `<div class="ph-kpis">
+          <div class="ph-k hero"><span>💵</span><div><small>${L('مبيعات الموبايلات', 'Phone sales')}</small><b class="num">${money(F.rev, false)}</b><em>${num(F.sold.length)} ${L('جهاز', 'phones')}</em></div></div>
+          ${canCost ? `<div class="ph-k"><span>🛒</span><div><small>${L('مشتريات الأجهزة', 'Phone purchases')}</small><b class="num">${money(F.buyTotal, false)}</b><em>${L('نقدي', 'cash')} ${money(F.buyCash, false)} · ${L('آجل', 'credit')} ${money(F.buyCredit, false)} · ${L('استبدال', 'trade-in')} ${money(F.buyTrade, false)}</em></div></div>` : ''}
+          ${canCost ? `<div class="ph-k"><span>💰</span><div><small>${L('مجمل الربح', 'Gross profit')}</small><b class="num pos">${money(F.gp, false)}</b><em>${L('المبيعات − تكلفة المباع', 'sales − cost of sold')}</em></div></div>` : ''}
+          <div class="ph-k"><span>💸</span><div><small>${L('مصروفات القسم', 'Dept. expenses')}</small><b class="num neg">${money(F.exp, false)}</b><em>${num(F.ex.length)} ${L('بند', 'items')}</em></div></div>
+          ${canCost ? `<div class="ph-k ${F.net >= 0 ? '' : 'warn'}"><span>📈</span><div><small>${L('صافي ربح القسم', 'Net profit')}</small><b class="num ${F.net >= 0 ? 'pos' : 'neg'}">${money(F.net, false)}</b><em>${L('مجمل الربح − المصروفات', 'gross − expenses')}</em></div></div>` : ''}
+          <div class="ph-k"><span>🔖</span><div><small>${L('عرابين حجز عندك', 'Deposits held')}</small><b class="num">${money(F.deps, false)}</b><em>${num(F.res.length)} ${L('جهاز محجوز', 'reserved')}</em></div></div>
+          ${canCost ? `<div class="ph-k"><span>↩️</span><div><small>${L('مرتجع للمورد', 'Returned')}</small><b class="num">${money(F.retVal, false)}</b><em>${num(F.ret.length)} ${L('جهاز', 'phones')}</em></div></div>` : ''}
+        </div>
+        <div class="card card-b mb"><h3 style="margin-top:0">${icon('chart')} ${L('داخل وخارج يوم بيوم', 'Daily in & out')} <small class="faint">— <span style="color:var(--ok)">■</span> ${L('مبيعات', 'sales')} · <span style="color:var(--err)">■</span> ${L('مشتريات', 'purchases')}</small></h3>${keys.length ? `<div class="rf-bars">${keys.map((k) => `<div class="rf-b" title="${fmtDate(k)}: ${money(days[k].in)} / ${money(days[k].out)}"><div style="display:flex;gap:2px;align-items:flex-end;height:100%;width:100%"><i style="flex:1;height:${Math.max(2, (days[k].in / mx) * 100)}%;background:var(--ok)"></i>${canCost ? `<i style="flex:1;height:${Math.max(2, (days[k].out / mx) * 100)}%;background:var(--err)"></i>` : ''}</div><small>${k.slice(8)}</small></div>`).join('')}</div>` : UI.empty(L('مفيش حركة في الفترة دي', 'No movements'), 'chart')}</div>
+        <div class="grid g2" style="gap:14px;align-items:start"><div id="pfBuy"></div><div><div id="pfEx" class="mb"></div><div id="pfRes"></div></div></div>`;
+      UI.table($('#pfBuy', b), { rows: F.bought.sort((x, y) => (x.buyDate < y.buyDate ? 1 : -1)), exportName: 'phones-purchases', emptyIcon: 'phone', title: L('مشتريات الأجهزة', 'Phone purchases'),
+        columns: [{ key: 'buyDate', label: L('التاريخ', 'Date'), render: (p) => fmtDate(p.buyDate) }, { label: L('الجهاز', 'Phone'), render: (p) => `<b>${esc(Phones.full(p))}</b><div class="faint mono" dir="ltr">${esc(p.imei1 || '')}</div>`, exportVal: (p) => Phones.full(p) },
+          { label: L('الدفع', 'Paid by'), render: (p) => `<span class="tag">${PhX.PAYN(p.source === 'tradein' ? 'none' : p.payFrom)}</span>`, exportVal: (p) => PhX.PAYN(p.source === 'tradein' ? 'none' : p.payFrom) }, ...(canCost ? [{ label: L('التكلفة', 'Cost'), render: (p) => `<b class="num">${money(PhX.cost(p))}</b>`, exportVal: (p) => PhX.cost(p) }] : [])],
+        footer: (r) => (canCost ? `<td colspan="3">${L('الإجمالي', 'Total')}</td><td class="num">${money(sum(r, PhX.cost))}</td>` : ''),
+        actions: () => UI.act('open', 'eye', L('فتح', 'Open')), onAction: (a, p) => this.details(p) });
+      UI.table($('#pfEx', b), { rows: F.ex, exportName: 'phones-expenses', emptyIcon: 'expense', noTools: F.ex.length < 6, title: L('مصروفات القسم', 'Dept. expenses'),
+        columns: [{ key: 'date', label: L('التاريخ', 'Date'), render: (e) => fmtDate(e.date) }, { key: 'category', label: L('البند', 'Category'), render: (e) => `<span class="tag p">${esc(e.category)}</span><div class="faint">${esc(e.note || '')}</div>`, exportVal: (e) => e.category }, { key: 'amount', label: L('المبلغ', 'Amount'), render: (e) => `<b class="num">${money(e.amount)}</b>`, exportVal: (e) => e.amount }],
+        footer: (r) => `<td colspan="2">${L('الإجمالي', 'Total')}</td><td class="num">${money(sum(r, (e) => e.amount))}</td>`,
+        actions: () => (Session.can('expenses') ? UI.act('del', 'trash', L('حذف', 'Delete'), 'del') : ''),
+        onAction: async (a, e) => { if (a === 'del' && (await UI.confirm(L('حذف المصروف ورجوع المبلغ للدرج لو كان منه؟', 'Delete and refund to drawer?')))) { DB.remove('expenses', e.id); if (e.src === 'drawer') cashMove(e.amount, 'expense', e.id, L('حذف مصروف', 'Expense deleted')); draw(); } } });
+      UI.table($('#pfRes', b), { rows: F.res, exportName: 'phones-deposits', emptyIcon: 'phone', noTools: F.res.length < 6, title: L('عرابين الحجز', 'Reservation deposits'),
+        columns: [{ label: L('الجهاز', 'Phone'), render: (p) => `<b>${esc(Phones.full(p))}</b><div class="faint">${esc(p.reserve?.name || '')} · ${p.reserve?.until ? L('لحد', 'until') + ' ' + fmtDate(p.reserve.until) : ''}</div>`, exportVal: (p) => Phones.full(p) }, { label: L('العربون', 'Deposit'), render: (p) => `<b class="num">${money(Number(p.reserve?.deposit) || 0)}</b>`, exportVal: (p) => Number(p.reserve?.deposit) || 0 }],
+        actions: () => UI.act('open', 'eye', L('فتح', 'Open')), onAction: (a, p) => this.details(p) });
+    };
+    dateRangeBar($('#pfRange', box), this.fst, draw);
+    $('#pfExp', box) && ($('#pfExp', box).onclick = () => PhX.addExpense(draw));
+    $('#pfP', box).onclick = () => {
+      const kp = [[L('مبيعات الموبايلات', 'Sales'), money(F.rev)], ...(canCost ? [[L('تكلفة المباع', 'Cost of sold'), money(F.cogs)], [L('مجمل الربح', 'Gross profit'), money(F.gp)], [L('مشتريات نقدي', 'Cash purchases'), money(F.buyCash)], [L('مشتريات آجل', 'Credit purchases'), money(F.buyCredit)], [L('استبدال', 'Trade-ins'), money(F.buyTrade)], [L('مرتجع للمورد', 'Returned'), money(F.retVal)]] : []), [L('مصروفات القسم', 'Expenses'), money(F.exp)], [L('عرابين حجز', 'Deposits'), money(F.deps)]];
+      const tb = (cols, rows) => `<table><thead><tr>${cols.map((c) => `<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((v) => `<td>${v}</td>`).join('')}</tr>`).join('') || `<tr><td colspan="${cols.length}">—</td></tr>`}</tbody></table>`;
+      printHTML(reportDoc(`${L('الكشف المالي لقسم الموبايلات', 'Phones financial statement')} — ${period(this.fst)}`, `<div class="kp">${kp.map(([l, v]) => `<div><span>${l}</span><b>${v}</b></div>`).join('')}</div>` + (canCost ? `<div class="netbox">${L('صافي ربح القسم', 'Net profit')}: ${money(F.net)}</div>` : '') +
+        `<h2>${L('المبيعات', 'Sales')}</h2>` + tb([L('التاريخ', 'Date'), L('الجهاز', 'Phone'), L('الفاتورة', 'Invoice'), L('البيع', 'Price'), ...(canCost ? [L('التكلفة', 'Cost'), L('الربح', 'Profit')] : [])], F.sold.map((p) => [fmtDate(p.soldAt), esc(Phones.full(p)), esc(p.saleNo || ''), money(p.soldPrice || 0, false), ...(canCost ? [money(PhX.cost(p), false), money((p.soldPrice || 0) - PhX.cost(p), false)] : [])])) +
+        (canCost ? `<h2>${L('المشتريات', 'Purchases')}</h2>` + tb([L('التاريخ', 'Date'), L('الجهاز', 'Phone'), L('الدفع', 'Paid by'), L('التكلفة', 'Cost')], F.bought.map((p) => [fmtDate(p.buyDate), esc(Phones.full(p)), PhX.PAYN(p.source === 'tradein' ? 'none' : p.payFrom), money(PhX.cost(p), false)])) : '') +
+        `<h2>${L('مصروفات القسم', 'Expenses')}</h2>` + tb([L('التاريخ', 'Date'), L('البند', 'Category'), L('المبلغ', 'Amount')], F.ex.map((e) => [fmtDate(e.date), esc(e.category), money(e.amount, false)])) +
+        `<div class="sig"><div>${L('المحاسب', 'Accountant')}</div><div>${L('مدير القسم', 'Dept. manager')}</div><div>${L('صاحب المحل', 'Owner')}</div></div>`), { type: 'report' });
+    };
+    draw();
+  };
+})();
 
 </script>
   <script>

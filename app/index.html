@@ -1925,6 +1925,13 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .rf-b i { width: 100%; border-radius: 6px 6px 2px 2px; background: linear-gradient(180deg, var(--p), var(--p-700, #5e0f1c)); display: block; }
 .rf-b small { font-size: 10px; color: var(--muted); }
 .cs-seg button small { opacity: .7; margin-inline-start: 4px; }
+/* 1.8 — تزامن رصيد المحفظة */
+.wc-sync { display: block; width: 100%; margin-top: 6px; border: 0; border-radius: 10px; padding: 7px 10px; font: inherit; font-weight: 800; font-size: 13px; cursor: pointer; background: var(--warn); color: #fff; }
+.ws-cmp { display: flex; align-items: stretch; gap: 10px; margin-bottom: 12px; }
+.ws-cmp > div { flex: 1; border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; background: var(--surface-2, var(--bg)); }
+.ws-cmp > div.hl { border-color: var(--p); }
+.ws-cmp small { display: block; color: var(--muted); font-size: 12px; } .ws-cmp b { font-size: 20px; } .ws-cmp em { display: block; font-style: normal; font-size: 11px; color: var(--muted); }
+.ws-cmp .ws-ar { flex: none; border: 0; background: none; display: grid; place-items: center; font-size: 22px; color: var(--muted); padding: 0; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -8281,7 +8288,7 @@ Modules.wallets = {
     $('#wlShowHidden') && ($('#wlShowHidden').onchange = (e) => { this.showHidden = e.target.checked; this.body(); });
     if (this.open.last) {
       const draw = () => {
-        let rows = DB.all('walletTx').filter((t) => t.type !== 'adjust');
+        let rows = DB.all('walletTx').filter((t) => t.type !== 'adjust' || t.source === 'sms-sync');
         if (['withdraw', 'deposit'].includes(this.lastFilter)) rows = rows.filter((t) => t.type === this.lastFilter);
         if (['pending', 'undelivered'].includes(this.lastFilter)) rows = rows.filter((t) => t.status === this.lastFilter);
         rows = rows.sort((a, c) => (a.date < c.date ? 1 : -1)).slice(0, this.lastCount);
@@ -8324,7 +8331,7 @@ Modules.wallets = {
         <div class="wc-net"><i class="color-dot wdot-${w.network}"></i>${netName(w.network)}${w.active === false ? ` · <span class="neg">${L('موقوفة', 'Inactive')}</span>` : ''}</div>
         <div class="wc-num ${/^[\d\s+]*$/.test(walletNo(w)) ? '' : 'txt'}"><span dir="ltr">${esc(fmtWalletNo(walletNo(w)) || '—')}</span></div>
         ${(() => { const own = w.owner && w.owner.replace(/\D/g, '') !== walletNo(w) ? `<div class="wc-owner">${icon('user')}<span>${esc(w.owner)}</span></div>` : '<span></span>'; const pb = phoneBrand(w.phoneModel); const ph = w.phoneModel ? `<div class="wc-phone" title="${L('موديل الهاتف', 'Phone model')}" ${pb ? `style="--pb:${pb[2]}"` : ''}>${icon('phone')}<span dir="auto">${esc(w.phoneModel)}</span></div>` : ''; return own !== '<span></span>' || ph ? `<div class="wc-meta">${own}${ph}</div>` : ''; })()}
-        ${w.smsBalanceAt ? `<div class="wc-sms ${Math.abs(w.smsBalanceDiff || 0) < 1 ? 'ok' : 'bad'}" title="${L('رصيد المحفظة حسب آخر رسالة وصلت', 'Balance per last SMS')} — ${fmtDT(w.smsBalanceAt)}">${icon('send')}<span>${L('آخر رسالة', 'Last SMS')}: <b class="num">${money(w.smsBalance, false)}</b></span>${Math.abs(w.smsBalanceDiff || 0) < 1 ? '<b>✓</b>' : `<b>${w.smsBalanceDiff > 0 ? '+' : ''}${money(w.smsBalanceDiff, false)}</b>`}</div>` : ''}
+        ${w.smsBalanceAt ? `<div class="wc-sms ${Math.abs(w.smsBalanceDiff || 0) <= 1 ? 'ok' : 'bad'}" title="${L('رصيد المحفظة حسب آخر رسالة وصلت', 'Balance per last SMS')} — ${fmtDT(w.smsBalanceAt)}">${icon('send')}<span>${L('آخر رسالة', 'Last SMS')}: <b class="num">${money(w.smsBalance, false)}</b></span>${Math.abs(w.smsBalanceDiff || 0) <= 1 ? '<b>✓</b>' : `<b>${w.smsBalanceDiff > 0 ? '+' : ''}${money(w.smsBalanceDiff, false)}</b>`}</div>${Math.abs(w.smsBalanceDiff || 0) > 1 ? `<button class="wc-sync" data-act="smssync" title="${L('تطبيق رصيد المحفظة الفعلي من آخر رسالة على البرنامج', 'Apply the SMS balance to the app')}">⚖️ ${L('تطبيق رصيد الرسالة', 'Apply SMS balance')}</button>` : ''}` : ''}
         ${w.name && w.name.replace(/\D/g, '') !== walletNo(w) ? `<div class="wc-name">${esc(w.name)}</div>` : ''}
       </div>
       <div class="wc-box">${row(L('الرصيد الحالي', 'Current balance'), bal)}</div>
@@ -8364,6 +8371,7 @@ Modules.wallets = {
         if (a === 'edit') return this.edit(w);
         if (a === 'limits') return this.limitsDialog(w);
         if (a === 'adjust') return this.adjustDialog(w);
+        if (a === 'smssync') return WalletSync.apply(w);
         if (a === 'fund' || a === 'cashout') return this.moveDialog(a, w);
         if (a === 'statement') return this.statement(w);
         if (a === 'delete') {
@@ -8411,6 +8419,7 @@ Modules.wallets = {
 
   /* ---------------- Operations table (shared) ---------------- */
   opsActions(t) {
+    if (t.locked || t.type === 'adjust') return `<span class="tag" title="${L('عملية تسوية / تزامن رصيد — مقفولة ومينفعش تتعدل أو تتمسح', 'Locked adjustment')}">🔒 ${L('مقفولة', 'Locked')}</span>`;
     let h = UI.act('print', 'printer', L('إيصال', 'Receipt'));
     if (t.status === 'pending') h += UI.act('confirm', 'check', L('تأكيد التنفيذ', 'Confirm'));
     if (t.status === 'undelivered') h += UI.act('deliver', 'hand', L('تم التسليم', 'Mark delivered'));
@@ -8420,6 +8429,7 @@ Modules.wallets = {
     return h;
   },
   async opsAction(a, t) {
+    if (t.locked || t.type === 'adjust') return UI.toast(L('العملية دي مقفولة — مينفعش تتعدل أو تتمسح', 'This operation is locked'), 'err');
     if (a === 'print') this.printOp(t);
     if (a === 'confirm') this.setStatus(t, t.type === 'withdraw' || t.type === 'deposit' ? 'completed' : 'completed');
     if (a === 'deliver') this.setStatus(t, 'completed');
@@ -8435,10 +8445,10 @@ Modules.wallets = {
       columns: [
         { key: 'date', label: L('الوقت', 'Time'), render: (t) => `<b>${fmtTime(t.date)}</b> <span class="faint">${fmtDate(t.date)}</span>`, exportVal: (t) => fmtDT(t.date) },
         { label: L('المحفظة', 'Wallet'), render: (t) => { const w = DB.get('wallets', t.walletId); return `<span class="row" style="gap:6px"><i class="color-dot wdot-${w?.network || 'other'}"></i>${esc(w?.name || '')}</span>`; }, exportVal: (t) => DB.get('wallets', t.walletId)?.name || '' },
-        { key: 'type', label: L('العملية', 'Type'), render: (t) => `<span class="tag ${WTX[t.type]?.[3] || ''}">${wtxName(t.type)}</span>`, exportVal: (t) => wtxName(t.type) },
+        { key: 'type', label: L('العملية', 'Type'), render: (t) => (t.source === 'sms-sync' ? `<span class="tag warn" title="${esc(t.note || '')}">⚖️ ${L('تزامن الرصيد مع رسالة الشركة', 'Balance synced with SMS')}</span><div class="faint" style="font-size:11.5px">${money(t.before, false)} ← ${money(t.after, false)} 🔒</div>` : `<span class="tag ${WTX[t.type]?.[3] || ''}">${wtxName(t.type)}</span>`), exportVal: (t) => (t.source === 'sms-sync' ? L('تزامن رصيد المحفظة مع الرسالة', 'SMS balance sync') : wtxName(t.type)) },
         { key: 'status', label: L('الحالة', 'Status'), render: wstatusTag, exportVal: (t) => L(...WSTATUS[t.status || 'completed'].slice(0, 2)) },
         { label: L('العميل', 'Client'), render: (t) => `${esc(t.clientName || '')} <span class="faint mono" dir="ltr">${esc(t.clientPhone || '')}</span>`, exportVal: (t) => `${t.clientName || ''} ${t.clientPhone || ''}` },
-        { key: 'amount', label: L('المبلغ', 'Amount'), render: (t) => `<b class="num" style="font-size:15px">${money(t.amount, false)}</b>`, exportVal: (t) => t.amount },
+        { key: 'amount', label: L('المبلغ', 'Amount'), render: (t) => (t.type === 'adjust' ? `<b class="num ${t.balanceDelta < 0 ? 'neg' : 'pos'}" style="font-size:15px">${t.balanceDelta > 0 ? '+' : ''}${money(t.balanceDelta, false)}</b>` : `<b class="num" style="font-size:15px">${money(t.amount, false)}</b>`), exportVal: (t) => (t.type === 'adjust' ? t.balanceDelta : t.amount) },
         { key: 'fee', label: L('العمولة', 'Fee'), render: (t) => money(t.fee || 0, false), exportVal: (t) => t.fee || 0 },
         ...(compact ? [] : [{ label: L('رسوم الشبكة', 'Net fee'), render: (t) => money(t.networkFee || 0, false), exportVal: (t) => t.networkFee || 0 }, { key: 'ref', label: L('رقم العملية', 'Ref'), render: (t) => esc(t.ref || t.opNo || '') }]),
         { label: L('المستخدم', 'User'), render: (t) => esc(DB.get('users', t.userId)?.name || '') }
@@ -8668,7 +8678,7 @@ Modules.wallets = {
   },
   adjustDialog(w) {
     UI.modal({ title: L('مطابقة رصيد المحفظة', 'Reconcile wallet'), icon: 'swap', size: 'sm', body: `<div class="stat-mini mb"><span class="l">${L('رصيد النظام', 'System balance')}</span><span class="v">${money(Wallets.balance(w))}</span></div>` + UI.form([{ name: 'actual', label: L('الرصيد الفعلي في المحفظة', 'Actual balance'), type: 'number', required: true, col: 12 }, { name: 'note', label: L('السبب', 'Reason'), col: 12 }]),
-      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('اعتماد', 'Apply'), cls: 'primary', onClick: (x) => { const v = UI.read(x.el); const d = round2((Number(v.actual) || 0) - Wallets.balance(w)); if (d) DB.insert('walletTx', { walletId: w.id, type: 'adjust', amount: Math.abs(d), balanceDelta: d, cashDelta: 0, note: v.note, date: nowISO(), userId: Session.user.id }); audit('wallet.reconcile', `${w.name} ${d}`); x.close(); App.reload(); } }] });
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('اعتماد', 'Apply'), cls: 'primary', onClick: (x) => { const v = UI.read(x.el); const d = round2((Number(v.actual) || 0) - Wallets.balance(w)); if (d) DB.insert('walletTx', { walletId: w.id, type: 'adjust', amount: Math.abs(d), balanceDelta: d, cashDelta: 0, note: v.note, date: nowISO(), userId: Session.user.id, locked: true, status: 'completed', opNo: DB.nextNo('wadj', 'AJ-') }); audit('wallet.reconcile', `${w.name} ${d}`); x.close(); App.reload(); } }] });
   },
   statement(w) {
     const txs = DB.filter('walletTx', (t) => t.walletId === w.id && wtxApplied(t).w).sort((a, b) => (a.date > b.date ? 1 : -1)); let run = Number(w.openingBalance) || 0;
@@ -10577,6 +10587,7 @@ Modules.settings = {
    ========================================================= */
 const CHANGELOG = [
   { v: '1.8.0', d: '2026-11-02', items: [
+    ['wallet', L('تزامن رصيد المحفظة مع رسالة الشركة: لو رصيد الرسالة مختلف أكتر من 1 ج بتضرب نغمة تحذير، وزرار «تطبيق رصيد الرسالة» بنافذة تأكيد — والتزامن بيتسجل في سجل العمليات مقفول 🔒 وفي سجل النشاط وجرس التنبيهات', 'Sync wallet balance from SMS with confirmation and a locked log entry')],
     ['tool', L('قسم الصيانة بقى زي الموبايلات والكاميرات: تبويباته (لوحة المراحل، كل الأجهزة، جاهز للتسليم، الإعدادات) جوه القسم بدل القائمة المنسدلة — والقائمة الجانبية بقت أقصر', 'Repairs tabs now live inside the section like Phones and CCTV')],
     ['layers', L('إصلاح عرض الجداول على الموبايل: الجدول العريض بيتحرك جوه الكارت بتاعه بدل ما يخرج برة الشاشة', 'Wide tables now scroll inside their card on mobile')],
     ['lock', L('أسعار التكلفة والأرباح بقت تظهر لمدير النظام (المالك) ومدير الفرع بس — الكاشير والمحاسب وأي دور تاني مش بيشوفوها حتى لو الصلاحية متعلّمة', 'Cost and profit visible to admin and branch manager only')],
@@ -12784,7 +12795,7 @@ const SmsLink = {
     const bal = Wallets.balance(w); const diff = round2(p.balance - bal);
     DB.update('smsInbox', sms.id, { balanceDiff: diff });
     DB.update('wallets', w.id, { smsBalance: p.balance, smsBalanceAt: sms.at, smsBalanceDiff: diff });
-    if (Math.abs(diff) >= 1 && Date.now() - new Date(sms.at).getTime() < 3 * 3600e3) (this._alerts = this._alerts || []).push(`${esc(w.name)}: ${L('الرسالة', 'SMS')} ${money(p.balance, false)} / ${L('البرنامج', 'app')} ${money(bal, false)}`);
+    if (Math.abs(diff) > 1 && Date.now() - new Date(sms.at).getTime() < 3 * 3600e3) (this._alerts = this._alerts || []).push(`${esc(w.name)}: ${L('الرسالة', 'SMS')} ${money(p.balance, false)} / ${L('البرنامج', 'app')} ${money(bal, false)}`);
   },
   defFee(w, type, a) { const pct = type === 'withdraw' ? w.feeWithdraw : w.feeDeposit; let f = a ? Math.max(w.feeMin || 0, (a * (pct || 0)) / 100) : 0; if (typeof feat === 'function' && feat('roundFee5') && f) f = Math.ceil(f / 5) * 5; return round2(f); },
 
@@ -13022,7 +13033,8 @@ const SmsPop = {
     const deliv = !t ? '' : t.status === 'undelivered' ? `<div class="smw-del no"><span>📦 ${L('التسليم', 'Delivery')}:</span><b>⏳ ${L('لسه متسلمش', 'Not handed yet')}</b><button class="btn sm ok" data-a="deliver">${icon('check')}${L('تم التسليم', 'Delivered')}</button></div>`
       : t.status === 'pending' ? `<div class="smw-del no"><span>📦 ${L('الحالة', 'Status')}:</span><b>⏳ ${L('معلقة', 'Pending')}</b></div>`
       : `<div class="smw-del ok"><span>📦 ${L('التسليم', 'Delivery')}:</span><b>✅ ${cust ? L('على حساب العميل الآجل', 'On credit account') : type === 'withdraw' ? L('تم التسليم', 'Delivered') : L('تم الاستلام', 'Collected')}</b></div>`;
-    const diff = s.balanceDiff != null && Math.abs(s.balanceDiff) >= 1 ? `<div class="smw-alert warn">⚠️ ${L('رصيد الرسالة مختلف عن البرنامج بـ', 'SMS balance differs by')} <b class="num">${money(s.balanceDiff)}</b></div>` : '';
+    const wNow = s.walletId && DB.get('wallets', s.walletId); const syncable = wNow && wNow.smsBalanceAt === s.at && Math.abs(wNow.smsBalanceDiff || 0) > 1;
+    const diff = s.balanceDiff != null && Math.abs(s.balanceDiff) > 1 ? `<div class="smw-alert warn">⚠️ ${L('رصيد الرسالة مختلف عن البرنامج بـ', 'SMS balance differs by')} <b class="num">${money(s.balanceDiff)}</b>${syncable ? ` <button class="btn sm" data-a="sync">⚖️ ${L('تطبيق رصيد الرسالة', 'Apply SMS balance')}</button>` : ''}</div>` : '';
     el.className = `smw in ${isIn ? 'is-in' : 'is-out'} ${fake ? 'is-fake' : ''} ${open ? 'is-open' : ''} ${el.classList.contains('min') ? 'min' : ''} ${el.classList.contains('max') ? 'max' : ''}`;
     el.innerHTML = `<div class="smw-h">
         <span class="smw-logo wdot-${net}">${{ vodafone: 'VF', etisalat: 'e&', orange: 'OR', we: 'WE', instapay: 'IP', bank: '🏦' }[net] || '💳'}</span>
@@ -13060,6 +13072,7 @@ const SmsPop = {
     const el = this.wins.get(id); const s = DB.get('smsInbox', id); if (!s) return this.close(id);
     const { p, t, w } = this.data(s);
     if (a === 'close') return this.close(id);
+    if (a === 'sync') { const ww = DB.get('wallets', s.walletId); if (ww) WalletSync.apply(ww, () => this.close(id)); return; }
     if (a === 'min') { el.classList.toggle('min'); el.classList.remove('max'); return; }
     if (a === 'max') { el.classList.toggle('max'); el.classList.remove('min'); if (el.classList.contains('max')) { const r = el.getBoundingClientRect(); if (r.right > window.innerWidth) el.style.left = Math.max(4, window.innerWidth - r.width - 8) + 'px'; } return; }
     if (a === 'text') return UI.modal({ title: L('نص الرسالة', 'Message text'), icon: 'send', size: 'sm', body: `<div class="mono" style="white-space:pre-wrap;line-height:1.8" dir="auto">${esc(s.sender)}\n\n${esc(s.body)}</div>` });
@@ -16089,6 +16102,57 @@ Phones.report = function (from, to, canCost) {
     draw();
   };
 })();
+
+</script>
+  <script>
+/* =========================================================
+   تزامن رصيد المحفظة مع رسالة الشركة (1.8)
+   - البرنامج بيقارن رصيد آخر رسالة برصيد المحفظة في البرنامج (sms-link.js)، ولو الفرق أكتر من 1 ج بيضرب نغمة تحذير
+   - «تطبيق رصيد الرسالة»: نافذة تأكيد بالرصيدين والفرق ← عملية تسوية مقفولة (مينفعش تتعدل أو تتمسح)
+     بتظهر في سجل العمليات بعلامة «تزامن الرصيد مع رسالة الشركة» + سجل النشاط + تنبيه
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const WalletSync = {
+  /* عمليات اتسجلت على المحفظة بعد وقت الرسالة = المقارنة مبقتش دقيقة */
+  after(w) { const t0 = new Date(w.smsBalanceAt).getTime() + 60000; return DB.filter('walletTx', (t) => t.walletId === w.id && new Date(t.date).getTime() > t0 && wtxApplied(t).w && t.source !== 'sms-sync'); },
+  async apply(w, done) {
+    w = DB.get('wallets', w.id) || w;
+    if (!w.smsBalanceAt || w.smsBalance == null) return UI.toast(L('مفيش رسالة فيها رصيد للمحفظة دي', 'No SMS balance for this wallet'), 'err');
+    const cur = Wallets.balance(w); const sms = round2(w.smsBalance); const d = round2(sms - cur);
+    if (Math.abs(d) < 0.01) { DB.update('wallets', w.id, { smsBalanceDiff: 0 }); UI.toast(L('الرصيد متطابق بالفعل ✓', 'Already in sync ✓'), 'ok'); return; }
+    const later = this.after(w);
+    if (later.length) return UI.modal({ title: L('مينفعش التطبيق دلوقتي', 'Cannot apply now'), icon: 'alert', size: 'sm', body: `<p style="line-height:1.9">${L(`فيه <b>${later.length}</b> عملية اتسجلت على المحفظة بعد آخر رسالة (${fmtDT(w.smsBalanceAt)})، فرصيد الرسالة مبقاش يمثل الرصيد الحالي. استنى أول رسالة جديدة من الشركة وطبّق رصيدها، أو اعمل «مطابقة الرصيد» يدوي بالرصيد اللي ظاهر في المحفظة دلوقتي.`, 'Operations were recorded after the last SMS; wait for a newer SMS.')}</p>`, actions: [{ label: L('تمام', 'OK'), onClick: (x) => x.close() }] });
+    const m = UI.modal({ title: L('تطبيق رصيد المحفظة الفعلي', 'Apply actual wallet balance'), icon: 'swap', size: 'sm', body: `
+      <div class="ws-cmp"><div><small>${L('رصيد البرنامج', 'App balance')}</small><b class="num">${money(cur)}</b></div><div class="ws-ar">←</div><div class="hl"><small>${L('رصيد الرسالة (الفعلي)', 'SMS balance (actual)')}</small><b class="num">${money(sms)}</b><em>${fmtDT(w.smsBalanceAt)}</em></div></div>
+      <div class="tag ${d < 0 ? 'err' : 'ok'} mb" style="display:block;white-space:normal;padding:10px;line-height:1.8">${L('المحفظة', 'Wallet')} <b>${esc(w.name)}</b> — ${L('الفرق', 'Difference')}: <b class="num">${d > 0 ? '+' : ''}${money(d)}</b><br>${L('هيتسجل عملية «تزامن رصيد» مقفولة في سجل العمليات بالفرق ده، ومينفعش تتعدل أو تتمسح بعد كده.', 'A locked sync entry will be recorded.')}</div>
+      ${UI.form([{ name: 'note', label: L('السبب / ملاحظة (اختياري)', 'Reason (optional)'), col: 12, placeholder: L('مثلاً: عملية اتنست تتسجل، رسوم شبكة…', 'e.g. unrecorded op, network fees…') }, { name: 'ok', label: L('راجعت رصيد المحفظة على الموبايل وهو مطابق للرسالة', 'I checked the wallet balance on the phone'), type: 'checkbox', col: 12 }], {})}`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد التطبيق', 'Confirm'), cls: 'primary', icon: 'check', onClick: async (x) => {
+        const v = UI.read(x.el); if (!v.ok) return UI.toast(L('علّم إنك راجعت رصيد المحفظة الأول', 'Please confirm you checked the wallet'), 'err');
+        let by = Session.user;
+        if (!Session.can('wallets.manage')) { if (typeof Approve === 'undefined') return UI.toast(L('محتاج صلاحية إدارة المحافظ', 'Needs wallet management permission'), 'err'); by = await Approve.ask(L(`تطبيق رصيد الرسالة على «${esc(w.name)}» بفرق ${money(d)}`, `Apply SMS balance on ${esc(w.name)} (${money(d)})`), 'wallets.manage'); if (!by) return; }
+        const now = Wallets.balance(DB.get('wallets', w.id)); if (Math.abs(now - cur) > 0.009) { x.close(); return UI.toast(L('الرصيد اتغير أثناء التأكيد — جرّب تاني', 'Balance changed — try again'), 'err'); }
+        const t = DB.insert('walletTx', { walletId: w.id, type: 'adjust', source: 'sms-sync', locked: true, status: 'completed', amount: Math.abs(d), balanceDelta: d, cashDelta: 0, fee: 0, before: cur, after: sms, smsAt: w.smsBalanceAt,
+          note: L('تزامن رصيد المحفظة مع رسالة الشركة', 'Wallet balance synced with SMS') + (v.note ? ' — ' + v.note : ''), opNo: DB.nextNo('wsync', 'SY-'), date: nowISO(), userId: Session.user.id, approvedBy: by && by.id !== Session.user.id ? by.id : null });
+        DB.update('wallets', w.id, { smsBalanceDiff: 0, lastSyncAt: nowISO(), lastSyncDiff: d });
+        audit('wallet.smsSync', `${w.name}: ${money(cur, false)} → ${money(sms, false)} (${d > 0 ? '+' : ''}${money(d, false)}) ${t.opNo}${by && by.id !== Session.user.id ? ' — ' + L('موافقة', 'approved by') + ' ' + by.name : ''}${v.note ? ' — ' + v.note : ''}`);
+        x.close(); UI.toast(L(`اتطبّق رصيد الرسالة ✓ — ${w.name} بقى ${money(sms)}`, 'SMS balance applied ✓'), 'ok', 6000); done && done(); if (App.current === 'wallets') App.reload(); else App.refreshTop && App.refreshTop();
+      } }] });
+    void m;
+  }
+};
+
+/* جرس التنبيهات: فرق رصيد أكتر من 1 ج + التزامن اللي اتعمل آخر 24 ساعة */
+if (typeof Notify !== 'undefined') {
+  const bl = Notify.list.bind(Notify);
+  Notify.list = function () {
+    const out = bl();
+    try {
+      DB.filter('wallets', (w) => w.active !== false && w.smsBalanceAt && Math.abs(w.smsBalanceDiff || 0) > 1).forEach((w) => out.unshift({ type: 'err', icon: 'wallet', t: L('فرق في رصيد المحفظة عن رسالة الشركة: ', 'Wallet differs from SMS: ') + w.name, s: `${w.smsBalanceDiff > 0 ? '+' : ''}${money(w.smsBalanceDiff)} — ${L('اضغط للتطبيق', 'tap to apply')}`, go: () => WalletSync.apply(w) }));
+      const since = Date.now() - 864e5; DB.filter('walletTx', (t) => t.source === 'sms-sync' && new Date(t.date).getTime() > since).forEach((t) => out.push({ type: 'warn', icon: 'swap', t: L('تم تزامن رصيد المحفظة مع الرسالة: ', 'Wallet synced with SMS: ') + (DB.get('wallets', t.walletId)?.name || ''), s: `${t.balanceDelta > 0 ? '+' : ''}${money(t.balanceDelta)} · ${fmtTime(t.date)} · ${DB.get('users', t.userId)?.name || ''}`, go: () => { Modules.wallets.tab = 'center'; App.go('wallets'); } }));
+    } catch (_) {}
+    return out;
+  };
+}
 
 </script>
   <script>

@@ -2089,6 +2089,13 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
   .wx-compact .wx-bal b { font-size: 16px; } .wx-compact .wx-lm small { font-size: 10px; }
   .wx-compact .wx-q { flex-direction: column; align-items: stretch; } .wx-compact .wx-q .wx-b.more { flex: 0 0 28px; }
 }
+
+/* طباعة كارت المحفظة: اختيارات + معاينة */
+.wpc { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
+.wpc-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+.wpc-prev { background: #eee; border-radius: 14px; padding: 10px; display: flex; justify-content: center; }
+.wpc-prev iframe { width: 302px; height: 520px; border: 0; background: #fff; border-radius: 8px; }
+@media (max-width: 760px) { .wpc { grid-template-columns: 1fr; } .wpc-prev { order: -1; } .wpc-prev iframe { height: 420px; } }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -3000,8 +3007,27 @@ async function importExcel() {
   const lines = text.split(/\r?\n/).filter(Boolean); const parse = (l) => (l.match(/("([^"]|"")*"|[^,]*)(,|$)/g) || []).map((c) => c.replace(/,$/, '').replace(/^"|"$/g, '').replace(/""/g, '"'));
   const head = parse(lines[0]); return lines.slice(1).map((l) => { const v = parse(l); return Object.fromEntries(head.map((h, i) => [h, v[i] ?? ''])); });
 }
+/* خط Cairo جوه كل مطبوعة: بنقرا قواعد @font-face بتاعة Cairo من البرنامج نفسه ونحوّل الملفات لـ data: عشان الطباعة
+   (ويندوز / أندرويد / المتصفح) تلاقي الخط من غير إنترنت ومن غير مسارات */
+let _printFontCSS = null;
+async function printFontCSS() {
+  if (_printFontCSS !== null) return _printFontCSS;
+  const rules = [];
+  for (const sh of [...document.styleSheets]) { let rs; try { rs = sh.cssRules; } catch (_) { continue; } for (const r of rs || []) if (r.type === 5 && /cairo/i.test(r.style.getPropertyValue('font-family'))) rules.push({ r, base: sh.href || document.baseURI }); }
+  const toData = async (u) => { const res = await fetch(u); if (!res.ok) throw new Error(res.status); const b = await res.blob(); return await new Promise((ok, no) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = no; fr.readAsDataURL(b); }); };
+  const seen = new Set(); let css = '';
+  for (const { r, base } of rules) {
+    let t = r.cssText; const ms = [...t.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/g)];
+    let ok = true;
+    for (const m of ms) { if (/^data:/.test(m[1])) continue; let abs = ''; try { abs = new URL(m[1], base).href; if (seen.has(abs)) { ok = false; break; } seen.add(abs); t = t.replace(m[0], `url("${await toData(abs)}")`); } catch (_) { if (abs && !/^https?:\/\/fonts\.gstatic/.test(abs)) t = t.replace(m[0], `url("${abs}")`); else { ok = false; break; } } }
+    if (ok && ms.length) css += t.replace(/format\(["']?woff2-variations["']?\)/g, 'format("woff2")') + '\n';
+  }
+  _printFontCSS = css; return css;
+}
 async function printHTML(html, opts = {}) {
   let type = opts.type || 'receipt';
+  try { const fc = await printFontCSS(); if (fc && typeof html === 'string' && !html.includes('data-mah-font')) html = html.replace('<head>', `<head><style data-mah-font>${fc}</style>`); } catch (_) {}
+  if (typeof html === 'string') html = html.replace(/font-family:\s*['"]?Tahoma['"]?\s*[,;]/gi, (m) => m.replace(/Tahoma/i, "'Cairo',Tahoma"));
   if (/size:A4/.test(html) && type === 'receipt' && DB.settings().receipt.width !== 'A4') type = 'report'; // A4 reports always show the dialog
   const s = DB.settings(); const cfg = type === 'label' ? s.label : type === 'receipt' ? s.receipt : {};
   const baseDir = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
@@ -8922,28 +8948,57 @@ Modules.wallets = {
   /* ---------------- Printing ---------------- */
   printOp(t) { return printWalletReceipt(t); },
   /* كارت المحفظة: اسم المتجر + اللوجو + رقم المحفظة + نوعها + اسم المالك + وقت وتاريخ الطباعة */
-  async printCard(w) {
-    const st = DB.settings().store; const now = new Date();
-    const qr = await qrDataURL(String(walletNo(w)), 160);
-    const html = `<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>
+  /* اختيارات كارت المحفظة (بتتحفظ في الإعدادات) */
+  CARD_OPTS: () => [['logo', L('لوجو المحل', 'Store logo')], ['store', L('اسم المحل', 'Store name')], ['type', L('نوع المحفظة (فودافون كاش…)', 'Wallet type')], ['owner', L('اسم المالك', 'Owner name')], ['wname', L('اسم المحفظة', 'Wallet name')], ['phone', L('موديل الموبايل', 'Phone model')], ['qr', L('كود QR للرقم', 'QR code')], ['time', L('وقت وتاريخ الطباعة', 'Print date & time')], ['bye', L('جملة الترحيب', 'Welcome line')], ['brand', L('السطر الأخير', 'Footer line')]],
+  cardCfg() { return { logo: true, store: true, type: true, owner: true, wname: false, phone: false, qr: true, time: true, bye: true, brand: true, size: 'small', byeText: 'سعداء بزيارتكم', brandText: 'مركز أهلاً للخدمات الإلكترونية', ...(DB.settings().walletCard || {}) }; },
+  async cardPrintHTML(w, o = this.cardCfg()) {
+    const st = DB.settings().store; const now = new Date(); const sm = o.size !== 'normal';
+    const qr = o.qr ? await qrDataURL(String(walletNo(w)), 160) : '';
+    const z = sm ? { w: 66, logo: 20, store: 15, type: 13, num: 23, owner: 21, qr: 19, small: 10.5, bye: 14, brand: 11, pad: '2.5mm 3mm 2mm' } : { w: 76, logo: 28, store: 19, type: 15, num: 27, owner: 24, qr: 24, small: 12, bye: 17, brand: 13, pad: '4mm 4mm 3mm' };
+    const showName = o.wname && w.name && w.name.replace(/\D/g, '') !== walletNo(w);
+    return `<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>
       @page{size:80mm auto;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Cairo',Tahoma,Arial,sans-serif;color:#000}
-      .card{width:76mm;margin:2mm auto;border:2px solid #000;border-radius:4mm;padding:4mm 4mm 3mm;text-align:center}
-      .logo{width:30mm;height:30mm;object-fit:contain}.store{font-size:19px;font-weight:900;margin:1mm 0 2mm}
-      .type{display:inline-block;border:1.5px solid #000;border-radius:10mm;padding:1mm 5mm;font-size:15px;font-weight:800;margin-bottom:2mm}
-      .lbl{font-size:12px;font-weight:600;color:#333}.num{font-size:27px;font-weight:900;letter-spacing:1.5px;direction:ltr;margin:1mm 0 2mm;font-variant-numeric:tabular-nums}
-      .owner{font-size:16px;font-weight:800;margin-bottom:2mm}.qr{width:24mm;height:24mm;margin:1mm auto}
-      .sig{border-top:1.5px dashed #000;margin-top:2mm;padding-top:2mm;display:flex;justify-content:space-between;font-size:12px;font-weight:700}
-      .bye{margin-top:3mm;font-size:17px;font-weight:900}.brand{font-size:13px;font-weight:800;margin-top:1mm}
+      .card{width:${z.w}mm;margin:2mm auto;border:2px solid #000;border-radius:4mm;padding:${z.pad};text-align:center}
+      .logo{width:${z.logo}mm;height:${z.logo}mm;object-fit:contain;display:block;margin:0 auto}
+      .store{font-size:${z.store}px;font-weight:900;line-height:1.3;margin:.5mm 0 1mm}
+      .type{display:inline-block;border:1.5px solid #000;border-radius:10mm;padding:0 4mm;font-size:${z.type}px;font-weight:800;margin:.5mm 0 1mm}
+      .lbl{font-size:${z.small}px;font-weight:700;color:#333;line-height:1.3}
+      .num{font-size:${z.num}px;font-weight:900;letter-spacing:1px;direction:ltr;line-height:1.25;margin-bottom:1mm;font-variant-numeric:tabular-nums}
+      .owner{font-size:${z.owner}px;font-weight:900;line-height:1.3;margin-bottom:1mm}.ext{font-size:${z.small + 2}px;font-weight:800;line-height:1.35}
+      .qr{width:${z.qr}mm;height:${z.qr}mm;margin:.5mm auto 0;display:block}
+      .sig{border-top:1.5px dashed #000;margin-top:1.5mm;padding-top:1mm;display:flex;justify-content:space-between;font-size:${z.small}px;font-weight:700}
+      .bye{margin-top:1mm;font-size:${z.bye}px;font-weight:900;line-height:1.3}.brand{font-size:${z.brand}px;font-weight:800}
     </style></head><body><div class="card">
-      <img class="logo" src="${logoSrc()}"><div class="store">${esc(st.name)}</div>
-      <div class="type">${netName(w.network)}</div>
+      ${o.logo ? `<img class="logo" src="${logoSrc()}">` : ''}${o.store ? `<div class="store">${esc(st.name)}</div>` : ''}
+      ${o.type ? `<div class="type">${netName(w.network)}</div>` : ''}
       <div class="lbl">رقم المحفظة</div><div class="num">${esc(fmtWalletNo(walletNo(w)) || '—')}</div>
-      ${w.owner ? `<div class="lbl">اسم المالك</div><div class="owner">${esc(w.owner)}</div>` : ''}
+      ${o.owner && w.owner ? `<div class="lbl">اسم المالك</div><div class="owner">${esc(w.owner)}</div>` : ''}
+      ${showName ? `<div class="ext">${esc(w.name)}</div>` : ''}${o.phone && w.phoneModel ? `<div class="ext">📱 ${esc(w.phoneModel)}</div>` : ''}
       ${qr ? `<img class="qr" src="${qr}">` : ''}
-      <div class="sig"><span>وقت الطباعة: ${fmtTime(now)}</span><span>التاريخ: ${fmtDate(now)}</span></div>
-      <div class="bye">سعداء بزيارتكم</div><div class="brand">مركز أهلاً للخدمات الإلكترونية</div>
+      ${o.time ? `<div class="sig"><span>وقت الطباعة: ${fmtTime(now)}</span><span>التاريخ: ${fmtDate(now)}</span></div>` : ''}
+      ${o.bye && o.byeText ? `<div class="bye">${esc(o.byeText)}</div>` : ''}${o.brand && o.brandText ? `<div class="brand">${esc(o.brandText)}</div>` : ''}
     </div></body></html>`;
-    printHTML(html, { type: 'receipt' }); audit('wallet.printCard', w.name);
+  },
+  /* زرار الطباعة: نافذة اختيارات + معاينة */
+  async printCard(w) {
+    const o = this.cardCfg();
+    const m = UI.modal({ title: L('طباعة كارت المحفظة', 'Print wallet card'), icon: 'printer', size: 'lg', body: `<div class="wpc"><div class="wpc-opts">
+        <div class="lbl" style="margin-bottom:6px">${L('اظهر في الكارت', 'Show on card')}</div>
+        <div class="wpc-checks">${this.CARD_OPTS().map(([k, t]) => `<label class="check"><input type="checkbox" data-o="${k}" ${o[k] ? 'checked' : ''}> ${t}</label>`).join('')}
+          <label class="check" style="opacity:.7"><input type="checkbox" checked disabled> ${L('رقم المحفظة (دايماً)', 'Wallet number (always)')}</label></div>
+        <div class="form-grid" style="margin-top:10px">
+          <div class="f c12"><label class="lbl">${L('جملة الترحيب', 'Welcome line')}</label><input data-t="byeText" value="${esc(o.byeText)}"></div>
+          <div class="f c12"><label class="lbl">${L('السطر الأخير', 'Footer line')}</label><input data-t="brandText" value="${esc(o.brandText)}"></div>
+          <div class="f c12"><label class="lbl">${L('حجم الكارت', 'Card size')}</label><select data-t="size"><option value="small" ${o.size !== 'normal' ? 'selected' : ''}>${L('صغير', 'Small')}</option><option value="normal" ${o.size === 'normal' ? 'selected' : ''}>${L('عادي (أكبر)', 'Normal')}</option></select></div>
+        </div><div class="faint" style="margin-top:8px">${L('اختياراتك بتتحفظ وبتتطبق على كل المحافظ', 'Saved for all wallets')}</div></div>
+        <div class="wpc-prev"><iframe id="wpcF" title="preview"></iframe></div></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('طباعة', 'Print'), cls: 'primary', icon: 'printer', onClick: async (x) => { const c = read(); DB.saveSettings({ walletCard: c }); x.close(); printHTML(await this.cardPrintHTML(w, c), { type: 'receipt' }); audit('wallet.printCard', w.name); } }] });
+    const el = m.el;
+    const read = () => { const c = { ...this.cardCfg() }; $$('[data-o]', el).forEach((i) => (c[i.dataset.o] = i.checked)); $$('[data-t]', el).forEach((i) => (c[i.dataset.t] = i.value)); return c; };
+    let fc = ''; try { fc = await printFontCSS(); } catch (_) {}
+    const base = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
+    const draw = async () => { const h = (await this.cardPrintHTML(w, read())).replace('<head>', `<head><base href="${base}"><style>${fc}</style><style>body{background:#fff}</style>`); const f = $('#wpcF', el); if (f) { f.onload = () => { try { f.style.height = Math.min(640, f.contentDocument.documentElement.scrollHeight + 6) + 'px'; } catch (_) {} }; f.srcdoc = h; } };
+    $$('[data-o],[data-t]', el).forEach((i) => (i.oninput = i.onchange = draw)); draw();
   }
 };
 
@@ -10823,6 +10878,8 @@ Modules.settings = {
    ========================================================= */
 const CHANGELOG = [
   { v: '1.8.0', d: '2026-11-02', items: [
+    ['printer', L('طباعة كارت المحفظة بقت بنافذة اختيارات ومعاينة: تختار تظهر إيه (اللوجو، اسم المحل، نوع المحفظة، اسم المالك، اسم المحفظة، موديل الموبايل، QR، الوقت والتاريخ، جملة الترحيب والسطر الأخير وتكتبهم بنفسك) وحجم الكارت صغير أو عادي — واختياراتك بتتحفظ', 'Wallet card print options with live preview')],
+    ['printer', L('كل المطبوعات (الإيصالات، الفواتير، الملصقات، كارت المحفظة، التقارير) بقت بخط Cairo مضمون حتى على الموبايل ومن غير إنترنت — وكارت المحفظة اتصغّر واسم المالك بقى كبير وواضح', 'All printouts now embed the Cairo font; smaller wallet card with a bigger owner name')],
     ['bank', L('الشركاء وتوزيع الأرباح: لكل شريك طريقة أرباح (حسب حصته، أو نسبة % من صافي الربح أو من أرباح الكاش، أو مبلغ ثابت كل شهر) — «صرف أرباح» بإيصال يمضي عليه ومش بيقلل رأس ماله، و«سحب من رأس المال» بيقلل حصته، واعتماد مستحقات الشهر 🔒، وكشف حساب لكل شريك', 'Partners: profit rules, payouts with receipts, capital withdrawals, monthly approval and statements')],
     ['wallet', L('تصميمات جديدة لكروت المحافظ: «الداكن الأنيق» و«البطاقة البنكية» و«القائمة المضغوطة» (والكلاسيكي لسه موجود) — بتختار من «شكل الكروت» فوق المحافظ وتغيّره وقت ما تحب، بنفس كل الأزرار', 'New wallet card styles (Elegant, Bank card, Compact, Classic) selectable from «Card style»')],
     ['send', L('الإيداع بيتسجل لوحده من رسالة الشركة بالمبلغ والرسوم الحقيقيين، ونافذة سريعة: «استلمت الكاش» أو «على حساب عميل آجل» (ومقترح العميل اللي اتحوّل لنفس الرقم قبل كده) — وتنبيه بنغمة لو الكاش متأكدش، وتحذير عند قفل الوردية', 'Deposits recorded from SMS with quick cash / credit confirmation and reminders')],

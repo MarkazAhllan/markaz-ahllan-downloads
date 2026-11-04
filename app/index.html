@@ -9873,10 +9873,14 @@ Modules.shifts = {
 /* ================= Capital ================= */
 Modules.capital = {
   title: () => L('رأس المال والمركز المالي', 'Capital & financial position'), icon: 'bank', perm: 'capital',
+  /* صافي ربح الشهر (كل الأقسام − المصروفات والمرتبات) */
+  monthProfit(mk) { const s = DB.filter('sales', (x) => monthKey(x.date) === mk); const svc = sum(DB.filter('walletTx', (t) => monthKey(t.date) === mk), (t) => t.fee || 0) + sum(DB.filter('machineTx', (t) => monthKey(t.date) === mk), (t) => (t.fee || 0) + (t.commission || 0)); const ex = sum(DB.filter('expenses', (e) => monthKey(e.date) === mk), (e) => e.amount); const sal = sum(DB.filter('payroll', (x) => x.month === mk && x.status === 'paid'), (x) => x.net); return round2(sum(s, Sales.netProfit) + svc + Repairs.profitMonth(mk) + Lines.profitMonth(mk) + (typeof CCTV !== 'undefined' ? CCTV.profitIn(mk + '-01', mk + '-31') : 0) - ex - sal); },
+  /* أرباح الكاش = عمولات المحافظ + خدمات الماكينات والكروت */
+  cashProfit(mk) { return round2(sum(DB.filter('walletTx', (t) => monthKey(t.date) === mk && (t.status || 'completed') !== 'pending'), (t) => t.fee || 0) + sum(DB.filter('machineTx', (t) => monthKey(t.date) === mk), (t) => (t.fee || 0) + (t.commission || 0))); },
   position() {
     const drawer = cashTotal(), safe = safeBalance(), wallets = Wallets.total(), machines = Machines.total(), stock = Stock.value(true), lines = Lines.stockValue(), recv = Customers.totalReceivable(), pay = Suppliers.totalPayable();
     const assets = round2(drawer + wallets + machines + stock + lines + recv);
-    const entries = DB.all('capital'); const invested = round2(sum(entries, (e) => (e.type === 'injection' ? e.amount : -e.amount)));
+    const entries = DB.filter('capital', (e) => ['injection', 'withdrawal', 'loss'].includes(e.type)); const invested = round2(sum(entries, (e) => (e.type === 'injection' ? e.amount : -e.amount)));
     return { drawer, safe, wallets, machines, stock, lines, recv, pay, assets, net: round2(assets - pay), invested, growth: round2(assets - pay - invested) };
   },
   render(el) {
@@ -9893,16 +9897,16 @@ Modules.capital = {
     <div id="cpPartners" class="grid g4 mb"></div><div id="cpTbl"></div>`;
     Charts.donut($('#cpDonut'), [[L('النقدية (الدرج + الخزينة)', 'Cash (drawer + safe)'), p.drawer], [L('المحافظ', 'Wallets'), p.wallets], [L('الماكينات', 'Machines'), p.machines], [L('المخزون (تكلفة)', 'Stock (cost)'), p.stock], [L('مخزون الخطوط', 'SIM lines stock'), p.lines], [L('مديونيات العملاء', 'Receivables'), p.recv]].map(([l, v], i) => ({ label: l, value: Math.max(0, v), color: PALETTE[i] })), { center: Charts.short(p.assets), sub: L('الأصول', 'assets') });
     const months = Array.from({ length: 6 }, (_, i) => monthKey(new Date(new Date().getFullYear(), new Date().getMonth() - 5 + i, 1)));
-    const prof = (mk) => { const s = DB.filter('sales', (x) => monthKey(x.date) === mk); const svc = sum(DB.filter('walletTx', (t) => monthKey(t.date) === mk), (t) => t.fee || 0) + sum(DB.filter('machineTx', (t) => monthKey(t.date) === mk), (t) => (t.fee || 0) + (t.commission || 0)); const ex = sum(DB.filter('expenses', (e) => monthKey(e.date) === mk), (e) => e.amount); const sal = sum(DB.filter('payroll', (x) => x.month === mk && x.status === 'paid'), (x) => x.net); return round2(sum(s, Sales.netProfit) + svc + Repairs.profitMonth(mk) + Lines.profitMonth(mk) + (typeof CCTV !== 'undefined' ? CCTV.profitIn(mk + '-01', mk + '-31') : 0) - ex - sal); };
+    const prof = (mk) => this.monthProfit(mk);
     Charts.bar($('#cpBar'), { labels: months.map(monthLabel), series: [{ name: L('صافي الربح', 'Net profit'), color: '#16825D', values: months.map(prof) }], height: 230 });
-    const partners = groupBy(DB.filter('capital', (e) => e.type !== 'loss'), (e) => e.partner || L('المالك', 'Owner'));
+    const partners = groupBy(DB.filter('capital', (e) => e.type === 'injection' || e.type === 'withdrawal'), (e) => e.partner || L('المالك', 'Owner'));
     $('#cpPartners').innerHTML = Object.entries(partners).map(([n, es]) => `<div class="card kpi"><div class="avatar" style="background:${avatarColor(n)}">${initials(n)}</div><div><div class="l">${esc(n)}</div><div class="v num" style="font-size:18px">${money(sum(es, (e) => (e.type === 'injection' ? e.amount : -e.amount)))}</div><div class="d faint">${L('حصة', 'Share')} ${p.invested ? Math.round((sum(es, (e) => (e.type === 'injection' ? e.amount : -e.amount)) / p.invested) * 100) : 0}%</div></div></div>`).join('');
     $('#cpIn').onclick = () => this.entry('injection'); $('#cpOut').onclick = () => this.entry('withdrawal');
     UI.table($('#cpTbl'), {
-      rows: DB.all('capital').sort((a, b) => (a.date < b.date ? 1 : -1)), exportName: 'capital',
-      columns: [{ key: 'date', label: L('التاريخ', 'Date'), render: (e) => fmtDate(e.date) }, { key: 'type', label: L('النوع', 'Type'), render: (e) => (e.type === 'injection' ? `<span class="tag ok">${L('إضافة رأس مال', 'Injection')}</span>` : e.type === 'loss' ? `<span class="tag warn">${L('هوالك / تالف', 'Waste')}</span>` : `<span class="tag err">${L('مسحوبات', 'Withdrawal')}</span>`), exportVal: (e) => e.type }, { key: 'partner', label: L('الشريك', 'Partner') },
+      rows: DB.filter('capital', (e) => !['dist', 'partner'].includes(e.type)).sort((a, b) => (a.date < b.date ? 1 : -1)), exportName: 'capital',
+      columns: [{ key: 'date', label: L('التاريخ', 'Date'), render: (e) => fmtDate(e.date) }, { key: 'type', label: L('النوع', 'Type'), render: (e) => (e.type === 'injection' ? `<span class="tag ok">${L('إضافة رأس مال', 'Injection')}</span>` : e.type === 'loss' ? `<span class="tag warn">${L('هوالك / تالف', 'Waste')}</span>` : e.type === 'payout' ? `<span class="tag info">${L('صرف أرباح', 'Profit payout')}${e.month ? ' — ' + monthLabel(e.month) : ''}</span>` : `<span class="tag err">${L('مسحوبات', 'Withdrawal')}</span>`), exportVal: (e) => e.type }, { key: 'partner', label: L('الشريك', 'Partner') },
         { key: 'amount', label: L('المبلغ', 'Amount'), render: (e) => `<b class="num">${money(e.amount)}</b>`, exportVal: (e) => e.amount }, { label: L('الوجهة', 'Destination'), render: (e) => esc(PAY_SRC().find((x) => x[0] === e.dest)?.[1] || L('خارج الدرج', 'Outside')) }, { key: 'note', label: L('ملاحظة', 'Note') }],
-      actions: (e) => (e.type === 'loss' ? '' : UI.act('del', 'trash', L('حذف', 'Delete'), 'del')), onAction: async (a, e) => { if (await UI.confirm(L('حذف الحركة؟', 'Delete?'))) { DB.remove('capital', e.id); if (e.dest === 'drawer') cashMove(e.type === 'injection' ? -e.amount : e.amount, 'capital', e.id, L('حذف حركة رأس مال', 'Capital entry deleted')); App.reload(); } }, emptyIcon: 'bank'
+      actions: (e) => (e.type === 'loss' ? '' : UI.act('del', 'trash', L('حذف', 'Delete'), 'del')), onAction: async (a, e) => { if (await UI.confirm(L('حذف الحركة؟', 'Delete?'))) { DB.remove('capital', e.id); const wt = DB.find('walletTx', (x) => x.capId === e.id); if (wt) DB.remove('walletTx', wt.id); if (e.dest === 'drawer') cashMove(e.type === 'injection' ? -e.amount : e.amount, 'capital', e.id, L('حذف حركة رأس مال', 'Capital entry deleted')); App.reload(); } }, emptyIcon: 'bank'
     });
   },
   entry(type) {
@@ -10820,6 +10824,7 @@ Modules.settings = {
    ========================================================= */
 const CHANGELOG = [
   { v: '1.8.0', d: '2026-11-02', items: [
+    ['bank', L('الشركاء وتوزيع الأرباح: لكل شريك طريقة أرباح (حسب حصته، أو نسبة % من صافي الربح أو من أرباح الكاش، أو مبلغ ثابت كل شهر) — «صرف أرباح» بإيصال يمضي عليه ومش بيقلل رأس ماله، و«سحب من رأس المال» بيقلل حصته، واعتماد مستحقات الشهر 🔒، وكشف حساب لكل شريك', 'Partners: profit rules, payouts with receipts, capital withdrawals, monthly approval and statements')],
     ['wallet', L('تصميمات جديدة لكروت المحافظ: «الداكن الأنيق» و«البطاقة البنكية» و«القائمة المضغوطة» (والكلاسيكي لسه موجود) — بتختار من «شكل الكروت» فوق المحافظ وتغيّره وقت ما تحب، بنفس كل الأزرار', 'New wallet card styles (Elegant, Bank card, Compact, Classic) selectable from «Card style»')],
     ['send', L('الإيداع بيتسجل لوحده من رسالة الشركة بالمبلغ والرسوم الحقيقيين، ونافذة سريعة: «استلمت الكاش» أو «على حساب عميل آجل» (ومقترح العميل اللي اتحوّل لنفس الرقم قبل كده) — وتنبيه بنغمة لو الكاش متأكدش، وتحذير عند قفل الوردية', 'Deposits recorded from SMS with quick cash / credit confirmation and reminders')],
     ['sim', L('تطبيق «مركز أهلاً SMS»: بيعرض شركة ورقم كل شريحة، وبيختار المحفظة لوحده لو رقم الشريحة متسجّل عليها', 'SMS helper shows each SIM carrier/number and auto-selects the wallet')],
@@ -16456,6 +16461,210 @@ const DepCash = {
       return bc(sh, ...a);
     };
   }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   الشركاء: سحب من رأس المال • توزيع الأرباح الشهري (نسبة / مبلغ ثابت / حسب الحصة)
+   • صرف الأرباح وتسجيله • كشف حساب الشريك
+   كل البيانات في مجموعة capital:
+     injection / withdrawal  → حركات رأس المال (بتأثر على حصة الشريك)
+     partner                 → طريقة حساب أرباح الشريك
+     dist                    → مستحقات شهر معتمدة (مقفولة)
+     payout                  → أرباح اتصرفت للشريك (مش بتأثر على رأس المال)
+   ===================================================================== */
+CASH_SOURCES.profit = ['توزيع أرباح الشركاء', 'Partner profit payouts'];
+
+const Partners = {
+  WASTE: () => L('هوالك', 'Waste'),
+  names() {
+    const set = new Set();
+    DB.filter('capital', (e) => ['injection', 'withdrawal', 'partner', 'payout', 'dist'].includes(e.type) && e.partner && e.partner !== this.WASTE()).forEach((e) => set.add(e.partner));
+    return [...set].sort((a, b) => this.capitalOf(b) - this.capitalOf(a));
+  },
+  capitalOf(n) { return round2(sum(DB.filter('capital', (e) => e.partner === n && (e.type === 'injection' || e.type === 'withdrawal')), (e) => (e.type === 'injection' ? e.amount : -e.amount))); },
+  invested() { return round2(sum(this.names(), (n) => Math.max(0, this.capitalOf(n)))); },
+  sharePct(n) { const t = this.invested(); return t ? round2((Math.max(0, this.capitalOf(n)) / t) * 100) : 0; },
+  ruleRec(n) { return DB.find('capital', (e) => e.type === 'partner' && e.partner === n); },
+  rule(n) { const r = this.ruleRec(n); return { mode: 'share', base: 'net', pct: 0, fixed: 0, ...(r || {}) }; },
+  MODES: () => [['share', L('حسب حصته في رأس المال', 'By capital share')], ['pct', L('نسبة ثابتة % من الأرباح', 'Fixed % of profit')], ['fixed', L('مبلغ ثابت كل شهر', 'Fixed monthly amount')], ['none', L('بدون أرباح', 'No profit')]],
+  BASES: () => [['net', L('صافي ربح المحل (كل الأقسام بعد المصروفات والمرتبات)', 'Store net profit')], ['cash', L('أرباح الكاش (عمولات المحافظ والماكينات والكروت)', 'Cash services profit')]],
+  baseAmt(mk, b) { return b === 'cash' ? Modules.capital.cashProfit(mk) : Modules.capital.monthProfit(mk); },
+  calc(n, mk) {
+    const r = this.rule(n);
+    if (r.mode === 'none') return { due: 0, desc: L('بدون أرباح', 'No profit'), base: 0 };
+    if (r.mode === 'fixed') return { due: round2(r.fixed || 0), desc: L('مبلغ ثابت شهري', 'Fixed monthly'), base: 0 };
+    const base = this.baseAmt(mk, r.base); const pct = r.mode === 'share' ? this.sharePct(n) : Number(r.pct) || 0;
+    const bName = r.base === 'cash' ? L('أرباح الكاش', 'cash profit') : L('صافي الربح', 'net profit');
+    return { due: base > 0 ? round2((base * pct) / 100) : 0, desc: `${pct}% ${L('من', 'of')} ${bName}`, base, pct };
+  },
+  distRec(n, mk) { return DB.find('capital', (e) => e.type === 'dist' && e.partner === n && e.month === mk); },
+  due(n, mk) { const d = this.distRec(n, mk); return d ? d.amount : this.calc(n, mk).due; },
+  paid(n, mk) { return round2(sum(DB.filter('capital', (e) => e.type === 'payout' && e.partner === n && (!mk || e.month === mk)), (e) => e.amount)); },
+  approve(n, mk) {
+    if (this.distRec(n, mk)) return this.distRec(n, mk);
+    const c = this.calc(n, mk);
+    return DB.insert('capital', { type: 'dist', partner: n, month: mk, amount: c.due, desc: c.desc, base: c.base || 0, amountKind: 'dist', date: new Date(mk + '-28T12:00:00').toISOString(), userId: Session.user.id });
+  },
+  /* اللي ليه من أرباح (المعتمد − المصروف) */
+  owed(n) { return round2(sum(DB.filter('capital', (e) => e.type === 'dist' && e.partner === n), (e) => e.amount) - this.paid(n)); },
+  prevMonth() { const d = new Date(); return monthKey(new Date(d.getFullYear(), d.getMonth() - 1, 1)); },
+  srcOpts() { return [['drawer', L('درج الكاشير', 'Cash drawer')], ['outside', L('خارج الدرج (الخزنة / البنك)', 'Outside drawer (safe / bank)')], ...DB.filter('wallets', (w) => w.active !== false).map((w) => ['w:' + w.id, L('محفظة: ', 'Wallet: ') + w.name])]; },
+  moveMoney(e, sign, note) {
+    if (e.dest === 'drawer') cashMove(sign * e.amount, e.type === 'payout' ? 'profit' : 'capital', e.id, note);
+    else if ((e.dest || '').startsWith('w:')) DB.insert('walletTx', { walletId: e.dest.slice(2), type: sign > 0 ? 'fund' : 'cashout', amount: e.amount, fee: 0, balanceDelta: sign * e.amount, cashDelta: 0, note, date: nowISO(), userId: Session.user.id, capId: e.id });
+  },
+  undoMoney(e) {
+    if (e.dest === 'drawer') cashMove(e.amount, e.type === 'payout' ? 'profit' : 'capital', e.id, L('إلغاء ', 'Undo ') + (e.type === 'payout' ? L('صرف أرباح', 'payout') : L('مسحوبات', 'withdrawal')));
+    const t = DB.find('walletTx', (x) => x.capId === e.id); if (t) DB.remove('walletTx', t.id);
+  },
+
+  /* ---------- سحب: من رأس المال أو من الأرباح ---------- */
+  withdraw(n0, kind0) {
+    const names = this.names(); const n = n0 || names[0] || '';
+    const m = UI.modal({ title: L('سحب / صرف لشريك', 'Partner withdrawal / payout'), icon: 'bank', size: 'sm', body: `
+      <div class="tabs mb" id="pwK"><button data-k="profit" class="${kind0 !== 'capital' ? 'active' : ''}">${icon('trend')}${L('صرف من أرباحه', 'From his profit')}</button><button data-k="capital" class="${kind0 === 'capital' ? 'active' : ''}">${icon('bank')}${L('سحب من رأس المال', 'From capital')}</button></div>
+      ${UI.form([{ name: 'partner', label: L('الشريك', 'Partner'), required: true, col: 12, value: n, attrs: 'list="pwNames" autocomplete="off"' },
+        { type: 'html', col: 12, html: `<datalist id="pwNames">${names.map((x) => `<option value="${esc(x)}">`).join('')}</datalist><div id="pwInfo" class="pw-info"></div>` },
+        { name: 'month', label: L('أرباح شهر', 'Profit of month'), type: 'month', value: this.prevMonth(), col: 6 },
+        { name: 'amount', label: L('المبلغ', 'Amount'), type: 'number', required: true, col: 6 },
+        { name: 'date', label: L('تاريخ الصرف', 'Date'), type: 'date', value: dayKey(), col: 6 },
+        { name: 'dest', label: L('الصرف من', 'Paid from'), type: 'select', options: this.srcOpts(), col: 6 },
+        { name: 'note', label: L('ملاحظة', 'Note'), col: 12 },
+        { name: 'print', label: L('طباعة إيصال صرف يمضي عليه الشريك', 'Print a signed receipt'), type: 'checkbox', value: true, col: 12 }])}`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد الصرف', 'Confirm'), cls: 'primary', onClick: (x) => this.saveWithdraw(x, kind) }] });
+    let kind = kind0 === 'capital' ? 'capital' : 'profit';
+    const el = m.el; const f = (k) => $(`[name=${k}]`, el);
+    const info = () => {
+      const p = f('partner').value.trim(); const mk = f('month').value || this.prevMonth();
+      f('month').closest('.f').style.display = kind === 'profit' ? '' : 'none';
+      if (!p) { $('#pwInfo', el).innerHTML = ''; return; }
+      const cap = this.capitalOf(p);
+      if (kind === 'capital') $('#pwInfo', el).innerHTML = `<div>${L('رأس ماله الحالي', 'Current capital')}: <b class="num">${money(cap)}</b> — ${L('حصته', 'share')} <b>${this.sharePct(p)}%</b></div><div class="faint">${L('السحب من رأس المال بيقلل حصته في المحل وفي الأرباح الجاية. لو سحب كل رأس ماله يبقى خرج من الشراكة.', 'Reduces his share and future profit.')}</div>`;
+      else { const d = this.due(p, mk), pd = this.paid(p, mk); $('#pwInfo', el).innerHTML = `<div>${L('مستحق', 'Due')} ${monthLabel(mk)}: <b class="num">${money(d)}</b> · ${L('اتصرف', 'paid')} <b class="num">${money(pd)}</b> · ${L('الباقي', 'left')} <b class="num ${d - pd > 0 ? 'pos' : ''}">${money(Math.max(0, d - pd))}</b></div><div class="faint">${this.distRec(p, mk) ? '🔒 ' + L('مستحقات الشهر معتمدة', 'Month approved') : this.calc(p, mk).desc + ' — ' + L('هتتعتمد تلقائياً مع أول صرف', 'auto-approved on first payout')} · ${L('صرف الأرباح مش بيأثر على رأس ماله', 'Payout does not change capital')}</div>`; if (!f('amount').value || f('amount').dataset.auto) { f('amount').value = Math.max(0, round2(d - pd)) || ''; f('amount').dataset.auto = '1'; } }
+    };
+    f('amount').oninput = () => delete f('amount').dataset.auto;
+    $$('#pwK button', el).forEach((b) => (b.onclick = () => { kind = b.dataset.k; $$('#pwK button', el).forEach((z) => z.classList.toggle('active', z === b)); if (f('amount').dataset.auto) f('amount').value = ''; info(); }));
+    ['partner', 'month'].forEach((k) => (f(k).oninput = f(k).onchange = info)); info();
+    m.kind = () => kind;
+  },
+  async saveWithdraw(m, _k) {
+    if (!UI.validate(m.el)) return; const v = UI.read(m.el); const kind = $('#pwK .active', m.el).dataset.k; const a = round2(Number(v.amount));
+    const p = v.partner.trim(); if (!(a > 0)) return UI.toast(L('اكتب مبلغ صحيح', 'Enter a valid amount'), 'err');
+    if (v.dest === 'drawer' && a > drawerBalance() + 0.01 && !(await UI.confirm(L(`الدرج فيه ${money(drawerBalance())} بس — تكمل؟`, 'Drawer has less — continue?')))) return;
+    const date = new Date(v.date + 'T12:00:00').toISOString(); let e;
+    if (kind === 'capital') {
+      const cap = this.capitalOf(p); if (a > cap + 0.01) return UI.toast(L(`المبلغ أكبر من رأس مال الشريك (${money(cap)})`, 'More than partner capital'), 'err');
+      e = DB.insert('capital', { type: 'withdrawal', partner: p, amount: a, date, dest: v.dest, note: v.note || (a >= cap - 0.01 ? L('سحب كامل رأس المال — خروج من الشراكة', 'Full exit') : ''), userId: Session.user.id });
+      this.moveMoney(e, -1, p); audit('capital.withdrawal', `${p} ${a}`);
+    } else {
+      const mk = v.month || this.prevMonth(); this.approve(p, mk);
+      const left = round2(this.due(p, mk) - this.paid(p, mk));
+      if (a > left + 0.01 && !(await UI.confirm(L(`المبلغ أكبر من الباقي من أرباح ${monthLabel(mk)} (${money(Math.max(0, left))}). الزيادة هتتسجل مقدّم أرباح عليه — تكمل؟`, 'More than due — record as advance?')))) return;
+      e = DB.insert('capital', { type: 'payout', partner: p, amount: a, month: mk, date, dest: v.dest, note: v.note || '', advance: a > left + 0.01, userId: Session.user.id });
+      this.moveMoney(e, -1, L('أرباح ', 'Profit ') + p); audit('capital.payout', `${p} ${monthLabel(mk)} ${a}`);
+    }
+    m.close(); UI.toast(L('اتسجل ✓', 'Saved ✓')); if (v.print) this.printReceipt(e); App.reload();
+  },
+
+  /* ---------- طريقة حساب الأرباح ---------- */
+  ruleDialog(n) {
+    const r = this.rule(n);
+    const m = UI.modal({ title: L('طريقة حساب أرباح: ', 'Profit rule: ') + n, icon: 'percent', size: 'sm', body: UI.form([
+      { name: 'mode', label: L('الطريقة', 'Method'), type: 'select', options: this.MODES(), value: r.mode, col: 12 },
+      { name: 'base', label: L('من أنهي أرباح', 'Profit base'), type: 'select', options: this.BASES(), value: r.base, col: 12 },
+      { name: 'pct', label: L('النسبة %', 'Percent %'), type: 'number', value: r.pct || '', col: 6, attrs: 'step="0.01" min="0" max="100"' },
+      { name: 'fixed', label: L('المبلغ الشهري', 'Monthly amount'), type: 'number', value: r.fixed || '', col: 6 },
+      { type: 'html', col: 12, html: `<div class="faint" id="prHint"></div>` }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (x) => {
+        const v = UI.read(x.el); const d = { mode: v.mode, base: v.base, pct: Number(v.pct) || 0, fixed: Number(v.fixed) || 0 };
+        if (d.mode === 'pct' && !(d.pct > 0 && d.pct <= 100)) return UI.toast(L('اكتب نسبة من 1 لـ 100', 'Enter 1-100'), 'err');
+        if (d.mode === 'fixed' && !(d.fixed > 0)) return UI.toast(L('اكتب المبلغ الشهري', 'Enter amount'), 'err');
+        const ex = this.ruleRec(n); ex ? DB.update('capital', ex.id, d) : DB.insert('capital', { type: 'partner', partner: n, amount: 0, date: nowISO(), ...d });
+        audit('capital.rule', `${n}: ${d.mode} ${d.pct || d.fixed}`); x.close(); App.reload();
+      } }] });
+    const el = m.el; const sync = () => { const md = $('[name=mode]', el).value; const show = (k, on) => ($(`[name=${k}]`, el).closest('.f').style.display = on ? '' : 'none'); show('pct', md === 'pct'); show('fixed', md === 'fixed'); show('base', md === 'pct' || md === 'share');
+      $('#prHint', el).textContent = md === 'share' ? L(`حصته دلوقتي ${this.sharePct(n)}% — بتتغير لوحدها لو حد زوّد أو سحب من رأس المال`, `Current share ${this.sharePct(n)}%`) : md === 'fixed' ? L('المبلغ ده بيتحسب كل شهر مهما كان الربح', 'Charged every month regardless of profit') : md === 'pct' ? L('لو الشهر خسران بيبقى المستحق صفر', 'Zero in a losing month') : ''; };
+    $('[name=mode]', el).onchange = sync; sync();
+  },
+
+  /* ---------- طباعة ---------- */
+  printReceipt(e) {
+    const st = DB.settings().store; const isP = e.type === 'payout';
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>@page{size:80mm auto;margin:0}body{font-family:Cairo,Tahoma;width:74mm;margin:3mm;font-size:12px;text-align:center}.ln{display:flex;justify-content:space-between;gap:6px;margin:2px 0}hr{border:0;border-top:1px dashed #000}.big{font-size:20px;font-weight:900;border:2px solid #000;border-radius:8px;padding:6px;margin:6px 0}.sg{margin-top:26px;border-top:1px solid #000;padding-top:3px}</style></head><body>
+      <img src="${logoSrc()}" style="width:26mm"><h3 style="margin:4px 0">${esc(st.name)}</h3><b>${isP ? L('إيصال صرف أرباح شريك', 'Partner profit payout') : L('إيصال سحب من رأس المال', 'Capital withdrawal receipt')}</b><hr>
+      <div class="ln"><span>${L('التاريخ', 'Date')}</span><span>${fmtDT(e.date)}</span></div><div class="ln"><span>${L('الشريك', 'Partner')}</span><b>${esc(e.partner)}</b></div>
+      ${isP ? `<div class="ln"><span>${L('أرباح شهر', 'Month')}</span><span>${monthLabel(e.month)}</span></div>` : ''}<div class="ln"><span>${L('من', 'From')}</span><span>${esc(this.srcOpts().find((x) => x[0] === e.dest)?.[1] || '')}</span></div>
+      <div class="big">${money(e.amount)}</div>
+      ${isP ? `<div class="ln"><span>${L('الباقي من أرباح الشهر', 'Month remaining')}</span><span>${money(Math.max(0, this.due(e.partner, e.month) - this.paid(e.partner, e.month)))}</span></div>` : `<div class="ln"><span>${L('رأس ماله بعد السحب', 'Capital after')}</span><span>${money(this.capitalOf(e.partner))}</span></div>`}
+      ${e.note ? `<div>${esc(e.note)}</div>` : ''}<div class="sg">${L('توقيع المستلم', 'Received by')}: ${esc(e.partner)}</div><hr><div style="font-size:9px">${COPYRIGHT_AR}</div></body></html>`);
+  },
+  printMonth(mk) {
+    const ns = this.names(); const rows = ns.map((n) => { const d = this.due(n, mk), p = this.paid(n, mk); return `<tr><td><b>${esc(n)}</b></td><td class="num">${money(this.capitalOf(n))}</td><td>${this.distRec(n, mk)?.desc || this.calc(n, mk).desc}</td><td class="num">${money(d)}</td><td class="num">${money(p)}</td><td class="num"><b>${money(Math.max(0, d - p))}</b></td></tr>`; }).join('');
+    const T = (f) => money(sum(ns, f));
+    printHTML(reportDoc(`${L('كشف توزيع أرباح الشركاء', 'Partners profit distribution')} — ${monthLabel(mk)}`, `<div class="kp"><div><span>${L('صافي ربح الشهر', 'Net profit')}</span><b>${money(Modules.capital.monthProfit(mk))}</b></div><div><span>${L('أرباح الكاش', 'Cash profit')}</span><b>${money(Modules.capital.cashProfit(mk))}</b></div><div><span>${L('مستحق للشركاء', 'Due to partners')}</span><b>${T((n) => this.due(n, mk))}</b></div><div><span>${L('اتصرف', 'Paid')}</span><b>${T((n) => this.paid(n, mk))}</b></div></div>
+      <table><thead><tr><th>${L('الشريك', 'Partner')}</th><th>${L('رأس ماله', 'Capital')}</th><th>${L('طريقة الحساب', 'Method')}</th><th>${L('المستحق', 'Due')}</th><th>${L('اتصرف', 'Paid')}</th><th>${L('الباقي', 'Left')}</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="sig">${ns.slice(0, 4).map((n) => `<div>${esc(n)}</div>`).join('')}</div>`), { type: 'report' });
+  },
+  statement(n) {
+    const es = DB.filter('capital', (e) => e.partner === n && ['injection', 'withdrawal', 'dist', 'payout'].includes(e.type)).sort((a, b) => (a.date < b.date ? -1 : 1));
+    let cap = 0, prof = 0;
+    const rows = es.map((e) => { const t = e.type; if (t === 'injection') cap += e.amount; if (t === 'withdrawal') cap -= e.amount; if (t === 'dist') prof += e.amount; if (t === 'payout') prof -= e.amount;
+      const lbl = t === 'injection' ? L('إضافة رأس مال', 'Capital in') : t === 'withdrawal' ? L('سحب من رأس المال', 'Capital out') : (t === 'dist' ? L('أرباح مستحقة', 'Profit due') : L('صرف أرباح', 'Profit paid')) + (e.month ? ' — ' + monthLabel(e.month) : '');
+      return `<tr><td>${fmtDate(e.date)}</td><td>${lbl}${e.note ? `<div class="faint">${esc(e.note)}</div>` : ''}</td><td class="num">${t === 'injection' ? money(e.amount, false) : t === 'withdrawal' ? '−' + money(e.amount, false) : ''}</td><td class="num">${t === 'dist' ? money(e.amount, false) : t === 'payout' ? '−' + money(e.amount, false) : ''}</td><td class="num"><b>${money(cap, false)}</b></td><td class="num"><b>${money(prof, false)}</b></td></tr>`; }).reverse().join('');
+    const head = `<div class="grid g4 mb">${UI.kpi(L('رأس ماله', 'Capital'), money(this.capitalOf(n)), 'bank', 'hero', `${L('حصة', 'Share')} ${this.sharePct(n)}%`)}${UI.kpi(L('إجمالي أرباحه المعتمدة', 'Approved profit'), money(sum(es.filter((e) => e.type === 'dist'), (e) => e.amount)), 'trend', 'c-ok')}${UI.kpi(L('اتصرفله', 'Paid'), money(this.paid(n)), 'check', 'c-info')}${UI.kpi(L('الباقي له', 'Owed'), money(this.owed(n)), 'clock', this.owed(n) < 0 ? 'c-err' : 'c-warn', this.owed(n) < 0 ? L('مقدّم أرباح', 'Advance') : '')}</div>`;
+    const tbl = `<table class="tbl"><thead><tr><th>${L('التاريخ', 'Date')}</th><th>${L('البيان', 'Item')}</th><th>${L('رأس المال', 'Capital')}</th><th>${L('الأرباح', 'Profit')}</th><th>${L('رصيد رأس المال', 'Capital bal.')}</th><th>${L('أرباح متبقية', 'Profit bal.')}</th></tr></thead><tbody>${rows || `<tr><td colspan="6">${UI.empty(L('لا توجد حركات', 'No entries'))}</td></tr>`}</tbody></table>`;
+    UI.modal({ title: L('كشف حساب الشريك: ', 'Partner statement: ') + n, icon: 'file', size: 'lg', body: head + `<div class="tbl-wrap">${tbl}</div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('طباعة / PDF', 'Print / PDF'), cls: 'primary', icon: 'printer', onClick: () => printHTML(reportDoc(L('كشف حساب الشريك: ', 'Partner statement: ') + n, `<div class="kp"><div><span>${L('رأس ماله', 'Capital')}</span><b>${money(this.capitalOf(n))}</b></div><div><span>${L('حصته', 'Share')}</span><b>${this.sharePct(n)}%</b></div><div><span>${L('اتصرفله أرباح', 'Paid')}</span><b>${money(this.paid(n))}</b></div><div><span>${L('الباقي له', 'Owed')}</span><b>${money(this.owed(n))}</b></div></div>${tbl}<div class="sig"><div>${L('الشريك', 'Partner')}</div><div>${L('المدير', 'Manager')}</div></div>`), { type: 'report' }) }] });
+  },
+
+  /* ---------- الكارت في صفحة رأس المال ---------- */
+  section(el) {
+    const mk = this.mk || this.prevMonth(); const ns = this.names();
+    const net = Modules.capital.monthProfit(mk), cash = Modules.capital.cashProfit(mk);
+    const tDue = round2(sum(ns, (n) => this.due(n, mk))), tPaid = round2(sum(ns, (n) => this.paid(n, mk)));
+    const allOk = ns.length && ns.every((n) => this.distRec(n, mk));
+    el.innerHTML = `<div class="card mb pt-card"><div class="card-h wrap">${icon('users')}<h3>${L('الشركاء وتوزيع الأرباح', 'Partners & profit distribution')}</h3><div class="spacer"></div>
+      <label class="row" style="gap:6px;font-size:13px;font-weight:700">${L('شهر', 'Month')} <input type="month" id="ptM" value="${mk}" style="width:auto;height:36px"></label>
+      ${allOk ? `<span class="tag ok">🔒 ${L('معتمد', 'Approved')}</span>` : `<button class="btn sm" id="ptApprove">${icon('check')}${L('اعتماد مستحقات الشهر', 'Approve month')}</button>`}
+      <button class="btn sm" id="ptPrint">${icon('printer')}${L('كشف التوزيع', 'Distribution sheet')}</button></div>
+      <div class="card-b"><div class="grid g5 mb pt-k">${UI.kpi(L('صافي ربح الشهر', 'Net profit'), money(net), 'trend', net >= 0 ? 'c-ok' : 'c-err')}${UI.kpi(L('أرباح الكاش', 'Cash profit'), money(cash), 'wallet', 'c-info', L('محافظ + ماكينات', 'wallets + machines'))}${UI.kpi(L('مستحق للشركاء', 'Due to partners'), money(tDue), 'users', '')}${UI.kpi(L('اتصرف', 'Paid'), money(tPaid), 'check', 'c-ok')}${UI.kpi(L('الباقي', 'Remaining'), money(Math.max(0, round2(tDue - tPaid))), 'clock', 'c-warn')}</div>
+      ${ns.length ? `<div class="tbl-wrap"><table class="tbl stack"><thead><tr><th>${L('الشريك', 'Partner')}</th><th>${L('رأس ماله', 'Capital')}</th><th>${L('طريقة الأرباح', 'Profit method')}</th><th>${L('مستحق الشهر', 'Month due')}</th><th>${L('اتصرف', 'Paid')}</th><th>${L('الباقي', 'Left')}</th><th>${L('إجمالي الباقي له', 'Total owed')}</th><th></th></tr></thead><tbody>
+      ${ns.map((n) => { const d = this.due(n, mk), p = this.paid(n, mk), lk = this.distRec(n, mk), r = this.rule(n), ow = this.owed(n); return `<tr data-p="${esc(n)}">
+        <td data-label=""><span class="row" style="gap:8px"><span class="avatar" style="background:${avatarColor(n)};width:34px;height:34px;font-size:13px">${initials(n)}</span><b>${esc(n)}</b></span></td>
+        <td data-label="${L('رأس ماله', 'Capital')}"><b class="num">${money(this.capitalOf(n))}</b> <span class="faint">(${this.sharePct(n)}%)</span></td>
+        <td data-label="${L('طريقة الأرباح', 'Profit method')}"><button class="btn ghost sm" data-a="rule" title="${L('تغيير طريقة الحساب', 'Change method')}">${icon('percent')}${lk ? esc(lk.desc) : this.calc(n, mk).desc}${r.mode === 'fixed' ? `: ${money(r.fixed, false)}` : ''}</button></td>
+        <td data-label="${L('مستحق الشهر', 'Month due')}" class="num">${lk ? '🔒 ' : ''}<b>${money(d)}</b></td>
+        <td data-label="${L('اتصرف', 'Paid')}" class="num">${money(p)}</td>
+        <td data-label="${L('الباقي', 'Left')}" class="num"><b class="${d - p > 0.01 ? 'neg' : 'pos'}">${d - p > 0.01 ? money(d - p) : '✓'}</b></td>
+        <td data-label="${L('إجمالي الباقي له', 'Total owed')}" class="num">${ow < -0.01 ? `<span class="tag warn">${L('مقدّم', 'Advance')} ${money(-ow, false)}</span>` : money(Math.max(0, ow))}</td>
+        <td data-label=""><span class="row" style="gap:4px;flex-wrap:wrap"><button class="btn ok sm" data-a="pay">${icon('arrowDown')}${L('صرف أرباح', 'Pay profit')}</button><button class="btn sm" data-a="cap">${icon('minus')}${L('سحب من رأس المال', 'Withdraw capital')}</button><button class="btn sm" data-a="st">${icon('file')}${L('كشف', 'Statement')}</button></span></td></tr>`; }).join('')}
+      </tbody></table></div>
+      <p class="faint" style="margin:10px 0 0">${L('«صرف أرباح» مش بيقلل رأس مال الشريك. «سحب من رأس المال» بيقلل حصته. بعد «اعتماد مستحقات الشهر» المبلغ بيتقفل 🔒 ومش بيتغير لو اتعدّلت فواتير الشهر.', '“Pay profit” keeps capital; “Withdraw capital” reduces share. Approved months are locked.')}</p>`
+      : UI.empty(L('أضف رأس مال باسم كل شريك الأول من «إضافة رأس مال»', 'Add capital for each partner first'), 'users')}</div></div>`;
+    $('#ptM', el).onchange = (e) => { this.mk = e.target.value || this.prevMonth(); this.section(el); };
+    $('#ptApprove', el) && ($('#ptApprove', el).onclick = async () => { if (!(await UI.confirm(L(`اعتماد مستحقات ${monthLabel(mk)} لكل الشركاء (${money(tDue)})؟ بعد الاعتماد المبالغ بتتقفل.`, 'Approve and lock this month?')))) return; ns.forEach((n) => this.approve(n, mk)); audit('capital.approve', monthLabel(mk)); UI.toast(L('اتعتمدت ✓', 'Approved ✓')); this.section(el); });
+    $('#ptPrint', el).onclick = () => this.printMonth(mk);
+    $$('tr[data-p]', el).forEach((tr) => { const n = tr.dataset.p; $$('[data-a]', tr).forEach((b) => (b.onclick = () => { const a = b.dataset.a; if (a === 'rule') this.ruleDialog(n); else if (a === 'st') this.statement(n); else if (a === 'cap') this.withdraw(n, 'capital'); else { this.withdraw(n, 'profit'); setTimeout(() => { const f = $('.modal-bg [name=month]'); if (f) { f.value = mk; f.dispatchEvent(new Event('change')); } }, 30); } })); });
+  }
+};
+
+/* ربط بصفحة رأس المال */
+(() => {
+  const CP = Modules.capital; if (!CP) return;
+  const r0 = CP.render.bind(CP);
+  CP.render = function (el) {
+    r0(el);
+    try {
+      const host = document.createElement('div'); host.id = 'ptSec'; const pc = $('#cpPartners', el); pc.parentNode.insertBefore(host, pc); pc.style.display = 'none';
+      Partners.section(host);
+      $('#cpOut', el).innerHTML = `${icon('minus')}${L('سحب / صرف لشريك', 'Partner withdrawal / payout')}`; $('#cpOut', el).onclick = () => Partners.withdraw();
+    } catch (e) { console.warn(e); }
+  };
+  /* حذف حركة: نرجّع الفلوس للدرج / المحفظة */
+  const e0 = CP.entry.bind(CP);
+  CP.entry = function (type) { if (type === 'withdrawal') return Partners.withdraw(null, 'capital'); return e0(type); };
 })();
 
 </script>

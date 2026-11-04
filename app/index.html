@@ -2083,7 +2083,6 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
   .wx-bank .wx-acts .wx-b.more { height: 28px; }
   .wx-elegant .wx-bal b, .wx-bank .wx-balr b { font-size: 19px; } .wx-elegant .wx-bal span { display: none; }
   .wx-elegant .wx-lr { font-size: 10.5px; } .wx-elegant .wx-lr b { font-size: 11.5px; }
-  .wx-elegant .wx-icons .wx-ic[data-act="print"] { display: none; }
   .wx-bank .wx-no { font-size: 14px; } .wx-bank .wx-lg4 b { font-size: 12px; } .wx-bank .wx-lg4 small { font-size: 10px; }
   .wx-compact .wx-mid b { white-space: normal; flex-wrap: wrap; }
   .wx-compact .wx-lg { display: none; }
@@ -8582,7 +8581,7 @@ Modules.wallets = {
       <div class="wx-lims">${lims.map(([lb, v, l]) => `<div class="wx-lr"><span>${lb}</span>${bar(v, l)}<b class="num">${lv(v, l)}</b></div>`).join('')}</div>
       <div class="wx-2">${wd}${dp}</div>
       <div class="wx-3"><button data-act="open">${icon('shield')}${L('دخول المحفظة', 'Open wallet')}</button>${resBtn}<button data-act="more">${icon('settings')}${L('المزيد', 'More')}</button></div>
-      ${this.optsHTML(w)}</div>`;
+      ${this.optsHTML(w, `<button data-act="print">${icon('printer')}${L('طباعة كارت المحفظة', 'Print wallet card')}</button>`)}</div>`;
   },
   bindCards(b) {
     $$('.wcard', b).forEach((card) => {

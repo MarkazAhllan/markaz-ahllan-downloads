@@ -1932,6 +1932,112 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .ws-cmp > div.hl { border-color: var(--p); }
 .ws-cmp small { display: block; color: var(--muted); font-size: 12px; } .ws-cmp b { font-size: 20px; } .ws-cmp em { display: block; font-style: normal; font-size: 11px; color: var(--muted); }
 .ws-cmp .ws-ar { flex: none; border: 0; background: none; display: grid; place-items: center; font-size: 22px; color: var(--muted); padding: 0; }
+
+/* ===================== Wallet cards — new styles (elegant / bank / compact) ===================== */
+.wcard.wx { --wx: #8A7A7D; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 22px; padding: 16px; gap: 10px; box-shadow: var(--shadow); overflow: hidden; }
+.wx.wnet-vodafone { --wx: #E60000; } .wx.wnet-etisalat { --wx: #5AA323; } .wx.wnet-orange { --wx: #FF7900; } .wx.wnet-we { --wx: #7B3FB0; } .wx.wnet-instapay { --wx: #5B3FD6; } .wx.wnet-bank { --wx: #2F6FD6; }
+.wx .num { font-variant-numeric: tabular-nums; }
+.wx .wx-lg { width: 46px; height: 46px; flex: none; border-radius: 14px; display: grid; place-items: center; font-weight: 900; font-size: 15px; color: var(--wx); background: color-mix(in srgb, var(--wx) 14%, transparent); border: 1px solid color-mix(in srgb, var(--wx) 35%, transparent); }
+.wx .wx-idx { min-width: 28px; height: 28px; padding: 0 7px; border-radius: 9px; border: 0; background: var(--surface-2); color: var(--text-2); font: inherit; font-weight: 900; font-size: 13px; cursor: pointer; flex: none; }
+.wx .wx-ic { width: 34px; height: 34px; border-radius: 10px; border: 0; background: var(--surface-2); color: var(--text-3); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.wx .wx-ic svg { width: 16px; height: 16px; } .wx .wx-ic.star.on { color: #F5B300; } .wx .wx-ic.star.on svg { fill: #F5B300; }
+.wx .wx-chips { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.wx .wx-chip { display: inline-flex; align-items: center; gap: 3px; height: 24px; padding: 0 8px; border-radius: 8px; background: var(--surface-2); color: var(--text-2); font-size: 12px; font-weight: 800; }
+.wx .wx-chip svg { width: 13px; height: 13px; } .wx .wx-chip.warn { background: var(--warn-bg); color: var(--warn); } .wx .wx-chip.bell { color: #D98E04; } .wx .wx-chip.res { background: var(--info-bg); color: var(--info); }
+.wx .wx-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.wx .wx-sms { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 700; border-radius: 99px; padding: 2px 10px; }
+.wx .wx-sms.ok { background: var(--ok-bg); color: var(--ok); } .wx .wx-sms.bad { background: var(--err-bg); color: var(--err); }
+.wx .wx-low { font-size: 11.5px; font-weight: 800; border-radius: 99px; padding: 2px 10px; background: var(--err-bg); color: var(--err); }
+.wx .wx-off { font-size: 11px; font-weight: 800; color: var(--err); background: var(--err-bg); border-radius: 6px; padding: 0 6px; }
+.wx .wx-rt { font-size: 12.5px; font-weight: 700; color: var(--info); display: flex; gap: 5px; align-items: center; } .wx .wx-rt svg { width: 14px; height: 14px; }
+.wx .wx-nol { font-size: 11.5px; font-weight: 600; color: var(--text-3); }
+.wx .wx-bar { height: 6px; border-radius: 9px; background: color-mix(in srgb, var(--text) 8%, transparent); overflow: hidden; }
+.wx .wx-bar i { display: block; height: 100%; border-radius: 9px; background: linear-gradient(90deg, var(--wx), color-mix(in srgb, var(--wx) 60%, #fff)); }
+.wx .wx-bar.warn i { background: #E89B0C; } .wx .wx-bar.err i { background: #E5484D; }
+.wx .wx-b { height: 44px; border: 0; border-radius: 14px; font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: filter .15s, transform .06s; }
+.wx .wx-b svg { width: 17px; height: 17px; } .wx .wx-b:active { transform: translateY(1px); } .wx .wx-b:hover { filter: brightness(1.05); }
+.wx .wx-b.dp { background: var(--ok-bg); color: var(--ok); } .wx .wx-b.wd { background: var(--err-bg); color: var(--err); }
+.wx .wx-b.more { background: var(--surface-2); color: var(--text-2); font-size: 20px; }
+.wx .wc-sync { margin-top: 0; }
+.wx .wc-opts { margin-top: 2px; } .wx .wc-opts button { background: var(--surface-2); color: var(--text); border-color: var(--line); }
+.wx .wc-opts button.wx-ro.on, .wx .wx-3 button.on { color: var(--info); }
+.wcard.wx.is-hidden { outline: 2px dashed var(--line-2); outline-offset: -6px; }
+.wcard.wx.is-fav { border-color: color-mix(in srgb, #F5B300 45%, var(--line)); }
+:root[data-theme="dark"] .wx .wx-sms.ok { background: rgba(17,114,74,.25); color: #8de0b5; } :root[data-theme="dark"] .wx .wx-sms.bad, :root[data-theme="dark"] .wx .wx-low, :root[data-theme="dark"] .wx .wx-b.wd { background: rgba(229,72,77,.18); color: #ff8a90; }
+:root[data-theme="dark"] .wx .wx-b.dp { background: rgba(46,190,108,.17); color: #5ee39b; }
+
+/* elegant */
+.wx-elegant::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--wx); }
+.wx-elegant .wx-h { display: flex; gap: 10px; align-items: center; }
+.wx-elegant .wx-id { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wx-elegant .wx-id b { font-size: 15.5px; font-weight: 800; } .wx-elegant .wx-id small { color: var(--text-2); font-size: 12.5px; overflow-wrap: anywhere; }
+.wx-elegant .wx-id small span[dir="ltr"] { font-weight: 800; color: var(--text); font-size: 14px; letter-spacing: .5px; }
+.wx-elegant .wx-icons { display: flex; gap: 6px; }
+.wx-elegant .wx-balr { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+.wx-elegant .wx-bal { display: flex; align-items: baseline; gap: 6px; } .wx-elegant .wx-bal b { font-size: 32px; font-weight: 900; line-height: 1.1; } .wx-elegant .wx-bal span { color: var(--text-3); font-size: 13px; font-weight: 700; }
+.wx .neg { color: var(--err) !important; }
+.wx-elegant .wx-lims { display: grid; gap: 8px; margin-top: 2px; }
+.wx-elegant .wx-lr { display: grid; grid-template-columns: 80px 1fr auto; gap: 8px; align-items: center; font-size: 12.5px; }
+.wx-elegant .wx-lr span { color: var(--text-2); font-weight: 600; } .wx-elegant .wx-lr b { font-size: 13.5px; font-weight: 800; min-width: 64px; text-align: left; }
+.wx-elegant .wx-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.wx-elegant .wx-3 { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 6px; }
+.wx-elegant .wx-3 button { height: 36px; border: 1px solid var(--line); background: var(--surface-2); color: var(--text-2); border-radius: 12px; font: inherit; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; min-width: 0; white-space: nowrap; }
+.wx-elegant .wx-3 button svg { width: 14px; height: 14px; flex: none; }
+
+/* bank card */
+.wcard.wx-bank { background: linear-gradient(135deg, var(--wc), var(--wc-d)); color: #fff; border: 0; box-shadow: 0 18px 36px -18px var(--wc-d); position: relative; }
+.wx-bank::before { content: ''; position: absolute; width: 260px; height: 260px; border-radius: 50%; background: rgba(255,255,255,.08); left: -90px; top: -120px; pointer-events: none; }
+.wx-bank::after { content: ''; position: absolute; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.06); left: 60px; bottom: -110px; pointer-events: none; }
+.wx-bank > * { position: relative; z-index: 1; }
+.wx-bank .wx-r1 { display: flex; align-items: center; gap: 8px; }
+.wx-bank .wx-lg { width: 36px; height: 36px; border-radius: 11px; background: #fff; color: var(--wc-d); border: 0; font-size: 13px; }
+.wx-bank .wx-nt { font-size: 15px; font-weight: 800; }
+.wx-bank .wx-idx, .wx-bank .wx-ic, .wx-bank .wx-chip { background: rgba(0,0,0,.2); color: #fff; }
+.wx-bank .wx-ic.star.on { background: rgba(255,255,255,.95); }
+.wx-bank .wx-no { font-size: 25px; font-weight: 900; letter-spacing: 2px; text-align: right; margin-top: 6px; } .wx-bank .wx-no.txt { font-size: 18px; letter-spacing: .5px; }
+.wx-bank .wx-own { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; opacity: .92; flex-wrap: wrap; }
+.wx-bank .wx-own span { display: inline-flex; gap: 4px; align-items: center; } .wx-bank .wx-own svg { width: 13px; height: 13px; }
+.wx-bank .wx-nm { font-size: 12px; opacity: .85; }
+.wx-bank .wx-balr { display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; flex-wrap: wrap; }
+.wx-bank .wx-balr small { font-size: 12px; opacity: .85; display: block; } .wx-bank .wx-balr b { font-size: 30px; font-weight: 900; line-height: 1.1; }
+.wx-bank .wx-balr b.neg { color: #fff !important; text-decoration: underline wavy rgba(255,255,255,.6); }
+.wx-bank .wx-sms, .wx-bank .wx-low { background: rgba(0,0,0,.24) !important; color: #fff !important; }
+.wx-bank .wx-rt { color: #fff; }
+.wx-bank .wx-lg4 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wx-bank .wx-lg4 > div { background: rgba(0,0,0,.2); border-radius: 12px; padding: 7px 10px; }
+.wx-bank .wx-lg4 small { font-size: 11px; opacity: .88; display: block; } .wx-bank .wx-lg4 b { font-size: 14px; font-weight: 800; }
+.wx-bank .wx-nol { color: rgba(255,255,255,.75); }
+.wx-bank .wx-bar { background: rgba(255,255,255,.25); height: 4px; margin-top: 5px; } .wx-bank .wx-bar i { background: #fff; } .wx-bank .wx-bar.warn i { background: #FFD27A; } .wx-bank .wx-bar.err i { background: #FFB4B4; }
+.wx-bank .wx-acts { display: grid; grid-template-columns: 1fr 1fr 48px; gap: 8px; }
+.wx-bank .wx-b.wd, .wx-bank .wx-b.dp { background: rgba(255,255,255,.95) !important; color: #222 !important; } .wx-bank .wx-b.more { background: rgba(0,0,0,.25); color: #fff; }
+.wx-bank .wc-opts button { background: rgba(255,255,255,.95); color: #222; border: 0; } .wx-bank .wc-opts button.danger { background: #fff1f1; color: #C62828; }
+
+/* compact list */
+.wcard.wx-compact { padding: 12px; gap: 9px; border-radius: 18px; }
+.wx-compact .wx-r { display: flex; gap: 10px; align-items: center; }
+.wx-compact .wx-lg { width: 44px; height: 44px; border-radius: 50%; background: var(--wx); color: #fff; border: 0; font-size: 13px; box-shadow: 0 0 0 3px color-mix(in srgb, var(--wx) 22%, transparent); }
+.wx-compact .wx-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wx-compact .wx-mid b { font-size: 14.5px; font-weight: 800; display: flex; align-items: center; gap: 6px; } .wx-compact .wx-mid small { color: var(--text-2); font-size: 12px; overflow-wrap: anywhere; }
+.wx-compact .wx-mid small span[dir="ltr"] { font-weight: 700; color: var(--text); }
+.wx-compact .wx-idx { min-width: 22px; height: 22px; font-size: 11.5px; border-radius: 7px; padding: 0 5px; }
+.wx-compact .wx-fv { color: #F5B300; }
+.wx-compact .wx-bal { text-align: left; flex: none; } .wx-compact .wx-bal b { font-size: 20px; font-weight: 900; display: block; line-height: 1.2; }
+.wx-compact .wx-bal small { font-size: 11px; font-weight: 700; } .wx-compact .wx-bal small.ok { color: var(--ok); } .wx-compact .wx-bal small.bad { color: var(--err); }
+.wx-compact .wx-lm { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wx-compact .wx-lm small { display: block; font-size: 11px; color: var(--text-2); margin-bottom: 3px; } .wx-compact .wx-lm small b { color: var(--text); }
+.wx-compact .wx-bar { height: 5px; }
+.wx-compact .wx-q { display: flex; gap: 6px; align-items: center; }
+.wx-compact .wx-q .wx-b { height: 38px; font-size: 13.5px; border-radius: 11px; flex: 1; }
+.wx-compact .wx-q .wx-b.more { flex: 0 0 42px; }
+.wx-compact .wx-q .wx-chips { flex: none; }
+@media (max-width: 420px) { .wx-compact .wx-q .wx-chips { display: none; } }
+.wg-multi .wcard.wx { padding: 10px; gap: 7px; } .wg-multi .wx-elegant .wx-bal b, .wg-multi .wx-bank .wx-balr b { font-size: 24px; } .wg-multi .wx-bank .wx-no { font-size: 19px; }
+.wgrid:has(> .wx) { grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); }
+.wgrid:has(> .wx-compact) { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
+.wx small span[dir="ltr"], .wx .wx-no { white-space: nowrap; }
+.wx-elegant .wx-id b, .wx-compact .wx-mid b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wx-elegant .wx-3 button { overflow: hidden; text-overflow: ellipsis; padding: 0 4px; }
+@media (max-width: 900px) { .wgrid:has(> .wx) { grid-template-columns: minmax(0, 1fr); } }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -8279,10 +8385,12 @@ Modules.wallets = {
       + this.section('last', L('آخر العمليات', 'Latest operations'), 'history', lastInner, lastTools)
       + this.section('nets', L('إجمالي الليمتات حسب نوع المحفظة', 'Limit totals by wallet type'), 'layers', netsInner)
       + `<div class="row mb wrap"><h3 style="margin:0">${L('المحافظ', 'Wallets')}</h3><span class="tag">${ws.length}</span><div class="spacer"></div>${hiddenN ? `<label class="check"><input type="checkbox" id="wlShowHidden" ${this.showHidden ? 'checked' : ''}>${L('عرض المخفية', 'Show hidden')} (${hiddenN})</label>` : ''}
+        <label class="row" style="gap:6px;font-size:13px;font-weight:600">${icon('layers')}${L('شكل الكروت', 'Card style')}: <select id="wlStyle" style="width:auto;height:36px">${this.STYLES.map(([k, t]) => `<option value="${k}" ${k === this.cardStyle() ? 'selected' : ''}>${L(...t)}</option>`).join('')}</select></label>
         <label class="row" style="gap:6px;font-size:13px;font-weight:600">${L('عدد المحافظ في الصف', 'Wallets per row')}: <select id="wlPerRow" style="width:auto;height:36px">${['auto', 1, 2, 3, 4, 5, 6].map((n) => `<option value="${n}" ${String(n) === perRow ? 'selected' : ''}>${n === 'auto' ? L('تلقائي', 'Auto') : n}</option>`).join('')}</select></label>
         ${Session.can('wallets.manage') ? `<button class="btn sm" id="wlOrder">${icon('swap')}${L('ترتيب وترقيم المحافظ', 'Order & numbering')}</button>` : ''}</div>`
       + (ws.length ? `<div class="wgrid ${perRow !== 'auto' && +perRow > 1 ? 'wg-multi' : ''}" data-cols="${perRow}" ${perRow !== 'auto' ? `style="--wcols:${perRow}"` : ''}>${ws.map((w) => this.cardHTML(w, num[w.id] - 1)).join('')}</div>` : `<div class="card">${UI.empty(L('أضف محافظك: فودافون كاش، أورنج، اتصالات، وي، إنستا باي، والحسابات البنكية — مع الرصيد الافتتاحي والليمت', 'Add your wallets: Vodafone Cash, Orange, e&, WE, InstaPay and bank accounts'), 'wallet')}</div>`);
     $$('[data-tog]', b).forEach((h) => (h.onclick = (e) => { if (e.target.closest('select,input,.btn:not(.icon-btn)')) return; const k = h.dataset.tog; this.open[k] = !this.open[k]; this.saveOpen(); this.body(); }));
+    $('#wlStyle').onchange = (e) => { try { localStorage.setItem('mah:wlStyle', e.target.value); } catch (_) {} UI.toast(L('اتغيّر شكل الكروت', 'Card style changed')); this.body(); };
     $('#wlPerRow').onchange = (e) => { try { localStorage.setItem('mah:wlPerRow', e.target.value); } catch (_) {} this.body(); };
     $('#wlOrder') && ($('#wlOrder').onclick = () => this.orderDialog());
     $('#wlShowHidden') && ($('#wlShowHidden').onchange = (e) => { this.showHidden = e.target.checked; this.body(); });
@@ -8306,7 +8414,12 @@ Modules.wallets = {
     const u = Wallets.usage(w); const left = (lim, used) => (lim ? Math.max(0, round2(lim - used)) : null);
     return { inDay: left(w.dailyInLimit, u.dayIn), outDay: left(w.dailyLimit, u.day), inMonth: left(w.monthlyInLimit, u.monthIn), outMonth: left(w.monthlyLimit, u.month), u };
   },
+  /* شكل كروت المحافظ — يختاره المستخدم ويتحفظ على الجهاز */
+  STYLES: [['elegant', ['الداكن الأنيق', 'Elegant']], ['bank', ['البطاقة البنكية', 'Bank card']], ['compact', ['القائمة المضغوطة', 'Compact list']], ['classic', ['الكلاسيكي (القديم)', 'Classic']]],
+  cardStyle() { try { const v = localStorage.getItem('mah:wlStyle'); return this.STYLES.some((x) => x[0] === v) ? v : 'elegant'; } catch (_) { return 'elegant'; } },
+  NETAB: { vodafone: 'VF', etisalat: 'e&', orange: 'OR', we: 'WE', instapay: 'IP', bank: '🏦' },
   cardHTML(w, i) {
+    const st = this.cardStyle(); if (st !== 'classic') return this.cardX(w, i, st);
     const a = this.avail(w); const bal = Wallets.balance(w);
     const row = (label, val, lim) => {
       if (lim === undefined) return `<div class="wc-row"><span class="wc-l">${label}</span><b class="wc-v num ${val < 0 ? 'neg' : ''}">${money(val, false)}</b></div>`;
@@ -8352,6 +8465,72 @@ Modules.wallets = {
         <button data-act="statement">${icon('file')}${L('كشف حساب', 'Statement')}</button>
         ${Session.can('wallets.manage') ? `<button data-act="delete" class="danger">${icon('trash')}${L('حذف المحفظة', 'Delete wallet')}</button>` : ''}
       </div></div>`;
+  },
+  optsHTML(w, extra = '') {
+    return `<div class="wc-opts hidden">${extra}
+        <button data-act="hide">${icon('eye')}${w.hidden ? L('إظهار', 'Show') : L('إخفاء', 'Hide')}</button>
+        ${feat('display') ? `<button data-act="dispnow">${icon('send')}${L('اعرضها على الشاشة الآن', 'Show on display now')}</button>` : ''}${feat('display') ? `<button data-act="display">${icon('pos')}${w.onDisplay ? L('إزالة من شاشة العرض', 'Remove from display') : L('إظهار على شاشة العرض', 'Show on display')}</button>` : ''}
+        ${Session.can('wallets.manage') ? `<button data-act="edit">${icon('edit')}${L('تعديل بيانات', 'Edit details')}</button><button data-act="limits">${icon('shield')}${L('تعديل الليميت', 'Edit limits')}</button><button data-act="adjust">${icon('swap')}${L('مطابقة الرصيد', 'Reconcile')}</button>` : ''}
+        <button data-act="fund">${icon('plus')}${L('تغذية من الدرج', 'Fund from drawer')}</button><button data-act="cashout">${icon('minus')}${L('سحب للدرج', 'Cash out to drawer')}</button>
+        <button data-act="statement">${icon('file')}${L('كشف حساب', 'Statement')}</button>
+        ${Session.can('wallets.manage') ? `<button data-act="delete" class="danger">${icon('trash')}${L('حذف المحفظة', 'Delete wallet')}</button>` : ''}
+      </div>`;
+  },
+  /* التصميمات الجديدة: elegant / bank / compact — نفس الأزرار والوظائف */
+  cardX(w, i, st) {
+    const a = this.avail(w); const bal = Wallets.balance(w);
+    const res = w.reservedBy ? DB.get('users', w.reservedBy) : null; const mine = w.reservedBy === Session.user.id;
+    const low = !!(w.lowBalance && bal < w.lowBalance);
+    const alertOn = [a.inDay, a.outDay].some((v, k) => v !== null && (k ? w.dailyLimit : w.dailyInLimit) && v / (k ? w.dailyLimit : w.dailyInLimit) <= 0.2) || low;
+    const openN = DB.filter('walletTx', (t) => t.walletId === w.id && (t.status === 'pending' || t.status === 'undelivered')).length;
+    const no = fmtWalletNo(walletNo(w)) || '—'; const isNo = /^[\d\s+]*$/.test(walletNo(w));
+    const own = w.owner && w.owner.replace(/\D/g, '') !== walletNo(w) ? esc(w.owner) : '';
+    const nm = w.name && w.name.replace(/\D/g, '') !== walletNo(w) ? esc(w.name) : '';
+    const ab = this.NETAB[w.network] || esc((w.name || netName(w.network) || '?').trim().slice(0, 2));
+    const lims = [[L('دخول اليوم', 'In today'), a.inDay, w.dailyInLimit], [L('خروج اليوم', 'Out today'), a.outDay, w.dailyLimit], [L('دخول الشهر', 'In month'), a.inMonth, w.monthlyInLimit], [L('خروج الشهر', 'Out month'), a.outMonth, w.monthlyLimit]];
+    const pc = (v, l) => (l ? Math.round((v / l) * 100) : null); const lc = (p) => (p === null ? '' : p <= 10 ? 'err' : p <= 30 ? 'warn' : 'ok');
+    const bar = (v, l) => { const p = pc(v, l); return `<div class="wx-bar ${lc(p)}"><i style="width:${p === null ? 0 : Math.max(2, p)}%"></i></div>`; };
+    const lv = (v, l) => (l ? money(v, false) : `<span class="wx-nol">${L('بدون ليمت', 'No limit')}</span>`);
+    const sOk = Math.abs(w.smsBalanceDiff || 0) <= 1;
+    const sms = w.smsBalanceAt ? `<span class="wx-sms ${sOk ? 'ok' : 'bad'}" title="${L('رصيد المحفظة حسب آخر رسالة وصلت', 'Balance per last SMS')} — ${fmtDT(w.smsBalanceAt)}">${sOk ? `✓ ${L('مطابق لآخر رسالة', 'Matches last SMS')}` : `⚠️ ${L('الرسالة', 'SMS')}: <b class="num">${money(w.smsBalance, false)}</b> (${w.smsBalanceDiff > 0 ? '+' : ''}${money(w.smsBalanceDiff, false)})`} · ${fmtTime(w.smsBalanceAt)}</span>` : '';
+    const sync = w.smsBalanceAt && !sOk ? `<button class="wc-sync" data-act="smssync" title="${L('تطبيق رصيد المحفظة الفعلي من آخر رسالة على البرنامج', 'Apply the SMS balance to the app')}">⚖️ ${L('تطبيق رصيد الرسالة', 'Apply SMS balance')}</button>` : '';
+    const lowTag = low ? `<span class="wx-low">⚠️ ${L('رصيد منخفض', 'Low balance')}</span>` : '';
+    const off = w.active === false ? `<span class="wx-off">${L('موقوفة', 'Inactive')}</span>` : '';
+    const resTxt = res ? (mine ? L('محجوزة لك', 'Reserved by you') : L('محجوزة لـ ', 'Reserved by ') + esc(res.name)) : '';
+    const resBtn = `<button data-act="reserve" class="${res ? 'on' : ''}">${icon('lock')}${res ? (mine || Session.can('wallets.manage') ? L('إلغاء الحجز', 'Release') : L('محجوزة', 'Reserved')) : L('حجز', 'Reserve')}</button>`;
+    const chips = `${openN ? `<span class="wx-chip warn" title="${L('عمليات معلقة / غير مسلمة', 'Open operations')}">${icon('clock')}${openN}</span>` : ''}<span class="wx-chip" title="${L('عمليات اليوم', 'Ops today')}">${icon('bars')}${a.u.count}</span>${alertOn ? `<span class="wx-chip bell" title="${L('اقتراب الليمت أو رصيد منخفض', 'Limit near or low balance')}">${icon('bell')}</span>` : ''}${res ? `<span class="wx-chip res" title="${resTxt}">${icon('lock')}</span>` : ''}`;
+    const star = `<button class="wx-ic star ${w.fav ? 'on' : ''}" data-act="fav" title="${L('مفضلة (تظهر أولاً)', 'Favorite')}">${icon('star')}</button>`;
+    const prn = `<button class="wx-ic" data-act="print" title="${L('طباعة كارت المحفظة', 'Print wallet card')}">${icon('printer')}</button>`;
+    const idx = `<button class="wx-idx num" data-act="renum" title="${L('تغيير رقم / ترتيب المحفظة', 'Change wallet number')}">${i + 1}</button>`;
+    const wd = `<button class="wx-b wd" data-act="withdraw">${icon('arrowDown')}${L('سحب', 'Withdraw')}</button>`, dp = `<button class="wx-b dp" data-act="deposit">${icon('arrowUp')}${L('إيداع', 'Deposit')}</button>`;
+    const extraOpts = `<button data-act="open">${icon('shield')}${L('دخول المحفظة', 'Open wallet')}</button>${resBtn.replace('class="', 'class="wx-ro ')}<button data-act="print">${icon('printer')}${L('طباعة كارت المحفظة', 'Print wallet card')}</button>`;
+    const cls = `wcard wx wx-${st} wnet-${w.network || 'other'} ${w.hidden ? 'is-hidden' : ''} ${w.active === false ? 'is-off' : ''} ${w.fav ? 'is-fav' : ''}`;
+    if (st === 'bank') return `<div class="${cls}" data-w="${w.id}">
+      <div class="wx-r1">${idx}<span class="wx-lg">${ab}</span><b class="wx-nt">${netName(w.network)}</b>${off}<span class="spacer"></span>${star}</div>
+      <div class="wx-no ${isNo ? '' : 'txt'}" dir="ltr">${esc(no)}</div>
+      <div class="wx-own">${own ? `<span>${icon('user')}${own}</span>` : '<span></span>'}${w.phoneModel ? `<span dir="auto">${icon('phone')}${esc(w.phoneModel)}</span>` : ''}</div>
+      ${nm ? `<div class="wx-nm">${nm}</div>` : ''}
+      <div class="wx-balr"><div><small>${L('الرصيد الحالي', 'Current balance')}</small><b class="num ${bal < 0 ? 'neg' : ''}">${money(bal, false)}</b></div><div class="wx-tags">${lowTag}${sms}</div></div>${sync}
+      <div class="wx-chips">${chips}${res ? `<span class="wx-rt">${resTxt}</span>` : ''}</div>
+      <div class="wx-lg4">${lims.map(([lb, v, l]) => `<div><small>${lb}</small><b class="num">${lv(v, l)}</b>${bar(v, l)}</div>`).join('')}</div>
+      <div class="wx-acts">${wd}${dp}<button class="wx-b more" data-act="more" title="${L('خيارات أخرى', 'More options')}">⋯</button></div>
+      ${this.optsHTML(w, extraOpts)}</div>`;
+    if (st === 'compact') return `<div class="${cls}" data-w="${w.id}">
+      <div class="wx-r"><span class="wx-lg">${ab}</span><div class="wx-mid"><b>${idx}${netName(w.network)} ${off}${w.fav ? '<span class="wx-fv">★</span>' : ''}</b><small><span dir="ltr">${esc(no)}</span>${own ? ` · ${own}` : ''}</small>${nm ? `<small>${nm}</small>` : ''}</div>
+        <div class="wx-bal"><b class="num ${bal < 0 || low ? 'neg' : ''}">${money(bal, false)}</b>${w.smsBalanceAt ? `<small class="${sOk ? 'ok' : 'bad'}">${sOk ? '✓ ' + L('مطابق', 'Match') : '⚠️ ' + (w.smsBalanceDiff > 0 ? '+' : '') + money(w.smsBalanceDiff, false)}</small>` : low ? `<small class="bad">${L('رصيد منخفض', 'Low')}</small>` : ''}</div></div>
+      ${sync}
+      <div class="wx-lm">${lims.slice(0, 2).map(([lb, v, l]) => `<div><small>${lb} <b class="num">${lv(v, l)}</b></small>${bar(v, l)}</div>`).join('')}</div>
+      <div class="wx-q">${wd}${dp}<span class="wx-chips">${chips}</span><button class="wx-b more" data-act="more" title="${L('خيارات أخرى', 'More options')}">⋯</button></div>
+      ${this.optsHTML(w, `${extraOpts}<button data-act="fav">${icon('star')}${w.fav ? L('إلغاء المفضلة', 'Unfavorite') : L('مفضلة (تظهر أولاً)', 'Favorite')}</button>`)}</div>`;
+    return `<div class="${cls}" data-w="${w.id}">
+      <div class="wx-h">${idx}<span class="wx-lg">${ab}</span><div class="wx-id"><b>${netName(w.network)} ${off}</b><small><span dir="ltr">${esc(no)}</span>${own ? ` · ${own}` : ''}</small>${w.phoneModel || nm ? `<small>${nm}${nm && w.phoneModel ? ' · ' : ''}${w.phoneModel ? `<span dir="auto">${esc(w.phoneModel)}</span>` : ''}</small>` : ''}</div><div class="wx-icons">${star}${prn}</div></div>
+      <div class="wx-balr"><div class="wx-bal"><b class="num ${bal < 0 || low ? 'neg' : ''}">${money(bal, false)}</b><span>${L('ج.م', 'EGP')}</span></div><div class="wx-chips">${chips}</div></div>
+      <div class="wx-tags">${lowTag}${sms}</div>${sync}
+      ${res ? `<div class="wx-rt">${icon('lock')} ${resTxt}</div>` : ''}
+      <div class="wx-lims">${lims.map(([lb, v, l]) => `<div class="wx-lr"><span>${lb}</span>${bar(v, l)}<b class="num">${lv(v, l)}</b></div>`).join('')}</div>
+      <div class="wx-2">${wd}${dp}</div>
+      <div class="wx-3"><button data-act="open">${icon('shield')}${L('دخول المحفظة', 'Open wallet')}</button>${resBtn}<button data-act="more">${icon('settings')}${L('المزيد', 'More')}</button></div>
+      ${this.optsHTML(w)}</div>`;
   },
   bindCards(b) {
     $$('.wcard', b).forEach((card) => {
@@ -8421,6 +8600,7 @@ Modules.wallets = {
   opsActions(t) {
     if (t.locked || t.type === 'adjust') return `<span class="tag" title="${L('عملية تسوية / تزامن رصيد — مقفولة ومينفعش تتعدل أو تتمسح', 'Locked adjustment')}">🔒 ${L('مقفولة', 'Locked')}</span>`;
     let h = UI.act('print', 'printer', L('إيصال', 'Receipt'));
+    if (t.cashPending && !t.customerId) h += UI.act('cashok', 'money', L('استلمت الكاش', 'Cash received'), 'ok');
     if (t.status === 'pending') h += UI.act('confirm', 'check', L('تأكيد التنفيذ', 'Confirm'));
     if (t.status === 'undelivered') h += UI.act('deliver', 'hand', L('تم التسليم', 'Mark delivered'));
     if (this.canEditOp(t) && ['withdraw', 'deposit'].includes(t.type)) h += UI.act('edit', 'edit', L('تعديل', 'Edit'));
@@ -8431,6 +8611,7 @@ Modules.wallets = {
   async opsAction(a, t) {
     if (t.locked || t.type === 'adjust') return UI.toast(L('العملية دي مقفولة — مينفعش تتعدل أو تتمسح', 'This operation is locked'), 'err');
     if (a === 'print') this.printOp(t);
+    if (a === 'cashok') { if (DepCash.confirm(t)) { UI.toast(L('تم — الكاش دخل الدرج', 'Cash received'), 'ok'); App.reload(); } return; }
     if (a === 'confirm') this.setStatus(t, t.type === 'withdraw' || t.type === 'deposit' ? 'completed' : 'completed');
     if (a === 'deliver') this.setStatus(t, 'completed');
     if (a === 'edit') this.editOp(t);
@@ -8446,7 +8627,7 @@ Modules.wallets = {
         { key: 'date', label: L('الوقت', 'Time'), render: (t) => `<b>${fmtTime(t.date)}</b> <span class="faint">${fmtDate(t.date)}</span>`, exportVal: (t) => fmtDT(t.date) },
         { label: L('المحفظة', 'Wallet'), render: (t) => { const w = DB.get('wallets', t.walletId); return `<span class="row" style="gap:6px"><i class="color-dot wdot-${w?.network || 'other'}"></i>${esc(w?.name || '')}</span>`; }, exportVal: (t) => DB.get('wallets', t.walletId)?.name || '' },
         { key: 'type', label: L('العملية', 'Type'), render: (t) => (t.source === 'sms-sync' ? `<span class="tag warn" title="${esc(t.note || '')}">⚖️ ${L('تزامن الرصيد مع رسالة الشركة', 'Balance synced with SMS')}</span><div class="faint" style="font-size:11.5px">${money(t.before, false)} ← ${money(t.after, false)} 🔒</div>` : `<span class="tag ${WTX[t.type]?.[3] || ''}">${wtxName(t.type)}</span>`), exportVal: (t) => (t.source === 'sms-sync' ? L('تزامن رصيد المحفظة مع الرسالة', 'SMS balance sync') : wtxName(t.type)) },
-        { key: 'status', label: L('الحالة', 'Status'), render: wstatusTag, exportVal: (t) => L(...WSTATUS[t.status || 'completed'].slice(0, 2)) },
+        { key: 'status', label: L('الحالة', 'Status'), render: (t) => wstatusTag(t) + (t.cashPending && !t.customerId ? ` <span class="tag err" title="${L('الإيداع اتم من الرسالة والكاش لسه متأكدش', 'Cash not confirmed yet')}">💵 ${L('الكاش متأكدش', 'Cash pending')}</span>` : ''), exportVal: (t) => L(...WSTATUS[t.status || 'completed'].slice(0, 2)) + (t.cashPending ? ' — ' + L('الكاش متأكدش', 'cash pending') : '') },
         { label: L('العميل', 'Client'), render: (t) => `${esc(t.clientName || '')} <span class="faint mono" dir="ltr">${esc(t.clientPhone || '')}</span>`, exportVal: (t) => `${t.clientName || ''} ${t.clientPhone || ''}` },
         { key: 'amount', label: L('المبلغ', 'Amount'), render: (t) => (t.type === 'adjust' ? `<b class="num ${t.balanceDelta < 0 ? 'neg' : 'pos'}" style="font-size:15px">${t.balanceDelta > 0 ? '+' : ''}${money(t.balanceDelta, false)}</b>` : `<b class="num" style="font-size:15px">${money(t.amount, false)}</b>`), exportVal: (t) => (t.type === 'adjust' ? t.balanceDelta : t.amount) },
         { key: 'fee', label: L('العمولة', 'Fee'), render: (t) => money(t.fee || 0, false), exportVal: (t) => t.fee || 0 },
@@ -8632,9 +8813,9 @@ Modules.wallets = {
     const d = wtxDeltas(type, a, fee, nf, deduct); const ap = wtxApplied({ type, status });
     const tw = typeof SmsLink !== 'undefined' ? SmsLink.autoTwin(w.id, type, a) : null;
     if (tw) { // اتسجلت تلقائياً من رسالة المحفظة — نحدّثها بدل التكرار
-      const b0 = wtxApplied(tw); const diff = round2((ap.c ? d.cashDelta : 0) - (b0.c ? tw.cashDelta : 0));
+      const b0 = wtxApplied(tw); const diff = round2((ap.c ? d.cashDelta : 0) - (b0.c && !tw.cashPending ? tw.cashDelta : 0));
       if (diff) cashMove(diff, type === 'withdraw' ? 'wallet-withdraw' : 'wallet-deposit', tw.opNo, `${w.name} ${v.clientPhone || ''}`);
-      DB.update('walletTx', tw.id, { status, fee, networkFee: nf, feeMode: v.feeMode, ...d, clientName: v.clientName || tw.clientName, clientPhone: v.clientPhone || tw.clientPhone, ref: v.ref || tw.ref, note: v.note || tw.note, smsClaimed: true, userId: Session.user.id });
+      DB.update('walletTx', tw.id, { status, fee, networkFee: nf, feeMode: v.feeMode, ...d, clientName: v.clientName || tw.clientName, clientPhone: v.clientPhone || tw.clientPhone, ref: v.ref || tw.ref, note: v.note || tw.note, smsClaimed: true, cashPending: false, userId: Session.user.id });
       audit('wallet.sms-claim', `${tw.opNo} ${a}`); x.close(); UI.toast(L('العملية دي كانت متسجلة تلقائياً من رسالة المحفظة — اتحدثت ببياناتك بدل ما تتكرر ✓', 'Auto-recorded op updated instead of duplicating ✓'), 'info', 5000);
       return ['wallets', 'dashboard'].includes(App.current) ? App.reload() : App.refreshTop();
     }
@@ -9027,11 +9208,11 @@ Object.assign(Modules.wallets, {
     if (!edit && ap.c && d.cashDelta < 0 && -d.cashDelta > drawerBalance() && !Session.can('limit.override')) return UI.toast(L(`نقدية الدرج غير كافية (${money(drawerBalance())})`, 'Not enough cash in drawer'), 'err');
     let t;
     if (edit) {
-      const oldA = wtxApplied(edit); const diff = round2((ap.c ? d.cashDelta : 0) - (oldA.c ? edit.cashDelta : 0));
+      const oldA = wtxApplied(edit); const diff = round2((ap.c ? d.cashDelta : 0) - (oldA.c && !edit.cashPending ? edit.cashDelta : 0));
       if (diff) cashMove(diff, 'adjust', edit.opNo || edit.id, L('تعديل عملية محفظة', 'Wallet op edited'));
       if (edit.custTxId) DB.remove('customerTx', edit.custTxId);
       const before = `${wtxName(edit.type)} ${edit.amount} / ${L('عمولة', 'fee')} ${edit.fee || 0} / ${edit.status || 'completed'} / ${DB.get('wallets', edit.walletId)?.name || ''}`;
-      t = DB.update('walletTx', edit.id, { ...doc, custTxId: null, editedAt: nowISO(), editedBy: Session.user.id, history: [...(edit.history || []), { at: nowISO(), by: Session.user.name, before }] });
+      t = DB.update('walletTx', edit.id, { ...doc, custTxId: null, cashPending: false, editedAt: nowISO(), editedBy: Session.user.id, history: [...(edit.history || []), { at: nowISO(), by: Session.user.name, before }] });
       audit('walletTx.edit', `${edit.opNo || edit.id}: ${before} → ${type} ${a} ${status}`);
       if (smsTwin) { DB.update('walletTx', t.id, { smsClaimed: true, userId: Session.user.id }); UI.toast(L('العملية دي كانت متسجلة تلقائياً من رسالة المحفظة — اتحدثت ببياناتك بدل ما تتكرر ✓', 'This op was auto-recorded from SMS — updated instead of duplicating ✓'), 'info', 5000); }
     } else {
@@ -10587,6 +10768,9 @@ Modules.settings = {
    ========================================================= */
 const CHANGELOG = [
   { v: '1.8.0', d: '2026-11-02', items: [
+    ['wallet', L('تصميمات جديدة لكروت المحافظ: «الداكن الأنيق» و«البطاقة البنكية» و«القائمة المضغوطة» (والكلاسيكي لسه موجود) — بتختار من «شكل الكروت» فوق المحافظ وتغيّره وقت ما تحب، بنفس كل الأزرار', 'New wallet card styles (Elegant, Bank card, Compact, Classic) selectable from «Card style»')],
+    ['send', L('الإيداع بيتسجل لوحده من رسالة الشركة بالمبلغ والرسوم الحقيقيين، ونافذة سريعة: «استلمت الكاش» أو «على حساب عميل آجل» (ومقترح العميل اللي اتحوّل لنفس الرقم قبل كده) — وتنبيه بنغمة لو الكاش متأكدش، وتحذير عند قفل الوردية', 'Deposits recorded from SMS with quick cash / credit confirmation and reminders')],
+    ['sim', L('تطبيق «مركز أهلاً SMS»: بيعرض شركة ورقم كل شريحة، وبيختار المحفظة لوحده لو رقم الشريحة متسجّل عليها', 'SMS helper shows each SIM carrier/number and auto-selects the wallet')],
     ['wallet', L('تزامن رصيد المحفظة مع رسالة الشركة: لو رصيد الرسالة مختلف أكتر من 1 ج بتضرب نغمة تحذير، وزرار «تطبيق رصيد الرسالة» بنافذة تأكيد — والتزامن بيتسجل في سجل العمليات مقفول 🔒 وفي سجل النشاط وجرس التنبيهات', 'Sync wallet balance from SMS with confirmation and a locked log entry')],
     ['tool', L('قسم الصيانة بقى زي الموبايلات والكاميرات: تبويباته (لوحة المراحل، كل الأجهزة، جاهز للتسليم، الإعدادات) جوه القسم بدل القائمة المنسدلة — والقائمة الجانبية بقت أقصر', 'Repairs tabs now live inside the section like Phones and CCTV')],
     ['layers', L('إصلاح عرض الجداول على الموبايل: الجدول العريض بيتحرك جوه الكارت بتاعه بدل ما يخرج برة الشاشة', 'Wide tables now scroll inside their card on mobile')],
@@ -12677,7 +12861,7 @@ const SmsSound = {
 
 const SmsLink = {
   timer: null, busy: false, lastSync: null, lastError: '',
-  cfg() { return { enabled: false, key: '', mode: 'in', graceMin: 3, windowMin: 45, cursor: 0, ...(DB.settings().smsLink || {}) }; },
+  cfg() { return { enabled: false, key: '', mode: 'all', depositConfirm: true, cashRemindMin: 5, graceMin: 3, windowMin: 45, cursor: 0, ...(DB.settings().smsLink || {}) }; },
   save(p) { DB.saveSettings({ smsLink: { ...this.cfg(), ...p } }); },
   server() { return typeof LICENSE_SERVER !== 'undefined' && LICENSE_SERVER.url && LICENSE_SERVER.anonKey ? LICENSE_SERVER : null; },
   available() { return !!this.server() && !window.MAH_DEMO; },
@@ -12815,8 +12999,11 @@ const SmsLink = {
     if (opt.type === 'internal') return null;
     const a = Number(opt.amount) || p.amount; const fee = opt.fee != null ? Number(opt.fee) || 0 : this.defFee(w, type, a); const nf = type === 'deposit' ? Number(opt.networkFee ?? p.fee) || 0 : 0;
     const status = opt.status || (type === 'withdraw' ? (opt.auto ? 'undelivered' : 'completed') : 'completed');
+    /* الإيداع اللي اتسجل لوحده من الرسالة: التحويل اتم، والكاش يستنى تأكيد الكاشير (استلمته / على عميل آجل) */
+    const pend = type === 'deposit' && opt.auto && this.cfg().depositConfirm !== false && !opt.noCash;
+    if (pend) opt.noCash = true;
     const d = wtxDeltas(type, a, fee, nf, false); const ap = wtxApplied({ type, status });
-    const t = DB.insert('walletTx', { ...base, amount: a, walletId: w.id, type, status, fee, networkFee: nf, feeMode: 'add', ...d, opNo: DB.nextNo('wop', 'OP-') });
+    const t = DB.insert('walletTx', { ...base, amount: a, walletId: w.id, type, status, fee, networkFee: nf, feeMode: 'add', ...d, opNo: DB.nextNo('wop', 'OP-'), ...(pend ? { cashPending: true } : {}) });
     if (ap.c && !opt.noCash) cashMove(d.cashDelta, type === 'withdraw' ? 'wallet-withdraw' : 'wallet-deposit', t.opNo, `${w.name} ${p.party || ''} (SMS)`);
     DB.update('smsInbox', sms.id, { status: opt.auto ? 'auto' : 'manual', txId: t.id, walletId: w.id });
     audit('wallet.sms-' + type, `${w.name} ${a} ${status}`); return t;
@@ -12928,15 +13115,17 @@ const SmsLink = {
     const m = UI.modal({ title: L('إعدادات ربط رسائل المحافظ', 'Wallet SMS settings'), icon: 'send', body: UI.form([
       { name: 'enabled', label: L('تفعيل استقبال الرسائل', 'Enable receiving SMS'), type: 'checkbox', col: 12 },
       { type: 'html', col: 12, html: `<label class="lbl">${L('كود الربط', 'Pairing code')}</label><div class="row" style="gap:6px"><input id="smsK" class="mono" readonly value="${esc(c.key || this.newKey())}" style="flex:1;font-size:17px;font-weight:800;direction:ltr"><button type="button" class="btn sm" id="smsKCopy">${icon('copy')}</button><button type="button" class="btn sm" id="smsKNew" title="${L('كود جديد', 'New code')}">${icon('refresh')}</button></div><div class="faint mt">${L('نفس الكود ده بيتكتب في تطبيق "مركز أهلاً SMS" وفي أي جهاز تاني عليه البرنامج. لو غيّرته لازم تكتبه تاني في كل الموبايلات.', 'Use this same code in the Markaz Ahllan SMS app and any other POS device.')}</div>` },
-      { name: 'mode', label: L('الرسائل اللي مالهاش عملية مسجلة', 'Messages with no recorded op'), type: 'select', col: 12, options: [['in', L('سجّل الوارد تلقائياً كسحب "غير مسلم" — والصادر يستنى تأكيدك (مقترح)', 'Auto-record incoming as undelivered withdraw (recommended)')], ['all', L('سجّل الوارد والصادر تلقائياً', 'Auto-record incoming and outgoing')], ['off', L('متسجلش حاجة — أنا اللي أأكد', 'Do not auto-record')]] },
+      { name: 'mode', label: L('الرسائل اللي مالهاش عملية مسجلة', 'Messages with no recorded op'), type: 'select', col: 12, options: [['all', L('سجّل الوارد والصادر تلقائياً — السحب «غير مسلم» والإيداع يستنى تأكيد استلام الكاش (مقترح)', 'Auto-record incoming and outgoing (recommended)')], ['in', L('سجّل الوارد بس تلقائياً كسحب «غير مسلم» — والصادر يستنى تأكيدك', 'Auto-record incoming only')], ['off', L('متسجلش حاجة — أنا اللي أأكد', 'Do not auto-record')]] },
+      { name: 'depositConfirm', label: L('الإيداع اللي بيتسجل من الرسالة يستنى الكاشير يأكد «استلمت الكاش» أو يسجّله على عميل آجل', 'Deposits from SMS wait for cash confirmation'), type: 'checkbox', col: 8 },
+      { name: 'cashRemindMin', label: L('نبّه لو الكاش متأكدش بعد (دقائق)', 'Remind after (min)'), type: 'number', col: 4 },
       { name: 'graceMin', label: L('استنى قبل التسجيل التلقائي (دقائق)', 'Wait before auto-record (min)'), type: 'number', col: 6 },
       { name: 'windowMin', label: L('فرق الوقت المسموح للمطابقة (دقائق)', 'Match window (min)'), type: 'number', col: 6 },
       { name: 'popup', label: L('نافذة منبثقة لكل رسالة (تتحرك بالسحب — فيها مراجعة وطباعة وواتساب وربط بعميل آجل)', 'Popup window for every message'), type: 'checkbox', col: 12 },
       { name: 'sound', label: L('أصوات التنبيه (استلام سليم / فرق رصيد / رسالة وهمية)', 'Alert sounds'), type: 'checkbox', col: 12 },
-      { type: 'html', col: 12, html: `<div class="row wrap" style="gap:6px"><button type="button" class="btn sm" data-snd="ok">🔔 ${L('سليم', 'OK')}</button><button type="button" class="btn sm" data-snd="warn">⚠️ ${L('فرق رصيد', 'Diff')}</button><button type="button" class="btn sm" data-snd="danger">🚨 ${L('وهمية', 'Fake')}</button></div>` }], { ...c, enabled: c.enabled || !c.key, sound: c.sound !== false, popup: c.popup !== false }),
+      { type: 'html', col: 12, html: `<div class="row wrap" style="gap:6px"><button type="button" class="btn sm" data-snd="ok">🔔 ${L('سليم', 'OK')}</button><button type="button" class="btn sm" data-snd="warn">⚠️ ${L('فرق رصيد', 'Diff')}</button><button type="button" class="btn sm" data-snd="danger">🚨 ${L('وهمية', 'Fake')}</button></div>` }], { ...c, enabled: c.enabled || !c.key, sound: c.sound !== false, popup: c.popup !== false, depositConfirm: c.depositConfirm !== false }),
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (x) => {
         const v = UI.read(x.el); const key = $('#smsK', x.el).value.trim();
-        const changed = key !== c.key; this.save({ enabled: !!v.enabled, key, mode: v.mode, sound: !!v.sound, popup: !!v.popup, graceMin: Math.max(0, Number(v.graceMin) || 0), windowMin: Math.max(5, Number(v.windowMin) || 45), ...(changed ? { cursor: 0 } : {}), ...((changed || (v.enabled && !c.enabled) || !c.since) ? { since: nowISO() } : {}) });
+        const changed = key !== c.key; this.save({ enabled: !!v.enabled, key, mode: v.mode, sound: !!v.sound, popup: !!v.popup, depositConfirm: !!v.depositConfirm, cashRemindMin: Math.max(1, Number(v.cashRemindMin) || 5), graceMin: Math.max(0, Number(v.graceMin) || 0), windowMin: Math.max(5, Number(v.windowMin) || 45), ...(changed ? { cursor: 0 } : {}), ...((changed || (v.enabled && !c.enabled) || !c.since) ? { since: nowISO() } : {}) });
         audit('sms.settings', `${v.enabled ? 'on' : 'off'} ${v.mode}`); x.close(); this.start(); this.pushCfg(true); App.reload();
       } }] });
     $('#smsKCopy', m.el).onclick = () => copyText($('#smsK', m.el).value);
@@ -13030,7 +13219,9 @@ const SmsPop = {
     const typeName = t ? wtxName(t.type) : p.dir === 'in' ? L('سحب', 'Withdraw') : L('إيداع', 'Deposit');
     const st = SMS_ST[s.status] || [s.status, s.status, ''];
     const row = (ic, l, v, cls = '') => (v || v === 0 ? `<div class="smw-r ${cls}"><span>${ic} ${l}:</span><b dir="auto">${v}</b></div>` : '');
-    const deliv = !t ? '' : t.status === 'undelivered' ? `<div class="smw-del no"><span>📦 ${L('التسليم', 'Delivery')}:</span><b>⏳ ${L('لسه متسلمش', 'Not handed yet')}</b><button class="btn sm ok" data-a="deliver">${icon('check')}${L('تم التسليم', 'Delivered')}</button></div>`
+    const sug = t && t.cashPending && !t.customerId ? DepCash.suggest(t) : null;
+    const deliv = !t ? '' : t.cashPending && !t.customerId ? `<div class="smw-del no smw-cash"><span>💵 ${L('الكاش', 'Cash')}:</span><b>⏳ ${L('لسه متأكدش', 'Not confirmed')}</b><button class="btn sm ok" data-a="cashok">${icon('check')}${L('استلمت الكاش', 'Cash received')}</button></div>${sug ? `<button class="btn sm smw-credit wide" data-a="credsug">💳 ${L('على حساب', 'On account of')} <b>${esc(sug.name)}</b> ${L('(اتحوّل له قبل كده)', '(used before)')}</button>` : ''}`
+      : t.status === 'undelivered' ? `<div class="smw-del no"><span>📦 ${L('التسليم', 'Delivery')}:</span><b>⏳ ${L('لسه متسلمش', 'Not handed yet')}</b><button class="btn sm ok" data-a="deliver">${icon('check')}${L('تم التسليم', 'Delivered')}</button></div>`
       : t.status === 'pending' ? `<div class="smw-del no"><span>📦 ${L('الحالة', 'Status')}:</span><b>⏳ ${L('معلقة', 'Pending')}</b></div>`
       : `<div class="smw-del ok"><span>📦 ${L('التسليم', 'Delivery')}:</span><b>✅ ${cust ? L('على حساب العميل الآجل', 'On credit account') : type === 'withdraw' ? L('تم التسليم', 'Delivered') : L('تم الاستلام', 'Collected')}</b></div>`;
     const wNow = s.walletId && DB.get('wallets', s.walletId); const syncable = wNow && wNow.smsBalanceAt === s.at && Math.abs(wNow.smsBalanceDiff || 0) > 1;
@@ -13087,6 +13278,8 @@ const SmsPop = {
     if (a === 'print') return Modules.wallets.printOp(t);
     if (a === 'wa') return sendWhatsApp(t.clientPhone || p.party, Modules.wallets.opText(t));
     if (a === 'credit') return this.creditDialog(id);
+    if (a === 'cashok') { if (!DepCash.confirm(t)) return; return this.after(id, L(`تم — ${money(DepCash.amount(t))} دخلوا الدرج`, 'Cash received')); }
+    if (a === 'credsug') { const c = DepCash.suggest(t); if (!c) return; CreditLink.link(t, c.id); return this.after(id, L(`تم — اتسجلت على ${c.name} • رصيده دلوقتي ${money(Customers.balance(c))}`, 'Linked')); }
     if (a === 'uncredit') {
       if (!(await UI.confirm(t.type === 'withdraw' ? L('فك الربط؟ العملية هترجع «لسه متسلمش» والكاش هيتسلّم للعميل من الدرج.', 'Unlink? The withdraw becomes undelivered.') : L('فك الربط؟ العملية هتتحسب إن العميل دفع الفلوس كاش في الدرج.', 'Unlink? The deposit will count as paid in cash.'), { danger: false }))) return;
       CreditLink.unlink(t); return this.after(id, L('تم فك الربط', 'Unlinked'));
@@ -13124,10 +13317,10 @@ const CreditLink = {
   link(t, cid, { cashMoved } = {}) {
     t = DB.get('walletTx', t.id); if (!t || t.customerId) return;
     const amt = this.cash(t); const ap = wtxApplied(t);
-    const moved = cashMoved ?? (ap.c && !!t.cashDelta);
+    const moved = cashMoved ?? (!t.cashPending && ap.c && !!t.cashDelta);
     if (moved && t.cashDelta) cashMove(-t.cashDelta, 'adjust', t.opNo || t.id, L('ربط بعميل آجل — المبلغ اتسجل على حسابه', 'Linked to credit customer'));
     const ct = Customers.tx(cid, t.type === 'withdraw' ? 'payment' : 'sale', amt, t.opNo, t.type === 'withdraw' ? L('سحب على محفظة — مستحق للعميل', 'Wallet withdraw — owed to customer') : L('تحويل رصيد على الحساب', 'Wallet transfer on credit'));
-    DB.update('walletTx', t.id, { customerId: cid, custTxId: ct.id, cashDelta: 0, status: t.status === 'undelivered' ? 'completed' : t.status, creditLinkedAt: nowISO(), creditLinkedBy: Session.user?.name || '' });
+    DB.update('walletTx', t.id, { customerId: cid, custTxId: ct.id, cashDelta: 0, cashPending: false, status: t.status === 'undelivered' ? 'completed' : t.status, creditLinkedAt: nowISO(), creditLinkedBy: Session.user?.name || '' });
     audit('wallet.credit-link', `${t.opNo} → ${DB.get('customers', cid)?.name}`);
   },
   unlink(t) {
@@ -13142,7 +13335,7 @@ const CreditLink = {
   pick({ title, info, delta, phone, onPick }) {
     if (!feat('credit')) return UI.toast(L('فعّل عملاء الآجل من الإعدادات ← المميزات', 'Enable credit customers in Settings → Features'), 'warn');
     let sel = null; const all = () => CreditCenter.sorted(CreditCenter.visible().filter((c) => !c.archived));
-    const d = SmsLink.digits(phone); const guess = d ? all().find((c) => SmsLink.digits(c.phone) === d) : null; if (guess) sel = guess.id;
+    const d = SmsLink.digits(phone); const guess = d ? all().find((c) => SmsLink.digits(c.phone) === d) || (typeof DepCash !== 'undefined' ? DepCash.byPhone(d) : null) : null; if (guess) sel = guess.id;
     const m = UI.modal({ title, icon: 'credit', size: 'sm', body: `<div class="cl-info">${info}</div>
       <div class="ph-search" style="margin:10px 0">${icon('search')}<input id="clQ" placeholder="${L('ابحث بالاسم أو الموبايل…', 'Search name or phone…')}"></div>
       <div class="cl-list" id="clL"></div><div id="clPrev" class="mt"></div>`,
@@ -16153,6 +16346,65 @@ if (typeof Notify !== 'undefined') {
     return out;
   };
 }
+
+</script>
+  <script>
+/* =========================================================
+   الإيداع من رسالة الشركة — تأكيد استلام الكاش (1.8)
+   - الإيداع اللي اتسجل لوحده من الرسالة: التحويل اتم بالمبلغ والرسوم الحقيقيين، والكاش بيستنى الكاشير:
+     «استلمت الكاش» ← يدخل الدرج  •  «على حساب عميل آجل» ← يتسجل عليه (ومقترح العميل اللي اتحوّل لنفس الرقم قبل كده)
+   - تنبيه بنغمة وإعادة فتح النافذة لو الكاش متأكدش بعد كام دقيقة + جرس التنبيهات + تحذير عند قفل الوردية
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ========================================================= */
+const DepCash = {
+  pending() { return DB.filter('walletTx', (t) => t.cashPending && !t.customerId && t.type === 'deposit'); },
+  amount(t) { return round2(Number(t.cashDelta) || wtxDeltas(t.type, t.amount, t.fee || 0, t.networkFee || 0, t.feeMode === 'deduct').cashDelta); },
+  /* آخر عميل آجل اتسجل عليه تحويل لنفس الرقم */
+  byPhone(d) {
+    if (!d) return null; const hit = DB.all('walletTx').filter((x) => x.customerId && SmsLink.digits(x.clientPhone) === d).sort((a, b) => (a.date < b.date ? 1 : -1))[0];
+    const c = hit && DB.get('customers', hit.customerId); return c && !c.archived ? c : null;
+  },
+  suggest(t) { if (!feat('credit')) return null; const d = SmsLink.digits(t.clientPhone); if (!d) return null; return DB.find('customers', (c) => !c.archived && SmsLink.digits(c.phone) === d) || this.byPhone(d); },
+  confirm(t) {
+    t = DB.get('walletTx', t.id); if (!t || !t.cashPending || t.customerId) return false;
+    if (!App.needShift()) return false;
+    const amt = this.amount(t); const w = DB.get('wallets', t.walletId);
+    if (amt) cashMove(amt, 'wallet-deposit', t.opNo || t.id, `${w ? w.name : ''} ${t.clientPhone || ''} (SMS)`);
+    DB.update('walletTx', t.id, { cashPending: false, cashConfirmedAt: nowISO(), cashConfirmedBy: Session.user.id, shiftId: Session.shift()?.id || t.shiftId || null });
+    audit('wallet.deposit-cash', `${t.opNo} ${amt}`); return true;
+  },
+  _rem: {},
+  tick() {
+    if (!Session.user || !Session.can('wallets')) return; const c = SmsLink.cfg(); if (c.depositConfirm === false) return;
+    const lim = (Number(c.cashRemindMin) || 5) * 60000; const now = Date.now();
+    const late = this.pending().filter((t) => now - new Date(t.date).getTime() >= lim && now - (this._rem[t.id] || 0) >= lim);
+    if (!late.length) return;
+    late.forEach((t) => (this._rem[t.id] = now));
+    try { SmsSound.play('warn'); } catch (_) {}
+    UI.toast(L(`💵 ${late.length} إيداع اتم من رسالة الشركة والكاش لسه متأكدش — ${money(sum(late, (t) => this.amount(t)))}`, `${late.length} deposits waiting for cash confirmation`), 'warn', 9000);
+    if (typeof SmsPop !== 'undefined' && SmsPop.on()) late.slice(0, 3).forEach((t) => { const s = t.smsId && DB.get('smsInbox', t.smsId); if (s) SmsPop.open(s.id); });
+  }
+};
+
+(function () {
+  setInterval(() => { try { DepCash.tick(); } catch (e) { console.warn(e); } }, 60000);
+  /* جرس التنبيهات */
+  if (typeof Notify !== 'undefined') {
+    const bl = Notify.list.bind(Notify);
+    Notify.list = function () { const out = bl(); try { const p = DepCash.pending(); if (p.length) out.unshift({ type: 'err', icon: 'money', t: L(`${p.length} إيداع من رسالة الشركة والكاش لسه متأكدش`, `${p.length} SMS deposits awaiting cash`), s: money(sum(p, (t) => DepCash.amount(t))), go: () => { if (typeof SmsPop !== 'undefined') p.slice(0, 5).forEach((t) => t.smsId && SmsPop.open(t.smsId)); } }); } catch (_) {} return out; };
+  }
+  /* قفل الوردية: تحذير لو فيه كاش إيداع متأكدش */
+  if (Modules.shifts && Modules.shifts.closeShiftDialog) {
+    const bc = Modules.shifts.closeShiftDialog.bind(Modules.shifts);
+    Modules.shifts.closeShiftDialog = async function (sh, ...a) {
+      const p = DepCash.pending();
+      if (p.length && !(await UI.confirm(L(`فيه <b>${p.length}</b> إيداع اتم من رسالة الشركة بإجمالي <b>${money(sum(p, (t) => DepCash.amount(t)))}</b> والكاش بتاعهم لسه متأكدش (لا اتسجل «استلمت الكاش» ولا على عميل آجل). جرد الدرج هيطلع فيه فرق. تكمّل قفل الوردية؟`, `${p.length} SMS deposits have unconfirmed cash. Close the shift anyway?`), { danger: true }))) {
+        if (typeof SmsPop !== 'undefined') p.slice(0, 5).forEach((t) => t.smsId && SmsPop.open(t.smsId)); return;
+      }
+      return bc(sh, ...a);
+    };
+  }
+})();
 
 </script>
   <script>

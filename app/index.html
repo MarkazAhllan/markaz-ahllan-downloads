@@ -2099,6 +2099,57 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 
 /* سطر إشعارات الجهاز في لوحة الجرس */
 .sn-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 6px 14px 2px; padding: 8px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); font-size: 13px; }
+
+/* ===== رادار التلاعب ===== */
+.rd-it { border-inline-start: 4px solid var(--line); } .rd-it.rd-3 { border-inline-start-color: var(--err); } .rd-it.rd-2 { border-inline-start-color: var(--warn); } .rd-it.rd-1 { border-inline-start-color: var(--info); }
+/* ===== توقّع السيولة ===== */
+.lq-card .lq-ic { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; background: var(--ok-bg); color: var(--ok); flex: none; }
+.lq-card.need .lq-ic { background: var(--warn-bg); color: var(--warn); } .lq-card.need { border-color: color-mix(in srgb, var(--warn) 35%, var(--line)); }
+/* ===== تسعير المستعمل ===== */
+.pp-box { margin-top: 10px; border: 1px dashed color-mix(in srgb, var(--p) 40%, var(--line)); background: color-mix(in srgb, var(--p) 5%, var(--surface)); border-radius: 14px; padding: 10px 12px; display: grid; gap: 8px; font-size: 13px; }
+.pp-g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .pp-g div { background: var(--surface); border-radius: 10px; padding: 6px 8px; } .pp-g small { display: block; color: var(--text-3); font-size: 11.5px; } .pp-g b { font-size: 14px; }
+@media (max-width: 520px) { .pp-g { grid-template-columns: 1fr 1fr; } }
+/* ===== مزامنة الشبكة ===== */
+.ls-ips { margin-top: 10px; display: grid; gap: 6px; } .ls-ips > div { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--surface-2); border-radius: 12px; padding: 8px 12px; } .ls-ips b { font-size: 20px; letter-spacing: .5px; }
+/* ===== الميكروفون في المساعد ===== */
+.ai-mic.on { background: var(--err); color: #fff; animation: aiPulse 1s infinite; } @keyframes aiPulse { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--err) 25%, transparent); } }
+
+/* ===== الإصدار 1.10 — أدوات احترافية ===== */
+/* التأكد من وصول التحويل */
+.tc-box { text-align: center; padding: 10px 4px 4px; display: grid; gap: 8px; justify-items: center; }
+.tc-spin { width: 64px; height: 64px; border-radius: 50%; border: 6px solid var(--p-100); border-top-color: var(--p); animation: tcspin 1s linear infinite; }
+@keyframes tcspin { to { transform: rotate(360deg); } }
+.tc-amt { font-size: 30px; font-weight: 900; color: var(--p); line-height: 1.2; }
+.tc-ok { width: 72px; height: 72px; border-radius: 50%; background: var(--ok-bg); color: var(--ok); display: grid; place-items: center; font-size: 38px; font-weight: 900; animation: tcpop .35s ease-out; }
+@keyframes tcpop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+/* قايمة المسروقات */
+.ig-box { border: 2px solid var(--err); background: var(--err-bg); color: var(--err); border-radius: var(--r); padding: 12px 14px; margin: 10px 0; display: grid; gap: 6px; }
+.ig-box b { font-size: 15px; }
+.ig-r { background: var(--surface); color: var(--text); border-radius: var(--r-sm); padding: 8px 10px; font-size: 13px; line-height: 1.8; }
+.ig-ok { color: var(--ok); background: var(--ok-bg); border-radius: var(--r-sm); padding: 6px 10px; font-size: 13px; font-weight: 700; }
+/* عقد شراء المستعمل */
+.uc-box { border: 1.5px dashed var(--line-2); border-radius: var(--r); padding: 12px; background: var(--surface-2); }
+.uc-box img { max-height: 70px; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+/* صور الاستلام في الصيانة */
+.rph-box { border: 1.5px dashed var(--line-2); border-radius: var(--r); padding: 10px 12px; margin-top: 12px; background: var(--surface-2); display: grid; gap: 8px; }
+.rph-strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; }
+.rph-strip img { width: 78px; height: 78px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); cursor: zoom-in; flex: none; }
+.rph-strip img.big { width: 130px; height: 130px; }
+/* تقرير تركيب الكاميرات */
+.cp-cams { display: grid; gap: 8px; }
+.cp-cam { display: flex; gap: 10px; align-items: flex-start; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 8px; }
+.cp-ph { width: 76px; flex: none; display: grid; gap: 4px; justify-items: center; }
+.cp-ph img, .cp-ph > span { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; border: 1px solid var(--line); display: grid; place-items: center; background: var(--surface); font-size: 24px; }
+.cp-cam input { margin-top: 4px; }
+/* مناقصة الموردين */
+.rq-best { background: var(--ok-bg) !important; color: var(--ok); font-weight: 900; }
+/* رسائل الماكينات */
+.ms-box { display: grid; gap: 8px; }
+.ms-it { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 0; border-top: 1px dashed var(--line); }
+.ms-ic { width: 34px; height: 34px; border-radius: 10px; background: var(--info-bg); display: grid; place-items: center; flex: none; }
+.ms-ic.ok { background: var(--ok-bg); } .ms-ic.warn { background: var(--warn-bg); }
+.ms-tx { flex: 1; min-width: 180px; display: grid; } .ms-tx small { color: var(--text-3); }
+.ms-sms { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px; font-size: 13px; line-height: 1.8; margin-bottom: 10px; white-space: pre-wrap; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2348,6 +2399,8 @@ const ICONS = {
   swap: '<path d="M7 16V4M3 8l4-4 4 4M17 8v12M21 16l-4 4-4-4"/>',
   refresh: '<path d="M21 12a9 9 0 1 1-2.6-6.4L21 8M21 3v5h-5"/>',
   sparkles: '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9zM5 2l.6 1.4L7 4l-1.4.6L5 6l-.6-1.4L3 4l1.4-.6z"/>',
+  wifi: '<path d="M5 12.55a11 11 0 0 1 14 0M8.5 16.1a6 6 0 0 1 7 0M2 8.8a16 16 0 0 1 20 0"/><circle cx="12" cy="20" r="1"/>',
+  mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/>',
   send: '<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
   whatsapp: '<path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.2-1.4-1.9-1-1 .8a4 4 0 0 1-2.2-2.2l.8-1-1-1.9z"/>',
   sim: '<path d="M7 2h7l5 5v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><rect x="8" y="11" width="8" height="7" rx="1"/><path d="M12 11v7M8 14.5h8"/>',
@@ -2386,7 +2439,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.8.0', build: '', trialHours: 168 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.10.0', build: '', trialHours: 168 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -3965,7 +4018,7 @@ const NAV = [
   { id: 'crm', grp: ['العملاء والتسويق', 'Customers & marketing'], icon: 'star', items: ['customers', 'loyalty', 'campaigns', 'ratings', 'catalog'] },
   { id: 'stock', grp: ['المخزون والمشتريات', 'Stock & purchasing'], icon: 'box', items: ['inventory', 'purchases', 'transfers', 'losses'] },
   { id: 'supp', grp: ['', ''], items: ['suppliers'], fixed: true },
-  { id: 'finance', grp: ['المالية والتقارير', 'Finance & reports'], icon: 'bank', items: ['reports', 'shifts', 'expenses', 'capital', 'eta', 'einv'] },
+  { id: 'finance', grp: ['المالية والتقارير', 'Finance & reports'], icon: 'bank', items: ['reports', 'radar', 'shifts', 'expenses', 'capital', 'zakat', 'eta', 'einv'] },
   { id: 'hr', grp: ['الموارد البشرية', 'HR'], icon: 'users', items: ['users', 'attendance', 'payroll', 'targets'] },
   { id: 'system', grp: ['النظام', 'System'], icon: 'settings', items: ['settings', 'backup'] }
 ];
@@ -5147,7 +5200,8 @@ Modules.purchases = {
     $('#puNewSup').onclick = () => Modules.suppliers.edit(null, (s) => { const o = new Option(s.name, s.id, true, true); $('#puSup').add(o); supplierId = s.id; });
     $('#puNewProd').onclick = () => Modules.inventory.edit(null, (p) => add(p));
     $('#puPack').onclick = () => PackUnits.open((r) => { const ex = items.find((i) => i.productId === r.product.id); if (ex) { ex.qty += r.qty; ex.cost = r.cost; } else items.push({ productId: r.product.id, name: r.product.name, qty: r.qty, cost: r.cost, price: Number(r.product.price) || 0, pack: r.note }); draw(); });
-    m.supplier = () => $('#puSup').value; draw();
+    m.supplier = () => $('#puSup').value; m.items = items; m.redraw = draw; m.addLine = (p, qty, cost, price) => { const ex = items.find((i) => i.productId === p.id); if (ex) { ex.qty += qty; ex.cost = cost; } else items.push({ productId: p.id, name: p.name, qty, cost, price: price || Number(p.price) || 0 }); draw(); };
+    if (typeof SupplierScan !== 'undefined') SupplierScan.attach(m); draw();
   },
   save(m, items) {
     const supplierId = $('#puSup', m.el).value;
@@ -10830,6 +10884,28 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.10.0', d: '2026-11-07', items: [
+    ['shield', L('التأكد من وصول التحويل قبل التسليم: لما العميل يدفع محفظة أو إنستا باي، البرنامج يستنى رسالة الشركة بنفس المبلغ على نفس المحفظة ويقولك «وصل فعلاً ✓» — وصورة التحويل المزوّرة مبقتش تعدّي (والتأكيد من غير رسالة محتاج موافقة المدير)', 'Verify the transfer SMS before handover')],
+    ['camera', L('فاتورة المورد من صورة: صوّر الفاتورة الورق والأصناف والكميات والأسعار ورقم الفاتورة والمورد بيتملوا لوحدهم — بتراجعها وتضيف بضغطة (محتاج مفتاح المساعد الذكي)', 'Supplier invoice from a photo')],
+    ['alert', L('قايمة الموبايلات المسروقة المشتركة بين المحلات: قبل ما تشتري مستعمل البرنامج بيكشف على الـ IMEI، ولو محل تاني مبلّغ عنه يظهر تحذير أحمر برقم المحل — وتقدر تبلّغ عن جهاز اتسرق منك', 'Shared stolen-IMEI list')],
+    ['edit', L('عقد شراء الموبايل المستعمل: توقيع البائع بصباعه على الشاشة + صور الجهاز + إقرار ملكية + نتيجة الكشف على المسروقات — ورقة A4 جاهزة للطباعة', 'Used-phone purchase contract')],
+    ['camera', L('صور الجهاز وقت استلام الصيانة: لحد 4 صور للخدوش والكسر قدام العميل، وبتظهر وقت التسليم «قارن الحالة»', 'Repair intake photos')],
+    ['shield', L('الكاميرات: تقرير تركيب احترافي (مكان كل كاميرا وصورتها، جهاز التسجيل والهارد وأيام التسجيل، توقيع العميل) + عقود صيانة دورية بتفكّرك بالزيارة والتحصيل', 'CCTV install report + maintenance contracts')],
+    ['truck', L('مناقصة الموردين: قايمة النواقص بتتبعت لكذا مورد بلينك على واتساب، كل مورد يكتب أسعاره، والبرنامج يقولك أرخص توليفة والتوفير ويبعت أمر الشراء لكل مورد', 'Supplier price tender')],
+    ['zap', L('ماكينات الشحن بالرسائل: رسالة «تم شحن رصيدك» من فوري/أمان/مصاري/بي/ضامن/ممكن تظهر «سجّل الشحن» بضغطة، ورصيد الرسالة بيتقارن برصيد البرنامج وينبّهك لأي فرق', 'Charging machines via SMS')],
+    ['settings', L('مهم: شغّل ملف supabase/pos-1.9.sql مرة واحدة في Supabase عشان قايمة المسروقات والمناقصة يشتغلوا — وحدّث تطبيق «مركز أهلاً SMS» عشان رسائل الماكينات توصل', 'Run supabase/pos-1.9.sql; update the SMS app')]
+  ] },
+  { v: '1.9.0', d: '2026-11-07', items: [
+    ['shield', L('رادار التلاعب (للمالك بس): بيقارن عمليات المحافظ اللي اتسجلت إيد بالرسائل اللي وصلت فعلاً من الشركة، وبيكشف المرتجعات والخصومات العالية لموظف، وعجز الدرج المتكرر، والبيع بأقل من التكلفة، والحذف والتعديل، والبيع في ساعات غريبة — مع مؤشر أمان وطباعة PDF', 'Fraud radar (owner only)')],
+    ['trend', L('توقّع السيولة لبكرة: «فودافون كاش محتاجة تتشحن بكام» و«الدرج محتاج فكة بكام» — من حركة نفس اليوم في الأسابيع اللي فاتت وذروة أول الشهر', 'Tomorrow cash forecast')],
+    ['whatsapp', L('رد آلي على واتساب العملاء: «رصيدي» و«جهازي» و«قسطي» و«نقاطي» و«صفحتي» — البرنامج بيرد لوحده على العملاء المتسجلين', 'WhatsApp auto-reply')],
+    ['user', L('صفحة العميل الشخصية: لينك واحد فيه رصيد الآجل والأقساط والنقاط وأجهزة الصيانة والضمانات — وملصق الضمان عليه QR بيفتح صفحة الجهاز', 'Customer portal + warranty QR')],
+    ['phone', L('اقتراح سعر شراء وبيع الموبايل المستعمل من تاريخ المحل (الموديل والمساحة والتقييم والبطارية والفحص)', 'Used phone pricing')],
+    ['percent', L('حساب الزكاة السنوي: البضاعة والكاش والمحافظ والديون المرجوّة ناقص ديون الموردين، والنصاب بسعر الدهب، ونصيب كل شريك — PDF', 'Zakat calculation')],
+    ['wifi', L('المزامنة على شبكة المحل من غير إنترنت: الكمبيوتر الرئيسي بيبقى سيرفر، والفروع والموبايلات بتتزامن معاه على نفس الراوتر حتى لو النت قاطع', 'Local network sync')],
+    ['mic', L('اسأل المساعد الذكي بصوتك على الموبايل («كسبت كام النهارده؟»)', 'Voice questions on mobile')],
+    ['whatsapp', L('إصلاح «Waiting for this message» في رسايل واتساب: البرنامج بيحتفظ بالرسايل اللي بعتها وبيبعتها تاني لو موبايل العميل طلبها، وبيستنى الاتصال يجهز قبل أول رسالة', 'Fixed WhatsApp waiting for this message')],
+  ] },
   { v: '1.8.0', d: '2026-11-02', items: [
     ['whatsapp', L('إصلاح «خاصية الربط مش متثبتة» في ربط واتساب على ويندوز: البرنامج بيحمّل مكتبة واتساب بالطريقتين، وبناء الويندوز بيتأكد إنها موجودة قبل ما يعمل ملف التثبيت', 'Fixed WhatsApp linking library on Windows')],
     ['file', L('إصلاح «مكتبة Excel مش متاحة» على الموبايل: المكتبة بقت ملف جوه التطبيق وبتتحمّل وقت الحاجة لو ماكانتش جاهزة — Excel شغال في خطوط المفوض والموبايلات والتقارير وكل التصدير والاستيراد', 'Fixed Excel library on mobile')],
@@ -16769,6 +16845,1449 @@ const SysNotify = {
   if (typeof Notify !== 'undefined') { const tg = Notify.toggle.bind(Notify); Notify.toggle = function () { tg(); const p = $('.notif-panel'); if (p) SysNotify.panelRow(p); }; }
   // تشغيل بعد الدخول
   const iv = setInterval(() => { if (typeof Session !== 'undefined' && Session.user) { clearInterval(iv); SysNotify.start(); } }, 3000);
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   رادار التلاعب — مراجعة تلقائية للعمليات وتنبيهات للمالك بس
+   1) عمليات محافظ اتسجلت إيد ومفيش رسالة من الشركة تثبتها (المحفظة نفسها رسايلها شغالة)
+   2) مرتجعات / خصومات موظف أعلى بكتير من متوسط زمايله
+   3) عجز درج متكرر لنفس الموظف
+   4) بيع بأقل من التكلفة
+   5) حذف / تعديل عمليات حساسة
+   6) بيع في ساعات غريبة (بعد مواعيد الشغل)
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const Radar = {
+  days: 30,
+  cfg() { return { on: true, shortage: 20, lateFrom: '00:00', lateTo: '07:00', ...(DB.settings().radar || {}) }; },
+  canSee() { return !!(Session.user && (Session.user.role === 'admin' || Session.user.username === 'admin')); },
+  uname(id) { return (id && DB.get('users', id)?.name) || L('غير معروف', 'Unknown'); },
+  inRange(d, from) { return d && String(d) >= from; },
+  /* كل الملاحظات في الفترة — [{sev: 3/2/1, k, title, text, user, amount, rows:[[...]]}] */
+  scan(days = this.days) {
+    const c = this.cfg(); const from = new Date(Date.now() - days * 864e5).toISOString(); const out = [];
+    const sales = DB.filter('sales', (s) => this.inRange(s.date, from) && s.status !== 'cancelled');
+    /* 1) محافظ من غير رسالة */
+    const smsW = new Set(DB.filter('walletTx', (t) => t.smsId && this.inRange(t.date, from)).map((t) => t.walletId));
+    if (smsW.size) {
+      const cutoff = Date.now() - 45 * 60e3;
+      const miss = DB.filter('walletTx', (t) => smsW.has(t.walletId) && this.inRange(t.date, from) && !t.smsId && ['withdraw', 'deposit'].includes(t.type) && (t.status || 'completed') === 'completed' && Date.parse(t.date) < cutoff && !t.noSmsOk);
+      const by = groupBy(miss, (t) => t.userId || '-');
+      Object.entries(by).forEach(([u, list]) => {
+        const amt = round2(sum(list, (t) => t.amount));
+        out.push({ sev: list.length >= 5 || amt >= 5000 ? 3 : 2, k: 'nosms', user: u, amount: amt, title: L(`${list.length} عملية محفظة من غير رسالة من الشركة`, `${list.length} wallet ops with no carrier SMS`), text: L(`سجّلها ${this.uname(u)} بإجمالي ${money(amt)} — المحفظة دي رسايلها بتوصل عادي، فالعملية ممكن تكون ما حصلتش فعلاً أو اتسجلت بمبلغ غلط.`, `By ${this.uname(u)}, total ${money(amt)}.`),
+          rows: list.slice(0, 40).map((t) => [fmtDT(t.date), DB.get('wallets', t.walletId)?.name || '', wtxName(t.type), money(t.amount), t.clientPhone || t.clientName || '', t.id]) });
+      });
+    }
+    /* 2) مرتجعات وخصومات لكل موظف مقارنة بالمتوسط */
+    const per = {};
+    sales.forEach((s) => {
+      const u = s.userId || '-'; const p = (per[u] ||= { n: 0, gross: 0, disc: 0, ret: 0, retN: 0 });
+      const g = sum(s.items || [], (i) => i.qty * i.price); const d = (Number(s.discount) || 0) + sum(s.items || [], (i) => (i.discount || 0) * (i.qty || 1));
+      p.n++; p.gross += g; p.disc += d;
+    });
+    DB.filter('sales', (s) => (s.returns || []).length).forEach((s) => (s.returns || []).forEach((r) => { if (!this.inRange(r.date, from)) return; const p = (per[r.userId || s.userId || '-'] ||= { n: 0, gross: 0, disc: 0, ret: 0, retN: 0 }); p.ret += r.amount || 0; p.retN++; }));
+    const users = Object.keys(per).filter((u) => per[u].n >= 5);
+    if (users.length >= 2) {
+      const avg = (f) => sum(users, f) / users.length;
+      const aRet = avg((u) => per[u].retN / per[u].n), aDisc = avg((u) => (per[u].gross ? per[u].disc / per[u].gross : 0));
+      users.forEach((u) => {
+        const p = per[u]; const rr = p.retN / p.n, dr = p.gross ? p.disc / p.gross : 0;
+        if (p.retN >= 3 && rr > Math.max(0.03, aRet * 2)) out.push({ sev: rr > aRet * 3 ? 3 : 2, k: 'returns', user: u, amount: round2(p.ret), title: L(`مرتجعات ${this.uname(u)} عالية`, `High returns by ${this.uname(u)}`), text: L(`${p.retN} مرتجع من ${p.n} فاتورة (${Math.round(rr * 100)}%) — متوسط باقي الموظفين ${Math.round(aRet * 100)}%. إجمالي المرتجع ${money(p.ret)}.`, `${p.retN} returns of ${p.n} invoices.`) });
+        if (p.disc > 100 && dr > Math.max(0.02, aDisc * 2)) out.push({ sev: dr > aDisc * 3 ? 3 : 2, k: 'disc', user: u, amount: round2(p.disc), title: L(`خصومات ${this.uname(u)} عالية`, `High discounts by ${this.uname(u)}`), text: L(`خصم ${money(p.disc)} (${(dr * 100).toFixed(1)}% من مبيعاته) — متوسط الباقيين ${(aDisc * 100).toFixed(1)}%.`, `Discounts ${money(p.disc)}.`) });
+      });
+    }
+    /* 3) عجز الدرج المتكرر */
+    const sh = DB.filter('shifts', (s) => s.status === 'closed' && this.inRange(s.closeAt, from) && Number(s.diff) < -(Number(c.shortage) || 20));
+    Object.entries(groupBy(sh, (s) => s.userId || '-')).forEach(([u, list]) => {
+      if (list.length < 2) return; const amt = round2(-sum(list, (s) => Number(s.diff) || 0));
+      out.push({ sev: list.length >= 4 ? 3 : 2, k: 'short', user: u, amount: amt, title: L(`عجز درج متكرر — ${this.uname(u)}`, `Repeated drawer shortage — ${this.uname(u)}`), text: L(`${list.length} ورديات فيها عجز بإجمالي ${money(amt)}.`, `${list.length} shifts short, total ${money(amt)}.`), rows: list.map((s) => [fmtDT(s.closeAt), money(s.diff)]) });
+    });
+    /* 4) بيع بأقل من التكلفة */
+    const below = []; sales.forEach((s) => (s.items || []).forEach((i) => { const net = i.price - (i.discount || 0); if (i.cost > 0 && net + 0.01 < i.cost) below.push({ s, i, loss: round2((i.cost - net) * i.qty) }); }));
+    Object.entries(groupBy(below, (x) => x.s.userId || '-')).forEach(([u, list]) => {
+      const amt = round2(sum(list, (x) => x.loss)); if (amt < 20) return;
+      out.push({ sev: amt >= 500 ? 3 : list.length >= 3 ? 2 : 1, k: 'below', user: u, amount: amt, title: L(`بيع بأقل من التكلفة — ${this.uname(u)}`, `Sold below cost — ${this.uname(u)}`), text: L(`${list.length} صنف اتباع بخسارة ${money(amt)}.`, `${list.length} items, loss ${money(amt)}.`), rows: list.slice(0, 40).map((x) => [x.s.no, x.i.name, money(x.i.cost), money(x.i.price - (x.i.discount || 0))]) });
+    });
+    /* 5) حذف وتعديل */
+    const sens = ['walletTx.delete', 'walletTx.edit', 'repair.delete', 'stock.adjust', 'user.delete', 'wallet.reconcile', 'walletTx.status'];
+    const au = DB.filter('auditLog', (a) => this.inRange(a.date, from) && sens.includes(a.action));
+    Object.entries(groupBy(au, (a) => a.userId || '-')).forEach(([u, list]) => {
+      if (list.length < 3) return;
+      out.push({ sev: list.length >= 10 ? 3 : 1, k: 'edits', user: u, amount: 0, title: L(`${list.length} حذف / تعديل لعمليات حساسة — ${this.uname(u)}`, `${list.length} sensitive edits — ${this.uname(u)}`), text: L('حذف أو تعديل عمليات محافظ، تسوية مخزون، تعديل رصيد… راجع التفاصيل.', 'Deleting/editing wallet ops, stock adjustments…'), rows: list.slice(0, 40).map((a) => [fmtDT(a.date), a.action, a.details]) });
+    });
+    /* 6) بيع في ساعات غريبة */
+    const hm = (d) => { const x = new Date(d); return pad(x.getHours()) + ':' + pad(x.getMinutes()); };
+    const late = sales.filter((s) => { const t = hm(s.date); return c.lateFrom <= c.lateTo ? t >= c.lateFrom && t < c.lateTo : t >= c.lateFrom || t < c.lateTo; });
+    Object.entries(groupBy(late, (s) => s.userId || '-')).forEach(([u, list]) => {
+      if (list.length < 2) return;
+      out.push({ sev: 1, k: 'late', user: u, amount: round2(sum(list, Sales.net)), title: L(`${list.length} فاتورة في وقت متأخر — ${this.uname(u)}`, `${list.length} late-night invoices — ${this.uname(u)}`), text: L(`بين ${c.lateFrom} و ${c.lateTo}.`, `Between ${c.lateFrom} and ${c.lateTo}.`), rows: list.slice(0, 40).map((s) => [s.no, fmtDT(s.date), money(Sales.net(s))]) });
+    });
+    return out.sort((a, b) => b.sev - a.sev || b.amount - a.amount);
+  },
+  score(list) { return Math.max(0, 100 - sum(list, (x) => (x.sev === 3 ? 18 : x.sev === 2 ? 8 : 3))); },
+  printRep(list, days) {
+    const sevL = { 3: L('عالي', 'High'), 2: L('متوسط', 'Medium'), 1: L('منخفض', 'Low') };
+    printHTML(reportDoc(L(`رادار التلاعب — آخر ${days} يوم`, `Fraud radar — last ${days} days`), `<div class="kp"><div><span>${L('مؤشر الأمان', 'Safety score')}</span><b>${this.score(list)}/100</b></div><div><span>${L('ملاحظات عالية', 'High')}</span><b>${list.filter((x) => x.sev === 3).length}</b></div><div><span>${L('متوسطة', 'Medium')}</span><b>${list.filter((x) => x.sev === 2).length}</b></div><div><span>${L('منخفضة', 'Low')}</span><b>${list.filter((x) => x.sev === 1).length}</b></div></div>
+      <table><thead><tr><th>${L('الخطورة', 'Severity')}</th><th>${L('الملاحظة', 'Finding')}</th><th>${L('التفاصيل', 'Details')}</th></tr></thead><tbody>${list.map((x) => `<tr><td><b>${sevL[x.sev]}</b></td><td><b>${esc(x.title)}</b></td><td>${esc(x.text)}</td></tr>`).join('') || `<tr><td colspan="3">${L('مفيش ملاحظات ✓', 'No findings ✓')}</td></tr>`}</tbody></table>`), { type: 'report' });
+  }
+};
+
+Modules.radar = {
+  title: () => L('رادار التلاعب', 'Fraud radar'), icon: 'shield', perm: 'reports', days: 30,
+  enabled: () => Radar.canSee(),
+  badge: () => { try { return Radar.canSee() ? Radar.scan(7).filter((x) => x.sev === 3).length : 0; } catch (_) { return 0; } },
+  render(el) {
+    if (!Radar.canSee()) { el.innerHTML = UI.empty(L('الرادار للمالك / مدير النظام بس', 'Owner only'), 'lock'); return; }
+    const list = Radar.scan(this.days); const sc = Radar.score(list);
+    const col = sc >= 85 ? 'c-ok' : sc >= 60 ? 'c-warn' : 'c-err';
+    const sevC = { 3: ['err', L('عالي', 'High')], 2: ['warn', L('متوسط', 'Medium')], 1: ['info', L('منخفض', 'Low')] };
+    el.innerHTML = `<div class="row mb wrap" style="gap:8px"><div class="seg" id="rdD">${[7, 30, 90].map((d) => `<button data-d="${d}" class="${d === this.days ? 'on' : ''}">${L(`آخر ${d} يوم`, `Last ${d} days`)}</button>`).join('')}</div><div class="spacer"></div><button class="btn" id="rdSet">${icon('settings')}${L('الإعدادات', 'Settings')}</button><button class="btn" id="rdPr">${icon('printer')}${L('طباعة / PDF', 'Print / PDF')}</button></div>
+      <div class="grid g4 mb">${UI.kpi(L('مؤشر الأمان', 'Safety score'), sc + '/100', 'shield', col, sc >= 85 ? L('الوضع مطمّن', 'Looks good') : L('محتاج مراجعة', 'Needs review'))}${UI.kpi(L('ملاحظات عالية', 'High'), list.filter((x) => x.sev === 3).length, 'alert', 'c-err')}${UI.kpi(L('متوسطة', 'Medium'), list.filter((x) => x.sev === 2).length, 'clock', 'c-warn')}${UI.kpi(L('منخفضة', 'Low'), list.filter((x) => x.sev === 1).length, 'info', 'c-info')}</div>
+      <div class="card card-b mb faint" style="font-size:12.5px;line-height:1.9">🔒 ${L('الرادار ظاهر للمالك ومدير النظام بس، ومحدش من الموظفين بيعرف بيه. الملاحظة مش اتهام — هي حاجة تستاهل تبص عليها بنفسك.', 'Visible to the owner only. A finding is not an accusation — just worth a look.')}</div>
+      ${list.length ? list.map((x, i) => `<div class="card mb rd-it rd-${x.sev}"><div class="card-b"><div class="row" style="gap:10px;align-items:flex-start"><span class="tag ${sevC[x.sev][0]}">${sevC[x.sev][1]}</span><div style="flex:1;min-width:0"><b style="font-size:15px">${esc(x.title)}</b><div class="faint" style="margin-top:3px;line-height:1.8">${esc(x.text)}</div></div>${x.rows ? `<button class="btn sm" data-i="${i}">${icon('eye')}${L('التفاصيل', 'Details')}</button>` : ''}</div></div></div>`).join('') : `<div class="card card-b">${UI.empty(L('مفيش أي ملاحظات في الفترة دي ✓', 'No findings in this period ✓'), 'check')}</div>`}`;
+    $$('#rdD button', el).forEach((b) => (b.onclick = () => { this.days = Number(b.dataset.d); this.render(el); }));
+    $('#rdPr', el).onclick = () => Radar.printRep(list, this.days);
+    $('#rdSet', el).onclick = () => this.settings(el);
+    $$('[data-i]', el).forEach((b) => (b.onclick = () => { const x = list[Number(b.dataset.i)];
+      const m = UI.modal({ title: x.title, icon: 'eye', size: 'lg', body: `<div class="tbl-wrap"><table class="tbl"><tbody>${x.rows.map((r) => `<tr>${r.slice(0, x.k === 'nosms' ? 5 : r.length).map((c) => `<td>${esc(String(c))}</td>`).join('')}${x.k === 'nosms' ? `<td><button class="btn sm" data-ok="${r[5]}">${L('سليمة', 'OK')}</button></td>` : ''}</tr>`).join('')}</tbody></table></div>${x.k === 'nosms' ? `<p class="faint mt">${L('«سليمة» = راجعتها ولقيتها صح (مثلاً الرسالة اتمسحت) — مش هتظهر في الرادار تاني.', '“OK” hides an op you verified.')}</p>` : ''}`, actions: [{ label: L('إغلاق', 'Close'), onClick: (mm) => mm.close() }] });
+      $$('[data-ok]', m.el).forEach((k) => (k.onclick = () => { DB.update('walletTx', k.dataset.ok, { noSmsOk: true }); audit('radar.ok', k.dataset.ok); k.closest('tr').remove(); }));
+    }));
+  },
+  settings(el) {
+    const c = Radar.cfg();
+    UI.modal({ title: L('إعدادات الرادار', 'Radar settings'), icon: 'settings', size: 'sm', body: UI.form([
+      { name: 'on', label: L('تنبيه في الجرس للمالك لما تظهر ملاحظة عالية', 'Bell alert for high findings'), type: 'checkbox', value: c.on, col: 12 },
+      { name: 'shortage', label: L('العجز اللي يتحسب (ج.م)', 'Shortage threshold'), type: 'number', value: c.shortage, col: 12 },
+      { name: 'lateFrom', label: L('ساعات غريبة من', 'Odd hours from'), type: 'time', value: c.lateFrom, col: 6 }, { name: 'lateTo', label: L('لحد', 'to'), type: 'time', value: c.lateTo, col: 6 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (m) => { const v = UI.read(m.el); DB.saveSettings({ radar: { on: !!v.on, shortage: Number(v.shortage) || 20, lateFrom: v.lateFrom || '00:00', lateTo: v.lateTo || '07:00' } }); m.close(); this.render(el); } }] });
+  }
+};
+
+/* تنبيه في الجرس (للمالك بس) */
+(() => {
+  if (typeof Notify === 'undefined') return; const nl = Notify.list.bind(Notify);
+  let cache = { at: 0, v: [] };
+  Notify.list = function () {
+    const a = nl();
+    try {
+      if (Radar.canSee() && Radar.cfg().on) {
+        if (Date.now() - cache.at > 5 * 60e3) cache = { at: Date.now(), v: Radar.scan(7).filter((x) => x.sev === 3) };
+        if (cache.v.length) a.unshift({ type: 'err', t: L(`🛡️ رادار التلاعب: ${cache.v.length} ملاحظة مهمة`, `Fraud radar: ${cache.v.length} findings`), icon: 'shield', s: cache.v[0].title, go: () => App.go('radar') });
+      }
+    } catch (_) {}
+    return a;
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   توقّع السيولة — «فودافون كاش محتاجة تتشحن بحوالي 8,000 قبل الضهر»
+   بيبص على حركة كل محفظة والدرج في نفس اليوم من الأسابيع اللي فاتت
+   (وأول / آخر الشهر بيقارن بنفس الأيام من الشهور اللي فاتت — المرتبات والمعاشات)
+   ويحسب أكبر نزول متوقع في الرصيد خلال اليوم + هامش أمان 15%.
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const Liquidity = {
+  OPS: ['withdraw', 'deposit', 'sale'],
+  SAFETY: 1.15,
+  dayKeyOf(d) { return dayKey(new Date(d)); },
+  /* الأيام المرجعية لليوم المطلوب */
+  refDays(target) {
+    const t = new Date(target + 'T12:00:00'); const set = new Set();
+    for (let w = 1; w <= 8; w++) set.add(dayKey(addDays(t, -7 * w)));
+    const dom = t.getDate();
+    if (dom <= 5 || dom >= 26) for (let m = 1; m <= 3; m++) for (const dd of [-1, 0, 1]) { const x = new Date(t.getFullYear(), t.getMonth() - m, dom + dd, 12); set.add(dayKey(x)); }
+    return [...set].filter((k) => k < dayKey());
+  },
+  /* أكبر نزول في اليوم (حسب ترتيب العمليات) + إجمالي الداخل والخارج */
+  dayStats(txs, field) {
+    const s = txs.slice().sort((a, b) => (a.date < b.date ? -1 : 1)); let cur = 0, low = 0, out = 0, inn = 0;
+    s.forEach((t) => { const v = Number(t[field]) || 0; cur += v; low = Math.min(low, cur); if (v < 0) out += -v; else inn += v; });
+    return { draw: -low, out, inn, n: s.length };
+  },
+  trimmed(arr) { const a = arr.slice().sort((x, y) => x - y); if (a.length >= 4) a.pop(); return a.length ? sum(a, (x) => x) / a.length : 0; },
+  forecast(target = dayKey(addDays(new Date(), 1))) {
+    const refs = this.refDays(target); const refSet = new Set(refs);
+    const tx = DB.filter('walletTx', (t) => this.OPS.includes(t.type) && (t.status || 'completed') !== 'cancelled' && refSet.has(this.dayKeyOf(t.date)));
+    const byDay = (list) => groupBy(list, (t) => this.dayKeyOf(t.date));
+    const activeDays = new Set(tx.map((t) => this.dayKeyOf(t.date)));
+    const conf = activeDays.size >= 6 ? 'high' : activeDays.size >= 3 ? 'mid' : 'low';
+    const wallets = DB.filter('wallets', (w) => w.active !== false && !w.hidden).map((w) => {
+      const days = byDay(tx.filter((t) => t.walletId === w.id)); const st = refs.map((d) => this.dayStats(days[d] || [], 'balanceDelta'));
+      const draw = this.trimmed(st.map((x) => x.draw)) * this.SAFETY, out = this.trimmed(st.map((x) => x.out)), inn = this.trimmed(st.map((x) => x.inn));
+      const bal = Wallets.balance(w); const need = Math.max(0, Math.ceil((draw - bal) / 100) * 100);
+      // الليمت اليومي ممكن يكون هو اللي يوقفك مش الرصيد
+      const lim = Number(w.dailyLimit) || 0; const limHit = lim && out > lim * 0.9;
+      return { w, bal, draw: round2(draw), out: round2(out), inn: round2(inn), need, limHit, lim, n: sum(st, (x) => x.n) };
+    });
+    const dSt = refs.map((d) => this.dayStats(byDay(tx)[d] || [], 'cashDelta'));
+    const dDraw = this.trimmed(dSt.map((x) => x.draw)) * this.SAFETY; const dBal = drawerBalance(Session.shift?.()?.id);
+    const drawer = { bal: dBal, draw: round2(dDraw), need: Math.max(0, Math.ceil((dDraw - dBal) / 100) * 100), out: round2(this.trimmed(dSt.map((x) => x.out))) };
+    return { target, refs: refs.length, active: activeDays.size, conf, wallets, drawer };
+  },
+  dayName(k) { try { return new Date(k + 'T12:00:00').toLocaleDateString(DB.settings().lang === 'en' ? 'en-GB' : 'ar-EG-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' }); } catch (_) { return k; } },
+  card() {
+    const f = this.forecast(); if (!f.active) return '';
+    const needs = f.wallets.filter((x) => x.need > 0); const tot = sum(needs, (x) => x.need);
+    return `<div class="card mb lq-card ${needs.length || f.drawer.need ? 'need' : 'ok'}"><div class="card-b row wrap" style="gap:10px;align-items:center">
+      <div class="lq-ic">${icon('trend')}</div><div style="flex:1;min-width:200px"><b>${L('توقّع السيولة لبكرة', 'Tomorrow’s cash forecast')} <span class="faint" style="font-weight:600">· ${esc(this.dayName(f.target))}</span></b>
+      <div class="faint" style="font-size:12.5px;margin-top:2px">${needs.length ? needs.slice(0, 3).map((x) => `${esc(x.w.name)}: <b class="neg">${L('اشحن', 'top up')} ${money(x.need, false)}</b>`).join(' · ') : L('أرصدة المحافظ كفاية لحركة بكرة المتوقعة ✓', 'Wallet balances look enough ✓')}${f.drawer.need ? ` · ${L('الدرج', 'Drawer')}: <b class="neg">${L('جهّز', 'prepare')} ${money(f.drawer.need, false)}</b>` : ''}</div></div>
+      <button class="btn sm" id="lqMore">${icon('eye')}${L('التفاصيل', 'Details')}</button></div></div>`;
+  },
+  details(target) {
+    const f = this.forecast(target); const cl = { high: ['ok', L('دقة عالية', 'High')], mid: ['warn', L('دقة متوسطة', 'Medium')], low: ['err', L('بيانات قليلة', 'Little data')] }[f.conf];
+    const m = UI.modal({ title: L('توقّع السيولة', 'Cash forecast'), icon: 'trend', size: 'lg', body: `
+      <div class="row wrap mb" style="gap:8px;align-items:center"><div class="seg" id="lqDay">${[[0, L('النهارده', 'Today')], [1, L('بكرة', 'Tomorrow')], [2, L('بعد بكرة', 'In 2 days')]].map(([d, t]) => { const k = dayKey(addDays(new Date(), d)); return `<button data-k="${k}" class="${k === f.target ? 'on' : ''}">${t}</button>`; }).join('')}</div><span class="tag ${cl[0]}">${cl[1]}</span><span class="faint" style="font-size:12px">${L(`مبني على ${f.active} يوم شبهه من الأسابيع/الشهور اللي فاتت`, `Based on ${f.active} similar days`)}</span></div>
+      <div class="tbl-wrap"><table class="tbl stack"><thead><tr><th>${L('المحفظة', 'Wallet')}</th><th>${L('الرصيد دلوقتي', 'Balance now')}</th><th>${L('خارج متوقع', 'Expected out')}</th><th>${L('داخل متوقع', 'Expected in')}</th><th>${L('أقصى نزول متوقع', 'Peak drawdown')}</th><th>${L('المطلوب', 'Needed')}</th></tr></thead><tbody>
+      ${f.wallets.map((x) => `<tr><td data-label=""><b>${esc(x.w.name)}</b>${x.limHit ? `<div class="tag warn" style="margin-top:3px">${L('الحركة المتوقعة قريبة من الليمت اليومي', 'Near daily limit')} (${money(x.lim, false)})</div>` : ''}</td><td data-label="${L('الرصيد', 'Balance')}" class="num">${money(x.bal)}</td><td data-label="${L('خارج', 'Out')}" class="num">${money(x.out)}</td><td data-label="${L('داخل', 'In')}" class="num">${money(x.inn)}</td><td data-label="${L('أقصى نزول', 'Drawdown')}" class="num">${money(x.draw)}</td><td data-label="${L('المطلوب', 'Needed')}" class="num"><b class="${x.need ? 'neg' : 'pos'}">${x.need ? L('اشحن ', 'Top up ') + money(x.need) : '✓'}</b></td></tr>`).join('')}
+      <tr><td data-label=""><b>💵 ${L('درج الكاش', 'Cash drawer')}</b></td><td class="num">${money(f.drawer.bal)}</td><td class="num">${money(f.drawer.out)}</td><td></td><td class="num">${money(f.drawer.draw)}</td><td class="num"><b class="${f.drawer.need ? 'neg' : 'pos'}">${f.drawer.need ? L('جهّز ', 'Prepare ') + money(f.drawer.need) : '✓'}</b></td></tr>
+      </tbody></table></div>
+      <p class="faint mt" style="font-size:12px;line-height:1.9">${L('«أقصى نزول» = أكبر مبلغ الرصيد ممكن ينزله خلال اليوم قبل ما فلوس تدخل، + 15% احتياطي. التوقّع بيتحسن كل ما البرنامج يشتغل أكتر.', 'Peak drawdown = the largest intraday drop + 15% buffer.')}</p>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }] });
+    $$('#lqDay button', m.el).forEach((b) => (b.onclick = () => { m.close(); this.details(b.dataset.k); }));
+  }
+};
+
+(() => {
+  const W = Modules.wallets; if (!W) return; const r0 = W.render.bind(W);
+  W.render = function (el) {
+    r0(el);
+    try {
+      if (this.tab && this.tab !== 'wallets') return; const g = $('.wgrid', el); if (!g || $('.lq-card', el)) return;
+      const h = Liquidity.card(); if (!h) return; const box = document.createElement('div'); box.innerHTML = h; const card = box.firstElementChild;
+      const anchor = g.previousElementSibling && g.previousElementSibling.classList.contains('row') ? g.previousElementSibling : g; anchor.parentNode.insertBefore(card, anchor);
+      $('#lqMore', card).onclick = () => Liquidity.details();
+    } catch (e) { console.warn('liquidity', e); }
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   رد آلي على واتساب العملاء — العميل يبعت «رصيدي» أو «جهازي» أو «قسطي» أو «نقاطي»
+   والبرنامج يرد لوحده من الكمبيوتر اللي عليه ربط واتساب.
+   - بيرد على رقم العميل المتسجل بس (مش بيكشف بيانات لرقم غريب)
+   - رد واحد كل دقيقتين لنفس الرقم، ومش بيرد في الجروبات
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const WaBot = {
+  last: {},
+  cfg() { return { on: false, balance: true, repair: true, inst: true, points: true, portal: true, help: true, ...(DB.settings().waBot || {}) }; },
+  norm(t) { return String(t || '').toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/[\u064B-\u0652\u0640]/g, '').replace(/[\u061F\u060C\u061B]/g, ' ').replace(/[^\u0600-\u06FFa-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); },
+  intent(text) {
+    const t = this.norm(text); if (!t || t.length > 40) return null;
+    if (/(^| )(رصيدي|حسابي|مديونيه|مديونيتي|عليا كام|عليه كام|balance)( |$)/.test(t)) return 'balance';
+    if (/(^| )(جهازي|الصيانه|صيانه|موبايلي فين|repair)( |$)/.test(t)) return 'repair';
+    if (/(^| )(قسطي|القسط|اقساطي|الاقساط|قسط)( |$)/.test(t)) return 'inst';
+    if (/(^| )(نقاطي|النقاط|points)( |$)/.test(t)) return 'points';
+    if (/(^| )(صفحتي|حسابي كله|لينك حسابي)( |$)/.test(t)) return 'portal';
+    if (/^(قائمه|القائمه|مساعده|help|منيو|اوامر)$/.test(t)) return 'help';
+    return null;
+  },
+  customerByPhone(ph) {
+    const tail = String(ph).replace(/\D/g, '').slice(-10);
+    return DB.find('customers', (c) => c.phone && String(c.phone).replace(/\D/g, '').slice(-10) === tail) || null;
+  },
+  reply(intent, ph) {
+    const c = this.customerByPhone(ph); const st = DB.settings().store?.name || '';
+    const hi = c ? `${L('أهلاً', 'Hi')} ${String(c.name || '').split(' ')[0]} 👋\n` : '';
+    const tail = String(ph).replace(/\D/g, '').slice(-10);
+    const helpTxt = `${L('ابعت كلمة من دول وهرد عليك على طول:', 'Send one of these words:')}\n• ${L('رصيدي — حسابك الآجل', 'balance')}\n• ${L('جهازي — حالة جهازك في الصيانة', 'repair')}\n• ${L('قسطي — معاد القسط الجاي', 'installment')}\n• ${L('نقاطي — رصيد نقاطك', 'points')}${typeof Portal !== 'undefined' && Portal.on() ? `\n• ${L('صفحتي — لينك حسابك كله', 'my page')}` : ''}\n\n${st}`;
+    if (intent === 'help') return hi + helpTxt;
+    if (intent === 'repair') {
+      const rs = DB.filter('repairs', (r) => r.phone && String(r.phone).replace(/\D/g, '').slice(-10) === tail && r.stage !== 'delivered').sort((a, b) => (a.date < b.date ? 1 : -1));
+      if (!rs.length) return hi + L('مفيش أجهزة ليك في الصيانة دلوقتي ✓', 'No devices in repair.');
+      return hi + rs.slice(0, 3).map((r) => { const s = RSTAGES[r.stage] || [r.stage, r.stage]; const due = Math.max(0, round2(Repairs.total(r) - Repairs.paid(r))); return `🔧 ${Repairs.device(r)} (${r.no})\n${L('الحالة', 'Status')}: *${L(s[0], s[1])}*${due && r.stage === 'ready' ? `\n${L('المطلوب', 'Due')}: ${money(due)}` : ''}${typeof Track !== 'undefined' && Track.on() && r.trackToken ? `\n${L('تابع', 'Track')}: ${Track.link(r)}` : ''}`; }).join('\n\n');
+    }
+    if (!c) return L(`الرقم ده مش متسجل عندنا كعميل. لو حسابك على رقم تاني ابعت من الرقم ده، أو كلمنا.\n${st}`, 'This number is not registered.');
+    if (intent === 'balance') { const b = Customers.balance(c); return hi + (b > 0.01 ? `${L('حسابك عندنا', 'Your balance')}: *${money(b)}* ${L('عليك', 'due')}` : b < -0.01 ? `${L('ليك عندنا', 'Credit')}: *${money(-b)}*` : L('حسابك خالص ✓ مفيش أي مبالغ', 'All settled ✓')); }
+    if (intent === 'inst') {
+      const ps = DB.filter('installments', (p) => p.customerId === c.id && Installments.status(p) !== 'done' && Installments.status(p) !== 'cancelled');
+      if (!ps.length) return hi + L('مفيش أقساط عليك ✓', 'No installments ✓');
+      return hi + ps.map((p) => { const n = Installments.next(p); return `📅 ${p.no}: ${L('الباقي', 'Remaining')} ${money(Installments.remaining(p))}${n ? `\n${L('القسط الجاي', 'Next')}: ${money(n.amount - n.paid)} — ${fmtDate(n.due)}` : ''}${Installments.overdueAmt(p) ? `\n⚠️ ${L('متأخر', 'Overdue')}: ${money(Installments.overdueAmt(p))}` : ''}`; }).join('\n\n');
+    }
+    if (intent === 'points') { if (typeof Loyalty === 'undefined') return null; const b = Loyalty.balance(c.id); return hi + `⭐ ${L('رصيد نقاطك', 'Your points')}: *${num(b)}* = ${money(Loyalty.value(b))}`; }
+    if (intent === 'portal') { if (typeof Portal === 'undefined' || !Portal.on()) return null; return hi + `📲 ${L('صفحة حسابك (رصيد، أقساط، نقاط، صيانة، ضمانات)', 'Your page')}:\n${Portal.link(c)}`; }
+    return null;
+  },
+  onMsg(m) {
+    try {
+      const c = this.cfg(); if (!c.on || !WaLink.ready() || !WaLink.desk()) return;
+      const it = this.intent(m.text); if (!it || c[it] === false) return;
+      const ph = waPhone(m.from); if (!ph) return;
+      if (this.last[ph] && Date.now() - this.last[ph] < 120000) return; this.last[ph] = Date.now();
+      const txt = this.reply(it, ph); if (!txt) return;
+      WaLink.queue(ph, txt, { kind: 'bot', ref: it, prio: 2 }); audit('wabot.reply', `${ph} ${it}`);
+    } catch (e) { console.warn('wabot', e); }
+  },
+  settings() {
+    const c = this.cfg();
+    UI.modal({ title: L('الرد الآلي على واتساب', 'WhatsApp auto-reply'), icon: 'whatsapp', size: 'sm', body: `<p class="faint" style="margin-top:0;line-height:1.9">${L('العميل يبعت كلمة لرقم المحل والبرنامج يرد لوحده. لازم ربط واتساب يكون شغال على الجهاز ده، والرد بيوصل للأرقام المتسجلة كعملاء بس.', 'Customers send a word and the app replies automatically.')}</p>` + UI.form([
+      { name: 'on', label: L('تشغيل الرد الآلي', 'Enable auto-reply'), type: 'checkbox', value: c.on, col: 12 },
+      { name: 'balance', label: L('«رصيدي» — حساب الآجل', '“balance”'), type: 'checkbox', value: c.balance, col: 12 },
+      { name: 'repair', label: L('«جهازي» — حالة الصيانة', '“repair”'), type: 'checkbox', value: c.repair, col: 12 },
+      { name: 'inst', label: L('«قسطي» — الأقساط', '“installment”'), type: 'checkbox', value: c.inst, col: 12 },
+      { name: 'points', label: L('«نقاطي» — نقاط الولاء', '“points”'), type: 'checkbox', value: c.points, col: 12 },
+      { name: 'portal', label: L('«صفحتي» — لينك صفحة العميل', '“my page”'), type: 'checkbox', value: c.portal, col: 12 },
+      { name: 'help', label: L('«قائمة» — يبعت الكلمات المتاحة', '“help”'), type: 'checkbox', value: c.help, col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (m) => { const v = UI.read(m.el); DB.saveSettings({ waBot: Object.fromEntries(Object.entries(v).map(([k, x]) => [k, !!x])) }); audit('wabot.settings', v.on ? 'on' : 'off'); m.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } }] });
+  }
+};
+
+(() => {
+  try { if (window.api && window.api.wa && window.api.wa.onMsg) window.api.wa.onMsg((m) => WaBot.onMsg(m)); } catch (_) {}
+  // زرار الإعدادات جوه نافذة ربط واتساب
+  if (typeof WaLink !== 'undefined' && WaLink.drawPanel) {
+    const d0 = WaLink.drawPanel.bind(WaLink);
+    WaLink.drawPanel = function () {
+      d0();
+      try { const b = this._panel && this._panel.el && $('.modal-b', this._panel.el); if (b && !$('#wbBtn', b)) { const r = document.createElement('div'); r.className = 'card card-b mt row wrap'; r.style.gap = '8px'; r.innerHTML = `<b style="flex:1">🤖 ${L('الرد الآلي على العملاء', 'Auto-reply to customers')}: <span class="tag ${WaBot.cfg().on ? 'ok' : ''}">${WaBot.cfg().on ? L('شغال', 'On') : L('مقفول', 'Off')}</span></b><button class="btn sm" id="wbBtn">${icon('settings')}${L('الإعدادات', 'Settings')}</button>`; b.appendChild(r); $('#wbBtn', r).onclick = () => WaBot.settings(); } } catch (_) {}
+    };
+  }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   صفحة العميل الشخصية — لينك واحد لكل عميل: رصيد الآجل، الأقساط، النقاط، أجهزة الصيانة، الضمانات
+   - بيترفع ملخص بس (من غير رقم الموبايل أو العنوان) على نفس سيرفر «تابع جهازك»
+   - اللينك فيه كود عشوائي طويل — محدش يقدر يخمّنه
+   + ملصق الضمان عليه QR يفتح صفحة الضمان (ساري ولا لأ) — بيمنع تزوير الملصقات
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const Portal = {
+  KEY: 'mah:portalDirty', busy: false,
+  cfg() { return { on: true, ...(DB.settings().portal || {}) }; },
+  on() { return typeof Cloud !== 'undefined' && Cloud.ok() && this.cfg().on !== false; },
+  dirty() { try { return new Set(JSON.parse(localStorage.getItem(this.KEY) || '[]')); } catch (_) { return new Set(); } },
+  mark(cid) { if (!cid) return; const d = this.dirty(); d.add(cid); try { localStorage.setItem(this.KEY, JSON.stringify([...d].slice(-800))); } catch (_) {} },
+  token(c) { if (c.portalToken) return c.portalToken; const t = 'C' + Cloud.token(20); DB.update('customers', c.id, { portalToken: t }); c.portalToken = t; return t; },
+  link(c) { this.token(c); this.mark(c.id); setTimeout(() => this.flush(), 300); return `${Cloud.site()}/portal.html?t=${c.portalToken}`; },
+  data(c) {
+    const st = DB.settings().store || {}; const now = Date.now();
+    const tx = DB.filter('customerTx', (t) => t.customerId === c.id).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 8).map((t) => ({ d: t.date, n: String(t.note || t.type || '').slice(0, 40), r: String(t.ref || '').slice(0, 20), a: t.amount }));
+    const inst = DB.filter('installments', (p) => p.customerId === c.id && !['done', 'cancelled'].includes(Installments.status(p))).slice(0, 4).map((p) => { const n = Installments.next(p); return { no: p.no, tot: p.total, rem: Installments.remaining(p), over: Installments.overdueAmt(p), next: n ? { due: n.due, a: round2(n.amount - n.paid) } : null, left: (p.schedule || []).filter((s) => s.paid + 0.01 < s.amount).length }; });
+    const tail = String(c.phone || '').replace(/\D/g, '').slice(-10);
+    const reps = tail ? DB.filter('repairs', (r) => r.phone && String(r.phone).replace(/\D/g, '').slice(-10) === tail).sort((a, b) => (a.date < b.date ? 1 : -1)) : [];
+    const rep = reps.filter((r) => r.stage !== 'delivered').slice(0, 4).map((r) => ({ no: r.no, dev: Repairs.device(r).slice(0, 40), s: r.stage, t: r.trackToken || '', due: Math.max(0, round2(Repairs.total(r) - Repairs.paid(r))) }));
+    const war = [
+      ...DB.filter('phones', (p) => p.customerId === c.id && p.status === 'sold' && p.warrantyUntil && Date.parse(p.warrantyUntil) > now).map((p) => ({ i: Phones.full(p).slice(0, 40), u: p.warrantyUntil, k: 'p' })),
+      ...reps.filter((r) => r.warrantyUntil && Date.parse(r.warrantyUntil) > now).map((r) => ({ i: Repairs.device(r).slice(0, 40), u: r.warrantyUntil, k: 'r', t: r.trackToken || '' }))
+    ].slice(0, 6);
+    const pts = typeof Loyalty !== 'undefined' && Loyalty.cfg && Loyalty.cfg().on ? { b: Loyalty.balance(c.id), v: Loyalty.value(Loyalty.balance(c.id)) } : null;
+    return { v: 1, kind: 'portal', store: { name: st.name || '', phone: st.phone || '', address: st.address || '' }, name: String(c.name || '').split(' ').slice(0, 2).join(' '), cur: DB.settings().currency || 'ج.م', bal: Customers.balance(c), tx, inst, rep, war, pts, at: nowISO() };
+  },
+  async flush() {
+    if (this.busy || !this.on() || !navigator.onLine) return; const d = this.dirty(); if (!d.size) return; this.busy = true;
+    try {
+      const items = [...d].map((id) => DB.get('customers', id)).filter((c) => c && c.portalToken).slice(0, 100).map((c) => { const dd = this.data(c); let s = JSON.stringify(dd); while (s.length > 7800 && dd.tx.length) { dd.tx.pop(); s = JSON.stringify(dd); } return { t: c.portalToken, d: dd }; });
+      if (items.length) { const mid = await License.machineId(); await Cloud.rpc('pos_track_put', { p_mid: mid, p_items: items }); }
+      const left = this.dirty(); [...left].forEach((id) => { const c = DB.get('customers', id); if (!c || !c.portalToken || items.some((it) => it.t === c.portalToken)) left.delete(id); });
+      try { localStorage.setItem(this.KEY, JSON.stringify([...left])); } catch (_) {}
+    } catch (e) { console.warn('portal', e.message); } finally { this.busy = false; }
+  },
+  share(c) {
+    if (!this.on()) return UI.toast(L('صفحة العميل محتاجة نت وسيرفر التفعيل', 'Needs the cloud server'), 'warn');
+    const u = this.link(c);
+    const m = UI.modal({ title: L('صفحة العميل: ', 'Customer page: ') + c.name, icon: 'user', size: 'sm', body: `<div style="text-align:center"><div id="ptQr" style="margin:6px auto 10px;width:190px;height:190px"></div><input class="mono" readonly value="${esc(u)}" style="direction:ltr;font-size:12px"><p class="faint mt" style="line-height:1.9">${L('العميل بيفتح اللينك ويشوف رصيده وأقساطه ونقاطه وأجهزته في الصيانة وضماناته — بيتحدّث لوحده.', 'The customer sees balance, installments, points, repairs and warranties.')}</p></div>`,
+      actions: [{ label: L('نسخ', 'Copy'), icon: 'copy', onClick: async () => { await copyText(u); UI.toast(L('اتنسخ ✓', 'Copied ✓')); } }, ...(c.phone ? [{ label: L('ابعت واتساب', 'Send WhatsApp'), cls: 'primary', icon: 'whatsapp', onClick: (x) => { const t = `${L('أهلاً', 'Hi')} ${String(c.name || '').split(' ')[0]} 👋\n${L('دي صفحة حسابك عندنا — فيها رصيدك وأقساطك ونقاطك وأجهزتك في الصيانة وضماناتك، وبتتحدّث لوحدها:', 'Your account page:')}\n${u}\n\n${DB.settings().store?.name || ''}`; if (typeof WaLink !== 'undefined' && WaLink.ready()) { WaLink.queue(c.phone, t, { kind: 'portal', prio: 1 }); UI.toast(L('اتحطت في طابور واتساب ✓', 'Queued ✓')); } else sendWhatsApp(c.phone, t); x.close(); } }] : [])] });
+    qrDataURL(u, 380).then((q) => { const b = $('#ptQr', m.el); if (b && q) b.innerHTML = `<img src="${q}" style="width:190px;height:190px">`; });
+  }
+};
+
+(() => {
+  /* أي تغيير يخص العميل → نحدّث صفحته */
+  const bi = DB.insert.bind(DB), bu = DB.update.bind(DB);
+  const cidOf = (col, d) => { if (!d) return null; if (col === 'customers') return d.id; if (['customerTx', 'installments', 'loyaltyTx', 'sales'].includes(col)) return d.customerId; if (col === 'instPays') return DB.get('installments', d.planId)?.customerId; if (col === 'phones') return d.customerId; if (col === 'repairs') { const t = String(d.phone || '').replace(/\D/g, '').slice(-10); return t ? DB.find('customers', (c) => c.phone && String(c.phone).replace(/\D/g, '').slice(-10) === t)?.id : null; } return null; };
+  const touch = (col, d) => { try { if (!Portal.on()) return; const id = cidOf(col, d); if (!id) return; const c = DB.get('customers', id); if (c && c.portalToken) Portal.mark(id); } catch (_) {} };
+  DB.insert = function (col, doc) { const r = bi(col, doc); touch(col, r); return r; };
+  DB.update = function (col, id, patch) { const r = bu(col, id, patch); if (!(col === 'customers' && patch && Object.keys(patch).length === 1 && 'portalToken' in patch)) touch(col, DB.get(col, id)); return r; };
+  setInterval(() => Portal.flush(), 60000); setTimeout(() => Portal.flush(), 20000);
+
+  /* زرار «صفحة العميل» في كشف العميل */
+  const C = Modules.customers;
+  if (C && C.statement) {
+    const v0 = C.statement.bind(C);
+    C.statement = function (c, ...rest) {
+      const r = v0(c, ...rest);
+      try { setTimeout(() => { const m = [...$$('.modal-bg')].pop(); const f = m && $('.modal-f', m); if (f && !$('[data-portal]', f) && Portal.on()) { const b = document.createElement('button'); b.className = 'btn'; b.dataset.portal = '1'; b.innerHTML = `${icon('user')}${L('صفحة العميل', 'Customer page')}`; b.onclick = () => Portal.share(DB.get('customers', c.id) || c); f.prepend(b); } }, 60); } catch (_) {}
+      return r;
+    };
+  }
+
+  /* ملصق الضمان: QR يفتح صفحة الجهاز (الضمان ساري لحد إمتى) */
+  const R = Modules.repairs;
+  if (R && R.printWarranty) {
+    const pw = R.printWarranty.bind(R);
+    R.printWarranty = function (r) {
+      try { if (r && r.warrantyUntil && typeof Track !== 'undefined' && Track.on()) { Track.token(r); Track.mark(r.id); setTimeout(() => Track.flush(), 300); Portal._wq = Track.link(r); } } catch (_) {}
+      return pw(r);
+    };
+    const ph = printHTML;
+    printHTML = async function (html, opts) {
+      try {
+        if (Portal._wq && typeof html === 'string' && opts && opts.type === 'label' && html.includes('ضمان صيانة')) {
+          const u = Portal._wq; Portal._wq = null; const lb = DB.settings().label || {}; const s = Math.max(9, Math.min(14, (lb.height || 30) * 0.42));
+          const q = await qrDataURL(u, 160);
+          if (q) html = html.replace('<div class="l">', '<div class="l" style="position:relative">').replace('</div></div></body>', `</div><img src="${q}" style="position:absolute;left:.8mm;bottom:.8mm;width:${s}mm;height:${s}mm;background:#fff"></div></body>`).replace('</style>', `.b{padding-left:${s + 1}mm!important}</style>`);
+        }
+      } catch (_) {}
+      return ph(html, opts);
+    };
+  }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   تسعير الموبايلات المستعملة — اقتراح سعر شراء وبيع من تاريخ المحل نفسه
+   بيبص على: نفس الماركة والموديل (والمساحة لو متاحة) — اشتريته بكام، اتباع بكام، وقعد كام يوم
+   وبيعدّل حسب التقييم (A/B/C) وصحة البطارية والفحص اللي فيه مشكلة.
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const PhonePrice = {
+  key(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9؀-ۿ]/g, ''); },
+  med(a) { if (!a.length) return 0; const s = a.slice().sort((x, y) => x - y); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; },
+  round(v) { return v >= 2000 ? Math.round(v / 50) * 50 : Math.round(v / 10) * 10; },
+  suggest(f) {
+    const bk = this.key(f.brand), mk = this.key(f.model); if (!mk) return null;
+    const since = Date.now() - 365 * 864e5;
+    let pool = DB.filter('phones', (p) => this.key(p.model) === mk && (!bk || this.key(p.brand) === bk) && Date.parse(p.buyDate || p.createdAt || 0) > since && p.id !== f.id);
+    const sameSt = f.storage ? pool.filter((p) => !p.storage || p.storage === f.storage) : pool; if (sameSt.length >= 2) pool = sameSt;
+    const used = pool.filter((p) => p.condition === 'used'); const base = (f.condition === 'used' && used.length) ? used : pool;
+    if (!base.length) return { n: 0 };
+    const buys = base.map((p) => Number(p.buyPrice) || 0).filter((x) => x > 0);
+    const sold = base.filter((p) => p.status === 'sold' && Number(p.soldPrice) > 0);
+    const sells = sold.map((p) => Number(p.soldPrice));
+    const daysToSell = sold.map((p) => Math.max(0, (Date.parse(p.soldAt) - Date.parse(p.buyDate || p.createdAt)) / 864e5)).filter((x) => isFinite(x));
+    const inStock = base.filter((p) => p.status === 'stock').length;
+    // تعديل الحالة
+    let k = 1; const notes = [];
+    if (f.condition === 'used') {
+      const g = { A: 1, B: 0.93, C: 0.84 }[f.grade || 'A'] || 1; if (g < 1) notes.push(L(`تقييم ${f.grade}`, `Grade ${f.grade}`)); k *= g;
+      const bat = Number(f.battery); if (bat && bat < 80) { k *= 0.95; notes.push(L(`بطارية ${bat}%`, `Battery ${bat}%`)); }
+      const bad = Object.entries(f.checks || {}).filter(([, v]) => v === false).length; if (bad) { k *= Math.max(0.7, 1 - bad * 0.04); notes.push(L(`${bad} مشكلة في الفحص`, `${bad} failed checks`)); }
+      const missing = !(f.acc && (f.acc.box || f.acc.charger)); if (missing) { k *= 0.98; }
+    }
+    const medBuy = this.med(buys), medSell = this.med(sells), medDays = this.med(daysToSell);
+    // لو عندنا بيع: الشراء = البيع − هامش 15% (ولو بيقعد كتير نزوّد الهامش)، ولو مفيش بيع نستخدم متوسط الشراء
+    const margin = medDays > 30 ? 0.22 : medDays > 14 ? 0.18 : 0.15;
+    const sell = medSell ? medSell * k : (medBuy ? medBuy * 1.18 * k : 0);
+    const buy = medSell ? sell * (1 - margin) : medBuy * k;
+    return { n: base.length, nSold: sold.length, medBuy, medSell, medDays: Math.round(medDays), inStock, buyLo: this.round(buy * 0.95), buyHi: this.round(buy), sell: this.round(sell), notes, margin };
+  },
+  box(s) {
+    if (!s) return '';
+    if (!s.n) return `<div class="pp-box faint">💡 ${L('مفيش تاريخ للموديل ده في المحل لسه — أول جهاز هيبقى أساس للاقتراحات الجاية.', 'No history for this model yet.')}</div>`;
+    return `<div class="pp-box"><div class="row wrap" style="gap:8px;align-items:center"><b style="flex:1">💡 ${L('اقتراح السعر من تاريخ المحل', 'Suggested price from your history')}</b><button type="button" class="btn sm primary" id="ppUse">${L('استخدم الاقتراح', 'Use')}</button></div>
+      <div class="pp-g"><div><small>${L('اشتري بـ', 'Buy at')}</small><b class="num">${money(s.buyLo, false)} – ${money(s.buyHi, false)}</b></div><div><small>${L('بيع بـ', 'Sell at')}</small><b class="num">${s.sell ? money(s.sell, false) : '—'}</b></div><div><small>${L('بيقعد عندك', 'Days to sell')}</small><b class="num">${s.nSold ? s.medDays + ' ' + L('يوم', 'days') : '—'}</b></div></div>
+      <div class="faint" style="font-size:12px;line-height:1.8">${L(`مبني على ${s.n} جهاز من نفس الموديل (اتباع منهم ${s.nSold})`, `Based on ${s.n} units (${s.nSold} sold)`)}${s.medBuy ? ` · ${L('متوسط شرائك', 'avg buy')} ${money(s.medBuy, false)}` : ''}${s.medSell ? ` · ${L('متوسط بيعك', 'avg sell')} ${money(s.medSell, false)}` : ''}${s.inStock ? ` · ${L('عندك منه', 'in stock')} ${s.inStock}` : ''}${s.notes.length ? ` · ${L('اتخصم عشان', 'adjusted for')}: ${s.notes.join('، ')}` : ''}</div></div>`;
+  }
+};
+
+(() => {
+  const P = Modules.phones; if (!P || !P.bindFields) return;
+  const b0 = P.bindFields.bind(P);
+  P.bindFields = function (el, p = {}) {
+    b0(el, p);
+    try {
+      const priceSec = $('[name=buyPrice]', el)?.closest('.ph-sec'); if (!priceSec) return;
+      const host = document.createElement('div'); host.id = 'ppHost'; priceSec.appendChild(host);
+      const draw = () => {
+        const v = UI.read(el); const f = { id: p.id, brand: v.brand, model: v.model, storage: v.storage, condition: v.condition, grade: v.grade, battery: v.battery, checks: Object.fromEntries($$('[data-ck]', el).map((i) => [i.dataset.ck, i.checked])), acc: Object.fromEntries($$('[data-ac]', el).map((i) => [i.dataset.ac, i.checked])) };
+        const s = PhonePrice.suggest(f); host.innerHTML = PhonePrice.box(s);
+        const u = $('#ppUse', host); if (u) u.onclick = () => { const bp = $('[name=buyPrice]', el), sp = $('[name=price]', el); if (bp) bp.value = s.buyHi; if (sp && s.sell) sp.value = s.sell; UI.toast(L('اتحط السعر المقترح — عدّله براحتك', 'Suggested price filled')); };
+      };
+      let t = null; const later = () => { clearTimeout(t); t = setTimeout(draw, 250); };
+      ['brand', 'model', 'storage', 'grade', 'battery'].forEach((n) => { const i = $(`[name=${n}]`, el); if (i) { i.addEventListener('input', later); i.addEventListener('change', later); } });
+      $$('#phCondSel button, [data-ck], [data-ac]', el).forEach((x) => x.addEventListener('click', later));
+      draw();
+    } catch (e) { console.warn('phoneprice', e); }
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   تقرير الزكاة السنوي — عروض التجارة + الكاش + المحافظ + الديون المرجوّة − الديون اللي عليك
+   النصاب = 85 جرام دهب عيار 24 × سعر الجرام (بتكتبه)، والزكاة 2.5% (سنة هجرية) أو 2.577% (سنة ميلادية)
+   ده حساب مساعد — والفتوى في التفاصيل لدار الإفتاء.
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const Zakat = {
+  cfg() { return { gold: 0, value: 'cost', year: 'hijri', recv: true, bank: 0, other: 0, otherDebt: 0, ...(DB.settings().zakat || {}) }; },
+  calc(c = this.cfg()) {
+    const byCost = c.value !== 'price';
+    const prod = round2(sum(DB.all('products').filter((p) => p.trackStock !== false && !p.deleted), (p) => Math.max(0, Number(p.qty) || 0) * (byCost ? Number(p.cost) || 0 : Number(p.price) || 0)));
+    const phones = round2(sum(DB.filter('phones', (p) => p.status === 'stock'), (p) => (byCost ? Number(p.buyPrice) || 0 : Number(p.price) || Number(p.buyPrice) || 0)));
+    const lines = round2(sum(DB.filter('lines', (l) => l.status === 'stock'), (l) => Number(byCost ? l.cost : l.price || l.cost) || 0));
+    const drawer = Math.max(0, drawerBalance()); const safe = Math.max(0, typeof safeBalance === 'function' ? safeBalance() : 0);
+    const wallets = round2(sum(DB.filter('wallets', (w) => w.active !== false), (w) => Math.max(0, Wallets.balance(w))));
+    const machines = typeof Machines !== 'undefined' ? round2(sum(DB.all('machines'), (m) => Math.max(0, Number(Machines.balance(m)) || 0))) : 0;
+    const recv = c.recv ? round2(sum(DB.all('customers'), (x) => Math.max(0, Customers.balance(x)))) : 0;
+    const pay = round2(sum(DB.all('suppliers'), (s) => Math.max(0, Suppliers.balance(s))));
+    const assets = [[L('البضاعة في المخزن', 'Stock goods'), prod], [L('موبايلات في المخزن', 'Phones in stock'), phones], [L('خطوط في المخزن', 'Lines in stock'), lines], [L('كاش الدرج', 'Drawer cash'), drawer], [L('الخزنة', 'Safe'), safe], [L('أرصدة المحافظ', 'Wallet balances'), wallets], [L('أرصدة الماكينات', 'Machine balances'), machines], [L('فلوس ليك عند العملاء (مرجوّة)', 'Receivables'), recv], [L('البنك / حسابات تانية', 'Bank / other accounts'), Number(c.bank) || 0], [L('أصول تجارية تانية', 'Other trade assets'), Number(c.other) || 0]].filter((x) => x[1] > 0 || x[0].includes('البنك'));
+    const debts = [[L('مستحق للموردين', 'Owed to suppliers'), pay], [L('ديون تانية عليك وقتها جه', 'Other due debts'), Number(c.otherDebt) || 0]];
+    const tA = round2(sum(assets, (x) => x[1])), tD = round2(sum(debts, (x) => x[1])); const net = round2(tA - tD);
+    const nisab = round2((Number(c.gold) || 0) * 85); const rate = c.year === 'greg' ? 0.02577 : 0.025;
+    const due = nisab && net >= nisab ? round2(net * rate) : 0;
+    return { assets, debts, tA, tD, net, nisab, rate, due, reached: !!(nisab && net >= nisab), byCost };
+  },
+  partners(z) {
+    if (typeof Partners === 'undefined' || !z.due) return [];
+    const ns = Partners.names(); if (ns.length < 2) return [];
+    return ns.map((n) => [n, Partners.sharePct(n), round2((z.due * Partners.sharePct(n)) / 100)]);
+  }
+};
+
+Modules.zakat = {
+  title: () => L('حساب الزكاة', 'Zakat'), icon: 'percent', perm: 'reports',
+  enabled: () => !!(Session.user && (Session.user.role === 'admin' || Session.user.username === 'admin' || Session.can('inventory.cost'))),
+  render(el) {
+    const c = Zakat.cfg(); const z = Zakat.calc(c); const pt = Zakat.partners(z);
+    const row = (a, b, cls = '') => `<tr><td>${a}</td><td class="num ${cls}"><b>${money(b)}</b></td></tr>`;
+    el.innerHTML = `<div class="grid g4 mb">${UI.kpi(L('صافي الأموال الزكوية', 'Zakatable net'), money(z.net), 'bank', 'hero')}${UI.kpi(L('النصاب (85 جم دهب)', 'Nisab (85g gold)'), z.nisab ? money(z.nisab) : L('اكتب سعر الدهب', 'Enter gold price'), 'award', z.nisab ? '' : 'c-warn')}${UI.kpi(L('الزكاة المستحقة', 'Zakat due'), money(z.due), 'check', z.due ? 'c-ok' : '', z.nisab ? (z.reached ? `${(z.rate * 100).toFixed(z.rate === 0.025 ? 1 : 3)}%` : L('لسه ما وصلش النصاب', 'Below nisab')) : '')}${UI.kpi(L('طريقة تقييم البضاعة', 'Goods valued at'), z.byCost ? L('سعر التكلفة', 'Cost') : L('سعر البيع', 'Selling price'), 'tag', '')}</div>
+      <div class="grid g2 mb" style="align-items:start">
+        <div class="card"><div class="card-h"><h3>${icon('plus')}${L('الأموال الزكوية', 'Zakatable assets')}</h3></div><div class="tbl-wrap"><table class="tbl"><tbody>${z.assets.map(([a, b]) => row(a, b)).join('')}<tr><td><b>${L('الإجمالي', 'Total')}</b></td><td class="num"><b>${money(z.tA)}</b></td></tr></tbody></table></div></div>
+        <div class="card"><div class="card-h"><h3>${icon('minus')}${L('يتخصم منها', 'Deducted')}</h3></div><div class="tbl-wrap"><table class="tbl"><tbody>${z.debts.map(([a, b]) => row(a, b, 'neg')).join('')}<tr><td><b>${L('الإجمالي', 'Total')}</b></td><td class="num neg"><b>${money(z.tD)}</b></td></tr></tbody></table></div>
+        ${pt.length ? `<div class="card-h"><h3>${icon('users')}${L('نصيب كل شريك (حسب حصته)', 'Each partner share')}</h3></div><div class="tbl-wrap"><table class="tbl"><tbody>${pt.map(([n, p, v]) => `<tr><td>${esc(n)} <span class="faint">(${p}%)</span></td><td class="num"><b>${money(v)}</b></td></tr>`).join('')}</tbody></table></div>` : ''}</div>
+      </div>
+      <div class="card mb"><div class="card-h"><h3>${icon('settings')}${L('بيانات الحساب', 'Inputs')}</h3></div><div class="card-b" id="zkF">${UI.form([
+        { name: 'gold', label: L('سعر جرام الدهب عيار 24 النهارده', 'Gold 24k price per gram'), type: 'number', value: c.gold || '', col: 4 },
+        { name: 'value', label: L('تقييم البضاعة', 'Value goods at'), type: 'select', value: c.value, options: [['cost', L('بسعر التكلفة (الشراء)', 'Cost')], ['price', L('بسعر البيع الحالي', 'Selling price')]], col: 4 },
+        { name: 'year', label: L('السنة', 'Year'), type: 'select', value: c.year, options: [['hijri', L('هجرية — 2.5%', 'Hijri — 2.5%')], ['greg', L('ميلادية — 2.577%', 'Gregorian — 2.577%')]], col: 4 },
+        { name: 'bank', label: L('فلوس في البنك / حسابات تانية', 'Bank / other accounts'), type: 'number', value: c.bank || '', col: 4 },
+        { name: 'other', label: L('أصول تجارية تانية (بضاعة برّه البرنامج)', 'Other trade assets'), type: 'number', value: c.other || '', col: 4 },
+        { name: 'otherDebt', label: L('ديون تانية عليك وقتها جه', 'Other due debts'), type: 'number', value: c.otherDebt || '', col: 4 },
+        { name: 'recv', label: L('احسب الفلوس اللي عند العملاء (الديون المرجوّة)', 'Include receivables'), type: 'checkbox', value: c.recv, col: 12 }])}
+        <div class="row wrap mt" style="gap:8px"><button class="btn primary" id="zkSave">${icon('check')}${L('احسب', 'Calculate')}</button><button class="btn" id="zkPr">${icon('printer')}${L('طباعة / PDF', 'Print / PDF')}</button></div>
+        <p class="faint mt" style="line-height:1.9;font-size:12.5px">ℹ️ ${L('الأصول الثابتة (الديكور، الرفوف، الأجهزة اللي بتشتغل بيها) مش بتدخل في الزكاة. ده حساب مساعد مبني على أرقام البرنامج — وفي أي تفصيلة فقهية ارجع لدار الإفتاء.', 'Fixed assets are excluded. This is a helper; consult a scholar for rulings.')}</p></div></div>`;
+    $('#zkSave', el).onclick = () => { const v = UI.read($('#zkF', el)); DB.saveSettings({ zakat: { gold: Number(v.gold) || 0, value: v.value, year: v.year, bank: Number(v.bank) || 0, other: Number(v.other) || 0, otherDebt: Number(v.otherDebt) || 0, recv: !!v.recv } }); this.render(el); };
+    $('#zkPr', el).onclick = () => {
+      const st = DB.settings().store || {};
+      printHTML(reportDoc(L('حساب الزكاة', 'Zakat calculation') + ' — ' + esc(st.name || ''), `<div class="kp"><div><span>${L('صافي الأموال الزكوية', 'Net')}</span><b>${money(z.net)}</b></div><div><span>${L('النصاب', 'Nisab')}</span><b>${money(z.nisab)}</b></div><div><span>${L('الزكاة المستحقة', 'Zakat due')}</span><b>${money(z.due)}</b></div><div><span>${L('سعر جرام الدهب', 'Gold/gram')}</span><b>${money(c.gold)}</b></div></div>
+        <table><thead><tr><th>${L('البند', 'Item')}</th><th>${L('القيمة', 'Value')}</th></tr></thead><tbody>${z.assets.map(([a, b]) => `<tr><td>${a}</td><td>${money(b)}</td></tr>`).join('')}<tr><td><b>${L('إجمالي الأموال', 'Total assets')}</b></td><td><b>${money(z.tA)}</b></td></tr>${z.debts.map(([a, b]) => `<tr><td>− ${a}</td><td>${money(b)}</td></tr>`).join('')}<tr><td><b>${L('الصافي', 'Net')}</b></td><td><b>${money(z.net)}</b></td></tr><tr><td><b>${L('الزكاة', 'Zakat')} (${(z.rate * 100).toFixed(z.rate === 0.025 ? 1 : 3)}%)</b></td><td><b>${money(z.due)}</b></td></tr></tbody></table>
+        ${pt.length ? `<table><thead><tr><th>${L('الشريك', 'Partner')}</th><th>${L('الحصة', 'Share')}</th><th>${L('نصيبه من الزكاة', 'Zakat share')}</th></tr></thead><tbody>${pt.map(([n, p, v]) => `<tr><td>${esc(n)}</td><td>${p}%</td><td>${money(v)}</td></tr>`).join('')}</tbody></table>` : ''}
+        <p style="font-size:11px;color:#555">${L('البضاعة متقيّمة بـ', 'Goods valued at')} ${z.byCost ? L('سعر التكلفة', 'cost') : L('سعر البيع', 'selling price')} — ${L('الأصول الثابتة مش داخلة. حساب مساعد، والفتوى لأهل العلم.', 'Fixed assets excluded.')}</p>`), { type: 'report' });
+    };
+  }
+};
+
+</script>
+  <script>
+/* =====================================================================
+   اسأل البرنامج بصوتك — زرار ميكروفون في المساعد الذكي
+   - الموبايل (أندرويد): التعرّف على الكلام بتاع Google بالعربي المصري
+   - المتصفح (Chrome): Web Speech API
+   - الكمبيوتر (ويندوز): مفيش تعرّف على الكلام بالعربي من غير إنترنت وخدمة خارجية — فالزرار مش بيظهر
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const Voice = {
+  plug() { const C = window.Capacitor; return C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.Speech ? C.Plugins.Speech : null; },
+  web() { return !DB.desktop && (window.SpeechRecognition || window.webkitSpeechRecognition) || null; },
+  supported() { return !!(this.plug() || this.web()); },
+  async listen() {
+    const lang = DB.settings().lang === 'en' ? 'en-US' : 'ar-EG';
+    const p = this.plug();
+    if (p) { const r = await p.listen({ lang, prompt: L('اسأل عن محلك… مثلاً: كسبت كام النهارده؟', 'Ask about your store…') }); return (r && r.text) || ''; }
+    const W = this.web(); if (!W) throw new Error('unsupported');
+    return await new Promise((ok, no) => { const r = new W(); r.lang = lang; r.interimResults = false; r.maxAlternatives = 1; let got = ''; r.onresult = (e) => { got = e.results[0][0].transcript; }; r.onerror = (e) => no(new Error(e.error || 'speech')); r.onend = () => ok(got); r.start(); });
+  }
+};
+
+(() => {
+  if (typeof AI === 'undefined') return;
+  const t0 = AI.toggle.bind(AI);
+  AI.toggle = function () {
+    t0();
+    try {
+      const p = $('.ai-panel'); if (!p || !Voice.supported()) return; const f = $('form.ai-input', p); if (!f || $('.ai-mic', f)) return;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ai-mic'; b.title = L('اسأل بصوتك', 'Ask by voice'); b.innerHTML = icon('mic') || '🎤';
+      f.insertBefore(b, f.lastElementChild);
+      b.onclick = async () => {
+        b.classList.add('on'); b.disabled = true;
+        try { const t = (await Voice.listen()).trim(); if (t) { const i = $('input', f); i.value = t; f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { cancelable: true })); } }
+        catch (e) { UI.toast(L('التعرّف على الصوت مش متاح على الجهاز ده — اتأكد إن تطبيق Google متثبت والنت شغال', 'Voice input not available'), 'warn'); }
+        finally { b.classList.remove('on'); b.disabled = false; }
+      };
+    } catch (_) {}
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   المزامنة على شبكة المحل (من غير إنترنت)
+   - الكمبيوتر الرئيسي: «الجهاز ده هو سيرفر الشبكة» ← بيشغّل سيرفر صغير على الواي فاي / الراوتر
+   - الفروع والموبايلات: بيكتبوا عنوان الكمبيوتر الرئيسي (زي 192.168.1.10) ← بيتزامنوا معاه كل دقيقة
+   - بتشتغل جنب المزامنة السحابية مش بدلها: لو النت قاطع الشبكة بتكمّل، ولما يرجع السحابة بتلحق
+   - نفس كود المزامنة السري — ونفس قاعدة «الأحدث يكسب»
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const LanSync = {
+  PORT: 47410, busy: false,
+  cfg() { return { hub: false, url: '', auto: true, lastPush: '', lastSeq: 0, lastSync: null, lastErr: '', ...(DB.settings().lanSync || {}) }; },
+  save(p) { DB.saveSettings({ lanSync: { ...this.cfg(), ...p } }); },
+  desk() { return !!(window.api && window.api.lan); },
+  httpPlug() { const C = window.Capacitor; return C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.CapacitorHttp ? C.Plugins.CapacitorHttp : null; },
+  norm(u) { u = String(u || '').trim(); if (!u) return ''; if (!/^https?:\/\//.test(u)) u = 'http://' + u; if (!/:\d+(\/|$)/.test(u.replace(/^https?:\/\//, ''))) u = u.replace(/\/$/, '') + ':' + this.PORT; return u.replace(/\/$/, ''); },
+  target() { const c = this.cfg(); if (c.hub && this.desk()) return `http://127.0.0.1:${this.PORT}`; return this.norm(c.url); },
+  on() { const c = this.cfg(); return !!((c.hub && this.desk()) || c.url) && !!Sync.cfg().code; },
+  async rpc(fn, body) {
+    const url = this.target(); if (!url) throw new Error(L('مفيش عنوان للكمبيوتر الرئيسي', 'No hub address'));
+    if (this.desk()) return window.api.lan.rpc({ url, fn, body });
+    const P = this.httpPlug();
+    if (P) { const r = await P.request({ url: `${url}/rpc/${fn}`, method: 'POST', headers: { 'Content-Type': 'application/json' }, data: body, connectTimeout: 8000, readTimeout: 20000 }); if (r.status >= 300) throw new Error((r.data && r.data.message) || 'HTTP ' + r.status); return typeof r.data === 'string' ? JSON.parse(r.data || 'null') : r.data; }
+    const r = await fetch(`${url}/rpc/${fn}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); const t = await r.text(); const j = t ? JSON.parse(t) : null; if (!r.ok) throw new Error((j && j.message) || 'HTTP ' + r.status); return j;
+  },
+  async ping(u) {
+    const url = this.norm(u); if (!url) return false;
+    try {
+      if (this.desk()) return await window.api.lan.ping(url);
+      const P = this.httpPlug(); if (P) { const r = await P.request({ url: url + '/ping', method: 'GET', connectTimeout: 4000, readTimeout: 4000 }); const d = typeof r.data === 'string' ? JSON.parse(r.data) : r.data; return !!(d && d.app === 'markaz-ahllan-hub'); }
+      const r = await fetch(url + '/ping'); return (await r.json()).app === 'markaz-ahllan-hub';
+    } catch (_) { return false; }
+  },
+  /* نفس خطوات Sync.run بس مع سيرفر الشبكة وعدّادات منفصلة */
+  async run(silent = true) {
+    if (this.busy || !this.on()) return false; const key = Sync.cfg().code; const s = this.cfg();
+    this.busy = true; const started = nowISO(); let pushed = 0, pulled = 0, ok = false;
+    try {
+      const since = s.lastPush || ''; const rows = [];
+      for (const c of COLLECTIONS) { if (c === 'settings') continue; for (const d of DB.raw(c)) if (d && d.id && (!since || (d.updatedAt || '') > since)) rows.push({ c, d }); }
+      let batch = [], size = 0;
+      const send = async () => { if (!batch.length) return; await this.rpc('pos_sync_push', { p_key: key, p_rows: batch }); pushed += batch.length; batch = []; size = 0; };
+      for (const r of rows) { const n = JSON.stringify(r.d).length; if (batch.length && (batch.length >= 300 || size + n > 900000)) await send(); batch.push(r); size += n; }
+      await send(); this.save({ lastPush: started });
+      let after = Number(s.lastSeq) || 0;
+      while (true) {
+        const res = await this.rpc('pos_sync_pull', { p_key: key, p_after: after, p_limit: 500 }); const arr = (res && res.rows) || [];
+        for (const row of arr) {
+          after = Math.max(after, Number(row.s) || 0);
+          if (!COLLECTIONS.includes(row.c) || row.c === 'settings' || !row.d || !row.d.id) continue;
+          const loc = DB.maps[row.c].get(row.d.id);
+          if (!loc || (loc.updatedAt || '') < (row.d.updatedAt || '')) { DB.upsertRaw(row.c, row.d); pulled++; }
+        }
+        this.save({ lastSeq: after }); if (arr.length < 500) break;
+      }
+      this.save({ lastSync: nowISO(), lastErr: '' }); ok = true;
+      if (!silent) UI.toast(L(`مزامنة الشبكة ✓ — رفع ${pushed} · تحميل ${pulled}`, `LAN sync ✓ — pushed ${pushed}, pulled ${pulled}`));
+      if (pulled && Session.user) App.reload();
+    } catch (e) { this.save({ lastErr: String(e.message || e).slice(0, 160) }); if (!silent) UI.toast(L('مزامنة الشبكة فشلت: ', 'LAN sync failed: ') + e.message, 'err', 7000); }
+    this.busy = false; return ok;
+  },
+  async startHub() { if (!this.desk()) return null; const st = await window.api.lan.start(); if (st && st.on) { if (!this.cfg().hub) this.save({ hub: true, lastPush: '', lastSeq: 0 }); } return st; },
+  async stopHub() { if (!this.desk()) return; await window.api.lan.stop(); this.save({ hub: false }); },
+
+  /* الكارت في «النسخ الاحتياطي والمزامنة» */
+  async card(host) {
+    const c = this.cfg(); const code = Sync.cfg().code; const st = this.desk() ? await window.api.lan.status().catch(() => null) : null;
+    const ipList = st && st.ips ? st.ips.map((x) => x.ip) : [];
+    host.innerHTML = `<div class="card mb ls-card"><div class="card-h wrap">${icon('wifi')}<h3>${L('المزامنة على شبكة المحل (من غير إنترنت)', 'Local network sync (no internet)')}</h3><div class="spacer"></div>${this.on() ? `<span class="tag ${c.lastErr ? 'err' : 'ok'}">${c.lastErr ? L('مش متصل', 'Not connected') : L('شغالة', 'On')}</span>` : `<span class="tag">${L('مقفولة', 'Off')}</span>`}</div><div class="card-b">
+      ${!code ? `<div class="tag warn" style="white-space:normal">${L('شغّل «المزامنة» الأول (الكود السري) — مزامنة الشبكة بتستخدم نفس الكود.', 'Enable sync first — LAN sync uses the same code.')}</div>` : `
+      <p class="faint" style="margin:0 0 10px;line-height:1.9;font-size:12.5px">${L('لو الأجهزة على نفس الراوتر أو الواي فاي، بتتزامن مع بعض على طول حتى لو النت قاطع. بتشتغل جنب المزامنة السحابية، مش بدلها.', 'Devices on the same router sync directly even with no internet.')}</p>
+      ${this.desk() ? `<label class="check" style="font-weight:800"><input type="checkbox" id="lsHub" ${c.hub ? 'checked' : ''}> ${L('الجهاز ده هو سيرفر الشبكة (الكمبيوتر الرئيسي)', 'This PC is the network hub (main PC)')}</label>
+        ${c.hub && st && st.on ? `<div class="ls-ips">${ipList.length ? ipList.map((ip) => `<div><span>${L('اكتب على الأجهزة التانية', 'Enter on other devices')}:</span><b class="mono" dir="ltr">${ip}</b></div>`).join('') : `<div class="faint">${L('الكمبيوتر مش متوصل بشبكة', 'Not connected to a network')}</div>`}<small class="faint">${L('لو ويندوز سأل «Allow access» اختار Private networks ← Allow. ويُفضّل تثبّت IP الكمبيوتر ده من الراوتر.', 'Allow the Windows firewall prompt for Private networks.')}</small></div>` : c.hub && st && !st.on ? `<div class="tag err mt">${L('السيرفر مش شغال: ', 'Hub not running: ')}${esc(st.error || '')}</div>` : ''}<hr style="border:0;border-top:1px dashed var(--line);margin:12px 0">` : ''}
+      ${!(c.hub && this.desk()) ? `<label class="lbl">${L('عنوان الكمبيوتر الرئيسي على الشبكة', 'Main PC network address')}</label><div class="row" style="gap:6px"><input id="lsUrl" class="mono" dir="ltr" placeholder="192.168.1.10" value="${esc(String(c.url || '').replace(/^https?:\/\//, '').replace(':' + this.PORT, ''))}"><button class="btn" id="lsTest">${icon('search')}${L('اختبار', 'Test')}</button><button class="btn primary" id="lsSave">${icon('check')}${L('حفظ', 'Save')}</button></div>` : ''}
+      <div class="row wrap mt" style="gap:8px;align-items:center"><span class="faint" style="font-size:12px">${L('آخر مزامنة على الشبكة', 'Last LAN sync')}: ${c.lastSync ? fmtDT(c.lastSync) : '—'}${c.lastErr ? ` · <span style="color:var(--err)">${esc(c.lastErr)}</span>` : ''}</span><div class="spacer"></div>${this.on() ? `<button class="btn sm" id="lsRun">${icon('refresh')}${L('زامن على الشبكة الآن', 'Sync on LAN now')}</button>` : ''}${c.url && !(c.hub && this.desk()) ? `<button class="btn sm" id="lsOff">${L('إيقاف', 'Turn off')}</button>` : ''}</div>`}
+      </div></div>`;
+    const q = (id) => $('#' + id, host);
+    q('lsHub') && (q('lsHub').onchange = async (e) => { if (e.target.checked) { const s2 = await this.startHub(); UI.toast(s2 && s2.on ? L('سيرفر الشبكة اشتغل ✓', 'Hub started ✓') : L('مقدرتش أشغّل السيرفر', 'Could not start'), s2 && s2.on ? 'ok' : 'err'); if (s2 && s2.on) this.run(true); } else await this.stopHub(); this.card(host); });
+    q('lsTest') && (q('lsTest').onclick = async () => { const u = q('lsUrl').value; const ok = await this.ping(u); UI.toast(ok ? L('لقيت الكمبيوتر الرئيسي ✓', 'Hub found ✓') : L('مش لاقي الكمبيوتر الرئيسي — اتأكد من العنوان وإن الجهازين على نفس الشبكة وإن «سيرفر الشبكة» شغال', 'Hub not found'), ok ? 'ok' : 'err', 6000); });
+    q('lsSave') && (q('lsSave').onclick = async () => { const u = this.norm(q('lsUrl').value); if (!u) return UI.toast(L('اكتب العنوان', 'Enter the address'), 'warn'); const ok = await this.ping(u); this.save({ url: u, lastPush: '', lastSeq: 0, lastErr: '' }); UI.toast(ok ? L('اتحفظ ✓ — بيتزامن دلوقتي', 'Saved ✓') : L('اتحفظ، بس الكمبيوتر الرئيسي مش باين دلوقتي', 'Saved, but hub not reachable now'), ok ? 'ok' : 'warn'); if (ok) await this.run(false); this.card(host); });
+    q('lsRun') && (q('lsRun').onclick = async () => { await this.run(false); this.card(host); });
+    q('lsOff') && (q('lsOff').onclick = () => { this.save({ url: '' }); this.card(host); });
+  }
+};
+
+(() => {
+  /* تشغيل السيرفر لوحده مع فتح البرنامج + مزامنة كل دقيقة */
+  setTimeout(async () => { try { if (LanSync.desk() && LanSync.cfg().hub) await window.api.lan.start(); } catch (_) {} }, 2500);
+  setInterval(() => { if (Session.user && LanSync.on() && LanSync.cfg().auto !== false) LanSync.run(true); }, 60000);
+  setTimeout(() => { if (Session.user && LanSync.on()) LanSync.run(true); }, 15000);
+  /* الكارت في صفحة النسخ الاحتياطي والمزامنة */
+  const B = Modules.backup; if (!B || !B.render) return;
+  const r0 = B.render.bind(B);
+  B.render = function (el, ...rest) {
+    const r = r0(el, ...rest);
+    try { const host = document.createElement('div'); host.id = 'lsHost'; const g = [...el.children].find((x) => x.classList && x.classList.contains('grid')); if (g) el.insertBefore(host, g); else el.prepend(host); LanSync.card(host); } catch (e) { console.warn('lan card', e); }
+    return r;
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   التحقق من تحويل العميل قبل التسليم (ضد «سكرين التحويل المزيّف»)
+   لما العميل يدفع بمحفظة أو إنستا باي في نقطة البيع، البرنامج يستنى رسالة الشركة الحقيقية
+   بنفس المبلغ على نفس المحفظة — وأول ما توصل: ✅ «التحويل وصل فعلاً» ويكمّل البيع.
+   لو ما وصلتش: مفيش تسليم (أو «تأكيد بدون رسالة» بموافقة المدير — وبيظهر في رادار التلاعب).
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const TransferCheck = {
+  cfg() { return { on: true, waitMin: 10, ...(DB.settings().transferCheck || {}) }; },
+  /* شغال لو ربط الرسائل شغال على المحل (الرسائل بتوصل للجهاز ده أو عن طريق المزامنة) */
+  active() { return this.cfg().on !== false && typeof SmsLink !== 'undefined' && (SmsLink.cfg().enabled || DB.filter('smsInbox', (s) => Date.parse(s.at) > Date.now() - 7 * 864e5).length > 0); },
+  used() { return new Set(DB.filter('smsInbox', (s) => s.verifiedFor).map((s) => s.id)); },
+  find(expect, walletId, since) {
+    const used = this.used();
+    return DB.filter('smsInbox', (s) => {
+      if (used.has(s.id) || ['fake', 'dup', 'other'].includes(s.status)) return false;
+      if (Date.parse(s.at) < since - 3 * 60000) return false;
+      const p = s.parsed || (typeof SmsParse !== 'undefined' ? SmsParse.parse(s.sender, s.body) : null);
+      if (!p || !p.ok || p.dir !== 'in' || Math.abs((Number(p.amount) || 0) - expect) > 0.01) return false;
+      if (walletId) { const w = s.walletId ? DB.get('wallets', s.walletId) : SmsLink.resolveWallet(s, p); if (w && w.id !== walletId) return false; }
+      return true;
+    }).sort((a, b) => (a.at < b.at ? 1 : -1))[0] || null;
+  },
+  /* بيرجّع: {ok:true, sms} أو {ok:true, manual:true} أو {ok:false} */
+  wait(expect, walletId, label) {
+    return new Promise((done) => {
+      const since = Date.now(); const w = walletId ? DB.get('wallets', walletId) : null; let timer = null, finished = false;
+      const end = (r) => { if (finished) return; finished = true; clearInterval(timer); m.close(); done(r); };
+      const m = UI.modal({ title: L('في انتظار وصول التحويل', 'Waiting for the transfer'), icon: 'shield', size: 'sm', body: `<div class="tc-box" id="tcB">
+          <div class="tc-spin"></div><div class="tc-amt num">${money(expect)}</div>
+          <div class="faint">${esc(label || '')}${w ? ` — ${esc(w.name)} <span dir="ltr">${esc(fmtWalletNo(walletNo(w)) || '')}</span>` : ''}</div>
+          <p style="line-height:1.9;margin:10px 0 0">${L('اطلب من العميل يحوّل دلوقتي. <b>ماتسلّمش البضاعة لحد ما رسالة الشركة توصل</b> — حتى لو وراك صورة تحويل.', 'Ask the customer to transfer now. <b>Do not hand over goods until the carrier SMS arrives</b>, even if shown a screenshot.')}</p>
+          <div class="faint" id="tcT" style="font-size:12px;margin-top:6px"></div></div>`,
+        actions: [{ label: L('إلغاء', 'Cancel'), onClick: () => end({ ok: false }) },
+          { label: L('تأكيد بدون رسالة', 'Confirm without SMS'), onClick: async () => { const ok = await Approve.ask(L(`تأكيد تحويل ${money(expect)} من غير رسالة من الشركة`, 'Confirm transfer without SMS'), 'limit.override'); if (!ok) return; audit('pay.verify-manual', `${expect} ${w ? w.name : ''}`); end({ ok: true, manual: true }); } }] });
+      const tick = async () => {
+        if (finished) return;
+        try { if (SmsLink.cfg().enabled && !SmsLink.busy) await SmsLink.sync(false); } catch (_) {}
+        const s = this.find(expect, walletId, since);
+        const secs = Math.round((Date.now() - since) / 1000); const t = $('#tcT', m.el); if (t) t.textContent = L(`بقالنا ${Math.floor(secs / 60)}:${pad(secs % 60)} مستنيين…`, `Waiting ${Math.floor(secs / 60)}:${pad(secs % 60)}…`);
+        if (s) {
+          DB.update('smsInbox', s.id, { verifiedFor: 'pos', verifiedAt: nowISO(), verifiedBy: Session.user?.id || null });
+          const p = s.parsed || {}; const b = $('#tcB', m.el);
+          if (b) b.innerHTML = `<div class="tc-ok">✓</div><div class="tc-amt num" style="color:var(--ok)">${money(expect)}</div><b>${L('التحويل وصل فعلاً من الشركة', 'Transfer confirmed by the carrier')}</b><div class="faint" style="margin-top:6px">${esc(p.partyName || p.party || '')}${p.txId ? ` · ${L('رقم العملية', 'Ref')} ${esc(p.txId)}` : ''} · ${fmtTime(s.at)}</div>`;
+          try { SmsSound.play('ok'); } catch (_) {}
+          audit('pay.verified', `${expect} ${p.txId || ''}`);
+          setTimeout(() => end({ ok: true, sms: s }), 1300); return;
+        }
+        if (secs > (Number(this.cfg().waitMin) || 10) * 60) { const b = $('#tcB', m.el); if (b && !$('.tc-late', b)) b.insertAdjacentHTML('beforeend', `<div class="tag warn tc-late mt" style="white-space:normal">${L('عدّى وقت كتير ومفيش رسالة — اتأكد من رقم المحفظة اللي العميل حوّل عليها', 'No SMS yet — check the wallet number')}</div>`); }
+      };
+      timer = setInterval(tick, 4000); setTimeout(tick, 600);
+    });
+  }
+};
+
+(() => {
+  const P = Modules.pos; if (!P || !P.finish) return;
+  const f0 = P.finish.bind(P);
+  P.finish = async function (m, method, t) {
+    try {
+      if (TransferCheck.active() && !m._tcOk) {
+        let expect = 0, wid = null;
+        if (method === 'wallet' || method === 'instapay') { expect = t.total; wid = $('#payWallet', m.el)?.value || null; if (!wid) return f0(m, method, t); }
+        else if (method === 'split' && m.splitLines) { const ws = m.splitLines.filter((l) => (l.method === 'wallet' || l.method === 'instapay') && l.amount > 0); if (ws.length === 1) { expect = ws[0].amount; wid = ws[0].walletId; } }
+        if (expect > 0) {
+          const r = await TransferCheck.wait(round2(expect), wid, method === 'instapay' ? L('إنستا باي', 'InstaPay') : L('محفظة', 'Wallet'));
+          if (!r.ok) return;
+          m._tcOk = true; m._tcSms = r.sms || null;
+        }
+      }
+    } catch (e) { console.warn('transfer-check', e); }
+    return f0(m, method, t);
+  };
+  /* ربط الرسالة اللي اتأكدت بعملية البيع (عشان ماتتسجلش «سحب» لوحدها) */
+  const sc = Sales.create.bind(Sales);
+  Sales.create = function (o) {
+    const s = sc(o);
+    try {
+      const sms = DB.filter('smsInbox', (x) => x.verifiedFor === 'pos' && !x.txId && Date.parse(x.verifiedAt) > Date.now() - 60000)[0];
+      if (sms && s) { const t = DB.find('walletTx', (x) => x.saleId === s.id || (x.ref === s.no && x.type === 'sale')); if (t) SmsLink.link(sms, t, sms.parsed || {}); DB.update('smsInbox', sms.id, { verifiedFor: s.no }); DB.update('sales', s.id, { payVerified: true }); }
+    } catch (_) {}
+    return s;
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   فاتورة المورد بالصورة — صوّر فاتورة الورق والمساعد الذكي يقراها:
+   الأصناف والكميات والأسعار ورقم الفاتورة والتاريخ، ويطابق الأصناف بالموجودة عندك
+   (اللي مش موجود تضيفه كصنف جديد بدوسة). محتاج مفتاح Claude في «المساعد الذكي».
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const SupplierScan = {
+  key() { const a = DB.settings().ai || {}; return a.apiKey ? a : null; },
+  attach(m) {
+    try {
+      const row = $('#puQ', m.el)?.closest('.row'); if (!row || $('#puScan', m.el)) return;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.id = 'puScan'; b.innerHTML = `${icon('camera')}${L('من صورة الفاتورة', 'From invoice photo')}`;
+      row.appendChild(b); b.onclick = () => this.run(m);
+    } catch (_) {}
+  },
+  pickImage() {
+    return new Promise((res) => {
+      const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; i.setAttribute('capture', 'environment');
+      i.onchange = () => { const f = i.files[0]; if (!f) return res(null); this.shrink(f).then(res, () => res(null)); }; i.click();
+    });
+  },
+  /* تصغير الصورة (أسرع وأرخص) — أقصى ضلع 1600px JPEG */
+  shrink(file) {
+    return new Promise((ok, no) => {
+      const img = new Image(); const u = URL.createObjectURL(file);
+      img.onload = () => { const k = Math.min(1, 1600 / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); ok(c.toDataURL('image/jpeg', 0.85)); };
+      img.onerror = no; img.src = u;
+    });
+  },
+  async read(dataUrl, k) {
+    const prods = DB.all('products').filter((p) => !p.deleted).slice(0, 600).map((p) => `${p.id}|${p.name}${p.barcode ? '|' + p.barcode : ''}`).join('\n');
+    const sup = DB.all('suppliers').map((s) => `${s.id}|${s.name}`).join('\n');
+    const prompt = `This is a photo of a supplier purchase invoice for a shop in Egypt (mobile accessories / CCTV). Read it and return ONLY JSON, no prose:
+{"supplierName":"","supplierId":null,"invoiceNo":"","date":"YYYY-MM-DD or empty","discount":0,"total":0,"items":[{"name":"as written","qty":1,"unitCost":0,"productId":"best matching id from MY PRODUCTS or null"}]}
+Rules: unitCost is the price per unit (if only line total is shown, divide by qty). Numbers may be Arabic-Indic digits — convert. Match productId only when you are confident it is the same item. supplierId from MY SUPPLIERS if it clearly matches.
+MY SUPPLIERS (id|name):
+${sup || '-'}
+MY PRODUCTS (id|name|barcode):
+${prods || '-'}`;
+    const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': k.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: k.model || 'claude-sonnet-5-5', max_tokens: 3000, messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: dataUrl.split(',')[1] } }, { type: 'text', text: prompt }] }] }) });
+    if (!r.ok) throw new Error((await r.text()).slice(0, 200));
+    const j = await r.json(); const t = j.content.map((c) => c.text || '').join(''); const s = t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1);
+    return JSON.parse(s);
+  },
+  async run(m) {
+    const k = this.key(); if (!k) return UI.toast(L('محتاج مفتاح Claude — من «المساعد الذكي ← الإعدادات»', 'Needs a Claude API key (AI assistant settings)'), 'warn', 6000);
+    const img = await this.pickImage(); if (!img) return;
+    const w = UI.modal({ title: L('بقرا الفاتورة…', 'Reading the invoice…'), icon: 'camera', size: 'sm', body: `<div class="tc-box"><div class="tc-spin"></div><p class="faint">${L('ثواني والأصناف تبقى جاهزة', 'A few seconds…')}</p><img src="${img}" style="max-width:100%;max-height:220px;border-radius:10px;margin-top:8px"></div>`, actions: [] });
+    let res; try { res = await this.read(img, k); } catch (e) { w.close(); return UI.toast(L('مقدرتش أقرا الفاتورة: ', 'Could not read: ') + e.message, 'err', 7000); }
+    w.close(); this.review(m, res, img);
+  },
+  review(m, r, img) {
+    const items = (r.items || []).filter((i) => i && i.name).map((i) => ({ name: String(i.name), qty: Math.max(1, Number(i.qty) || 1), cost: round2(Number(i.unitCost) || 0), pid: i.productId && DB.get('products', i.productId) ? i.productId : '' }));
+    const opts = (sel) => `<option value="">➕ ${L('صنف جديد', 'New product')}</option>${DB.all('products').filter((p) => !p.deleted).map((p) => `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}`;
+    const sum0 = round2(sum(items, (i) => i.qty * i.cost));
+    const md = UI.modal({ title: L('راجع الأصناف قبل الإضافة', 'Review before adding'), icon: 'check', size: 'xl', body: `
+      <div class="row wrap mb" style="gap:10px;align-items:flex-start"><img src="${img}" style="width:120px;border-radius:10px;border:1px solid var(--line)"><div style="flex:1;min-width:220px;line-height:2">
+        <div>${L('المورد', 'Supplier')}: <b>${esc(r.supplierName || '—')}</b>${r.supplierId && DB.get('suppliers', r.supplierId) ? ` <span class="tag ok">${L('اتعرف عليه', 'Matched')}</span>` : r.supplierName ? ` <label class="check" style="display:inline-flex"><input type="checkbox" id="ssNewSup" checked> ${L('ضيفه مورد جديد', 'Add as new supplier')}</label>` : ''}</div>
+        <div>${L('رقم الفاتورة', 'Invoice #')}: <b>${esc(r.invoiceNo || '—')}</b> · ${L('التاريخ', 'Date')}: <b>${esc(r.date || '—')}</b></div>
+        <div>${L('إجمالي المقروء', 'Read total')}: <b class="num">${money(sum0)}</b>${r.total ? ` · ${L('إجمالي الفاتورة', 'Invoice total')}: <b class="num">${money(r.total)}</b> ${Math.abs(sum0 - (r.total + (Number(r.discount) || 0))) > 1 ? `<span class="tag warn">${L('مش متطابق — راجع', 'Mismatch — check')}</span>` : '<span class="tag ok">✓</span>'}` : ''}</div></div></div>
+      <div class="tbl-wrap"><table class="tbl stack"><thead><tr><th>${L('المكتوب في الفاتورة', 'On invoice')}</th><th>${L('الصنف عندك', 'Your product')}</th><th>${L('الكمية', 'Qty')}</th><th>${L('سعر الوحدة', 'Unit cost')}</th><th></th></tr></thead><tbody>
+      ${items.map((i, x) => `<tr data-x="${x}"><td data-label="">${esc(i.name)}</td><td data-label="${L('الصنف', 'Product')}"><select data-f="pid">${opts(i.pid)}</select></td><td data-label="${L('الكمية', 'Qty')}"><input type="number" data-f="qty" value="${i.qty}" style="width:80px"></td><td data-label="${L('السعر', 'Cost')}"><input type="number" data-f="cost" value="${i.cost}" style="width:100px"></td><td><button class="btn sm ghost" data-del="${x}">${icon('trash')}</button></td></tr>`).join('') || `<tr><td colspan="5">${UI.empty(L('ملقيتش أصناف في الصورة — صوّرها أوضح', 'No items found — retake the photo'))}</td></tr>`}
+      </tbody></table></div><p class="faint mt" style="font-size:12px">${L('«صنف جديد» = هيتعمل صنف بنفس الاسم وسعر شراء الوحدة (عدّل سعر البيع بعدين).', '“New product” creates a product with this name.')}</p>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('إضافة للفاتورة', 'Add to invoice'), cls: 'primary', icon: 'check', onClick: (x) => {
+        $$('tr[data-x]', x.el).forEach((tr) => { const i = items[+tr.dataset.x]; if (!i || i.del) return; i.pid = $('[data-f=pid]', tr).value; i.qty = Number($('[data-f=qty]', tr).value) || 1; i.cost = Number($('[data-f=cost]', tr).value) || 0; });
+        let n = 0; items.filter((i) => !i.del).forEach((i) => { let p = i.pid && DB.get('products', i.pid); if (!p) p = DB.insert('products', { name: i.name, cost: i.cost, price: round2(i.cost * 1.25), qty: 0, trackStock: true, category: '' }); m.addLine(p, i.qty, i.cost, Number(p.price) || 0); n++; });
+        if (!(r.supplierId && DB.get('suppliers', r.supplierId)) && r.supplierName && $('#ssNewSup', x.el)?.checked && !$('#puSup', m.el).value) { const ex = DB.find('suppliers', (x) => x.name.trim() === String(r.supplierName).trim()); const ns = ex || DB.insert('suppliers', { name: String(r.supplierName).slice(0, 80), phone: '', createdAt: nowISO() }); r.supplierId = ns.id; const sel = $('#puSup', m.el); if (!sel.querySelector(`option[value="${ns.id}"]`)) sel.insertAdjacentHTML('beforeend', `<option value="${ns.id}">${esc(ns.name)}</option>`); }
+        if (r.supplierId && DB.get('suppliers', r.supplierId) && !$('#puSup', m.el).value) { $('#puSup', m.el).value = r.supplierId; $('#puSup', m.el).dispatchEvent(new Event('change')); }
+        if (r.invoiceNo && !$('#puRef', m.el).value) $('#puRef', m.el).value = r.invoiceNo;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(r.date || '')) $('#puDate', m.el).value = r.date;
+        if (Number(r.discount) > 0) { $('#puDisc', m.el).value = Number(r.discount); $('#puDisc', m.el).dispatchEvent(new Event('input')); }
+        audit('purchase.scan', `${n} items ${r.invoiceNo || ''}`); x.close(); UI.toast(L(`اتضاف ${n} صنف ✓ — راجع واحفظ`, `${n} items added ✓`));
+      } }] });
+    $$('[data-del]', md.el).forEach((b) => (b.onclick = () => { items[+b.dataset.del].del = true; b.closest('tr').remove(); }));
+  }
+};
+
+</script>
+  <script>
+/* =====================================================================
+   قايمة الموبايلات المسروقة / المفقودة المشتركة بين المحلات (IMEI)
+   - وانت بتشتري جهاز (أو استبدال): البرنامج يكشف الـ IMEI على القايمة المشتركة لوحده
+   - لو مبلّغ عنه: تحذير أحمر + مش هيتحفظ غير بموافقة المدير
+   - أي محل يقدر يبلّغ عن IMEI (مسروق / مفقود / نصب) ويلغي بلاغه — والبلاغ مسؤولية صاحبه
+   محتاج ملف supabase/pos-1.9.sql يتشغّل مرة واحدة.
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const ImeiGuard = {
+  cache: {}, override: {},
+  REASONS: () => [['stolen', L('مسروق', 'Stolen')], ['lost', L('مفقود', 'Lost')], ['fraud', L('نصب / شيك من غير رصيد', 'Fraud')], ['blocked', L('محظور من الشبكة', 'Network-blocked')]],
+  on() { return typeof Cloud !== 'undefined' && Cloud.ok(); },
+  norm(v) { return String(v || '').replace(/\D/g, ''); },
+  valid(v) { const d = this.norm(v); return d.length >= 14 && d.length <= 16; },
+  async check(imeis) {
+    const list = [...new Set(imeis.map((x) => this.norm(x)).filter((x) => this.valid(x)))]; if (!list.length || !this.on()) return [];
+    const fresh = list.filter((x) => !(this.cache[x] && Date.now() - this.cache[x].at < 10 * 60e3));
+    if (fresh.length) {
+      try { const mid = await License.machineId(); const r = await Cloud.rpc('pos_imei_check', { p_mid: mid, p_imeis: fresh }); fresh.forEach((x) => (this.cache[x] = { at: Date.now(), v: (r || []).filter((f) => f.imei === x) })); }
+      catch (e) { console.warn('imei check', e.message); return null; }
+    }
+    return list.flatMap((x) => (this.cache[x] ? this.cache[x].v : [])).filter((f) => !f.mine);
+  },
+  reasonName(k) { return (this.REASONS().find((x) => x[0] === k) || [k, k])[1]; },
+  warnHTML(flags) {
+    return `<div class="ig-box"><b>🚫 ${L('الجهاز ده مبلّغ عنه في قايمة المحلات', 'This device is reported by other shops')}</b>${flags.map((f) => `<div class="ig-r">${esc(this.reasonName(f.reason))} — ${esc(f.store || '')}${f.phone ? ` · <a href="tel:${esc(f.phone)}" dir="ltr">${esc(f.phone)}</a>` : ''} · ${fmtDate(f.at)}${f.note ? `<div class="faint">${esc(f.note)}</div>` : ''}</div>`).join('')}
+      <div class="faint" style="margin-top:4px">${L('ماتشتريش الجهاز قبل ما تكلم المحل اللي بلّغ. لو اشتريته بعد التحذير ده بتبقى مسؤوليتك.', 'Contact the reporting shop before buying.')}</div>
+      <button type="button" class="btn sm mt" data-igok>${L('عارف وهكمل بموافقة المدير', 'Proceed with manager approval')}</button></div>`;
+  },
+  async report(pre = {}) {
+    if (!this.on()) return UI.toast(L('البلاغ محتاج نت وسيرفر التفعيل', 'Needs the cloud server'), 'warn');
+    const m = UI.modal({ title: L('بلاغ عن IMEI', 'Report an IMEI'), icon: 'alert', size: 'sm', body: UI.form([
+      { name: 'imei', label: 'IMEI', required: true, value: pre.imei || '', col: 12, attrs: 'dir="ltr" inputmode="numeric" maxlength="16"' },
+      { name: 'reason', label: L('السبب', 'Reason'), type: 'select', options: this.REASONS(), value: pre.reason || 'stolen', col: 12 },
+      { name: 'note', label: L('ملاحظة تظهر للمحلات (من غير بيانات أشخاص)', 'Note shown to shops (no personal data)'), value: pre.note || '', col: 12 },
+      { name: 'agree', label: L('أقر إن البلاغ صحيح وعلى مسؤوليتي، وهلغيه لو الجهاز رجع لصاحبه', 'I confirm this report is true and my responsibility'), type: 'checkbox', col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('إرسال البلاغ', 'Send report'), cls: 'danger', onClick: async (x) => {
+        const v = UI.read(x.el); const im = this.norm(v.imei); if (!this.valid(im)) return UI.toast(L('IMEI لازم 15 رقم', 'IMEI must be 15 digits'), 'err'); if (!v.agree) return UI.toast(L('لازم توافق على الإقرار', 'Please confirm'), 'warn');
+        try { const st = DB.settings().store || {}; await Cloud.rpc('pos_imei_flag', { p_mid: await License.machineId(), p_imei: im, p_reason: v.reason, p_note: String(v.note || '').slice(0, 200), p_store: st.name || '', p_phone: st.phone || '' }); delete this.cache[im]; audit('imei.flag', `${im} ${v.reason}`); x.close(); UI.toast(L('اتبعت البلاغ ✓ — أي محل يكشف على الرقم ده هيشوفه', 'Report sent ✓')); }
+        catch (e) { UI.toast(/not allowed/.test(e.message) ? L('البلاغ متاح للأجهزة المفعّلة أونلاين بس', 'Only online-activated devices can report') : e.message, 'err', 6000); }
+      } }] });
+  },
+  async mine() {
+    if (!this.on()) return UI.toast(L('محتاج نت وسيرفر التفعيل', 'Needs the cloud server'), 'warn');
+    let list = []; try { list = await Cloud.rpc('pos_imei_mine', { p_mid: await License.machineId() }) || []; } catch (e) { return UI.toast(e.message, 'err'); }
+    const m = UI.modal({ title: L('قايمة المسروقات المشتركة — بلاغاتي', 'Shared stolen list — my reports'), icon: 'alert', size: 'lg', body: `
+      <div class="row wrap mb" style="gap:8px"><input id="igQ" dir="ltr" inputmode="numeric" placeholder="${L('اكشف على IMEI…', 'Check an IMEI…')}" style="max-width:260px"><button class="btn" id="igChk">${icon('search')}${L('كشف', 'Check')}</button><div class="spacer"></div><button class="btn danger" id="igNew">${icon('plus')}${L('بلاغ جديد', 'New report')}</button></div><div id="igRes"></div>
+      <div class="tbl-wrap"><table class="tbl stack"><thead><tr><th>IMEI</th><th>${L('السبب', 'Reason')}</th><th>${L('ملاحظة', 'Note')}</th><th>${L('التاريخ', 'Date')}</th><th>${L('الحالة', 'Status')}</th><th></th></tr></thead><tbody>
+      ${list.map((f) => `<tr><td dir="ltr" class="mono">${esc(f.imei)}</td><td>${esc(this.reasonName(f.reason))}</td><td>${esc(f.note || '')}</td><td>${fmtDate(f.at)}</td><td>${f.active ? `<span class="tag err">${L('ساري', 'Active')}</span>` : `<span class="tag">${L('ملغي', 'Cancelled')}</span>`}</td><td>${f.active ? `<button class="btn sm" data-un="${esc(f.imei)}">${L('إلغاء البلاغ', 'Cancel')}</button>` : ''}</td></tr>`).join('') || `<tr><td colspan="6">${UI.empty(L('مفيش بلاغات منك', 'No reports yet'), 'check')}</td></tr>`}
+      </tbody></table></div><p class="faint mt" style="font-size:12px;line-height:1.9">${L('القايمة مشتركة بين كل المحلات اللي شغالة على البرنامج. اللي بيظهر للمحلات: اسم محلك ورقمه وسبب البلاغ والملاحظة — من غير أي بيانات عملاء.', 'Shared between all shops using the app. Only your store name/phone and the reason are shown.')}</p>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }] });
+    $('#igNew', m.el).onclick = () => { m.close(); this.report(); };
+    $('#igChk', m.el).onclick = async () => { const v = $('#igQ', m.el).value; if (!this.valid(v)) return UI.toast(L('IMEI لازم 15 رقم', 'IMEI must be 15 digits'), 'err'); delete this.cache[this.norm(v)]; const f = await this.check([v]); $('#igRes', m.el).innerHTML = f === null ? `<div class="tag warn mb">${L('مقدرتش أكشف دلوقتي', 'Could not check now')}</div>` : f.length ? this.warnHTML(f).replace(/<button[^>]*data-igok[^>]*>.*?<\/button>/, '') : `<div class="ig-ok mb">✅ ${L('الرقم ده مش مبلّغ عنه', 'Not reported')}</div>`; };
+    $$('[data-un]', m.el).forEach((b) => (b.onclick = async () => { if (!(await UI.confirm(L('إلغاء البلاغ ده؟', 'Cancel this report?')))) return; try { await Cloud.rpc('pos_imei_unflag', { p_mid: await License.machineId(), p_imei: b.dataset.un }); audit('imei.unflag', b.dataset.un); m.close(); this.mine(); } catch (e) { UI.toast(e.message, 'err'); } }));
+  }
+};
+
+(() => {
+  const P = Modules.phones; if (!P) return;
+  /* الكشف وانت بتكتب الـ IMEI */
+  const b0 = P.bindFields.bind(P);
+  P.bindFields = function (el, p = {}) {
+    b0(el, p);
+    try {
+      if (!ImeiGuard.on()) return;
+      const host = document.createElement('div'); host.id = 'igHost'; const im1 = $('[name=imei1]', el); if (!im1) return;
+      (im1.closest('.f') || im1.parentElement).appendChild(host);
+      let t = null; const run = () => { clearTimeout(t); t = setTimeout(async () => {
+        const ims = ['imei1', 'imei2'].map((n) => $(`[name=${n}]`, el)?.value).filter((x) => ImeiGuard.valid(x)); if (!ims.length) { host.innerHTML = ''; el.dataset.igFlag = ''; return; }
+        const f = await ImeiGuard.check(ims); if (f === null) { host.innerHTML = `<div class="faint" style="font-size:12px">${L('مقدرتش أكشف على قايمة المسروقات دلوقتي (النت)', 'Could not check the stolen list now')}</div>`; return; }
+        if (!f.length) { host.innerHTML = `<div class="ig-ok">✅ ${L('مش مبلّغ عنه في قايمة المحلات', 'Not on the shared stolen list')}</div>`; el.dataset.igFlag = ''; return; }
+        el.dataset.igFlag = ims.join(','); host.innerHTML = ImeiGuard.warnHTML(f);
+        $('[data-igok]', host).onclick = async () => { const ok = await Approve.ask(L('شراء جهاز مبلّغ عنه في قايمة المسروقات', 'Buying a reported device'), 'approve'); if (!ok) return; ims.forEach((x) => (ImeiGuard.override[ImeiGuard.norm(x)] = true)); audit('imei.override', ims.join(',')); host.querySelector('[data-igok]').outerHTML = `<div class="tag warn mt">${L('اتوافق عليه — اتسجل في السجل', 'Approved — logged')}</div>`; };
+      }, 400); };
+      ['imei1', 'imei2'].forEach((n) => { const i = $(`[name=${n}]`, el); if (i) i.addEventListener('input', run); }); run();
+    } catch (e) { console.warn('imeiguard', e); }
+  };
+  /* منع الحفظ لو مبلّغ عنه ومفيش موافقة */
+  const c0 = P.check.bind(P);
+  P.check = function (out, id) {
+    const e = c0(out, id); if (e) return e;
+    try { const flagged = [out.imei1, out.imei2].map((x) => ImeiGuard.norm(x)).filter((x) => x && ImeiGuard.cache[x] && ImeiGuard.cache[x].v.some((f) => !f.mine)); if (!id && flagged.some((x) => !ImeiGuard.override[x])) return L('الجهاز مبلّغ عنه في قايمة المسروقات — مش هيتحفظ غير بموافقة المدير (الزرار في التحذير الأحمر)', 'Reported device — needs manager approval'); } catch (_) {}
+    return e;
+  };
+  /* زرار «قايمة المسروقات» في صفحة الموبايلات + «بلّغ» في تفاصيل الجهاز */
+  const r0 = P.render.bind(P);
+  P.render = function (el) { r0(el); try { const bar = $('.ph-bar', el); if (bar && !$('#igBtn', bar) && ImeiGuard.on()) { const b = document.createElement('button'); b.className = 'btn'; b.id = 'igBtn'; b.innerHTML = `🚫 ${L('قايمة المسروقات', 'Stolen list')}`; b.onclick = () => ImeiGuard.mine(); bar.appendChild(b); } } catch (_) {} };
+  const d0 = P.details.bind(P);
+  P.details = function (p) {
+    const r = d0(p);
+    try { const m = [...$$('.modal-bg')].pop(); const f = m && $('.modal-f', m); if (f && p && p.imei1 && ImeiGuard.on()) { const b = document.createElement('button'); b.className = 'btn'; b.innerHTML = `🚫 ${L('بلّغ عن الـ IMEI', 'Report IMEI')}`; b.onclick = () => ImeiGuard.report({ imei: p.imei1 }); f.prepend(b); } } catch (_) {}
+    return r;
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   عقد شراء الموبايل المستعمل — بيحميك قانونياً لو الجهاز طلع مسروق
+   - توقيع البائع على الشاشة + لحد 3 صور للجهاز (جنب صورة البطاقة الموجودة)
+   - عقد A4 فيه: بيانات المحل والبائع والجهاز والـ IMEI والفحص والإكسسوار والسعر
+     + نتيجة الكشف على قايمة المسروقات المشتركة + بنود الإقرار + التوقيع والصور
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const UsedContract = {
+  /* لوحة التوقيع */
+  sign(cb) {
+    const m = UI.modal({ title: L('توقيع البائع', 'Seller signature'), icon: 'edit', size: 'md', body: `<p class="faint" style="margin-top:0">${L('خلّي البائع يمضي بصباعه أو بالماوس جوه المربع', 'Let the seller sign inside the box')}</p><canvas id="ucSig" width="900" height="360" style="width:100%;height:220px;background:#fff;border:2px dashed var(--line);border-radius:14px;touch-action:none"></canvas>`,
+      actions: [{ label: L('مسح', 'Clear'), onClick: () => { const c = $('#ucSig', m.el); c.getContext('2d').clearRect(0, 0, c.width, c.height); drawn = false; } }, { label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() },
+        { label: L('حفظ التوقيع', 'Save signature'), cls: 'primary', onClick: (x) => { if (!drawn) return UI.toast(L('مفيش توقيع', 'No signature'), 'warn'); cb(this.trim($('#ucSig', m.el))); x.close(); } }] });
+    const c = $('#ucSig', m.el); const g = c.getContext('2d'); g.lineWidth = 5; g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = '#111'; let down = false, drawn = false;
+    const pt = (e) => { const r = c.getBoundingClientRect(); return [((e.clientX - r.left) / r.width) * c.width, ((e.clientY - r.top) / r.height) * c.height]; };
+    c.onpointerdown = (e) => { down = true; c.setPointerCapture(e.pointerId); const [x, y] = pt(e); g.beginPath(); g.moveTo(x, y); };
+    c.onpointermove = (e) => { if (!down) return; const [x, y] = pt(e); g.lineTo(x, y); g.stroke(); drawn = true; };
+    c.onpointerup = c.onpointercancel = () => (down = false);
+  },
+  /* قصّ المساحة الفاضية وتصغير التوقيع (PNG صغير) */
+  trim(c) {
+    const g = c.getContext('2d'); const d = g.getImageData(0, 0, c.width, c.height).data; let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+    for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) if (d[(y * c.width + x) * 4 + 3] > 20) { if (x < x0) x0 = x; if (y < y0) y0 = y; if (x > x1) x1 = x; if (y > y1) y1 = y; }
+    if (x1 <= x0) return c.toDataURL('image/png');
+    const w = x1 - x0 + 20, h = y1 - y0 + 20, k = Math.min(1, 420 / w); const o = document.createElement('canvas'); o.width = Math.round(w * k); o.height = Math.round(h * k);
+    o.getContext('2d').drawImage(c, x0 - 10, y0 - 10, w, h, 0, 0, o.width, o.height); return o.toDataURL('image/png');
+  },
+  contract(p) {
+    const s = DB.settings(); const st = s.store || {}; const c = PH_COND[p.condition || 'used'];
+    const checks = typeof PH_CHECKS !== 'undefined' ? PH_CHECKS.map(([k, a, b]) => [L(a, b), p.checks ? p.checks[k] : undefined]).filter((x) => x[1] !== undefined) : [];
+    const acc = typeof PH_ACC !== 'undefined' ? PH_ACC.filter(([k]) => p.acc && p.acc[k]).map(([, a, b]) => L(a, b)) : [];
+    const ig = p.igCheck; const photos = (p.devPhotos || []).slice(0, 3);
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>
+      @page{size:A4;margin:12mm}*{box-sizing:border-box}body{font-family:'Cairo',Tahoma,Arial;color:#111;font-size:12.5px;margin:0}
+      .hd{display:flex;align-items:center;gap:12px;border-bottom:3px solid #8B1A2B;padding-bottom:8px}.hd img{width:64px;height:64px;object-fit:contain}.hd h1{margin:0;font-size:22px;color:#8B1A2B}.hd small{color:#555}
+      .no{margin-inline-start:auto;text-align:left;font-size:12px}.no b{font-size:15px}
+      h3{margin:12px 0 6px;font-size:14px;color:#8B1A2B;border-inline-start:4px solid #8B1A2B;padding-inline-start:8px}
+      table{width:100%;border-collapse:collapse}td{border:1px solid #ddd;padding:5px 8px;vertical-align:top}td.k{background:#faf4f5;width:24%;font-weight:700}
+      .ok{color:#11724A;font-weight:800}.bad{color:#C62828;font-weight:800}.chk{display:inline-block;margin:2px 8px 2px 0}
+      ol{margin:4px 0;padding-inline-start:18px;line-height:1.9}.sig{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:14px}.sig div{border:1px solid #ddd;border-radius:10px;padding:8px;min-height:110px;text-align:center}.sig img{max-height:80px;max-width:100%}
+      .ph{display:flex;gap:8px;margin-top:6px}.ph img{height:120px;border:1px solid #ddd;border-radius:8px;object-fit:cover;max-width:32%}.ft{margin-top:10px;font-size:10px;color:#777;text-align:center}
+    </style></head><body>
+      <div class="hd"><img src="${logoSrc()}"><div><h1>${L('عقد شراء جهاز مستعمل', 'Used device purchase contract')}</h1><small>${esc(st.name || '')}${st.address ? ' — ' + esc(st.address) : ''}${st.phone ? ' — ' + esc(st.phone) : ''}</small></div><div class="no">${L('رقم', 'No.')} <b>${esc(p.buyNo || p.code || '')}</b><br>${fmtDT(p.buyDate || p.createdAt)}</div></div>
+      <h3>${L('الطرف الأول (البائع)', 'Seller')}</h3><table><tr><td class="k">${L('الاسم', 'Name')}</td><td>${esc(p.sellerName || '')}</td><td class="k">${L('الموبايل', 'Phone')}</td><td dir="ltr">${esc(p.sellerPhone || '')}</td></tr><tr><td class="k">${L('الرقم القومي', 'National ID')}</td><td dir="ltr" colspan="3">${esc(p.sellerNid || '')}</td></tr></table>
+      <h3>${L('الطرف الثاني (المشتري)', 'Buyer')}</h3><table><tr><td class="k">${L('المحل', 'Store')}</td><td>${esc(st.name || '')}</td><td class="k">${L('المستلم', 'Received by')}</td><td>${esc(DB.get('users', p.userId)?.name || Session.user?.name || '')}</td></tr></table>
+      <h3>${L('بيانات الجهاز', 'Device')}</h3><table>
+        <tr><td class="k">${L('الجهاز', 'Device')}</td><td>${esc(Phones.full(p))}</td><td class="k">${L('الحالة', 'Condition')}</td><td>${L(...c.slice(0, 2))}${p.grade ? ` — ${L('تقييم', 'Grade')} ${esc(p.grade)}` : ''}${p.battery ? ` — 🔋 ${esc(p.battery)}%` : ''}</td></tr>
+        <tr><td class="k">IMEI 1</td><td dir="ltr"><b>${esc(p.imei1 || '')}</b></td><td class="k">IMEI 2</td><td dir="ltr">${esc(p.imei2 || '—')}</td></tr>
+        ${p.serial ? `<tr><td class="k">${L('السيريال', 'Serial')}</td><td dir="ltr" colspan="3">${esc(p.serial)}</td></tr>` : ''}
+        ${checks.length ? `<tr><td class="k">${L('الفحص', 'Checks')}</td><td colspan="3">${checks.map(([n, v]) => `<span class="chk">${v ? '✔' : '✘'} ${esc(n)}</span>`).join('')}</td></tr>` : ''}
+        ${acc.length ? `<tr><td class="k">${L('مع الجهاز', 'Accessories')}</td><td colspan="3">${acc.map(esc).join('، ')}</td></tr>` : ''}
+        <tr><td class="k">${L('المبلغ المدفوع', 'Price paid')}</td><td colspan="3"><b style="font-size:15px">${money(p.buyPrice)}</b></td></tr>
+        <tr><td class="k">${L('قايمة المسروقات', 'Stolen list')}</td><td colspan="3">${ig ? (ig.ok ? `<span class="ok">✔ ${L('مش مبلّغ عنه', 'Not reported')}</span>` : `<span class="bad">⚠ ${L('مبلّغ عنه — اتشرى بموافقة المدير', 'Reported — approved by manager')}</span>`) + ` — ${L('اتكشف عليه', 'checked')} ${fmtDT(ig.at)}` : L('ما اتكشفش عليه', 'Not checked')}</td></tr></table>
+      <h3>${L('إقرار البائع', 'Seller declaration')}</h3><ol>
+        <li>${L('أقر أنا البائع بأن الجهاز الموضح بياناته أعلاه ملكي الخاص، وآل إليّ بطريقة مشروعة، وخالي من أي حقوق للغير.', 'The device is my lawful property, free of third-party rights.')}</li>
+        <li>${L('أقر بأن الجهاز غير مسروق أو مفقود أو محل نزاع، وغير مرهون أو مقسّط على شركة لم يتم سداد أقساطها.', 'It is not stolen, lost, disputed, pledged or under unpaid installments.')}</li>
+        <li>${L('أتحمل وحدي المسئولية المدنية والجنائية كاملة إذا ثبت خلاف ذلك، وألتزم برد المبلغ المستلم كاملاً.', 'I bear full civil and criminal liability otherwise and will refund the amount.')}</li>
+        <li>${L('أوافق على أن يحتفظ المحل بصورة بطاقتي وصور الجهاز وبيانات هذا العقد، وأن يسلّمها للجهات المختصة عند الطلب.', 'I agree the store keeps my ID copy, photos and this contract and may hand them to authorities.')}</li>
+        <li>${L('استلمت المبلغ الموضح أعلاه كاملاً، وسلّمت الجهاز بحالته الموصوفة.', 'I received the full amount and handed over the device as described.')}</li></ol>
+      ${photos.length || p.sellerIdPhoto ? `<h3>${L('الصور', 'Photos')}</h3><div class="ph">${p.sellerIdPhoto ? `<img src="${p.sellerIdPhoto}">` : ''}${photos.map((x) => `<img src="${x}">`).join('')}</div>` : ''}
+      <div class="sig"><div>${L('توقيع البائع', 'Seller signature')}<br>${p.sellerSig ? `<img src="${p.sellerSig}">` : '<br><br>'}<br><b>${esc(p.sellerName || '')}</b></div><div>${L('عن المحل', 'For the store')}<br><br><br><br><b>${esc(st.name || '')}</b></div></div>
+      <div class="ft">${COPYRIGHT_AR}</div></body></html>`, { type: 'report' });
+    audit('phone.contract', `${p.code || ''} ${p.imei1 || ''}`);
+  }
+};
+
+(() => {
+  const P = Modules.phones; if (!P) return;
+  const b0 = P.bindFields.bind(P);
+  P.bindFields = function (el, p = {}) {
+    b0(el, p);
+    try {
+      const box = $('#phSellerBox', el); if (!box || $('#ucBox', el)) return;
+      el.dataset.ucSig = p.sellerSig || ''; el._ucPh = (p.devPhotos || []).slice();
+      const d = document.createElement('div'); d.id = 'ucBox'; d.className = 'uc-box mt';
+      const draw = () => { d.innerHTML = `<div class="row wrap" style="gap:8px;align-items:center"><button type="button" class="btn sm" id="ucSign">✍️ ${L('توقيع البائع على الشاشة', 'Seller signs on screen')}</button>${el.dataset.ucSig ? `<img src="${el.dataset.ucSig}" style="height:38px;background:#fff;border-radius:6px;border:1px solid var(--line)"><span class="tag ok">${L('اتمضى', 'Signed')}</span>` : ''}
+        <button type="button" class="btn sm" id="ucPh">📷 ${L('صور الجهاز', 'Device photos')} (${el._ucPh.length}/3)</button>${el._ucPh.map((x, i) => `<img src="${x}" data-rm="${i}" title="${L('اضغط للمسح', 'Tap to remove')}" style="height:38px;border-radius:6px;cursor:pointer">`).join('')}</div>
+        <div class="faint" style="font-size:11.5px;margin-top:4px">${L('بعد الحفظ: «عقد الشراء» من تفاصيل الجهاز — ورقة A4 فيها الإقرار والتوقيع والصور ونتيجة الكشف على قايمة المسروقات.', 'After saving: “Purchase contract” from the device details.')}</div>`;
+        $('#ucSign', d).onclick = () => UsedContract.sign((sig) => { el.dataset.ucSig = sig; draw(); });
+        $('#ucPh', d).onclick = async () => { if (el._ucPh.length >= 3) return UI.toast(L('أقصى 3 صور', 'Max 3 photos'), 'warn'); const x = await pickImage(640); if (x) { el._ucPh.push(x); draw(); } };
+        $$('[data-rm]', d).forEach((im) => (im.onclick = () => { el._ucPh.splice(+im.dataset.rm, 1); draw(); }));
+      };
+      box.appendChild(d); draw();
+    } catch (e) { console.warn('contract', e); }
+  };
+  const rf = P.readFields.bind(P);
+  P.readFields = function (el) {
+    const r = rf(el);
+    try {
+      if (r && r.out && r.out.source === 'customer') {
+        if (el.dataset.ucSig) r.out.sellerSig = el.dataset.ucSig; if (el._ucPh && el._ucPh.length) r.out.devPhotos = el._ucPh.slice(0, 3);
+        const ims = [r.out.imei1, r.out.imei2].map((x) => typeof ImeiGuard !== 'undefined' ? ImeiGuard.norm(x) : '').filter((x) => x && ImeiGuard.cache[x]);
+        if (ims.length) r.out.igCheck = { at: nowISO(), ok: !ims.some((x) => ImeiGuard.cache[x].v.some((f) => !f.mine)) };
+      }
+    } catch (_) {}
+    return r;
+  };
+  const d0 = P.details.bind(P);
+  P.details = function (p) {
+    const r = d0(p);
+    try { if (p && p.source === 'customer') { const m = [...$$('.modal-bg')].pop(); const f = m && $('.modal-f', m); if (f) { const b = document.createElement('button'); b.className = 'btn primary'; b.innerHTML = `📝 ${L('عقد الشراء', 'Purchase contract')}`; b.onclick = () => UsedContract.contract(DB.get('phones', p.id) || p); f.prepend(b); } } } catch (_) {}
+    return r;
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   صور الجهاز وقت الاستلام في الصيانة — لحد 4 صور للخدوش والكسر والشاشة قدام العميل
+   بتتحفظ مع التذكرة، وبتظهر في تفاصيل الجهاز وفي شاشة التسليم «قارن الحالة» — مفيش خناقة بعد كده.
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const RepairPhotos = {
+  cur: null, MAX: 4,
+  strip(list, big) { return `<div class="rph-strip">${list.map((x, i) => `<img src="${x}" data-ph="${i}" class="${big ? 'big' : ''}">`).join('')}</div>`; },
+  zoom(src) { UI.modal({ title: L('صورة الجهاز', 'Device photo'), icon: 'camera', size: 'lg', body: `<img src="${src}" style="width:100%;border-radius:12px">`, actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }] }); },
+  bindZoom(box, list) { $$('[data-ph]', box).forEach((im) => (im.onclick = () => this.zoom(list[+im.dataset.ph]))); }
+};
+
+(() => {
+  const R = Modules.repairs; if (!R) return;
+  /* نموذج الاستلام / التعديل */
+  const rc0 = R.receive.bind(R);
+  R.receive = function (r, ...rest) {
+    const out = rc0(r, ...rest);
+    try {
+      const m = [...$$('.modal-bg')].pop(); const body = m && $('.modal-b', m); if (!body) return out;
+      const cur = (RepairPhotos.cur = { m, id: r && r.id ? r.id : null, photos: ((r && r.photos) || []).slice() });
+      const box = document.createElement('div'); box.className = 'rph-box';
+      const draw = () => { box.innerHTML = `<div class="row wrap" style="gap:8px;align-items:center"><b style="flex:1;min-width:180px">📷 ${L('صور الجهاز وقت الاستلام', 'Device photos at intake')} <span class="faint" style="font-weight:600">(${cur.photos.length}/${RepairPhotos.MAX})</span></b><button type="button" class="btn sm" id="rphAdd">${icon('camera')}${L('صوّر الخدوش / الكسر', 'Photo scratches / damage')}</button></div>${cur.photos.length ? RepairPhotos.strip(cur.photos) : `<div class="faint" style="font-size:12px">${L('صوّر الجهاز قدام العميل — بتحميك لو قال «الشاشة ماكانتش مكسورة».', 'Photograph the device in front of the customer.')}</div>`}`;
+        $('#rphAdd', box).onclick = async () => { if (cur.photos.length >= RepairPhotos.MAX) return UI.toast(L(`أقصى ${RepairPhotos.MAX} صور`, `Max ${RepairPhotos.MAX}`), 'warn'); const x = await pickImage(720); if (x) { cur.photos.push(x); draw(); } };
+        $$('[data-ph]', box).forEach((im) => (im.onclick = async () => { if (await UI.confirm(L('مسح الصورة دي؟', 'Remove this photo?'))) { cur.photos.splice(+im.dataset.ph, 1); draw(); } }));
+      };
+      body.appendChild(box); draw();
+    } catch (e) { console.warn('repair photos', e); }
+    return out;
+  };
+  /* إلحاق الصور بالتذكرة وقت الحفظ */
+  const bi = DB.insert.bind(DB), bu = DB.update.bind(DB);
+  const live = () => RepairPhotos.cur && document.body.contains(RepairPhotos.cur.m) ? RepairPhotos.cur : null;
+  DB.insert = function (col, doc) { const c = col === 'repairs' && live(); if (c && !c.id && doc && !doc.photos && c.photos.length) { doc = { ...doc, photos: c.photos.slice(), photosAt: nowISO() }; RepairPhotos.cur = null; } return bi(col, doc); };
+  DB.update = function (col, id, patch) { const c = col === 'repairs' && live(); if (c && c.id === id && patch && patch.customerName !== undefined) { patch = { ...patch, photos: c.photos.slice() }; RepairPhotos.cur = null; } return bu(col, id, patch); };
+  /* تفاصيل الجهاز */
+  const v0 = R.view.bind(R);
+  R.view = function (r) {
+    const out = v0(r);
+    try { const x = DB.get('repairs', r.id) || r; if ((x.photos || []).length) { const m = [...$$('.modal-bg')].pop(); const body = m && $('.modal-b', m); if (body) { const s = document.createElement('div'); s.className = 'card card-b mt'; s.innerHTML = `<b>📷 ${L('حالة الجهاز وقت الاستلام', 'Condition at intake')}</b> <span class="faint">${fmtDT(x.photosAt || x.date)}</span>${RepairPhotos.strip(x.photos, true)}`; const head = $('.rp-steps', body); (head ? head.parentNode.insertBefore(s, head.nextSibling) : body.appendChild(s)); RepairPhotos.bindZoom(s, x.photos); } } } catch (_) {}
+    return out;
+  };
+  /* شاشة التسليم: قارن الحالة */
+  const d0 = R.deliver.bind(R);
+  R.deliver = function (r) {
+    const out = d0(r);
+    try { const x = DB.get('repairs', r.id) || r; if ((x.photos || []).length) { const m = [...$$('.modal-bg')].pop(); const body = m && $('.modal-b', m); if (body) { const s = document.createElement('div'); s.className = 'rph-box'; s.innerHTML = `<b>🔍 ${L('قارن الحالة قبل التسليم — دي صور الجهاز وقت الاستلام', 'Compare with the intake photos')}</b>${RepairPhotos.strip(x.photos)}`; body.prepend(s); RepairPhotos.bindZoom(s, x.photos); } } } catch (_) {}
+    return out;
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   كاميرات المراقبة — تقرير التركيب الاحترافي + عقود الصيانة الدورية
+   1) «وضع الزيارة» للفني: صورة ومكان لكل كاميرا، الجهاز والهارد وأيام التسجيل، تطبيق المشاهدة،
+      تسجيل وصول بالموقع (GPS)، توقيع العميل ← تقرير تركيب A4 باسم المحل يتبعت للعميل
+   2) عقد صيانة دورية (اشتراك شهري / كل 3 شهور / سنوي): تحصيل الاشتراك، المتأخرات، تنبيهات
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+CASH_SOURCES['cctv-amc'] = ['اشتراكات صيانة الكاميرات', 'CCTV maintenance contracts'];
+
+const CvPro = {
+  /* ---------- 1) تقرير التركيب ---------- */
+  camCount(j) { try { return sum((j.items || []).filter((i) => { const p = i.productId && DB.get('products', i.productId); return typeof CvStock !== 'undefined' && p ? CvStock.group(p) === 'cam' : /كامير|camera/i.test(i.name || ''); }), (i) => Number(i.qty) || 0); } catch (_) { return 0; } },
+  report(j) {
+    j = DB.get('cctvJobs', j.id) || j;
+    const rp = { cams: [], dvr: '', hdd: '', days: '', app: '', pwChanged: false, net: '', notes: '', sig: '', gps: null, tech: Session.user?.name || '', ...(j.report || {}) };
+    const n = Math.max(rp.cams.length, this.camCount(j) || 0, 1); while (rp.cams.length < n) rp.cams.push({ loc: '', note: '', photo: '' });
+    const m = UI.modal({ title: L('تقرير التركيب', 'Installation report') + ' — ' + j.no, icon: 'cctv', size: 'xl', body: `<div id="cpR"></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), icon: 'check', onClick: () => { save(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } },
+        { label: L('حفظ وطباعة التقرير', 'Save & print'), cls: 'primary', icon: 'printer', onClick: (x) => { save(); x.close(); this.printReport(DB.get('cctvJobs', j.id)); } }] });
+    const box = $('#cpR', m.el);
+    const read = () => { $$('[data-cam]', box).forEach((r) => { const i = +r.dataset.cam; rp.cams[i].loc = $('[data-f=loc]', r).value; rp.cams[i].note = $('[data-f=note]', r).value; }); ['dvr', 'hdd', 'days', 'app', 'net', 'notes', 'tech'].forEach((k) => { const e = $(`[name=${k}]`, box); if (e) rp[k] = e.value; }); rp.pwChanged = !!$('[name=pwChanged]', box)?.checked; };
+    const save = () => { read(); DB.update('cctvJobs', j.id, { report: { ...rp, at: nowISO(), by: Session.user?.name || '' } }); audit('cctv.report', j.no); };
+    const draw = () => {
+      box.innerHTML = `<div class="cp-cams">${rp.cams.map((c, i) => `<div class="cp-cam" data-cam="${i}"><div class="cp-ph">${c.photo ? `<img src="${c.photo}">` : `<span>📷</span>`}<button type="button" class="btn sm" data-pic="${i}">${c.photo ? L('تغيير', 'Change') : L('صورة', 'Photo')}</button></div><div style="flex:1;min-width:0"><b>${L('كاميرا', 'Camera')} ${i + 1}</b><input data-f="loc" value="${esc(c.loc)}" placeholder="${L('المكان: المدخل / الكاشير / المخزن…', 'Location')}"><input data-f="note" value="${esc(c.note)}" placeholder="${L('ملاحظة: زاوية / ليلي / صوت…', 'Note')}"></div>${rp.cams.length > 1 ? `<button type="button" class="btn sm ghost" data-rm="${i}">${icon('trash')}</button>` : ''}</div>`).join('')}
+        <button type="button" class="btn" id="cpAdd">${icon('plus')}${L('كاميرا كمان', 'Add camera')}</button></div>
+        ${UI.form([{ name: 'dvr', label: L('مكان جهاز التسجيل (DVR/NVR)', 'Recorder location'), value: rp.dvr, col: 4 }, { name: 'hdd', label: L('الهارد', 'Hard disk'), value: rp.hdd, col: 4, attrs: 'placeholder="1TB"' }, { name: 'days', label: L('أيام التسجيل المتوقعة', 'Recording days'), value: rp.days, col: 4, attrs: 'inputmode="numeric"' },
+          { name: 'app', label: L('تطبيق المشاهدة على موبايل العميل', 'Viewing app'), value: rp.app, col: 4 }, { name: 'net', label: L('الشبكة / الراوتر', 'Network'), value: rp.net, col: 4 }, { name: 'tech', label: L('الفني', 'Technician'), value: rp.tech, col: 4 },
+          { name: 'pwChanged', label: L('غيّرنا كلمة سر الجهاز الافتراضية وسلّمناها للعميل', 'Default password changed and handed over'), type: 'checkbox', value: rp.pwChanged, col: 12 },
+          { name: 'notes', label: L('ملاحظات للعميل', 'Notes for the customer'), type: 'textarea', value: rp.notes, col: 12 }])}
+        <div class="row wrap mt" style="gap:8px;align-items:center"><button type="button" class="btn" id="cpGps">📍 ${L('تسجيل الوصول بالموقع', 'Check in with GPS')}</button>${rp.gps ? `<span class="tag ok">${L('اتسجل', 'Recorded')} ${fmtTime(rp.gps.at)}</span><a href="#" id="cpMap">${L('الخريطة', 'Map')}</a>` : ''}
+          <button type="button" class="btn" id="cpSig">✍️ ${L('توقيع العميل بالاستلام', 'Customer sign-off')}</button>${rp.sig ? `<img src="${rp.sig}" style="height:38px;background:#fff;border-radius:6px;border:1px solid var(--line)"><span class="tag ok">${L('اتمضى', 'Signed')}</span>` : ''}</div>`;
+      $$('[data-pic]', box).forEach((b) => (b.onclick = async () => { read(); const x = await pickImage(640); if (x) { rp.cams[+b.dataset.pic].photo = x; draw(); } }));
+      $$('[data-rm]', box).forEach((b) => (b.onclick = () => { read(); rp.cams.splice(+b.dataset.rm, 1); draw(); }));
+      $('#cpAdd', box).onclick = () => { read(); rp.cams.push({ loc: '', note: '', photo: '' }); draw(); };
+      $('#cpSig', box).onclick = () => { read(); UsedContract.sign((s) => { rp.sig = s; draw(); }); };
+      $('#cpGps', box).onclick = () => { read(); if (!navigator.geolocation) return UI.toast(L('الجهاز ده مفيهوش تحديد موقع', 'No GPS on this device'), 'warn'); navigator.geolocation.getCurrentPosition((p) => { rp.gps = { lat: +p.coords.latitude.toFixed(6), lng: +p.coords.longitude.toFixed(6), acc: Math.round(p.coords.accuracy), at: nowISO() }; draw(); }, () => UI.toast(L('مقدرتش أجيب الموقع — فعّل الـ GPS واسمح للبرنامج', 'Could not get location'), 'warn'), { enableHighAccuracy: true, timeout: 15000 }); };
+      $('#cpMap', box) && ($('#cpMap', box).onclick = (e) => { e.preventDefault(); openExternal(`https://maps.google.com/?q=${rp.gps.lat},${rp.gps.lng}`); });
+    };
+    draw();
+  },
+  async printReport(j) {
+    const st = DB.settings().store || {}; const rp = j.report || {}; const cams = (rp.cams || []).filter((c) => c.loc || c.photo || c.note);
+    const ckl = Array.isArray(j.checklist) ? j.checklist : Object.entries(j.checklist || {}).filter(([, v]) => v).map(([k]) => k);
+    const qr = rp.gps ? await qrDataURL(`https://maps.google.com/?q=${rp.gps.lat},${rp.gps.lng}`, 160) : '';
+    printHTML(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><style>
+      @page{size:A4;margin:12mm}*{box-sizing:border-box}body{font-family:'Cairo',Tahoma,Arial;color:#111;font-size:12.5px;margin:0}
+      .hd{display:flex;align-items:center;gap:12px;border-bottom:3px solid #8B1A2B;padding-bottom:8px}.hd img{width:64px;height:64px;object-fit:contain}.hd h1{margin:0;font-size:22px;color:#8B1A2B}.hd small{color:#555}.no{margin-inline-start:auto;text-align:left}
+      h3{margin:12px 0 6px;font-size:14px;color:#8B1A2B;border-inline-start:4px solid #8B1A2B;padding-inline-start:8px}
+      table{width:100%;border-collapse:collapse}td{border:1px solid #ddd;padding:5px 8px;vertical-align:top}td.k{background:#faf4f5;width:22%;font-weight:700}
+      .cams{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.cam{border:1px solid #ddd;border-radius:10px;overflow:hidden;page-break-inside:avoid}.cam img{width:100%;height:120px;object-fit:cover;display:block;background:#eee}.cam div{padding:5px 8px}.cam b{color:#8B1A2B}
+      .chk{display:inline-block;margin:2px 10px 2px 0}.sig{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:14px}.sig div{border:1px solid #ddd;border-radius:10px;padding:8px;min-height:100px;text-align:center}.sig img{max-height:70px;max-width:100%}.ft{margin-top:10px;font-size:10px;color:#777;text-align:center}
+    </style></head><body>
+      <div class="hd"><img src="${logoSrc()}"><div><h1>${L('تقرير تركيب كاميرات مراقبة', 'CCTV installation report')}</h1><small>${esc(st.name || '')}${st.phone ? ' — ' + esc(st.phone) : ''}</small></div><div class="no">${L('رقم', 'No.')} <b>${esc(j.no)}</b><br>${fmtDate(j.installedAt || rp.at || j.date)}</div></div>
+      <h3>${L('العميل والموقع', 'Customer & site')}</h3><table><tr><td class="k">${L('العميل', 'Customer')}</td><td>${esc(j.customerName || '')}</td><td class="k">${L('الموبايل', 'Phone')}</td><td dir="ltr">${esc(j.phone || '')}</td></tr><tr><td class="k">${L('العنوان', 'Address')}</td><td colspan="3">${esc(j.address || j.location || '')}</td></tr>
+        ${rp.gps ? `<tr><td class="k">${L('تسجيل الوصول', 'Check-in')}</td><td colspan="3">${fmtDT(rp.gps.at)} — ${rp.gps.lat}, ${rp.gps.lng} (±${rp.gps.acc}m)</td></tr>` : ''}</table>
+      <h3>${L('الكاميرات', 'Cameras')} (${cams.length})</h3><div class="cams">${cams.map((c, i) => `<div class="cam">${c.photo ? `<img src="${c.photo}">` : '<img>'}<div><b>${L('كاميرا', 'Camera')} ${i + 1}</b> — ${esc(c.loc || '')}${c.note ? `<br><small>${esc(c.note)}</small>` : ''}</div></div>`).join('')}</div>
+      <h3>${L('النظام', 'System')}</h3><table>
+        <tr><td class="k">${L('الأجهزة', 'Equipment')}</td><td colspan="3">${(j.items || []).map((i) => `${esc(i.name)} × ${i.qty}`).join('، ')}</td></tr>
+        <tr><td class="k">${L('جهاز التسجيل', 'Recorder')}</td><td>${esc(rp.dvr || '—')}</td><td class="k">${L('الهارد / أيام التسجيل', 'HDD / days')}</td><td>${esc(rp.hdd || '—')}${rp.days ? ` — ${esc(rp.days)} ${L('يوم', 'days')}` : ''}</td></tr>
+        <tr><td class="k">${L('تطبيق المشاهدة', 'Viewing app')}</td><td>${esc(rp.app || '—')}</td><td class="k">${L('الشبكة', 'Network')}</td><td>${esc(rp.net || '—')}</td></tr>
+        <tr><td class="k">${L('الأمان', 'Security')}</td><td colspan="3">${rp.pwChanged ? '✔ ' + L('اتغيّرت كلمة السر الافتراضية واتسلّمت للعميل', 'Default password changed and handed over') : '—'}</td></tr>
+        ${ckl.length ? `<tr><td class="k">${L('قائمة التسليم', 'Checklist')}</td><td colspan="3">${ckl.map((c) => `<span class="chk">✔ ${esc(c)}</span>`).join('')}</td></tr>` : ''}
+        ${j.warrantyUntil ? `<tr><td class="k">${L('الضمان', 'Warranty')}</td><td colspan="3">${L('ساري حتى', 'Valid until')} <b>${fmtDate(j.warrantyUntil)}</b>${j.amc && j.amc.on ? ` — ${L('عقد صيانة دورية', 'Maintenance contract')}: ${money(j.amc.fee)} / ${this.everyName(j.amc.every)}` : ''}</td></tr>` : ''}</table>
+      ${rp.notes ? `<h3>${L('ملاحظات', 'Notes')}</h3><p>${esc(rp.notes)}</p>` : ''}
+      <div class="sig"><div>${L('استلام العميل', 'Customer sign-off')}<br>${rp.sig ? `<img src="${rp.sig}">` : '<br><br>'}<br><b>${esc(j.customerName || '')}</b></div><div>${L('الفني', 'Technician')}<br>${qr ? `<img src="${qr}" style="height:70px">` : '<br><br>'}<br><b>${esc(rp.tech || '')}</b></div></div>
+      <div class="ft">${COPYRIGHT_AR}</div></body></html>`, { type: 'report' });
+  },
+
+  /* ---------- 2) عقود الصيانة الدورية ---------- */
+  EVERY: () => [[1, L('شهري', 'Monthly')], [3, L('كل 3 شهور', 'Quarterly')], [6, L('كل 6 شهور', 'Half-yearly')], [12, L('سنوي', 'Yearly')]],
+  everyName(e) { return (this.EVERY().find((x) => x[0] === Number(e)) || [0, ''])[1]; },
+  amcDue(j) { const a = j.amc; if (!a || !a.on || !a.nextBill) return 0; let n = 0, d = new Date(a.nextBill); const end = a.end ? new Date(a.end) : null; while (d <= new Date() && (!end || d <= end) && n < 60) { n++; d = CCTV.addMonths(d, Number(a.every) || 1); } return n; },
+  amcList() { return CCTV.jobs().filter((j) => j.amc && j.amc.on && j.status !== 'cancelled'); },
+  amcDialog(j) {
+    const a = { on: true, fee: 0, every: 1, visits: 4, start: dayKey(), end: '', ...(j.amc || {}) };
+    UI.modal({ title: L('عقد صيانة دورية', 'Maintenance contract') + ' — ' + j.no, icon: 'shield', size: 'sm', body: UI.form([
+      { name: 'on', label: L('العقد ساري', 'Contract active'), type: 'checkbox', value: a.on, col: 12 },
+      { name: 'fee', label: L('قيمة الاشتراك', 'Fee'), type: 'number', value: a.fee || '', col: 6, required: true }, { name: 'every', label: L('كل', 'Every'), type: 'select', options: this.EVERY(), value: a.every, col: 6 },
+      { name: 'visits', label: L('زيارات صيانة في السنة', 'Visits per year'), type: 'number', value: a.visits, col: 12 },
+      { name: 'start', label: L('بداية العقد', 'Start'), type: 'date', value: String(a.start).slice(0, 10), col: 6 }, { name: 'end', label: L('نهاية العقد (اختياري)', 'End (optional)'), type: 'date', value: a.end ? String(a.end).slice(0, 10) : '', col: 6 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ العقد', 'Save'), cls: 'primary', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); const fee = round2(Number(v.fee) || 0); if (v.on && !(fee > 0)) return UI.toast(L('اكتب قيمة الاشتراك', 'Enter the fee'), 'err');
+        const every = Number(v.every) || 1; const visits = Math.max(0, Number(v.visits) || 0);
+        const amc = { on: !!v.on, fee, every, visits, start: v.start, end: v.end || '', nextBill: (j.amc && j.amc.nextBill && j.amc.start === v.start) ? j.amc.nextBill : v.start, pays: (j.amc && j.amc.pays) || [] };
+        DB.update('cctvJobs', j.id, { amc, maintMonths: visits ? Math.max(1, Math.round(12 / visits)) : j.maintMonths, nextVisit: j.nextVisit || (visits ? CCTV.addMonths(new Date(v.start), Math.max(1, Math.round(12 / visits))).toISOString() : null) });
+        audit('cctv.amc', `${j.no} ${fee}/${every}`); x.close(); UI.toast(L('اتحفظ العقد ✓', 'Contract saved ✓')); Modules.cctv.refresh && Modules.cctv.refresh(j.id);
+      } }] });
+  },
+  amcPay(j) {
+    j = DB.get('cctvJobs', j.id) || j; const a = j.amc; if (!a || !a.on) return; const n = Math.max(1, this.amcDue(j));
+    UI.modal({ title: L('تحصيل اشتراك الصيانة', 'Collect maintenance fee') + ' — ' + j.no, icon: 'money', size: 'sm', body: `<div class="stat-mini mb"><span class="l">${L('مستحق', 'Due')}: ${n} × ${money(a.fee)}</span><span class="v num">${money(n * a.fee)}</span></div>` + UI.form([
+      { name: 'periods', label: L('عدد الفترات', 'Periods'), type: 'number', value: n, col: 6 }, { name: 'src', label: L('الدفع', 'Payment'), type: 'select', options: CCTV.srcOpts(true), col: 6 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تحصيل', 'Collect'), cls: 'primary', icon: 'check', onClick: (x) => {
+        const v = UI.read(x.el); const k = Math.max(1, Math.min(24, Number(v.periods) || 1)); const amt = round2(k * a.fee);
+        if ((v.src || 'drawer') === 'drawer' && !App.needShift()) return;
+        if (v.src && v.src.startsWith('w:')) DB.insert('walletTx', { walletId: v.src.slice(2), type: 'sale', amount: amt, fee: 0, balanceDelta: amt, cashDelta: 0, ref: j.no, note: L('اشتراك صيانة كاميرات ', 'CCTV contract ') + j.no, date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null, status: 'completed' });
+        else if (v.src === 'credit') Customers.tx(CCTV.ensureCustomer(j), 'sale', amt, j.no, L('اشتراك صيانة كاميرات', 'CCTV contract'));
+        else cashMove(amt, 'cctv-amc', j.no, `${L('اشتراك صيانة', 'Contract')} ${j.no} — ${j.customerName || ''}`);
+        let nb = new Date(a.nextBill || a.start); for (let i = 0; i < k; i++) nb = CCTV.addMonths(nb, Number(a.every) || 1);
+        DB.update('cctvJobs', j.id, { amc: { ...a, nextBill: dayKey(nb), pays: [...(a.pays || []), { id: uid(), amount: amt, periods: k, src: v.src || 'drawer', date: nowISO(), by: Session.user.name }] }, history: CCTV.hist(j, 'pay', `${L('اشتراك صيانة', 'Contract')} ${money(amt)}`) });
+        audit('cctv.amcPay', `${j.no} ${amt}`); x.close(); UI.toast(L('اتحصّل ✓', 'Collected ✓')); Modules.cctv.refresh && Modules.cctv.refresh(j.id);
+      } }] });
+  },
+  amcCard() {
+    const list = this.amcList(); const due = list.filter((j) => this.amcDue(j) > 0);
+    const monthly = round2(sum(list, (j) => j.amc.fee / (Number(j.amc.every) || 1)));
+    return `<div class="card card-b mb"><div class="row wrap" style="gap:8px;align-items:center"><h4 style="margin:0;flex:1">📑 ${L('عقود الصيانة الدورية', 'Maintenance contracts')} <span class="faint" style="font-weight:600">· ${list.length} ${L('عقد', 'contracts')} · ${L('دخل شهري ثابت', 'monthly recurring')} ${money(monthly)}</span></h4>${due.length ? `<span class="tag err">${due.length} ${L('مستحق', 'due')}</span>` : ''}</div>
+      ${list.length ? list.sort((a, b) => this.amcDue(b) - this.amcDue(a)).map((j) => { const n = this.amcDue(j); return `<div class="cv-row" data-amc="${j.id}"><span class="av">${esc((j.customerName || '?').trim()[0] || '?')}</span><div style="min-width:0;flex:1"><b>${esc(j.customerName || '')}</b> <span class="faint mono" style="font-size:12px">${j.no}</span><div class="faint" style="font-size:12px">${money(j.amc.fee)} / ${this.everyName(j.amc.every)} · ${L('الاستحقاق الجاي', 'Next bill')} ${fmtDate(j.amc.nextBill)}</div></div>${n ? `<span class="tag err">${L('متأخر', 'Due')} ${n}</span>` : '<span class="tag ok">✓</span>'}<button class="btn sm" data-amcpay="${j.id}">${L('تحصيل', 'Collect')}</button></div>`; }).join('') : `<div class="faint" style="font-size:12.5px">${L('من تفاصيل أي تركيب ← «عقد صيانة دورية» — دخل ثابت كل شهر من عملائك.', 'Open an installation ← “Maintenance contract”.')}</div>`}</div>`;
+  }
+};
+
+(() => {
+  const M = Modules.cctv; if (!M) return;
+  /* أزرار في تفاصيل التركيب */
+  const v0 = M.view.bind(M);
+  M.view = function (j) {
+    const out = v0(j);
+    try {
+      const x = DB.get('cctvJobs', j.id) || j; if (x.status === 'quote' || x.status === 'cancelled') return out;
+      const m = [...$$('.modal-bg')].pop(); const f = m && $('.modal-f', m); if (!f) return out;
+      const mk = (h, fn, cls = 'btn') => { const b = document.createElement('button'); b.className = cls; b.innerHTML = h; b.onclick = fn; f.prepend(b); };
+      if (x.amc && x.amc.on) mk(`💵 ${L('تحصيل الاشتراك', 'Collect fee')}${CvPro.amcDue(x) ? ` <span class="tag err">${CvPro.amcDue(x)}</span>` : ''}`, () => { m.remove(); CvPro.amcPay(x); });
+      mk(`📑 ${x.amc && x.amc.on ? L('العقد', 'Contract') : L('عقد صيانة دورية', 'Maintenance contract')}`, () => { m.remove(); CvPro.amcDialog(x); });
+      mk(`📋 ${L('تقرير التركيب', 'Install report')}${x.report ? ' ✓' : ''}`, () => { m.remove(); CvPro.report(x); }, 'btn primary');
+    } catch (e) { console.warn('cvpro', e); }
+    return out;
+  };
+  /* كارت العقود في تبويب «الضمان والزيارات» */
+  const c0 = M.care.bind(M);
+  M.care = function (box) { c0(box); try { box.insertAdjacentHTML('afterbegin', CvPro.amcCard()); $$('[data-amcpay]', box).forEach((b) => (b.onclick = (e) => { e.stopPropagation(); CvPro.amcPay(DB.get('cctvJobs', b.dataset.amcpay)); })); $$('[data-amc]', box).forEach((r) => (r.onclick = (e) => { if (e.target.closest('[data-amcpay]')) return; M.view(DB.get('cctvJobs', r.dataset.amc)); })); } catch (e) { console.warn(e); } };
+  /* تنبيه في الجرس */
+  if (typeof Notify !== 'undefined') { const nl = Notify.list.bind(Notify); Notify.list = function () { const a = nl(); try { if (feat('cctv')) { const d = CvPro.amcList().filter((j) => CvPro.amcDue(j) > 0); if (d.length) a.push({ type: 'warn', icon: 'cctv', t: L(`${d.length} اشتراك صيانة كاميرات مستحق`, `${d.length} CCTV contracts due`), s: money(sum(d, (j) => CvPro.amcDue(j) * j.amc.fee)), go: () => { Modules.cctv.tab = 'care'; App.go('cctv'); } }); } } catch (_) {} return a; }; }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   مناقصة الموردين على واتساب — قايمة النواقص تتبعت لكذا مورد بلينك، وكل مورد يكتب أسعاره
+   والبرنامج يقارن: أرخص مورد لكل صنف، وأرخص مورد واحد للطلبية كلها، والتوفير.
+   محتاج ملف supabase/pos-1.9.sql + نشر rfq.html على الموقع (بيتعمل مع بناء الأندرويد).
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const Rfq = {
+  on() { return typeof Cloud !== 'undefined' && Cloud.ok(); },
+  list() { return (DB.settings().rfqs || []).slice(); },
+  saveList(l) { DB.saveSettings({ rfqs: l.slice(-30) }); },
+  link(r) { return `${Cloud.site()}/rfq.html?t=${r.token}`; },
+  async push(r) { const mid = await License.machineId(); const st = DB.settings().store || {}; await Cloud.rpc('pos_rfq_put', { p_mid: mid, p_token: r.token, p_closed: !!r.closed, p_data: { v: 1, store: { name: st.name || '', phone: st.phone || '', address: st.address || '' }, no: r.no, until: r.until || '', note: r.note || '', items: r.items.map((i) => ({ k: i.k, n: i.name, q: i.qty, u: i.unit || '' })) } }); },
+  async replies(r) { const mid = await License.machineId(); return (await Cloud.rpc('pos_rfq_replies', { p_mid: mid, p_token: r.token })) || []; },
+  /* إنشاء مناقصة من النواقص */
+  create() {
+    if (!this.on()) return UI.toast(L('المناقصة محتاجة نت وسيرفر التفعيل', 'Needs the cloud server'), 'warn');
+    const rows = StockPlan.calc().filter((r) => r.need).slice(0, 60);
+    const sups = DB.filter('suppliers', (s) => s.phone);
+    const m = UI.modal({ title: L('مناقصة الموردين — طلب أسعار', 'Supplier tender — request prices'), icon: 'truck', size: 'xl', body: `
+      <p class="faint" style="margin-top:0;line-height:1.9">${L('اختار الأصناف والكميات والموردين — كل مورد هيوصله لينك على واتساب يكتب فيه أسعاره، والبرنامج يقارنلك.', 'Pick items and suppliers — each gets a WhatsApp link to enter prices.')}</p>
+      <div class="grid g2" style="gap:14px;align-items:start"><div class="card"><div class="card-h"><h3>${icon('box')}${L('الأصناف', 'Items')} <span class="faint" id="rqN"></span></h3><div class="spacer"></div><input id="rqQ" list="rqPl" placeholder="${L('ضيف صنف...', 'Add item...')}" style="max-width:170px;height:34px"><datalist id="rqPl">${DB.filter('products', (p) => p.active !== false && p.type !== 'service').slice(0, 800).map((p) => `<option value="${esc(p.name)}">`).join('')}</datalist><button class="btn sm" id="rqAdd">${icon('plus')}</button></div><div class="tbl-wrap" style="max-height:46vh"><table class="tbl"><tbody id="rqItems"></tbody></table></div></div>
+      <div class="card card-b"><h4 style="margin:0 0 8px">${icon('users')} ${L('الموردين', 'Suppliers')}</h4>${sups.length ? sups.map((s) => `<label class="check"><input type="checkbox" data-sup="${s.id}" checked> ${esc(s.name)} <span class="faint" dir="ltr">${esc(s.phone)}</span></label>`).join('') : `<div class="faint">${L('ضيف أرقام موبايل للموردين الأول', 'Add supplier phone numbers first')}</div>`}
+      <div class="mt">${UI.form([{ name: 'until', label: L('آخر معاد للرد', 'Reply by'), type: 'date', value: dayKey(addDays(new Date(), 2)), col: 12 }, { name: 'note', label: L('ملاحظة للموردين', 'Note to suppliers'), col: 12, attrs: `placeholder="${L('مثلاً: التوريد خلال يومين', 'e.g. delivery in 2 days')}"` }])}</div></div></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('إرسال للموردين', 'Send to suppliers'), cls: 'primary', icon: 'whatsapp', onClick: (x) => this.send(x, items) }] });
+    const items = rows.map((r) => ({ k: r.id, pid: r.id, name: r.name, qty: r.sug, on: true }));
+    const draw = () => {
+      $('#rqItems', m.el).innerHTML = items.map((i, k) => `<tr><td style="width:30px"><input type="checkbox" data-on="${k}" ${i.on ? 'checked' : ''}></td><td>${esc(i.name)}</td><td style="width:90px"><input type="number" data-q="${k}" value="${i.qty}" min="1"></td></tr>`).join('') || `<tr><td>${UI.empty(L('مفيش نواقص دلوقتي — ضيف أصناف بنفسك', 'No shortages — add items'))}</td></tr>`;
+      $('#rqN', m.el).textContent = `(${items.filter((i) => i.on).length})`;
+      $$('[data-on]', m.el).forEach((c) => (c.onchange = () => { items[+c.dataset.on].on = c.checked; $('#rqN', m.el).textContent = `(${items.filter((i) => i.on).length})`; }));
+      $$('[data-q]', m.el).forEach((c) => (c.onchange = () => (items[+c.dataset.q].qty = Math.max(1, Number(c.value) || 1))));
+    };
+    const add = () => { const q = $('#rqQ', m.el).value.trim(); if (!q) return; const p = DB.find('products', (x) => x.name === q); if (items.some((i) => i.pid && p && i.pid === p.id)) return UI.toast(L('الصنف موجود', 'Already added'), 'warn'); items.push({ k: p ? p.id : 'n' + Date.now().toString(36), pid: p ? p.id : '', name: q, qty: 1, on: true }); $('#rqQ', m.el).value = ''; draw(); };
+    $('#rqAdd', m.el).onclick = add; $('#rqQ', m.el).onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } };
+    draw();
+  },
+  async send(m, items) {
+    const sel = items.filter((i) => i.on && i.qty > 0); if (!sel.length) return UI.toast(L('اختار أصناف', 'Pick items'), 'warn');
+    const sups = $$('[data-sup]:checked', m.el).map((c) => DB.get('suppliers', c.dataset.sup)).filter(Boolean); if (!sups.length) return UI.toast(L('اختار مورد واحد على الأقل', 'Pick a supplier'), 'warn');
+    const v = UI.read(m.el); const r = { token: 'Q' + Cloud.token(20), no: DB.nextNo('rfq', 'RFQ-'), date: nowISO(), until: v.until || '', note: v.note || '', items: sel.map((i) => ({ k: i.k, pid: i.pid, name: i.name, qty: i.qty })), sups: sups.map((s) => s.id) };
+    try { await this.push(r); } catch (e) { return UI.toast(L('مقدرتش أرفع المناقصة: ', 'Upload failed: ') + e.message, 'err', 6000); }
+    this.saveList([...this.list(), r]); audit('rfq.create', `${r.no} ${sel.length} items ${sups.length} suppliers`);
+    const st = DB.settings().store || {}; const u = this.link(r);
+    sups.forEach((s) => { const t = `${L('أهلاً', 'Hi')} ${s.name} 👋\n${L(`محتاجين أسعاركم لـ ${sel.length} صنف (طلبية ${r.no})`, `Please quote ${sel.length} items (${r.no})`)}${r.until ? ` — ${L('قبل', 'by')} ${fmtDate(r.until)}` : ''}:\n${u}\n\n${st.name || ''}`; if (typeof WaLink !== 'undefined' && WaLink.ready()) WaLink.queue(s.phone, t, { kind: 'rfq', ref: r.no, prio: 1 }); else sendWhatsApp(s.phone, t); });
+    m.close(); UI.toast(L(`اتبعتت لـ ${sups.length} مورد ✓ — الردود هتظهر في «مناقصات الموردين»`, 'Sent ✓'));
+  },
+  /* المقارنة */
+  compare(r, reps) {
+    const items = r.items; const S = reps.map((p) => ({ name: p.name, phone: p.phone, note: p.note, at: p.at, pr: p.prices || {} }));
+    const price = (s, i) => { const v = Number(s.pr[i.k]); return v > 0 ? v : null; };
+    const best = items.map((i) => { let b = null; S.forEach((s, x) => { const v = price(s, i); if (v != null && (b == null || v < b.v)) b = { v, x }; }); return b; });
+    const mixTotal = round2(items.reduce((a, i, k) => a + (best[k] ? best[k].v * i.qty : 0), 0));
+    const full = S.map((s, x) => { const covered = items.filter((i) => price(s, i) != null).length; return { x, covered, total: round2(sum(items, (i) => (price(s, i) || 0) * i.qty)) }; });
+    const one = full.filter((f) => f.covered === items.length).sort((a, b) => a.total - b.total)[0] || null;
+    return { S, best, mixTotal, full, one, price };
+  },
+  async open(r) {
+    let reps = []; try { reps = await this.replies(r); } catch (e) { return UI.toast(e.message, 'err'); }
+    const c = this.compare(r, reps); const items = r.items;
+    const m = UI.modal({ title: `${L('مناقصة', 'Tender')} ${r.no} — ${reps.length} ${L('رد', 'replies')}`, icon: 'truck', size: 'xl', body: reps.length ? `
+      <div class="grid g3 mb">${UI.kpi(L('أرخص توليفة (كل صنف من أرخص مورد)', 'Best mix'), money(c.mixTotal), 'trend', 'c-ok')}${c.one ? UI.kpi(L('أرخص مورد واحد للطلبية كلها', 'Cheapest single supplier'), money(c.one.total), 'truck', '', esc(c.S[c.one.x].name)) : UI.kpi(L('أرخص مورد واحد', 'Single supplier'), '—', 'truck', '', L('محدش سعّر كل الأصناف', 'No full quote'))}${c.one ? UI.kpi(L('التوفير بالتوليفة', 'Saving with mix'), money(round2(c.one.total - c.mixTotal)), 'money', 'c-info') : ''}</div>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th>${c.S.map((s) => `<th>${esc(s.name)}</th>`).join('')}</tr></thead><tbody>
+      ${items.map((i, k) => `<tr><td>${esc(i.name)}</td><td class="num">${i.qty}</td>${c.S.map((s, x) => { const v = c.price(s, i); return `<td class="num ${c.best[k] && c.best[k].x === x ? 'rq-best' : ''}">${v != null ? money(v, false) : '—'}</td>`; }).join('')}</tr>`).join('')}
+      <tr><td colspan="2"><b>${L('إجمالي كل مورد', 'Supplier total')}</b></td>${c.full.map((f) => `<td class="num"><b>${money(f.total, false)}</b><div class="faint" style="font-size:11px">${f.covered}/${items.length}</div></td>`).join('')}</tr></tbody></table></div>
+      ${c.S.some((s) => s.note) ? `<div class="mt">${c.S.filter((s) => s.note).map((s) => `<div class="faint">💬 <b>${esc(s.name)}</b>: ${esc(s.note)}</div>`).join('')}</div>` : ''}` : `<div class="card card-b">${UI.empty(L('لسه محدش رد — الموردين هيوصلهم اللينك على واتساب', 'No replies yet'), 'clock')}<div class="tc mt"><input class="mono" readonly value="${esc(this.link(r))}" dir="ltr" style="max-width:420px"></div></div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, ...(reps.length ? [{ label: L('ابعت أمر الشراء لكل مورد', 'Send purchase orders'), icon: 'whatsapp', onClick: () => this.orders(r, c) }, { label: L('طباعة المقارنة', 'Print comparison'), icon: 'printer', onClick: () => this.print(r, c) }] : []),
+        { label: r.closed ? L('فتح المناقصة', 'Reopen') : L('قفل المناقصة', 'Close tender'), onClick: async (x) => { r.closed = !r.closed; try { await this.push(r); } catch (_) {} this.saveList(this.list().map((y) => (y.token === r.token ? r : y))); x.close(); this.open(r); } }] });
+  },
+  orders(r, c) {
+    const st = DB.settings().store || {}; const by = {};
+    r.items.forEach((i, k) => { const b = c.best[k]; if (!b) return; (by[b.x] ||= []).push(`• ${i.name} × ${i.qty} = ${money(b.v * i.qty, false)}`); });
+    Object.entries(by).forEach(([x, lines]) => { const s = c.S[x]; const t = `${L('أهلاً', 'Hi')} ${s.name} 👋\n${L('تمام، عايزين نطلب', 'We would like to order')} (${r.no}):\n${lines.join('\n')}\n\n${st.name || ''}`; if (typeof WaLink !== 'undefined' && WaLink.ready()) WaLink.queue(s.phone, t, { kind: 'rfq', ref: r.no, prio: 1 }); else sendWhatsApp(s.phone, t); });
+    audit('rfq.order', r.no); UI.toast(L(`اتبعت أمر شراء لـ ${Object.keys(by).length} مورد ✓`, 'Orders sent ✓'));
+  },
+  print(r, c) {
+    printHTML(reportDoc(`${L('مقارنة أسعار الموردين', 'Supplier price comparison')} — ${r.no}`, `<div class="kp"><div><span>${L('أرخص توليفة', 'Best mix')}</span><b>${money(c.mixTotal)}</b></div>${c.one ? `<div><span>${L('أرخص مورد واحد', 'Single supplier')}</span><b>${money(c.one.total)} — ${esc(c.S[c.one.x].name)}</b></div><div><span>${L('التوفير', 'Saving')}</span><b>${money(round2(c.one.total - c.mixTotal))}</b></div>` : ''}</div>
+      <table><thead><tr><th>${L('الصنف', 'Item')}</th><th>${L('الكمية', 'Qty')}</th>${c.S.map((s) => `<th>${esc(s.name)}</th>`).join('')}</tr></thead><tbody>${r.items.map((i, k) => `<tr><td>${esc(i.name)}</td><td>${i.qty}</td>${c.S.map((s, x) => { const v = c.price(s, i); return `<td style="${c.best[k] && c.best[k].x === x ? 'background:#e6f6ee;font-weight:800' : ''}">${v != null ? money(v, false) : '—'}</td>`; }).join('')}</tr>`).join('')}</tbody></table>`), { type: 'report' });
+  },
+  async manage() {
+    const l = this.list().reverse();
+    const m = UI.modal({ title: L('مناقصات الموردين', 'Supplier tenders'), icon: 'truck', size: 'lg', body: `<div class="row mb"><div class="spacer"></div><button class="btn primary" id="rqNew">${icon('plus')}${L('مناقصة جديدة من النواقص', 'New tender from shortages')}</button></div>
+      <div class="tbl-wrap"><table class="tbl stack"><thead><tr><th>${L('رقم', 'No.')}</th><th>${L('التاريخ', 'Date')}</th><th>${L('الأصناف', 'Items')}</th><th>${L('الموردين', 'Suppliers')}</th><th>${L('الحالة', 'Status')}</th><th></th></tr></thead><tbody>
+      ${l.map((r) => `<tr><td><b>${esc(r.no)}</b></td><td>${fmtDate(r.date)}</td><td>${r.items.length}</td><td>${(r.sups || []).length}</td><td>${r.closed ? `<span class="tag">${L('مقفولة', 'Closed')}</span>` : `<span class="tag ok">${L('مفتوحة', 'Open')}</span>`}</td><td><button class="btn sm primary" data-op="${r.token}">${L('الردود والمقارنة', 'Replies')}</button></td></tr>`).join('') || `<tr><td colspan="6">${UI.empty(L('مفيش مناقصات لسه', 'No tenders yet'), 'truck')}</td></tr>`}</tbody></table></div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }] });
+    $('#rqNew', m.el).onclick = () => { m.close(); this.create(); };
+    $$('[data-op]', m.el).forEach((b) => (b.onclick = () => { const r = this.list().find((x) => x.token === b.dataset.op); if (r) { m.close(); this.open(r); } }));
+  }
+};
+
+(() => {
+  const P = Modules.purchases; if (!P) return;
+  const r0 = P.render.bind(P);
+  P.render = function (el) { r0(el); try { const t = $('.sec-title', el); if (t && !$('#rqBtn', t) && Rfq.on()) { const b = document.createElement('button'); b.className = 'btn'; b.id = 'rqBtn'; b.innerHTML = `${icon('truck')}${L('مناقصة الموردين', 'Supplier tender')}`; b.onclick = () => Rfq.manage(); t.insertBefore(b, $('#puNew', t)); } } catch (_) {} };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   ربط ماكينات الشحن برسائل الـ SMS — نفس تطبيق «مركز أهلاً SMS» اللي على موبايل المحافظ
+   - رسالة «تم شحن رصيدك» من فوري/أمان/مصاري/بي/ضامن/ممكن ← تظهر على كارت الماكينة «سجّل الشحن» بضغطة
+   - أي رسالة فيها «رصيدك الحالي» ← بتتقارن برصيد الماكينة في البرنامج، ولو فيه فرق تنبيه + زرار مطابقة
+   كل ماكينة ليها اسم مُرسل (بيتعرف تلقائي من نوعها) — وممكن تغيّره من «ربط رسائل الماكينات».
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const MachineSms = {
+  // أسماء المُرسل المعروفة لكل نوع ماكينة
+  KNOWN: { fawry: /fawry|فوري/i, aman: /aman|أمان|امان/i, masary: /masary|مصاري|مصارى/i, bee: /^bee\b|bee[\s._-]*(pay|egypt)?$|^بي$/i, damen: /damen|ضامن/i, momkn: /momkn|momken|ممكن/i },
+  TOPUP: /(تم\s*)?(شحن|اضافه|اضافة|ايداع|تحويل)\s*(رصيد|مبلغ)?.{0,40}(الي|إلى|الى|لـ?)?\s*(حسابك|محفظتك|رصيدك|ماكينتك)|recharg|top[\s-]*up|credited|has\s*been\s*added|تم\s*اضافه|تم\s*اضافة|تم\s*ايداع|تم\s*شحن/i,
+  TOL: 1,
+  machineFor(sms) {
+    const s = String(sms.sender || '').trim(); if (!s) return null;
+    const ms = DB.filter('machines', (m) => m.active !== false);
+    const own = ms.find((m) => m.smsSender && s.toLowerCase().includes(String(m.smsSender).toLowerCase().trim()));
+    if (own) return own;
+    // من نوع الماكينة: لو فيه ماكينة واحدة بس من النوع ده (ولو أكتر: رقم الماكينة/التاجر مكتوب في الرسالة)
+    const kind = Object.keys(this.KNOWN).find((k) => this.KNOWN[k].test(s)); if (!kind) return null;
+    const same = ms.filter((m) => m.provider === kind && !m.smsSender);
+    if (same.length === 1) return same[0];
+    const body = SmsParse.norm(sms.body);
+    return same.find((m) => m.code && body.includes(String(m.code).trim())) || (same.length ? { ambiguous: true, kind } : null);
+  },
+  parse(sms) {
+    const t = SmsParse.norm(sms.body); const p = SmsParse.parse(sms.sender, sms.body);
+    const topup = this.TOPUP.test(t) && !/(خصم|سحب|دفع|سداد|شراء|debited|paid)/i.test(t.split(/رصيد(ك)?\s*(الحالي|المتاح)/)[0] || '');
+    return { amount: p.amount, balance: p.balance, txId: p.txId, topup: !!(topup && p.amount) };
+  },
+  /* بتشتغل قبل معالجة رسائل المحافظ — بتسحب رسائل الماكينات وتعلّمها */
+  pre() {
+    const out = { n: 0, alerts: [], topups: 0 };
+    DB.filter('smsInbox', (s) => s.status === 'new').forEach((sms) => {
+      const m = this.machineFor(sms); if (!m) return;
+      if (m.ambiguous) { DB.update('smsInbox', sms.id, { status: 'machine', mkind: m.kind, mp: this.parse(sms) }); out.n++; return; }
+      const p = this.parse(sms);
+      if (p.txId && DB.find('smsInbox', (x) => x.id !== sms.id && x.status === 'machine' && x.machineId === m.id && x.mp?.txId === p.txId)) { DB.update('smsInbox', sms.id, { status: 'dup' }); return; }
+      DB.update('smsInbox', sms.id, { status: 'machine', machineId: m.id, mp: p, mstate: p.topup ? 'pending' : 'info' }); out.n++;
+      if (p.topup) out.topups++;
+      if (p.balance != null) {
+        DB.update('machines', m.id, { smsBal: p.balance, smsBalAt: sms.at });
+        const d = this.diff(DB.get('machines', m.id)); if (d != null && Math.abs(d) > this.TOL && !p.topup) out.alerts.push(`${m.name}: ${d > 0 ? '+' : ''}${money(d, false)}`);
+      }
+    });
+    if (out.topups) UI.toast(`⚡ ${L(`وصلت رسالة شحن رصيد لـ ${out.topups} ماكينة — سجّلها من صفحة الماكينات`, `${out.topups} machine top-up SMS — record from Machines`)}`, 'info', 6000);
+    if (out.alerts.length) { UI.toast(`${L('فرق في رصيد الماكينة عن آخر رسالة', 'Machine balance differs from SMS')} — ${out.alerts.slice(0, 3).join(' · ')}`, 'warn', 7000); try { SmsSound.play('warn'); } catch (_) {} }
+    if (out.n && App.current === 'machines') setTimeout(() => App.reload(), 50);
+    return out;
+  },
+  pending(mid) { return DB.filter('smsInbox', (s) => s.status === 'machine' && s.mstate === 'pending' && (!mid || s.machineId === mid)).sort((a, b) => (a.at < b.at ? 1 : -1)); },
+  /* الفرق بين رصيد الرسالة ورصيد البرنامج وقت الرسالة (الشحن المسجّل من رسالة بيتحسب بوقت رسالته، والشحن اللي لسه متسجلش بيتحسب كأنه اتسجل) */
+  diff(m) {
+    if (m.smsBal == null) return null; const at = m.smsBalAt; const smsAt = (t) => { const s = t.smsId && DB.get('smsInbox', t.smsId); return s ? s.at : t.date; };
+    const later = DB.filter('machineTx', (t) => t.machineId === m.id && smsAt(t) > at);
+    const pend = this.pending(m.id).filter((s) => s.at <= at);
+    return round2(m.smsBal - (Machines.balance(m) - sum(later, (t) => t.balanceDelta) + sum(pend, (s) => (s.mp && s.mp.amount) || 0)));
+  },
+  /* سجّل الشحن من الرسالة */
+  record(sms) {
+    const m = DB.get('machines', sms.machineId); if (!m) return; const p = sms.mp || {};
+    UI.modal({ title: L('تسجيل شحن رصيد من رسالة', 'Record top-up from SMS') + ' — ' + esc(m.name), icon: 'zap', size: 'sm', body: `<div class="ms-sms">${esc(sms.body)}</div>` + UI.form([
+      { name: 'amount', label: L('المبلغ المدفوع للشركة', 'Amount paid'), type: 'number', value: p.amount || '', required: true, col: 12 },
+      { name: 'bonus', label: L('رصيد إضافي / بونص', 'Bonus'), type: 'number', value: 0, col: 12 },
+      { name: 'src', label: L('الدفع من', 'Paid from'), type: 'select', options: PAY_SRC(), col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تسجيل', 'Record'), cls: 'primary', onClick: (x) => {
+        const v = UI.read(x.el); const a = Number(v.amount) || 0; if (!(a > 0)) return; if (v.src === 'drawer' && !App.needShift()) return;
+        const t = DB.insert('machineTx', { machineId: m.id, type: 'topup', amount: a, commission: Number(v.bonus) || 0, balanceDelta: round2(a + (Number(v.bonus) || 0)), cashDelta: v.src === 'drawer' ? -a : 0, note: L('من رسالة SMS', 'From SMS') + (p.txId ? ` #${p.txId}` : ''), smsId: sms.id, date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null });
+        payFromSource(v.src, a, 'machine-topup', t.id); DB.update('smsInbox', sms.id, { mstate: 'done', txId: t.id }); audit('machine.topup.sms', `${m.name} ${a}`); x.close(); UI.toast(L('اتسجل الشحن ✓', 'Recorded ✓')); App.reload();
+      } }] });
+  },
+  ignore(sms) { DB.update('smsInbox', sms.id, { mstate: 'ignored' }); App.reload(); },
+  assign(sms) {
+    const ms = DB.filter('machines', (m) => m.active !== false);
+    UI.modal({ title: L('الرسالة دي لأنهي ماكينة؟', 'Which machine?'), icon: 'zap', size: 'sm', body: `<div class="ms-sms">${esc(sms.body)}</div>` + UI.form([{ name: 'mid', label: L('الماكينة', 'Machine'), type: 'select', options: ms.map((m) => [m.id, m.name]), col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تمام', 'OK'), cls: 'primary', onClick: (x) => { const v = UI.read(x.el); const p = sms.mp || {}; DB.update('smsInbox', sms.id, { machineId: v.mid, mstate: p.topup ? 'pending' : 'info' }); if (p.balance != null) DB.update('machines', v.mid, { smsBal: p.balance, smsBalAt: sms.at }); x.close(); App.reload(); } }] });
+  },
+  /* إعداد اسم المُرسل لكل ماكينة */
+  settings() {
+    const ms = DB.all('machines');
+    UI.modal({ title: L('ربط رسائل الماكينات (SMS)', 'Machine SMS link'), icon: 'zap', body: `<p class="faint" style="margin-top:0;line-height:1.9">${L('ركّب تطبيق «مركز أهلاً SMS» على الموبايل اللي بتوصله رسائل الماكينة (نفس اللي بيربط المحافظ). البرنامج بيعرف رسائل فوري/أمان/مصاري/بي/ضامن/ممكن لوحده — لو الشركة بتبعت باسم تاني اكتبه هنا.', 'Install the SMS app on the phone receiving machine messages. Known providers are detected automatically; enter a custom sender name if needed.')}</p>
+      ${typeof SmsLink !== 'undefined' && SmsLink.cfg().enabled ? '' : `<div class="note warn mb">${L('ربط الرسائل مش مفعّل — فعّله من المحافظ ← ربط الرسائل.', 'SMS link is off — enable it from Wallets.')}</div>`}
+      ${ms.map((m) => `<div class="row" style="gap:10px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line)"><b style="flex:1">${esc(m.name)} <span class="faint">${esc(provName(m.provider))}</span></b><input data-ms="${m.id}" value="${esc(m.smsSender || '')}" placeholder="${L('تلقائي', 'Auto')}" dir="ltr" style="max-width:160px"></div>`).join('') || UI.empty(L('ضيف ماكينة الأول', 'Add a machine first'), 'zap')}`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', onClick: (x) => { $$('[data-ms]', x.el).forEach((i) => DB.update('machines', i.dataset.ms, { smsSender: i.value.trim() })); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.reload(); } }] });
+  },
+  /* قسم في صفحة الماكينات */
+  sectionHTML() {
+    const pend = this.pending(); const amb = DB.filter('smsInbox', (s) => s.status === 'machine' && !s.machineId && s.mstate !== 'ignored');
+    const diffs = DB.filter('machines', (m) => m.active !== false && m.smsBal != null).map((m) => ({ m, d: this.diff(m) })).filter((x) => x.d != null && Math.abs(x.d) > this.TOL);
+    const rows = [
+      ...pend.map((s) => { const m = DB.get('machines', s.machineId); return `<div class="ms-it"><span class="ms-ic ok">⚡</span><div class="ms-tx"><b>${L('شحن رصيد', 'Top-up')} ${money(s.mp.amount)} — ${esc(m?.name || '')}</b><small>${fmtDT(s.at)} · ${esc(s.sender)}</small></div><button class="btn sm primary" data-msr="${s.id}">${L('سجّل الشحن', 'Record')}</button><button class="btn sm ghost" data-msi="${s.id}">${L('تجاهل', 'Ignore')}</button></div>`; }),
+      ...amb.map((s) => `<div class="ms-it"><span class="ms-ic">❔</span><div class="ms-tx"><b>${L('رسالة من', 'SMS from')} ${esc(s.sender)}${s.mp?.amount ? ` — ${money(s.mp.amount)}` : ''}</b><small>${fmtDT(s.at)} · ${L('عندك أكتر من ماكينة من النوع ده', 'several machines of this type')}</small></div><button class="btn sm" data-msa="${s.id}">${L('حدد الماكينة', 'Pick machine')}</button><button class="btn sm ghost" data-msi="${s.id}">${L('تجاهل', 'Ignore')}</button></div>`),
+      ...diffs.map(({ m, d }) => `<div class="ms-it"><span class="ms-ic warn">⚠️</span><div class="ms-tx"><b>${esc(m.name)}: ${L('الرسالة بتقول', 'SMS says')} ${money(m.smsBal)} — ${L('فرق', 'diff')} <span class="${d > 0 ? 'pos' : 'neg'}">${d > 0 ? '+' : ''}${money(d, false)}</span></b><small>${fmtDT(m.smsBalAt)}</small></div><button class="btn sm" data-msadj="${m.id}">${L('مطابقة', 'Reconcile')}</button></div>`)];
+    return `<div class="card card-b mb ms-box"><div class="row wrap" style="gap:8px;align-items:center"><b style="flex:1">📩 ${L('رسائل الماكينات', 'Machine SMS')} ${rows.length ? `<span class="tag warn">${rows.length}</span>` : `<span class="tag ok">${L('كله مظبوط', 'All good')}</span>`}</b><button class="btn sm" id="msSet">${icon('settings')}${L('ربط رسائل الماكينات', 'Machine SMS settings')}</button></div>${rows.join('')}</div>`;
+  },
+  bind(el) {
+    const g = (id) => DB.get('smsInbox', id);
+    $('#msSet', el) && ($('#msSet', el).onclick = () => this.settings());
+    $$('[data-msr]', el).forEach((b) => (b.onclick = () => this.record(g(b.dataset.msr))));
+    $$('[data-msi]', el).forEach((b) => (b.onclick = () => this.ignore(g(b.dataset.msi))));
+    $$('[data-msa]', el).forEach((b) => (b.onclick = () => this.assign(g(b.dataset.msa))));
+    $$('[data-msadj]', el).forEach((b) => (b.onclick = () => { const m = DB.get('machines', b.dataset.msadj); Modules.machines.adjustDialog(m); setTimeout(() => { const i = $('.modal-bg:last-child [name=actual]'); if (i) i.value = round2(Machines.balance(m) + this.diff(m)); }, 30); }));
+  }
+};
+
+(() => {
+  if (typeof SMS_ST !== 'undefined') { SMS_ST.machine = ['رسالة ماكينة ⚡', 'Machine SMS ⚡', 'info']; }
+  if (typeof SmsLink !== 'undefined') { const p0 = SmsLink.process.bind(SmsLink); SmsLink.process = function () { let r = null; try { r = MachineSms.pre(); } catch (e) { console.warn('machine sms', e); } const o = p0(); if (r && r.n) o.changed = true; return o; }; }
+  const M = Modules.machines; if (!M) return;
+  const m0 = M.main.bind(M);
+  M.main = function (el) { m0(el); try { if (!(typeof SmsLink !== 'undefined' && (SmsLink.cfg().enabled || MachineSms.pending().length))) return; const grid = $('#mcCards', el); if (!grid) return; const w = document.createElement('div'); w.innerHTML = MachineSms.sectionHTML(); grid.parentNode.insertBefore(w.firstElementChild, grid); MachineSms.bind(el); } catch (e) { console.warn(e); } };
+  if (typeof Notify !== 'undefined') { const l0 = Notify.list.bind(Notify); Notify.list = function () { const l = l0(); try { const n = MachineSms.pending().length; if (n) l.push({ type: 'info', icon: 'zap', t: L(`${n} رسالة شحن رصيد ماكينة مستنية تتسجل`, `${n} machine top-up SMS to record`), s: L('ماكينات الشحن', 'Machines'), go: () => App.go('machines') }); } catch (_) {} return l; }; }
 })();
 
 </script>

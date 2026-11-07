@@ -2221,6 +2221,24 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .rp-bal b { font-size: 22px; } .rp-bal.neg b { color: var(--err); } .rp-bal.pos b { color: var(--ok); }
 .rp-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; }
 .rp-stats span { display: block; font-size: 11.5px; color: var(--text-3); } .rp-stats b { font-size: 14px; }
+/* كارت الماكينة: التزويد والمناديب */
+.mc-f2 { padding: 0 12px 12px; display: grid; gap: 8px; }
+.mf-info { display: grid; gap: 4px; font-size: 12.5px; background: var(--surface-2); border-radius: 10px; padding: 8px 10px; }
+.mf-info > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 8px; align-items: baseline; }
+.mf-info span { color: var(--text-3); } .mf-info small { width: 100%; text-align: end; color: var(--text-3); font-size: 11px; }
+.mf-top { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 10px; font-weight: 800; font-size: 14px; background: color-mix(in srgb, var(--mc) 14%, var(--surface)); color: var(--mc); border: 1.5px solid color-mix(in srgb, var(--mc) 45%, transparent); }
+.mf-top:hover { background: var(--mc); color: #fff; }
+.mf-top.low { background: var(--mc); color: #fff; animation: mfpulse 1.6s ease-in-out infinite; }
+@keyframes mfpulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--mc) 25%, transparent); } }
+.mf-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.mf-s { display: grid; gap: 4px; align-content: start; padding: 4px 6px; }
+.mf-s + .mf-s { border-inline-start: 1px dashed var(--line); padding-inline-start: 14px; }
+.mf-s .l { font-size: 12.5px; color: var(--text-2); font-weight: 700; } .mf-s > b { font-size: 20px; }
+.mf-link { cursor: pointer; border-radius: 10px; } .mf-link:hover { background: var(--surface-2); }
+.mf-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mf-chip { font: inherit; font-size: 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 99px; padding: 3px 10px; color: var(--text); }
+button.mf-chip { cursor: pointer; } .mf-chip.warn { background: var(--warn-bg); border-color: transparent; }
+@media (max-width: 760px) { .mf-strip { grid-template-columns: 1fr; } .mf-s + .mf-s { border-inline-start: 0; border-top: 1px dashed var(--line); padding: 10px 6px 0; } }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2514,7 +2532,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.13.0', build: '', trialHours: 168 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.13.1', build: '', trialHours: 168 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2790,7 +2808,7 @@ const CASH_SOURCES = {
   'customer-pay': ['تحصيل من عملاء', 'Customer collections'], 'supplier-pay': ['سداد موردين', 'Supplier payments'],
   'wallet-withdraw': ['سحب محافظ', 'Wallet withdrawals'], 'wallet-deposit': ['إيداع محافظ', 'Wallet deposits'], 'wallet-fee': ['عمولات المحافظ', 'Wallet fees'],
   'machine-service': ['خدمات الماكينات', 'Machine services'], lines: ['خطوط الشركات', 'Mobile lines'], 'machine-topup': ['شحن رصيد الماكينات', 'Machine top-ups'],
-  capital: ['رأس المال', 'Capital'], opening: ['رصيد افتتاحي', 'Opening'], adjust: ['تسوية', 'Adjustment'], salary: ['مرتبات وسلف', 'Salaries & advances'], 'shift-close': ['تسليم وردية', 'Shift handover'], 'phone-buy': ['شراء موبايلات', 'Phone purchases'], 'phone-reserve': ['عربون حجز موبايلات', 'Phone reservation deposits'], cctv: ['تركيبات الكاميرات', 'CCTV installations']
+  capital: ['رأس المال', 'Capital'], opening: ['رصيد افتتاحي', 'Opening'], adjust: ['تسوية', 'Adjustment'], salary: ['مرتبات وسلف', 'Salaries & advances'], 'shift-close': ['تسليم وردية', 'Shift handover'], 'phone-buy': ['شراء موبايلات', 'Phone purchases'], 'phone-reserve': ['عربون حجز موبايلات', 'Phone reservation deposits'], cctv: ['تركيبات الكاميرات', 'CCTV installations'], 'rep-payment': ['سداد مناديب الماكينات', 'Machine rep payments'], 'finance-settle': ['تسويات شركات التقسيط', 'Financing settlements'], 'cheque-in': ['شيكات محصّلة', 'Cheques collected'], 'cheque-out': ['شيكات مسددة', 'Cheques paid'], 'request-deposit': ['عربون طلبات العملاء', 'Request deposits']
 };
 
 /* ---------------- UI kit ---------------- */
@@ -10025,7 +10043,7 @@ Modules.capital = {
       ${UI.kpi(L('رأس المال المستثمر', 'Invested capital'), money(p.invested), 'bank', 'hero', L('إضافات − مسحوبات', 'injections − withdrawals'))}
       ${UI.kpi(L('صافي قيمة المشروع الآن', 'Current net worth'), money(p.net), 'target', 'c-info', L('الأصول − الالتزامات', 'assets − liabilities'))}
       ${UI.kpi(L('النمو / الأرباح المحتجزة', 'Growth / retained'), money(p.growth), 'trend', p.growth >= 0 ? 'c-ok' : 'c-err', p.invested ? `${Math.round((p.growth / p.invested) * 100)}%` : '')}
-      ${UI.kpi(L('التزامات للموردين', 'Liabilities'), money(p.pay), 'credit', 'c-err')}
+      ${UI.kpi(L('الالتزامات', 'Liabilities'), money(p.pay), 'credit', 'c-err', p.reps ? `${L('موردين', 'suppliers')} ${money(round2(p.pay - p.reps), false)} + ${L('مناديب', 'reps')} ${money(p.reps, false)}` : L('مستحق للموردين', 'owed to suppliers'))}
     </div>
     <div class="grid mb" style="grid-template-columns:1fr 1fr"><div class="card"><div class="card-h"><h3>${L('توزيع الأصول', 'Assets breakdown')}</h3></div><div class="card-b" id="cpDonut"></div></div>
     <div class="card"><div class="card-h"><h3>${L('الربح الشهري — آخر 6 شهور', 'Monthly profit — last 6 months')}</h3></div><div class="card-b" id="cpBar"></div></div></div>
@@ -10959,6 +10977,13 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.13.1', d: '2026-11-07', items: [
+    ['plus', L('زرار «تزويد الرصيد» كبير وواضح على كارت كل ماكينة — وبيتلوّن وينبض لو الرصيد قلّ عن الحد الأدنى', 'Big “Top up balance” button on every machine card — pulses when low')],
+    ['zap', L('كارت الماكينة بقى بيوريك: اتزوّد النهارده كام، وآخر تزويد كان كام ومنين وإمتى، والمناديب اللي ليهم فلوس من الماكينة دي', 'Card shows today’s top-ups, last top-up source, and reps owed')],
+    ['history', L('«حركة الرصيد» لكل ماكينة: رصيد أول وآخر المدة، اتزوّد كام ومن أنهي مصدر، اتصرف كام، وكل حركة بالرصيد بعدها — النهارده / امبارح / الأسبوع / الشهر', 'Per-machine balance ledger with running balance')],
+    ['user', L('شريط أعلى صفحة الماكينات: تزويد النهارده حسب المصدر، إجمالي اللي ليه على المناديب، والماكينات اللي محتاجة تزويد (تضغط عليها تزوّدها على طول)', 'Top strip: today’s top-ups by source, owed to reps, machines needing top-up')],
+    ['bank', L('فلوس المناديب الآجلة بقت محسوبة في الالتزامات (المركز المالي وصافي قيمة المشروع) وبتتخصم في حساب الزكاة، وسداد المناديب بيظهر باسمه في حركة الدرج', 'Rep balances count as liabilities, in zakat, and in drawer movements')]
+  ] },
   { v: '1.13.0', d: '2026-11-07', items: [
     ['whatsapp', L('علاج نهائي لـ «Waiting for this message»: واتساب غيّرت نظام تعريف الأرقام (LID) والمكتبة القديمة مكانتش بتدعمه، فالرسالة كانت بتوصل والعميل مش قادر يفتحها. اتنقلنا لمكتبة واتساب الإصدار 7 — بعد التحديث امسح الجهاز القديم من «الأجهزة المرتبطة» واربط بالـ QR مرة واحدة', 'WhatsApp “Waiting for this message” fixed (Baileys 7 / LID) — relink once')],
     ['plus', L('تزويد رصيد الماكينات بقى بمصدره: كاش من الدرج، خزنة/بنك، محفظة، إنستا باي، مندوب، أو أي طريقة تانية — وكل تزويد بيتسجل بمصدره في سجل العمليات', 'Machine top-ups now record their source')],
@@ -17436,7 +17461,7 @@ const Zakat = {
     const recv = c.recv ? round2(sum(DB.all('customers'), (x) => Math.max(0, Customers.balance(x)))) : 0;
     const pay = round2(sum(DB.all('suppliers'), (s) => Math.max(0, Suppliers.balance(s))));
     const assets = [[L('البضاعة في المخزن', 'Stock goods'), prod], [L('موبايلات في المخزن', 'Phones in stock'), phones], [L('خطوط في المخزن', 'Lines in stock'), lines], [L('كاش الدرج', 'Drawer cash'), drawer], [L('الخزنة', 'Safe'), safe], [L('أرصدة المحافظ', 'Wallet balances'), wallets], [L('أرصدة الماكينات', 'Machine balances'), machines], [L('فلوس ليك عند العملاء (مرجوّة)', 'Receivables'), recv], [L('البنك / حسابات تانية', 'Bank / other accounts'), Number(c.bank) || 0], [L('أصول تجارية تانية', 'Other trade assets'), Number(c.other) || 0]].filter((x) => x[1] > 0 || x[0].includes('البنك'));
-    const debts = [[L('مستحق للموردين', 'Owed to suppliers'), pay], [L('ديون تانية عليك وقتها جه', 'Other due debts'), Number(c.otherDebt) || 0]];
+    const debts = [[L('مستحق للموردين', 'Owed to suppliers'), pay], [L('مستحق للمناديب (رصيد ماكينات آجل)', 'Owed to machine reps'), typeof MachineReps !== 'undefined' ? MachineReps.totalOwed() : 0], [L('ديون تانية عليك وقتها جه', 'Other due debts'), Number(c.otherDebt) || 0]];
     const tA = round2(sum(assets, (x) => x[1])), tD = round2(sum(debts, (x) => x[1])); const net = round2(tA - tD);
     const nisab = round2((Number(c.gold) || 0) * 85); const rate = c.year === 'greg' ? 0.02577 : 0.025;
     const due = nisab && net >= nisab ? round2(net * rate) : 0;
@@ -19487,6 +19512,47 @@ const MachineReps = {
   }
 };
 
+/* ====== الربط بكل ماكينة: الكارت + حركة الرصيد + ملخص التزويد ====== */
+const MachineFund = {
+  SRC_NAME: (k) => ({ drawer: L('كاش', 'Cash'), outside: L('خزنة/بنك', 'Safe/bank'), wallet: L('محفظة', 'Wallet'), instapay: L('إنستا باي', 'InstaPay'), rep: L('مندوب', 'Rep'), other: L('أخرى', 'Other') }[k] || L('غير محدد', 'Unspecified')),
+  tops(mid, from, to) { return DB.filter('machineTx', (t) => t.type === 'topup' && (!mid || t.machineId === mid) && inRange(t.date, from, to)); },
+  bySrc(list) { const o = {}; list.forEach((t) => { const k = t.src || 'unk'; o[k] = round2((o[k] || 0) + (Number(t.amount) || 0)); }); return o; },
+  lastTop(mid) { return DB.filter('machineTx', (t) => t.type === 'topup' && t.machineId === mid).sort((a, b) => (a.date < b.date ? 1 : -1))[0] || null; },
+  reps(m) { return MachineReps.list().filter((r) => (r.providers || []).includes(m.provider) || MachineReps.tx(r.id).some((t) => t.machineId === m.id)).map((r) => ({ r, bal: MachineReps.balance(r.id) })); },
+  /* السطر اللي بيتحط في كارت الماكينة */
+  cardExtra(m) {
+    const today = this.tops(m.id, dayKey(), dayKey()); const tt = round2(sum(today, (t) => t.amount)); const lt = this.lastTop(m.id); const reps = this.reps(m).filter((x) => x.bal > 0);
+    return `<div class="mf-info">${tt ? `<div><span>${L('اتزوّد النهارده', 'Topped up today')}</span><b class="num">${money(tt, false)}</b></div>` : ''}${lt ? `<div><span>${L('آخر تزويد', 'Last top-up')}</span><b>${money(lt.amount, false)} · ${esc(this.SRC_NAME(lt.src))}</b><small>${fmtDT(lt.date)}</small></div>` : `<div class="faint">${L('لسه متزوّدتش', 'No top-ups yet')}</div>`}${reps.map((x) => `<div class="mf-rep"><span>🧑‍💼 ${esc(x.r.name)} ${L('ليه', 'is owed')}</span><b class="num neg">${money(x.bal, false)}</b></div>`).join('')}</div>`;
+  },
+  /* حركة رصيد ماكينة برصيد متحرك */
+  ledger(m, p = 'month') {
+    const R = MachineReps.range.bind(MachineReps); let [from, to] = R(p);
+    const NAMES = { service: L('خدمة', 'Service'), card: L('كارت', 'Card'), topup: L('تزويد رصيد', 'Top-up'), commission: L('عمولة', 'Commission'), dayfee: L('رسوم يومية', 'Daily fee'), adjust: L('مطابقة', 'Reconcile') };
+    const draw = (md) => {
+      [from, to] = R(p); const all = DB.filter('machineTx', (t) => t.machineId === m.id).sort((a, b) => (a.date < b.date ? -1 : 1));
+      const open = round2((Number(m.openingBalance) || 0) + sum(all.filter((t) => from && dayKey(t.date) < from), (t) => Number(t.balanceDelta) || 0)); let run = open;
+      const rows = all.filter((t) => inRange(t.date, from || null, to || null)).map((t) => { run = round2(run + (Number(t.balanceDelta) || 0)); return { t, run }; });
+      const tops = rows.filter((x) => x.t.type === 'topup').map((x) => x.t); const bs = this.bySrc(tops); const used = round2(-sum(rows.filter((x) => (x.t.balanceDelta || 0) < 0 && x.t.type !== 'adjust'), (x) => x.t.balanceDelta));
+      $('#mfBody', md.el).innerHTML = `<div class="tabs mb" id="mfP">${[['today', L('النهارده', 'Today')], ['yday', L('امبارح', 'Yesterday')], ['week', L('آخر 7 أيام', 'Last 7 days')], ['month', L('الشهر ده', 'This month')], ['all', L('الكل', 'All')]].map(([k, n]) => `<button data-p="${k}" class="${p === k ? 'active' : ''}">${n}</button>`).join('')}</div>
+        <div class="grid g4 mb">${[[L('رصيد أول المدة', 'Opening'), open], [L('اتزوّد', 'Topped up'), round2(sum(tops, (t) => t.amount + (t.commission || 0)))], [L('اتصرف (عمليات)', 'Used (ops)'), used], [L('الرصيد آخر المدة', 'Closing'), run]].map(([l, v]) => `<div class="stat-mini"><span class="l">${l}</span><span class="v num">${money(v)}</span></div>`).join('')}</div>
+        ${tops.length ? `<div class="mf-chips mb">${Object.entries(bs).map(([k, v]) => `<span class="mf-chip">${esc(this.SRC_NAME(k))} <b class="num">${money(v, false)}</b></span>`).join('')}</div>` : ''}
+        <div class="tbl-wrap" style="max-height:48vh"><table class="tbl stack"><thead><tr><th>${L('الوقت', 'Time')}</th><th>${L('العملية', 'Operation')}</th><th>${L('البيان', 'Details')}</th><th>${L('أثر الرصيد', 'Effect')}</th><th>${L('الرصيد', 'Balance')}</th></tr></thead><tbody>
+        ${rows.slice().reverse().map(({ t, run: r }) => `<tr><td>${fmtDT(t.date)}</td><td>${esc(NAMES[t.type] || t.type)}</td><td>${esc(t.type === 'topup' ? t.srcLabel || t.note || '' : t.serviceName || t.cardName || t.note || '')}</td><td class="num ${t.balanceDelta >= 0 ? 'pos' : 'neg'}">${t.balanceDelta >= 0 ? '+' : ''}${money(t.balanceDelta, false)}</td><td class="num"><b>${money(r, false)}</b></td></tr>`).join('') || `<tr><td colspan="5">${UI.empty(L('مفيش حركات في الفترة دي', 'No movements in this period'), 'zap')}</td></tr>`}</tbody></table></div>`;
+      $$('#mfP button', md.el).forEach((b) => (b.onclick = () => { p = b.dataset.p; draw(md); }));
+    };
+    const md = UI.modal({ title: L('حركة رصيد', 'Balance movements') + ' — ' + esc(m.name), icon: 'history', size: 'xl', body: '<div id="mfBody"></div>', actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('تزويد الرصيد', 'Top up'), cls: 'primary', icon: 'plus', onClick: (x) => { x.close(); MachineReps.topup(DB.get('machines', m.id)); } }] });
+    draw(md);
+  },
+  /* شريط أعلى صفحة الماكينات */
+  stripHTML() {
+    const t = this.tops(null, dayKey(), dayKey()); const bs = this.bySrc(t); const owed = MachineReps.totalOwed(); const low = DB.filter('machines', (m) => m.active !== false && m.minBalance && Machines.balance(m) < m.minBalance);
+    return `<div class="card card-b mb mf-strip"><div class="mf-s"><span class="l">⬆️ ${L('تزويد النهارده', 'Top-ups today')}</span><b class="num">${money(round2(sum(t, (x) => x.amount)))}</b>${t.length ? `<div class="mf-chips">${Object.entries(bs).map(([k, v]) => `<span class="mf-chip">${esc(this.SRC_NAME(k))} <b class="num">${money(v, false)}</b></span>`).join('')}</div>` : `<small class="faint">${L('مفيش تزويد النهارده', 'None today')}</small>`}</div>
+      <div class="mf-s mf-link" id="mfReps"><span class="l">🧑‍💼 ${L('ليه على المناديب', 'Owed to reps')}</span><b class="num ${owed > 0 ? 'neg' : ''}">${money(owed)}</b><small class="faint">${L('اضغط للتفاصيل والسداد', 'Tap for details & payments')}</small></div>
+      <div class="mf-s"><span class="l">⚠️ ${L('محتاجة تزويد', 'Need top-up')}</span>${low.length ? `<div class="mf-chips">${low.map((m) => `<button class="mf-chip warn" data-mflow="${m.id}">${esc(m.name)} <b class="num">${money(Machines.balance(m), false)}</b></button>`).join('')}</div>` : `<b class="pos" style="font-size:15px">${L('كل الماكينات تمام', 'All good')}</b>`}</div></div>`;
+  }
+};
+MachineReps.totalOwed = function () { return round2(sum(this.list(true), (r) => Math.max(0, this.balance(r.id)))); };
+
 (() => {
   const M = Modules.machines; if (!M) return;
   /* شاشة التزويد الجديدة بدل القديمة (ورسائل «تم شحن رصيدك» بتفتحها متملية) */
@@ -19497,8 +19563,32 @@ const MachineReps = {
   M.subs = function () { const l = s0(); if (!l.some((x) => x.tab === 'reps')) l.splice(1, 0, { tab: 'reps', label: L('المناديب', 'Reps'), icon: 'user' }); return l; };
   const m0 = M.main.bind(M);
   M.main = function (el) { if (this.tab === 'reps') return MachineReps.page(el); return m0(el); };
+  /* كارت الماكينة: زرار «تزويد الرصيد» واضح + آخر تزويد + المناديب، و«حركة الرصيد» */
+  const c0 = M.cardHTML.bind(M);
+  M.cardHTML = function (m, td) {
+    let h = c0(m, td);
+    try {
+      const low = m.minBalance && Machines.balance(m) < m.minBalance;
+      h = h.replace(/<div class="mc-f">[\s\S]*?<\/div>\s*<\/div>\s*$/, `<div class="mc-f2">${MachineFund.cardExtra(m)}<button class="mf-top ${low ? 'low' : ''}" data-mact="topup" data-id="${m.id}">${icon('plus')}${L('تزويد الرصيد', 'Top up balance')}</button></div><div class="mc-f"><button data-mact="card" data-id="${m.id}">${icon('card')}${L('كارت', 'Card')}</button><button data-mact="svc" data-id="${m.id}">${icon('zap')}${L('خدمة', 'Service')}</button><button data-mact="ledger" data-id="${m.id}">${icon('history')}${L('حركة الرصيد', 'Movements')}</button></div></div>`);
+    } catch (_) {}
+    return h;
+  };
+  const mm0 = M.main;
+  M.main = function (el) {
+    const r = mm0.call(this, el);
+    try {
+      if (this.tab === 'reps') return r;
+      $$('[data-mact="ledger"]', el).forEach((b) => (b.onclick = (e) => { e.stopPropagation(); MachineFund.ledger(DB.get('machines', b.dataset.id)); }));
+      const k = el.querySelector('.grid.g4'); if (k && !$('.mf-strip', el)) { const w = document.createElement('div'); w.innerHTML = MachineFund.stripHTML(); k.after(w.firstElementChild);
+        $('#mfReps', el).onclick = () => { this.tab = 'reps'; App.go('machines'); }; $$('[data-mflow]', el).forEach((b) => (b.onclick = () => MachineReps.topup(DB.get('machines', b.dataset.mflow)))); }
+      /* كارت «تزويد اليوم» اللي فوق يتكتب بالاسم الجديد */
+      $$('.kpi', el).forEach((x) => { const l = x.querySelector('.kpi-l, .l, .label'); if (l && /شحن أرصدة اليوم/.test(l.textContent)) l.textContent = L('تزويد أرصدة اليوم', 'Top-ups today'); });
+    } catch (e) { console.warn(e); }
+    return r;
+  };
   /* مصدر التزويد بيظهر في سجل العمليات */
   if (typeof MTX_TYPES !== 'undefined') MTX_TYPES.topup = ['تزويد رصيد الماكينة', 'Machine top-up', 'ok'];
+  if (Modules.capital && Modules.capital.position) { const p0 = Modules.capital.position.bind(Modules.capital); Modules.capital.position = function () { const p = p0(); try { const r = MachineReps.totalOwed(); if (r) { p.reps = r; p.pay = round2(p.pay + r); p.net = round2(p.assets - p.pay); p.growth = round2(p.net - p.invested); } } catch (_) {} return p; }; }
   if (typeof Notify !== 'undefined') { const l0 = Notify.list.bind(Notify); Notify.list = function () { const l = l0(); try { MachineReps.list().forEach((r) => { const b = MachineReps.balance(r.id); if (r.limit && b > r.limit) l.push({ type: 'warn', icon: 'user', t: L(`المندوب ${r.name} ليه ${money(b)} — فوق الحد (${money(r.limit)})`, `Rep ${r.name} over credit limit`), s: L('الماكينات ← المناديب', 'Machines → Reps'), go: () => { M.tab = 'reps'; App.go('machines'); } }); }); } catch (_) {} return l; }; }
 })();
 

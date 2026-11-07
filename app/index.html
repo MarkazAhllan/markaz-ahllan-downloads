@@ -2179,6 +2179,36 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .cpl-wrap canvas { display: block; width: 100%; height: auto; touch-action: none; cursor: crosshair; }
 .cpl-sel:not(:empty) { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 12px; }
 .cpl-sel input[type=range] { width: 100%; }
+
+/* ===== الإصدار 1.12 ===== */
+.fc-cos { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+.fc-cos button { border: 2px solid var(--line); border-radius: var(--r-sm); background: var(--surface); padding: 10px 8px; display: grid; gap: 2px; cursor: pointer; font: inherit; color: var(--text); border-inline-start: 5px solid var(--fc); }
+.fc-cos button.active { border-color: var(--fc); background: color-mix(in srgb, var(--fc) 10%, var(--surface)); }
+.fc-cos small { color: var(--text-3); font-size: 11px; }
+.fc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.fc-card { border-top: 4px solid var(--fc); }
+.fc-amt { font-size: 24px; font-weight: 900; margin: 6px 0 2px; color: var(--fc); }
+.fc-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--fc); margin-inline-end: 6px; vertical-align: middle; }
+.fc-row, .fx-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+.fc-row input[type=color] { width: 42px; height: 38px; padding: 2px; }
+.fc-row > input:not([type]), .fx-row > input { flex: 1; min-width: 140px; }
+.fc-row label, .fx-row label { display: grid; gap: 2px; font-size: 12px; color: var(--text-2); max-width: 130px; }
+.fx-row select { max-width: 170px; }
+.fx-box { display: grid; gap: 6px; }
+.fx-it { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 0; border-top: 1px dashed var(--line); }
+.fx-ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-weight: 900; background: var(--surface-2); border: 1px solid var(--line); }
+.fx-ic.ok { background: var(--ok-bg); color: var(--ok); border-color: transparent; } .fx-ic.warn { background: var(--warn-bg); color: var(--warn); border-color: transparent; } .fx-ic.err { background: var(--err-bg); color: var(--err); border-color: transparent; }
+.prod .shelf { display: block; font-size: 10.5px; color: var(--text-3); margin-top: 2px; }
+.shelf-i { font-size: 11px; color: var(--text-3); }
+.ss-sec { padding: 10px 0; border-bottom: 1px dashed var(--line); } .ss-sec:last-child { border-bottom: 0; }
+.ss-ew { border: 2px solid var(--line); border-radius: var(--r-sm); padding: 10px 14px; background: var(--surface); display: grid; gap: 2px; cursor: pointer; font: inherit; color: var(--text); min-width: 110px; }
+.ss-ew.on, .ss-p.on { border-color: var(--ok); background: var(--ok-bg); }
+.ss-acc { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 8px; }
+.ss-p { border: 1.5px solid var(--line); border-radius: var(--r-sm); padding: 8px 10px; background: var(--surface); display: grid; gap: 2px; text-align: start; cursor: pointer; font: inherit; color: var(--text); }
+.ss-p .n { font-weight: 700; font-size: 13px; } .ss-p small { color: var(--text-3); }
+.cr-box { display: grid; gap: 6px; }
+.cr-it { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 0; border-top: 1px dashed var(--line); }
+.rf-chip { background: var(--surface-2); border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; font-size: 13px; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2471,7 +2501,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.11.0', build: '', trialHours: 168 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.12.0', build: '', trialHours: 168 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2535,7 +2565,7 @@ const AVATAR_COLORS = ['#8B1A2B', '#1F5FA8', '#16825D', '#B26A00', '#6B2C91', '#
 function avatarColor(s) { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return AVATAR_COLORS[h % AVATAR_COLORS.length]; }
 
 /* ---------------- Database (Realm via Electron IPC / browser fallback) ---------------- */
-const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx', 'ratings', 'promos', 'transfers', 'orders', 'quotes', 'campaigns', 'eReceipts', 'eInvoices'];
+const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx', 'ratings', 'promos', 'transfers', 'orders', 'quotes', 'campaigns', 'eReceipts', 'eInvoices', 'finSales', 'cheques', 'custRequests'];
 
 const DEFAULT_SETTINGS = {
   appName: 'Markaz Ahllan POS',
@@ -10916,6 +10946,16 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.12.0', d: '2026-11-07', items: [
+    ['percent', L('شركات التقسيط (فاليو، أمان، كونتكت، سهولة، بريميوم): طريقة دفع جديدة في البيع — المقدّم كاش والباقي على الشركة. صفحة «شركات التقسيط» بتوريك المستحق على كل شركة والمتأخر، والتسوية بضغطة لما الفلوس توصل، والعمولة بتتسجل مصروف', 'Financing companies')],
+    ['calendar', L('المصاريف الثابتة الشهرية: الإيجار والكهربا والنت بمعاد كل واحد — تنبيه قبلها، تسجيل بضغطة، ونصيب اليوم الواحد منها (في صفحة المصروفات)', 'Monthly fixed expenses')],
+    ['file', L('الشيكات: واردة من العملاء وصادرة للموردين بمواعيد استحقاقها، وتنبيه قبل المعاد. «اتصرف» بيخصم من حساب العميل/المورد ويحرّك الفلوس، و«رجع» بيعلّمه مرتجع', 'Cheques')],
+    ['phone', L('توافق الإكسسوارات: كل صنف تكتب عليه الموديلات اللي يناسبها — البحث بالموديل في البيع بيطلّعها كلها، ولما تبيع موبايل بيظهر اقتراح بإكسسواراته', 'Accessory compatibility & suggestions')],
+    ['shield', L('الضمان الممتد المدفوع: يتعرض وقت بيع الموبايل (6 أو 12 شهر أو باقاتك) وبيمدّ ضمان الجهاز نفسه في الإيصال والملصق وصفحة العميل', 'Paid extended warranty')],
+    ['bell', L('طلبات العملاء للحاجات الناقصة: «مفيش دلوقتي؟ سيب رقمك» — أول ما الصنف يدخل في فاتورة شراء العميل يوصله «طلبك وصل» على واتساب، والطلبات بتدخل في النواقص والمناقصة', 'Customer requests for out-of-stock items')],
+    ['users', L('رشّح صاحبك: كل عميل ليه كود — صاحبه يشتري بالكود أول مرة والاتنين ياخدوا نقاط، وقايمة بأكتر عملاء بيجيبولك زباين', 'Refer a friend')],
+    ['box', L('مكان الصنف على الرف: بيظهر في البيع والفاتورة والجرد، والبحث في المخزون بالرف والموديل', 'Shelf location')]
+  ] },
   { v: '1.11.0', d: '2026-11-07', items: [
     ['alert', L('قايمة أرقام النصابين المشتركة: وانت بتكتب رقم العميل في عملية المحفظة، لو محل تاني مبلّغ عنه («حوّلتلك بالغلط»، رسالة وهمية، إيصال مزوّر) يطلع تحذير أحمر — وكمان على رسائل التحويل اللي جاية. وتقدر تبلّغ عن رقم من نفس الشاشة', 'Shared scammer-number list')],
     ['wallet', L('المحفظة البديلة: لو العملية هتعدّي الليمت أو رصيد المحفظة مش مكفي أو هتقرّب من الليمت، البرنامج يقترح المحافظ اللي تاخدها كاملة وتحوّل عليها بضغطة', 'Alternative wallet suggestion')],
@@ -18831,6 +18871,469 @@ const CvPlan = {
     const r0 = P.render.bind(P);
     P.render = function (el) { r0(el); try { const held = $('#posHeld', el); if (held && !$('#posTrade', el) && typeof Phones !== 'undefined' && Phones.on() && Session.can('phones')) { const b = document.createElement('button'); b.className = 'btn sm'; b.id = 'posTrade'; b.title = L('استبدال: جهاز العميل القديم مقابل جهاز جديد', 'Trade-in'); b.innerHTML = `${icon('swap')}<span>${L('استبدال', 'Trade-in')}</span>`; b.onclick = () => Modules.phones.tradeIn(); held.after(b); } } catch (_) {} };
   }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   شركات التقسيط (فاليو / أمان / كونتكت / سهولة / بريميوم …)
+   - في نقطة البيع: طريقة دفع «شركة تقسيط» — المقدّم كاش والباقي على الشركة
+   - كل بيعة بتتسجل مستحق على الشركة (ناقص عمولتها) بمعاد تحويل متوقع
+   - صفحة «شركات التقسيط»: المستحق على كل شركة، المتأخر، والتسوية لما الفلوس توصل (درج / محفظة / بنك)
+     والعمولة بتتسجل مصروف «عمولة شركات التقسيط» عشان الربح يطلع صح
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+PAY.finance = { ar: 'شركة تقسيط', en: 'Financing co.', icon: 'percent' };
+const FinCos = {
+  DEF: [{ id: 'valu', name: 'فاليو', pct: 0, days: 7, color: '#00a19a' }, { id: 'aman', name: 'أمان', pct: 0, days: 7, color: '#0a7f3f' }, { id: 'contact', name: 'كونتكت', pct: 0, days: 10, color: '#e4002b' }, { id: 'souhoola', name: 'سهولة', pct: 0, days: 7, color: '#5b2d8e' }, { id: 'premium', name: 'بريميوم', pct: 0, days: 10, color: '#c59d3f' }],
+  EXP_CAT: 'عمولة شركات التقسيط',
+  list() { const c = DB.settings().finCos; return (Array.isArray(c) && c.length ? c : this.DEF).filter((x) => x.active !== false); },
+  all() { const c = DB.settings().finCos; return Array.isArray(c) && c.length ? c : this.DEF; },
+  get(id) { return this.all().find((c) => c.id === id) || { id, name: id, pct: 0, days: 7, color: '#888' }; },
+  due(f) { return f.status === 'due'; },
+  late(f) { return this.due(f) && f.expectAt && f.expectAt < dayKey(); },
+  owed(coId) { return round2(sum(DB.filter('finSales', (f) => this.due(f) && (!coId || f.coId === coId)), (f) => f.net)); },
+  /* شاشة الدفع: «شركة تقسيط» */
+  body(m, t, cart) {
+    const b = $('#payBody', m.el); const cos = this.list(); const cu = Modules.pos.customerId ? DB.get('customers', Modules.pos.customerId) : null;
+    if (!cos.length) { b.innerHTML = `<div class="tag warn">${L('ضيف شركات التقسيط من صفحة «شركات التقسيط»', 'Add financing companies first')}</div>`; return; }
+    b.innerHTML = `<label class="lbl">${L('الشركة', 'Company')}</label><div class="fc-cos" id="fcCo">${cos.map((c, i) => `<button type="button" data-co="${c.id}" class="${i === 0 ? 'active' : ''}" style="--fc:${c.color || '#888'}"><b>${esc(c.name)}</b>${c.pct ? `<small>${L('عمولة', 'fee')} ${c.pct}%</small>` : ''}</button>`).join('')}</div>` +
+      UI.form([{ name: 'fcDown', label: L('المقدّم من العميل (كاش)', 'Down payment (cash)'), type: 'number', value: 0, col: 6 }, { name: 'fcRef', label: L('رقم العقد / الطلب', 'Contract no.'), col: 6, attrs: 'dir="ltr"' },
+        { name: 'fcName', label: L('اسم العميل', 'Customer name'), value: cu ? cu.name : '', col: 6 }, { name: 'fcPhone', label: L('موبايل العميل', 'Customer mobile'), type: 'tel', value: cu ? cu.phone || '' : '', col: 6 }]);
+    m.el._fcCo = cos[0].id;
+    const upd = () => { const co = this.get(m.el._fcCo); const dn = Math.min(t.total, Number($('[name=fcDown]', m.el).value) || 0); const fin = round2(t.total - dn); const fee = round2((fin * (Number(co.pct) || 0)) / 100);
+      $('#payChange', m.el).innerHTML = `<div class="stat-mini"><span class="l">${L('على الشركة', 'Financed')}</span><span class="v num">${money(fin)}</span></div>${fee ? `<div class="stat-mini mt"><span class="l">${L('عمولة الشركة', 'Company fee')}</span><span class="v num neg">− ${money(fee)}</span></div>` : ''}<div class="stat-mini mt"><span class="l">${L('هيوصلك منها', 'You will receive')}</span><span class="v num pos">${money(round2(fin - fee))}</span><span class="faint" style="font-size:11px">${L('خلال', 'within')} ${co.days || 7} ${L('يوم', 'days')}</span></div>`; };
+    $$('[data-co]', b).forEach((x) => (x.onclick = () => { m.el._fcCo = x.dataset.co; $$('[data-co]', b).forEach((y) => y.classList.toggle('active', y === x)); upd(); }));
+    $('[name=fcDown]', m.el).oninput = upd; upd();
+  },
+  /* بعد إنشاء الفاتورة */
+  record(sale, p) {
+    const co = this.get(p.coId); const fee = round2((p.amount * (Number(co.pct) || 0)) / 100);
+    return DB.insert('finSales', { saleId: sale.id, saleNo: sale.no, coId: co.id, coName: co.name, amount: round2(p.amount), pct: Number(co.pct) || 0, fee, net: round2(p.amount - fee), ref: p.ref || '', customerName: p.cname || '', customerPhone: p.cphone || '', items: (sale.items || []).map((i) => i.name).join('، ').slice(0, 160), date: sale.date, expectAt: dayKey(addDays(new Date(), Number(co.days) || 7)), status: 'due', userId: Session.user?.id || null });
+  },
+  /* التسوية */
+  settle(coId) {
+    const rows = DB.filter('finSales', (f) => this.due(f) && f.coId === coId).sort((a, b) => (a.date < b.date ? -1 : 1)); const co = this.get(coId);
+    if (!rows.length) return UI.toast(L('مفيش مستحقات على الشركة دي', 'Nothing due'), 'info');
+    const DST = () => [['outside', L('البنك / خارج الدرج', 'Bank / outside drawer')], ['drawer', L('درج الكاشير (كاش)', 'Cash drawer')], ...DB.filter('wallets', (w) => w.active !== false).map((w) => ['w:' + w.id, L('محفظة: ', 'Wallet: ') + w.name])];
+    const m = UI.modal({ title: L('تسوية', 'Settle') + ' — ' + esc(co.name), icon: 'check', size: 'lg', body: `<p class="faint" style="margin-top:0">${L('علّم العمليات اللي الشركة حوّلت فلوسها', 'Tick the sales the company paid for')}</p>
+      <div class="tbl-wrap" style="max-height:44vh"><table class="tbl stack"><thead><tr><th><input type="checkbox" id="fcAll" checked></th><th>${L('الفاتورة', 'Invoice')}</th><th>${L('العميل', 'Customer')}</th><th>${L('على الشركة', 'Financed')}</th><th>${L('العمولة', 'Fee')}</th><th>${L('الصافي', 'Net')}</th><th>${L('المتوقع', 'Expected')}</th></tr></thead><tbody>
+      ${rows.map((f) => `<tr><td><input type="checkbox" data-f="${f.id}" checked></td><td><b>${esc(f.saleNo)}</b>${f.ref ? `<div class="faint mono" style="font-size:11px">${esc(f.ref)}</div>` : ''}</td><td>${esc(f.customerName || '—')}</td><td class="num">${money(f.amount, false)}</td><td class="num">${money(f.fee, false)}</td><td class="num"><b>${money(f.net, false)}</b></td><td>${this.late(f) ? `<span class="tag err">${fmtDate(f.expectAt)}</span>` : fmtDate(f.expectAt)}</td></tr>`).join('')}</tbody></table></div>
+      <div class="grid g3 mt">${UI.form([{ name: 'got', label: L('المبلغ اللي وصل فعلاً', 'Amount actually received'), type: 'number', col: 4 }, { name: 'dst', label: L('وصل على', 'Received to'), type: 'select', options: DST(), col: 4 }, { name: 'ref', label: L('رقم التحويل', 'Transfer ref'), col: 4 }])}</div><div id="fcSum" class="mt"></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد التسوية', 'Confirm'), cls: 'primary', icon: 'check', onClick: (x) => {
+        const sel = $$('[data-f]:checked', x.el).map((c) => DB.get('finSales', c.dataset.f)).filter(Boolean); if (!sel.length) return UI.toast(L('علّم عملية واحدة على الأقل', 'Tick at least one'), 'warn');
+        const v = UI.read(x.el); const exp = round2(sum(sel, (f) => f.net)); const got = v.got === '' || v.got == null ? exp : round2(Number(v.got) || 0); const diff = round2(exp - got);
+        if (v.dst === 'drawer' && !App.needShift()) return; const ref = DB.nextNo('fset', 'FS-');
+        if (v.dst === 'drawer') cashMove(got, 'finance-settle', ref, co.name);
+        else if (String(v.dst).startsWith('w:')) DB.insert('walletTx', { walletId: v.dst.slice(2), type: 'fund', amount: got, fee: 0, balanceDelta: got, cashDelta: 0, ref, note: L('تسوية ', 'Settlement ') + co.name, date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null, status: 'completed' });
+        const fees = round2(sum(sel, (f) => f.fee) + Math.max(0, diff)); try { const ec = DB.settings().expenseCategories || []; if (!ec.includes(this.EXP_CAT)) DB.saveSettings({ expenseCategories: [...ec, this.EXP_CAT] }); } catch (_) {}
+        if (fees > 0) DB.insert('expenses', { category: this.EXP_CAT, amount: fees, src: 'none', note: `${co.name} — ${sel.length} ${L('عملية', 'sales')}${diff > 0 ? ` (${L('فرق', 'diff')} ${money(diff, false)})` : ''}`, ref, date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null });
+        sel.forEach((f) => DB.update('finSales', f.id, { status: 'settled', settledAt: nowISO(), settleRef: ref, transferRef: v.ref || '', paid: round2(f.net - (diff > 0 ? (diff * f.net) / exp : 0)) }));
+        audit('finance.settle', `${co.name} ${got}`); x.close(); UI.toast(L(`اتسوّت ${sel.length} عملية ✓`, `${sel.length} settled ✓`)); App.reload();
+      } }] });
+    const upd = () => { const sel = $$('[data-f]:checked', m.el).map((c) => DB.get('finSales', c.dataset.f)); const exp = round2(sum(sel, (f) => f.net)); const g = $('[name=got]', m.el); if (!g.dataset.t) g.value = exp; const got = Number(g.value) || 0; $('#fcSum', m.el).innerHTML = `<div class="row wrap" style="gap:14px"><span>${L('المفروض يوصل', 'Expected')}: <b class="num">${money(exp)}</b></span>${Math.abs(exp - got) > 0.01 ? `<span class="tag ${got < exp ? 'err' : 'ok'}">${L('فرق', 'Difference')} ${money(round2(got - exp))}</span>` : ''}</div>`; };
+    $$('[data-f]', m.el).forEach((c) => (c.onchange = upd)); $('#fcAll', m.el).onchange = (e) => { $$('[data-f]', m.el).forEach((c) => (c.checked = e.target.checked)); upd(); };
+    $('[name=got]', m.el).oninput = (e) => { e.target.dataset.t = 1; upd(); }; upd();
+  },
+  cosDialog() {
+    const cos = this.all().map((c) => ({ ...c }));
+    const m = UI.modal({ title: L('شركات التقسيط', 'Financing companies'), icon: 'settings', size: 'lg', body: `<p class="faint" style="margin-top:0">${L('العمولة = النسبة اللي الشركة بتخصمها من المبلغ اللي عليها. المدة = الشركة بتحوّل بعد كام يوم.', 'Fee % deducted by the company; days until it pays you.')}</p><div id="fcRows"></div><button class="btn sm mt" id="fcAdd">${icon('plus')}${L('شركة', 'Company')}</button>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { DB.saveSettings({ finCos: cos.filter((c) => c.name.trim()) }); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.reload(); } }] });
+    const draw = () => { $('#fcRows', m.el).innerHTML = cos.map((c, i) => `<div class="fc-row"><input type="color" value="${c.color || '#888888'}" data-k="color" data-i="${i}"><input value="${esc(c.name)}" data-k="name" data-i="${i}" placeholder="${L('الاسم', 'Name')}"><label>${L('عمولة %', 'Fee %')}<input type="number" step="0.1" value="${c.pct || 0}" data-k="pct" data-i="${i}"></label><label>${L('يحوّل بعد (يوم)', 'Pays after (days)')}<input type="number" value="${c.days || 7}" data-k="days" data-i="${i}"></label><label class="check"><input type="checkbox" data-k="active" data-i="${i}" ${c.active !== false ? 'checked' : ''}>${L('شغالة', 'Active')}</label></div>`).join('');
+      $$('[data-k]', m.el).forEach((inp) => (inp.oninput = inp.onchange = () => { const c = cos[+inp.dataset.i], k = inp.dataset.k; c[k] = k === 'active' ? inp.checked : k === 'pct' || k === 'days' ? Number(inp.value) || 0 : inp.value; })); };
+    $('#fcAdd', m.el).onclick = () => { cos.push({ id: 'c' + Date.now().toString(36), name: '', pct: 0, days: 7, color: '#1f6feb' }); draw(); }; draw();
+  }
+};
+
+Modules.fincos = {
+  title: () => L('شركات التقسيط', 'Financing companies'), icon: 'percent', perm: 'expenses', st: { preset: 'month' }, f: 'due',
+  render(el) {
+    const all = DB.all('finSales'); const due = all.filter((f) => FinCos.due(f)); const late = due.filter((f) => FinCos.late(f));
+    const mk = monthKey(new Date()); const setM = all.filter((f) => f.status === 'settled' && monthKey(f.settledAt) === mk);
+    el.innerHTML = `<div class="sec-title"><h2 style="margin:0">${L('شركات التقسيط', 'Financing companies')}</h2><div class="spacer"></div><button class="btn" id="fcCfg">${icon('settings')}${L('الشركات والعمولات', 'Companies & fees')}</button></div>
+      <div class="grid g4 mb">${UI.kpi(L('مستحق على الشركات', 'Owed by companies'), money(FinCos.owed()), 'percent', 'hero', `${due.length} ${L('عملية', 'sales')}`)}${UI.kpi(L('متأخر عن معاده', 'Overdue'), money(round2(sum(late, (f) => f.net))), 'alert', late.length ? 'c-err' : '', `${late.length} ${L('عملية', 'sales')}`)}${UI.kpi(L('اتحصّل الشهر ده', 'Collected this month'), money(round2(sum(setM, (f) => f.paid ?? f.net))), 'check', 'c-ok')}${UI.kpi(L('عمولات الشهر ده', 'Fees this month'), money(round2(sum(all.filter((f) => monthKey(f.date) === mk), (f) => f.fee))), 'minus', 'c-warn')}</div>
+      <div class="fc-grid mb">${FinCos.all().map((c) => { const d = due.filter((f) => f.coId === c.id); const l = d.filter((f) => FinCos.late(f)); if (!d.length && c.active === false) return ''; return `<div class="card card-b fc-card" style="--fc:${c.color || '#888'}"><div class="row" style="align-items:center"><b style="flex:1;font-size:16px">${esc(c.name)}</b>${l.length ? `<span class="tag err">${l.length} ${L('متأخر', 'late')}</span>` : ''}</div><div class="fc-amt num">${money(round2(sum(d, (f) => f.net)))}</div><div class="faint" style="font-size:12px">${d.length} ${L('عملية', 'sales')} · ${L('عمولة', 'fee')} ${c.pct || 0}% · ${L('بيحوّل بعد', 'pays after')} ${c.days || 7} ${L('يوم', 'd')}</div><button class="btn sm primary mt" data-set="${c.id}" ${d.length ? '' : 'disabled'}>${icon('check')}${L('تسوية', 'Settle')}</button></div>`; }).join('')}</div>
+      <div class="sec-title"><div class="tabs" id="fcTabs">${[['due', L('مستحق', 'Due')], ['late', L('متأخر', 'Overdue')], ['settled', L('اتسوّى', 'Settled')], ['all', L('الكل', 'All')]].map(([k, n]) => `<button data-t="${k}" class="${this.f === k ? 'active' : ''}">${n}</button>`).join('')}</div></div><div id="fcTbl"></div>`;
+    $('#fcCfg').onclick = () => FinCos.cosDialog(); $$('[data-set]', el).forEach((b) => (b.onclick = () => FinCos.settle(b.dataset.set)));
+    $$('#fcTabs button', el).forEach((b) => (b.onclick = () => { this.f = b.dataset.t; App.go('fincos'); }));
+    const rows = all.filter((f) => (this.f === 'due' ? FinCos.due(f) : this.f === 'late' ? FinCos.late(f) : this.f === 'settled' ? f.status === 'settled' : true)).sort((a, b) => (a.date < b.date ? 1 : -1));
+    UI.table($('#fcTbl'), { rows, exportName: 'financing', emptyIcon: 'percent', searchText: (f) => `${f.saleNo} ${f.coName} ${f.customerName} ${f.customerPhone} ${f.ref}`,
+      columns: [{ key: 'date', label: L('التاريخ', 'Date'), render: (f) => fmtDate(f.date) }, { label: L('الشركة', 'Company'), render: (f) => `<span class="fc-dot" style="--fc:${FinCos.get(f.coId).color || '#888'}"></span>${esc(f.coName)}`, exportVal: (f) => f.coName },
+        { label: L('الفاتورة', 'Invoice'), render: (f) => `<b>${esc(f.saleNo)}</b>${f.ref ? ` <span class="faint mono">${esc(f.ref)}</span>` : ''}`, exportVal: (f) => f.saleNo }, { label: L('العميل', 'Customer'), render: (f) => `${esc(f.customerName || '—')} <span class="faint" dir="ltr">${esc(f.customerPhone || '')}</span>`, exportVal: (f) => f.customerName },
+        { key: 'amount', label: L('على الشركة', 'Financed'), render: (f) => money(f.amount, false) }, { key: 'fee', label: L('العمولة', 'Fee'), render: (f) => money(f.fee, false) }, { key: 'net', label: L('الصافي', 'Net'), render: (f) => `<b>${money(f.net, false)}</b>` },
+        { label: L('الحالة', 'Status'), render: (f) => (f.status === 'settled' ? `<span class="tag ok">${L('اتسوّى', 'Settled')} ${fmtDate(f.settledAt)}</span>` : FinCos.late(f) ? `<span class="tag err">${L('متأخر من', 'Late since')} ${fmtDate(f.expectAt)}</span>` : `<span class="tag warn">${L('متوقع', 'Expected')} ${fmtDate(f.expectAt)}</span>`), exportVal: (f) => f.status }],
+      footer: (r) => `<td colspan="4">${L('الإجمالي', 'Total')}</td><td class="num">${money(sum(r, (f) => f.amount), false)}</td><td class="num">${money(sum(r, (f) => f.fee), false)}</td><td class="num">${money(sum(r, (f) => f.net), false)}</td><td></td>` });
+  }
+};
+
+(() => {
+  try { const g = NAV.find((x) => x.id === 'finance'); if (g && !g.items.includes('fincos')) g.items.splice(g.items.indexOf('expenses') + 1, 0, 'fincos'); } catch (_) {}
+  const P = Modules.pos; if (!P) return;
+  /* إظهار شاشة «شركة تقسيط» */
+  const c0 = P.checkout.bind(P);
+  P.checkout = function () {
+    const out = c0();
+    try { const m = [...$$('.modal-bg')].pop(); const btn = m && $('#payM [data-m="finance"]', m); if (!btn) return out; const t = this.totals(); const mm = { el: m }; m._fcT = t;
+      $$('#payM button', m).forEach((b) => b.addEventListener('click', () => { if (b.dataset.m === 'finance') setTimeout(() => FinCos.body(mm, t, this.cart), 0); }));
+      /* مش متاح في الدفع المتعدد */
+      const split = $('#payM [data-m="split"]', m); if (split) split.addEventListener('click', () => setTimeout(() => $$('#payBody [data-lm] option[value="finance"]', m).forEach((o) => o.remove()), 0));
+    } catch (e) { console.warn('fincos', e); }
+    return out;
+  };
+  const f0 = P.finish.bind(P);
+  P.finish = async function (m, method, t) {
+    if (method !== 'finance') return f0(m, method, t);
+    if (this.cart.some((i) => i.tradeIn || i.reserveDep)) return UI.toast(L('شركة التقسيط مش متاحة مع الاستبدال أو الحجز', 'Not available with trade-in / reservations'), 'err');
+    const co = m.el._fcCo; const down = Math.min(t.total, Number($('[name=fcDown]', m.el)?.value) || 0); const fin = round2(t.total - down);
+    if (!co) return UI.toast(L('اختار الشركة', 'Choose the company'), 'err'); if (!(fin > 0)) return UI.toast(L('المقدّم بيغطي الفاتورة كلها — استخدم الكاش', 'Down payment covers it all'), 'warn');
+    const ref = $('[name=fcRef]', m.el).value.trim(); const cname = $('[name=fcName]', m.el).value.trim(); const cphone = $('[name=fcPhone]', m.el).value.trim();
+    m.splitLines = [...(down > 0 ? [{ method: 'cash', amount: down }] : []), { method: 'finance', amount: fin, coId: co, ref, cname, cphone }];
+    FinCos._pending = true; try { return await f0(m, 'split', t); } finally { FinCos._pending = false; }
+  };
+  const sc = Sales.create.bind(Sales);
+  Sales.create = function (o) {
+    const s = sc(o);
+    try { (o.payments || []).filter((p) => p.method === 'finance').forEach((p) => FinCos.record(s, p)); } catch (e) { console.warn('fincos record', e); }
+    return s;
+  };
+  /* لو الفاتورة اتلغت: العملية تتلغي من مستحقات الشركة */
+  const bu = DB.update.bind(DB); DB.update = function (col, id, patch) { const r = bu(col, id, patch); try { if (col === 'sales' && patch && ['cancelled', 'returned'].includes(patch.status)) DB.filter('finSales', (f) => f.saleId === id && f.status === 'due').forEach((f) => bu('finSales', f.id, { status: 'cancelled', cancelledAt: nowISO(), why: patch.status })); } catch (_) {} return r; };
+  if (typeof Notify !== 'undefined') { const l0 = Notify.list.bind(Notify); Notify.list = function () { const l = l0(); try { const late = DB.filter('finSales', (f) => FinCos.late(f)); if (late.length) l.push({ type: 'warn', icon: 'percent', t: L(`${late.length} عملية تقسيط الشركة اتأخرت في تحويلها (${money(round2(sum(late, (f) => f.net)))})`, `${late.length} financing payments overdue`), s: L('شركات التقسيط', 'Financing'), go: () => App.go('fincos') }); } catch (_) {} return l; }; }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   1) المصاريف الثابتة الشهرية — إيجار / كهربا / نت / اشتراكات… بمعاد كل واحد
+      تنبيه قبلها، تسجيل بضغطة (بيتسجل مصروف عادي)، ونصيب اليوم منها عشان تعرف ربحك الحقيقي
+   2) الشيكات — شيكات واردة من العملاء وصادرة للموردين بمواعيد استحقاقها
+      «اتصرف» بيسجّل التحصيل/السداد على حساب العميل أو المورد ويحرّك الفلوس — و«رجع» بيعلّمه مرتجع
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const FixedExp = {
+  list() { return (DB.settings().fixedExp || []).filter((x) => x && x.name); },
+  monthly() { return round2(sum(this.list().filter((x) => x.active !== false), (x) => Number(x.amount) || 0)); },
+  daily() { const d = new Date(); return round2(this.monthly() / new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()); },
+  dueDate(x, base = new Date()) { const y = base.getFullYear(), m = base.getMonth(); const last = new Date(y, m + 1, 0).getDate(); return dayKey(new Date(y, m, Math.min(Math.max(1, Number(x.day) || 1), last))); },
+  paid(x, mk = monthKey(new Date())) { return DB.find('expenses', (e) => e.fixedId === x.id && e.fixedMonth === mk); },
+  status() { return this.list().filter((x) => x.active !== false).map((x) => { const due = this.dueDate(x); const p = this.paid(x); const days = Math.round((Date.parse(due) - Date.parse(dayKey())) / 864e5); return { x, due, p, days, late: !p && days < 0, soon: !p && days >= 0 && days <= (Number(x.remind) || 3) }; }).sort((a, b) => (a.due < b.due ? -1 : 1)); },
+  pay(x) {
+    const mk = monthKey(new Date()); if (this.paid(x, mk)) return UI.toast(L('اتسجّل الشهر ده قبل كده', 'Already recorded this month'), 'info');
+    UI.modal({ title: L('تسجيل', 'Record') + ' — ' + esc(x.name), icon: 'expense', size: 'sm', body: UI.form([{ name: 'amount', label: L('المبلغ', 'Amount'), type: 'number', value: x.amount, required: true, col: 12 }, { name: 'src', label: L('الدفع من', 'Paid from'), type: 'select', options: PAY_SRC(), value: x.src || 'outside', col: 12 }, { name: 'note', label: L('ملاحظة / رقم الإيصال', 'Note / receipt'), col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (m) => m.close() }, { label: L('تسجيل', 'Record'), cls: 'primary', icon: 'check', onClick: (m) => {
+        const v = UI.read(m.el); const a = Number(v.amount) || 0; if (!(a > 0)) return; if (v.src === 'drawer' && !App.needShift()) return;
+        const e = DB.insert('expenses', { category: x.category || x.name, amount: a, src: v.src, note: `${x.name} — ${mk}${v.note ? ' — ' + v.note : ''}`, fixedId: x.id, fixedMonth: mk, date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null });
+        payFromSource(v.src, a, 'expense', e.id); audit('expense.fixed', `${x.name} ${a}`); m.close(); UI.toast(L('اتسجّل ✓', 'Recorded ✓')); App.reload();
+      } }] });
+  },
+  manage() {
+    const rows = this.list().map((x) => ({ ...x })); const cats = DB.settings().expenseCategories || [];
+    const m = UI.modal({ title: L('المصاريف الثابتة الشهرية', 'Monthly fixed expenses'), icon: 'calendar', size: 'xl', body: `<p class="faint" style="margin-top:0">${L('اكتب كل مصروف بيتكرر كل شهر ومعاده — البرنامج هيفكّرك قبله ويسجّله بضغطة.', 'Add each recurring monthly expense and its due day.')}</p><div id="fxRows"></div><button class="btn sm mt" id="fxAdd">${icon('plus')}${L('مصروف ثابت', 'Fixed expense')}</button>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { DB.saveSettings({ fixedExp: rows.filter((r) => r.name.trim() && Number(r.amount) > 0) }); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.reload(); } }] });
+    const draw = () => { $('#fxRows', m.el).innerHTML = rows.length ? rows.map((r, i) => `<div class="fx-row"><input value="${esc(r.name)}" data-k="name" data-i="${i}" placeholder="${L('الاسم (إيجار المحل…)', 'Name')}"><select data-k="category" data-i="${i}">${cats.map((c) => `<option ${c === r.category ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select><label>${L('المبلغ', 'Amount')}<input type="number" value="${r.amount || ''}" data-k="amount" data-i="${i}"></label><label>${L('يوم', 'Day')}<input type="number" min="1" max="31" value="${r.day || 1}" data-k="day" data-i="${i}"></label><select data-k="src" data-i="${i}">${PAY_SRC().map(([k, n]) => `<option value="${k}" ${k === (r.src || 'outside') ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select><button type="button" class="btn sm ghost" data-rm="${i}">${icon('trash')}</button></div>`).join('') : `<div class="faint">${L('مفيش مصاريف ثابتة لسه', 'None yet')}</div>`;
+      $$('[data-k]', m.el).forEach((inp) => (inp.oninput = inp.onchange = () => { const r = rows[+inp.dataset.i], k = inp.dataset.k; r[k] = k === 'amount' || k === 'day' ? Number(inp.value) || 0 : inp.value; }));
+      $$('[data-rm]', m.el).forEach((b) => (b.onclick = () => { rows.splice(+b.dataset.rm, 1); draw(); })); };
+    $('#fxAdd', m.el).onclick = () => { rows.push({ id: 'fx' + Date.now().toString(36), name: '', category: cats.includes('إيجار') && !rows.some((r) => r.category === 'إيجار') ? 'إيجار' : cats[0] || '', amount: 0, day: 1, src: 'outside' }); draw(); };
+    if (!rows.length) $('#fxAdd', m.el).click(); else draw();
+  },
+  cardHTML() {
+    const st = this.status(); const tot = this.monthly(); const paidAmt = round2(sum(st.filter((s) => s.p), (s) => s.p.amount));
+    return `<div class="card card-b mb fx-box"><div class="row wrap" style="gap:8px;align-items:center"><b style="flex:1">📅 ${L('المصاريف الثابتة الشهرية', 'Monthly fixed expenses')}</b><button class="btn sm" id="fxMng">${icon('settings')}${L('تعديل', 'Edit')}</button></div>
+      ${st.length ? `<div class="grid g3 mt">${[[L('إجمالي الشهر', 'Monthly total'), money(tot)], [L('نصيب اليوم الواحد', 'Daily share'), money(this.daily())], [L('اتدفع الشهر ده', 'Paid this month'), `${money(paidAmt)} / ${money(tot)}`]].map(([l, v]) => `<div class="stat-mini"><span class="l">${l}</span><span class="v num">${v}</span></div>`).join('')}</div>
+      ${st.map((s) => `<div class="fx-it"><span class="fx-ic ${s.p ? 'ok' : s.late ? 'err' : s.soon ? 'warn' : ''}">${s.p ? '✓' : new Date(s.due).getDate()}</span><div style="flex:1;min-width:150px"><b>${esc(s.x.name)}</b> <span class="faint">${money(s.x.amount, false)}</span><div class="faint" style="font-size:12px">${s.p ? L(`اتسجّل ${fmtDate(s.p.date)}`, `Recorded ${fmtDate(s.p.date)}`) : s.late ? `<span class="neg">${L(`متأخر ${-s.days} يوم`, `${-s.days} days late`)}</span>` : s.days === 0 ? L('معاده النهارده', 'Due today') : L(`باقي ${s.days} يوم — ${fmtDate(s.due)}`, `in ${s.days} days`)}</div></div>${s.p ? '' : `<button class="btn sm ${s.late || s.soon ? 'primary' : ''}" data-fxp="${s.x.id}">${L('سجّل', 'Record')}</button>`}</div>`).join('')}` : `<div class="faint mt" style="font-size:13px">${L('سجّل الإيجار والكهربا والنت والاشتراكات مرة واحدة — والبرنامج يفكّرك كل شهر ويحسب نصيب اليوم منها.', 'Add rent, power, internet once — get monthly reminders.')}</div>`}</div>`;
+  },
+  bind(el) { $('#fxMng', el) && ($('#fxMng', el).onclick = () => this.manage()); $$('[data-fxp]', el).forEach((b) => (b.onclick = () => this.pay(this.list().find((x) => x.id === b.dataset.fxp)))); }
+};
+
+const CHQ_ST = { pending: ['مستني الاستحقاق', 'Pending', 'warn'], cleared: ['اتصرف', 'Cleared', 'ok'], bounced: ['رجع (مرتجع)', 'Bounced', 'err'], cancelled: ['ملغي', 'Cancelled', ''] };
+const Cheques = {
+  due(c) { return c.status === 'pending'; },
+  daysTo(c) { return Math.round((Date.parse(c.dueDate) - Date.parse(dayKey())) / 864e5); },
+  party(c) { return c.customerId ? DB.get('customers', c.customerId)?.name : c.supplierId ? DB.get('suppliers', c.supplierId)?.name : c.partyName; },
+  edit(c0, dir = 'in') {
+    const c = c0 || { dir, dueDate: dayKey(addDays(new Date(), 30)), status: 'pending' }; const isIn = (c.dir || dir) === 'in';
+    const m = UI.modal({ title: c0 ? L('تعديل شيك', 'Edit cheque') : isIn ? L('شيك وارد (من عميل)', 'Incoming cheque') : L('شيك صادر (لمورد)', 'Outgoing cheque'), icon: 'file', size: 'md', body: UI.form([
+      { name: 'dir', label: L('النوع', 'Type'), type: 'select', options: [['in', L('وارد — استلمته من عميل', 'Incoming — from a customer')], ['out', L('صادر — كتبته لمورد', 'Outgoing — to a supplier')]], col: 12 },
+      { name: 'partyId', label: L('العميل / المورد (اختياري)', 'Customer / supplier (optional)'), type: 'select', options: [['', '—']], col: 6 }, { name: 'partyName', label: L('أو اكتب الاسم', 'Or type the name'), col: 6 },
+      { name: 'amount', label: L('المبلغ', 'Amount'), type: 'number', required: true, col: 4 }, { name: 'dueDate', label: L('تاريخ الاستحقاق', 'Due date'), type: 'date', required: true, col: 4 }, { name: 'no', label: L('رقم الشيك', 'Cheque no.'), col: 4, attrs: 'dir="ltr"' },
+      { name: 'bank', label: L('البنك', 'Bank'), col: 6 }, { name: 'note', label: L('ملاحظة', 'Note'), col: 6 }], { ...c, partyId: c.customerId || c.supplierId || '' }),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); const a = Number(v.amount) || 0; if (!(a > 0)) return UI.toast(L('اكتب المبلغ', 'Enter amount'), 'err');
+        const doc = { dir: v.dir, amount: a, dueDate: v.dueDate, no: v.no || '', bank: v.bank || '', note: v.note || '', customerId: v.dir === 'in' ? v.partyId || null : null, supplierId: v.dir === 'out' ? v.partyId || null : null, partyName: v.partyId ? '' : v.partyName || '' };
+        if (!doc.customerId && !doc.supplierId && !doc.partyName) return UI.toast(L('اختار العميل/المورد أو اكتب الاسم', 'Pick or type the party'), 'err');
+        if (c0) DB.update('cheques', c0.id, doc); else DB.insert('cheques', { ...doc, status: 'pending', date: nowISO(), userId: Session.user.id });
+        audit('cheque.save', `${doc.dir} ${a} ${doc.no}`); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.reload();
+      } }] });
+    const fill = () => { const d = $('[name=dir]', m.el).value; const s = $('[name=partyId]', m.el); const cur = s.value || c.customerId || c.supplierId || ''; s.innerHTML = `<option value="">—</option>` + (d === 'in' ? DB.all('customers') : DB.all('suppliers')).map((p) => `<option value="${p.id}" ${p.id === cur ? 'selected' : ''}>${esc(p.name)}</option>`).join(''); };
+    $('[name=dir]', m.el).onchange = fill; fill();
+  },
+  clear(c) {
+    const isIn = c.dir === 'in'; const DST = () => [['outside', L('البنك / خارج الدرج', 'Bank / outside drawer')], ['drawer', L('درج الكاشير (كاش)', 'Cash drawer')], ...DB.filter('wallets', (w) => w.active !== false).map((w) => ['w:' + w.id, L('محفظة: ', 'Wallet: ') + w.name])];
+    UI.modal({ title: isIn ? L('الشيك اتصرف', 'Cheque cleared') : L('الشيك اتسحب', 'Cheque cashed'), icon: 'check', size: 'sm', body: `<p style="line-height:1.9;margin-top:0">${esc(this.party(c) || '')} — <b>${money(c.amount)}</b>${c.no ? ` · ${L('شيك', 'No.')} <span dir="ltr">${esc(c.no)}</span>` : ''}</p>` + UI.form([{ name: 'dst', label: isIn ? L('الفلوس دخلت على', 'Money went to') : L('الفلوس خرجت من', 'Money left from'), type: 'select', options: DST(), col: 12 }]) + (c.customerId || c.supplierId ? `<div class="faint" style="font-size:12.5px">${isIn ? L('هيتخصم المبلغ من حساب العميل الآجل.', 'Will be deducted from the customer balance.') : L('هيتخصم المبلغ من حساب المورد.', 'Will be deducted from the supplier balance.')}</div>` : ''),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تأكيد', 'Confirm'), cls: 'primary', icon: 'check', onClick: (x) => {
+        const v = UI.read(x.el); if (v.dst === 'drawer' && !App.needShift()) return; const ref = 'CHQ-' + (c.no || c.id.slice(0, 6));
+        if (isIn) { if (v.dst === 'drawer') cashMove(c.amount, 'cheque-in', ref, this.party(c)); else if (String(v.dst).startsWith('w:')) DB.insert('walletTx', { walletId: v.dst.slice(2), type: 'fund', amount: c.amount, fee: 0, balanceDelta: c.amount, cashDelta: 0, ref, note: L('شيك ', 'Cheque ') + (this.party(c) || ''), date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null, status: 'completed' }); if (c.customerId) Customers.tx(c.customerId, 'payment', -c.amount, ref, L('تحصيل شيك', 'Cheque collected')); }
+        else { payFromSource(v.dst, c.amount, 'cheque-out', ref); if (c.supplierId) Suppliers.tx(c.supplierId, 'payment', -c.amount, ref, L('سداد بشيك', 'Paid by cheque')); }
+        DB.update('cheques', c.id, { status: 'cleared', clearedAt: nowISO(), dst: v.dst }); audit('cheque.clear', `${c.dir} ${c.amount} ${c.no}`); x.close(); UI.toast(L('اتسجّل ✓', 'Recorded ✓')); App.reload();
+      } }] });
+  },
+  async bounce(c) { if (!(await UI.confirm(L('الشيك رجع (مرتجع)؟ — هيفضل المبلغ على العميل/المورد زي ما هو', 'Mark as bounced?')))) return; DB.update('cheques', c.id, { status: 'bounced', bouncedAt: nowISO() }); audit('cheque.bounce', `${c.dir} ${c.amount} ${c.no}`); App.reload(); }
+};
+
+Modules.cheques = {
+  title: () => L('الشيكات', 'Cheques'), icon: 'file', perm: 'expenses', f: 'pending',
+  render(el) {
+    const all = DB.all('cheques'); const pend = all.filter((c) => Cheques.due(c)); const inP = pend.filter((c) => c.dir === 'in'), outP = pend.filter((c) => c.dir === 'out'); const soon = pend.filter((c) => Cheques.daysTo(c) <= 7);
+    el.innerHTML = `<div class="sec-title"><h2 style="margin:0">${L('الشيكات', 'Cheques')}</h2><div class="spacer"></div><button class="btn" id="chOut">${icon('arrowUp')}${L('شيك صادر', 'Outgoing')}</button><button class="btn primary" id="chIn">${icon('arrowDown')}${L('شيك وارد', 'Incoming')}</button></div>
+      <div class="grid g4 mb">${UI.kpi(L('شيكات واردة مستنية', 'Incoming pending'), money(round2(sum(inP, (c) => c.amount))), 'arrowDown', 'hero', `${inP.length} ${L('شيك', 'cheques')}`)}${UI.kpi(L('شيكات صادرة مستنية', 'Outgoing pending'), money(round2(sum(outP, (c) => c.amount))), 'arrowUp', 'c-warn', `${outP.length} ${L('شيك', 'cheques')}`)}${UI.kpi(L('مستحقة خلال أسبوع', 'Due within a week'), soon.length, 'clock', soon.length ? 'c-err' : '')}${UI.kpi(L('رجعت', 'Bounced'), all.filter((c) => c.status === 'bounced').length, 'alert', '')}</div>
+      <div class="sec-title"><div class="tabs" id="chTabs">${[['pending', L('مستنية', 'Pending')], ['in', L('واردة', 'Incoming')], ['out', L('صادرة', 'Outgoing')], ['done', L('اتصرفت / رجعت', 'Closed')]].map(([k, n]) => `<button data-t="${k}" class="${this.f === k ? 'active' : ''}">${n}</button>`).join('')}</div></div><div id="chTbl"></div>`;
+    $('#chIn').onclick = () => Cheques.edit(null, 'in'); $('#chOut').onclick = () => Cheques.edit(null, 'out');
+    $$('#chTabs button', el).forEach((b) => (b.onclick = () => { this.f = b.dataset.t; App.go('cheques'); }));
+    const rows = all.filter((c) => (this.f === 'pending' ? Cheques.due(c) : this.f === 'in' ? c.dir === 'in' : this.f === 'out' ? c.dir === 'out' : !Cheques.due(c))).sort((a, b) => (a.dueDate < b.dueDate ? -1 : 1));
+    UI.table($('#chTbl'), { rows, exportName: 'cheques', emptyIcon: 'file', searchText: (c) => `${Cheques.party(c) || ''} ${c.no} ${c.bank} ${c.note}`,
+      columns: [{ key: 'dueDate', label: L('الاستحقاق', 'Due'), render: (c) => { const d = Cheques.daysTo(c); return `${fmtDate(c.dueDate)}${Cheques.due(c) ? `<div class="faint" style="font-size:11px">${d < 0 ? `<span class="neg">${L(`فات ${-d} يوم`, `${-d}d overdue`)}</span>` : d === 0 ? L('النهارده', 'Today') : L(`بعد ${d} يوم`, `in ${d}d`)}</div>` : ''}`; } },
+        { label: L('النوع', 'Type'), render: (c) => (c.dir === 'in' ? `<span class="tag info">${L('وارد', 'In')}</span>` : `<span class="tag warn">${L('صادر', 'Out')}</span>`), exportVal: (c) => c.dir },
+        { label: L('الطرف', 'Party'), render: (c) => esc(Cheques.party(c) || '—'), exportVal: (c) => Cheques.party(c) }, { key: 'amount', label: L('المبلغ', 'Amount'), render: (c) => `<b>${money(c.amount, false)}</b>` },
+        { label: L('رقم / بنك', 'No. / bank'), render: (c) => `<span dir="ltr" class="mono">${esc(c.no || '')}</span> ${esc(c.bank || '')}`, exportVal: (c) => `${c.no} ${c.bank}` }, { label: L('الحالة', 'Status'), render: (c) => `<span class="tag ${CHQ_ST[c.status][2]}">${L(...CHQ_ST[c.status].slice(0, 2))}</span>`, exportVal: (c) => c.status }],
+      actions: (c) => (Cheques.due(c) ? UI.act('clr', 'check', L('اتصرف', 'Cleared')) + UI.act('bnc', 'x', L('رجع', 'Bounced')) + UI.act('edit', 'edit', L('تعديل', 'Edit')) : '') + (c.status !== 'cleared' && Session.can('settings') ? UI.act('del', 'trash', L('حذف', 'Delete'), 'del') : ''),
+      onAction: async (a, c) => { if (a === 'clr') Cheques.clear(c); if (a === 'bnc') Cheques.bounce(c); if (a === 'edit') Cheques.edit(c); if (a === 'del' && (await UI.confirm(L('حذف الشيك؟', 'Delete?')))) { DB.remove('cheques', c.id); App.reload(); } },
+      footer: (r) => `<td colspan="3">${L('الإجمالي', 'Total')}</td><td class="num">${money(sum(r, (c) => c.amount), false)}</td><td colspan="2"></td>` });
+  }
+};
+
+(() => {
+  try { const g = NAV.find((x) => x.id === 'finance'); if (g && !g.items.includes('cheques')) g.items.splice(g.items.indexOf('fincos') + 1 || g.items.indexOf('expenses') + 1, 0, 'cheques'); } catch (_) {}
+  const E = Modules.expenses; if (E) { const r0 = E.render.bind(E); E.render = function (el) { r0(el); try { const k = $('#exKpi', el)?.closest('.grid') || el.firstElementChild; const w = document.createElement('div'); w.innerHTML = FixedExp.cardHTML(); k.parentNode.insertBefore(w.firstElementChild, k); FixedExp.bind(el); } catch (e) { console.warn(e); } }; }
+  if (typeof Notify !== 'undefined') { const l0 = Notify.list.bind(Notify); Notify.list = function () { const l = l0(); try {
+    FixedExp.status().filter((s) => s.late || s.soon).forEach((s) => l.push({ type: s.late ? 'err' : 'warn', icon: 'expense', t: s.late ? L(`${s.x.name} متأخر (${money(s.x.amount)})`, `${s.x.name} overdue`) : L(`${s.x.name} معاده ${s.days ? `بعد ${s.days} يوم` : 'النهارده'} (${money(s.x.amount)})`, `${s.x.name} due soon`), s: L('المصاريف الثابتة', 'Fixed expenses'), go: () => App.go('expenses') }));
+    const ch = DB.filter('cheques', (c) => Cheques.due(c) && Cheques.daysTo(c) <= 2); if (ch.length) l.push({ type: ch.some((c) => Cheques.daysTo(c) < 0) ? 'err' : 'warn', icon: 'file', t: L(`${ch.length} شيك معاده قرّب أو فات (${money(round2(sum(ch, (c) => c.amount)))})`, `${ch.length} cheques due`), s: L('الشيكات', 'Cheques'), go: () => App.go('cheques') });
+  } catch (_) {} return l; }; }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   1) توافق الإكسسوارات مع الموديلات — كل جراب/سكرينة/شاحن مكتوب عليه الموديلات اللي يناسبها
+      البحث في البيع بالموديل («A54») بيطلّع كل اللي يناسبه، ولما تبيع موبايل بيظهر اقتراح بإكسسواراته
+   2) الضمان الممتد المدفوع — يتعرض وقت بيع الموبايل، وبيمدّ ضمان الجهاز نفسه (فيظهر في الإيصال والملصق وصفحة العميل)
+   3) مكان الصنف على الرف — بيظهر في البيع والجرد والبحث
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const Compat = {
+  n(s) { return String(s || '').toLowerCase().replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[\s\-_./()+]+/g, ''); },
+  tokens(p) { return String(p.compat || '').split(/[,،;\n]+/).map((x) => this.n(x)).filter((x) => x.length >= 2); },
+  /* الكلمات اللي ممكن تتطابق في اسم الموبايل: كل كلمة + كل كلمتين ورا بعض + الاسم كله */
+  keys(name) { const w = String(name || '').toLowerCase().split(/[\s\-_/()+]+/).filter(Boolean).map((x) => this.n(x)); const s = new Set(w); for (let i = 0; i < w.length - 1; i++) { s.add(w[i] + w[i + 1]); if (w[i + 2]) s.add(w[i] + w[i + 1] + w[i + 2]); } s.add(w.join('')); return s; },
+  fits(p, name) { const k = this.keys(name); return this.tokens(p).some((t) => k.has(t)); },
+  forPhone(ph) { const nm = [ph.brand, ph.model].filter(Boolean).join(' '); return DB.filter('products', (p) => p.active !== false && p.compat && (p.trackStock === false || Stock.qty(p) > 0) && this.fits(p, nm)).slice(0, 12); },
+  search(q) { const t = this.n(q); if (t.length < 2) return []; return DB.filter('products', (p) => p.active !== false && this.tokens(p).some((x) => x.includes(t))); },
+  /* ربط جماعي: موديل → أصناف */
+  bulk() {
+    const cats = DB.all('categories'); let model = '', cat = '', q = '';
+    const m = UI.modal({ title: L('توافق الإكسسوارات مع الموديلات', 'Accessory compatibility'), icon: 'phone', size: 'xl', body: `<p class="faint" style="margin-top:0;line-height:1.9">${L('اكتب الموديل (مثلاً A54 أو iPhone 15) وعلّم الأصناف اللي تناسبه — أو افتح أي صنف واكتب الموديلات في خانة «يناسب الموديلات».', 'Type a model and tick the matching products.')}</p>
+      <div class="row wrap" style="gap:8px"><input id="cmM" placeholder="${L('الموديل: A54', 'Model: A54')}" style="max-width:200px"><select id="cmC" style="max-width:180px"><option value="">${L('كل الأقسام', 'All categories')}</option>${cats.map((c) => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select><input id="cmQ" type="search" placeholder="${L('بحث في الأصناف…', 'Search products…')}" style="max-width:200px"></div>
+      <div class="tbl-wrap mt" style="max-height:52vh"><table class="tbl"><tbody id="cmL"></tbody></table></div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => {
+        const mm = $('#cmM', x.el).value.trim(); if (!mm) return UI.toast(L('اكتب الموديل', 'Type the model'), 'warn'); const t = this.n(mm); let n = 0;
+        $$('[data-cm]', x.el).forEach((c) => { const p = DB.get('products', c.dataset.cm); const toks = String(p.compat || '').split(/[,،;\n]+/).map((s) => s.trim()).filter(Boolean); const has = toks.some((s) => this.n(s) === t);
+          if (c.checked && !has) { DB.update('products', p.id, { compat: [...toks, mm].join('، ') }); n++; } else if (!c.checked && has) { DB.update('products', p.id, { compat: toks.filter((s) => this.n(s) !== t).join('، ') }); n++; } });
+        audit('compat.bulk', `${mm} ${n}`); UI.toast(L(`اتحدّث ${n} صنف ✓`, `${n} updated ✓`)); draw();
+      } }] });
+    const draw = () => { model = $('#cmM', m.el).value.trim(); cat = $('#cmC', m.el).value; q = $('#cmQ', m.el).value.trim().toLowerCase(); const t = this.n(model);
+      const list = DB.filter('products', (p) => p.active !== false && p.type !== 'service' && (!cat || p.categoryId === cat) && (!q || p.name.toLowerCase().includes(q))).slice(0, 300);
+      $('#cmL', m.el).innerHTML = list.map((p) => { const has = t && this.tokens(p).includes(t); return `<tr><td style="width:34px"><input type="checkbox" data-cm="${p.id}" ${has ? 'checked' : ''} ${t ? '' : 'disabled'}></td><td>${esc(p.name)}</td><td class="faint" style="font-size:12px">${esc(p.compat || '')}</td></tr>`; }).join('') || `<tr><td>${UI.empty(L('مفيش أصناف', 'No products'), 'box')}</td></tr>`; };
+    ['#cmM', '#cmQ'].forEach((s) => ($(s, m.el).oninput = () => { clearTimeout(m._t); m._t = setTimeout(draw, 200); })); $('#cmC', m.el).onchange = draw; draw();
+  }
+};
+
+const ExtWarranty = {
+  cfg() { return { on: false, suggest: true, plans: [{ months: 6, pct: 4, min: 100 }, { months: 12, pct: 7, min: 150 }], ...(DB.settings().extWarranty || {}) }; },
+  price(plan, base) { const v = Math.max(Number(plan.min) || 0, ((Number(base) || 0) * (Number(plan.pct) || 0)) / 100); return Math.ceil(v / 5) * 5; },
+  settings() {
+    const c = this.cfg(); const pl = c.plans.map((x) => ({ ...x }));
+    const m = UI.modal({ title: L('الضمان الممتد المدفوع + اقتراحات البيع', 'Extended warranty & suggestions'), icon: 'shield', size: 'lg', body: UI.form([{ name: 'on', label: L('اعرض الضمان الممتد وقت بيع الموبايل', 'Offer extended warranty when selling a phone'), type: 'checkbox', col: 12 }, { name: 'suggest', label: L('اعرض الإكسسوارات المناسبة وقت بيع الموبايل', 'Suggest matching accessories when selling a phone'), type: 'checkbox', col: 12 }], c) + `<label class="lbl mt">${L('الباقات — السعر = نسبة من سعر الجهاز بحد أدنى', 'Plans — price = % of the phone price, with a minimum')}</label><div id="ewP"></div><button class="btn sm mt" id="ewAdd">${icon('plus')}${L('باقة', 'Plan')}</button><div class="faint mt" style="font-size:12.5px;line-height:1.8">${L('الضمان الممتد بيتضاف على ضمان الجهاز نفسه — فيظهر في الإيصال وملصق الضمان وصفحة العميل. وثمنه ربح كامل (تكلفة صفر) إلا لو حطيت تكلفة.', 'Extends the phone warranty; its price is pure margin.')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { const v = UI.read(x.el); DB.saveSettings({ extWarranty: { on: !!v.on, suggest: !!v.suggest, plans: pl.filter((p) => Number(p.months) > 0) } }); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); } }] });
+    const draw = () => { $('#ewP', m.el).innerHTML = pl.map((p, i) => `<div class="fx-row"><label>${L('شهور', 'Months')}<input type="number" value="${p.months}" data-k="months" data-i="${i}"></label><label>${L('% من سعر الجهاز', '% of price')}<input type="number" step="0.5" value="${p.pct}" data-k="pct" data-i="${i}"></label><label>${L('أقل سعر', 'Min price')}<input type="number" value="${p.min}" data-k="min" data-i="${i}"></label><span class="faint" style="font-size:12px">${L('جهاز بـ 10,000 =', 'A 10,000 phone =')} <b>${money(this.price(p, 10000), false)}</b></span><button type="button" class="btn sm ghost" data-rm="${i}">${icon('trash')}</button></div>`).join('');
+      $$('[data-k]', m.el).forEach((inp) => (inp.oninput = () => { pl[+inp.dataset.i][inp.dataset.k] = Number(inp.value) || 0; })); $$('[data-rm]', m.el).forEach((b) => (b.onclick = () => { pl.splice(+b.dataset.rm, 1); draw(); })); };
+    $('#ewAdd', m.el).onclick = () => { pl.push({ months: 24, pct: 12, min: 250 }); draw(); }; draw();
+  }
+};
+
+/* لوحة الاقتراحات بعد إضافة موبايل للفاتورة */
+const SellSuggest = {
+  show(ph) {
+    const P = Modules.pos; const ew = ExtWarranty.cfg(); const acc = ew.suggest !== false ? Compat.forPhone(ph) : []; const line = P.cart.find((i) => i.phoneId === ph.id); if (!line) return;
+    const plans = ew.on ? ew.plans : []; if (!acc.length && !plans.length) return;
+    const nm = [ph.brand, ph.model].filter(Boolean).join(' ');
+    const m = UI.modal({ title: L('مع الموبايل ده', 'With this phone') + ' — ' + esc(nm), icon: 'star', size: 'md', body: `${plans.length ? `<div class="ss-sec"><b>🛡️ ${L('ضمان ممتد', 'Extended warranty')}</b><div class="row wrap mt" style="gap:8px">${plans.map((p, i) => `<button type="button" class="ss-ew" data-ew="${i}"><b>+${p.months} ${L('شهر', 'mo')}</b><span class="num">${money(ExtWarranty.price(p, line.price))}</span></button>`).join('')}</div></div>` : ''}
+      ${acc.length ? `<div class="ss-sec"><b>🎧 ${L('إكسسوارات مناسبة', 'Matching accessories')}</b><div class="ss-acc">${acc.map((p) => `<button type="button" class="ss-p" data-ac="${p.id}"><span class="n">${esc(p.name)}</span><span class="num">${money(p.price, false)}</span>${p.shelf ? `<small>📍 ${esc(p.shelf)}</small>` : ''}</button>`).join('')}</div></div>` : ''}`,
+      actions: [{ label: L('تمام', 'Done'), cls: 'primary', onClick: (x) => x.close() }] });
+    $$('[data-ac]', m.el).forEach((b) => (b.onclick = () => { P.addProduct(DB.get('products', b.dataset.ac)); b.classList.add('on'); }));
+    $$('[data-ew]', m.el).forEach((b) => (b.onclick = () => {
+      const pl = plans[+b.dataset.ew]; const old = P.cart.findIndex((i) => i.extW && i.extW.phoneId === ph.id); if (old >= 0) { const o = P.cart[old]; line.warrantyDays = Math.max(0, (Number(line.warrantyDays) || 0) - o.extW.days); P.cart.splice(old, 1); }
+      const days = Math.round(pl.months * 30.4); line.warrantyDays = (Number(line.warrantyDays) || 0) + days; line.extDays = days;
+      P.cart.push({ productId: null, name: `${L('ضمان ممتد', 'Extended warranty')} ${pl.months} ${L('شهر', 'mo')} — ${nm}`, qty: 1, price: ExtWarranty.price(pl, line.price), cost: Number(pl.cost) || 0, discount: 0, custom: true, extW: { phoneId: ph.id, months: pl.months, days } });
+      P.renderCart(); $$('[data-ew]', m.el).forEach((y) => y.classList.toggle('on', y === b)); UI.toast(L(`اتضاف ضمان ${pl.months} شهر ✓`, 'Added ✓'));
+    }));
+  }
+};
+
+(() => {
+  /* خانات المنتج: «يناسب الموديلات» و«مكانه على الرف» */
+  const I = Modules.inventory;
+  if (I) {
+    const e0 = I.edit.bind(I);
+    I.edit = function (p, onSave, defaults) {
+      const out = e0(p, onSave, defaults);
+      try { const m = [...$$('.modal-bg')].pop(); const notes = m && $('[name=notes]', m); const f = notes && notes.closest('.f'); if (f && !$('[name=compat]', m)) { const x = p || defaults || {};
+        f.insertAdjacentHTML('beforebegin', `<div class="f c8"><label class="lbl">📱 ${L('يناسب الموديلات (افصل بفاصلة)', 'Fits models (comma separated)')}</label><input name="compat" value="${esc(x.compat || '')}" placeholder="${L('مثلاً: A54، A34، Galaxy S23', 'e.g. A54, A34, Galaxy S23')}"></div><div class="f c4"><label class="lbl">📍 ${L('مكانه على الرف', 'Shelf location')}</label><input name="shelf" value="${esc(x.shelf || '')}" placeholder="${L('دولاب 2 — رف 3', 'Cabinet 2 – shelf 3')}"></div>`); } } catch (e) { console.warn(e); }
+      return out;
+    };
+    const r0 = I.render.bind(I);
+    I.render = function (el) { r0(el); try { const add = $('#invAdd', el); if (add && !$('#cmBtn', el)) { const b = document.createElement('button'); b.className = 'btn'; b.id = 'cmBtn'; b.innerHTML = `${icon('phone')}${L('توافق الموديلات', 'Model compatibility')}`; b.onclick = () => Compat.bulk(); add.before(b); } } catch (_) {} };
+  }
+  if (I && I.stockCount) { const k0 = I.stockCount.bind(I); I.stockCount = function (b) { const r = k0(b); try { $$('[data-c]', b).forEach((i) => { const p = DB.get('products', i.dataset.c); const td = i.closest('tr')?.firstElementChild; if (p && p.shelf && td && !$('.shelf-i', td)) td.insertAdjacentHTML('beforeend', `<div class="shelf-i">📍 ${esc(p.shelf)}</div>`); }); } catch (_) {} return r; }; }
+  /* البيع: البحث بالموديل + مكان الصنف + الاقتراحات */
+  const P = Modules.pos; if (!P) return;
+  const fl0 = P.filtered.bind(P);
+  P.filtered = function () { const base = fl0(); try { const q = ($('#posQ')?.value || '').trim(); if (q.length >= 2) { const ids = new Set(base.map((p) => p.id)); Compat.search(q).filter((p) => !this.cat || p.categoryId === this.cat).forEach((p) => { if (!ids.has(p.id)) { base.push(p); ids.add(p.id); } }); } } catch (_) {} return base; };
+  const g0 = P.renderGrid.bind(P);
+  P.renderGrid = function () { const r = g0(); try { $$('#posGrid .prod[data-id]').forEach((b) => { const p = DB.get('products', b.dataset.id); if (p && p.shelf && !$('.shelf', b)) b.insertAdjacentHTML('beforeend', `<span class="shelf">📍 ${esc(p.shelf)}</span>`); }); } catch (_) {} return r; };
+  const c0 = P.renderCart.bind(P);
+  P.renderCart = function () { const r = c0(); try { $$('#posCart .cart-item').forEach((row, k) => { const i = this.cart[k]; if (!i) return; const p = i.productId && DB.get('products', i.productId); const n = $('.n', row); if (p && p.shelf && n && !$('.shelf-i', row)) n.insertAdjacentHTML('afterend', `<div class="shelf-i">📍 ${esc(p.shelf)}</div>`); if (i.extW && n) n.insertAdjacentHTML('afterbegin', '🛡️ '); }); } catch (_) {} return r; };
+  const a0 = P.addPhone.bind(P);
+  P.addPhone = function (p, o = {}) { const had = this.cart.some((i) => i.phoneId === p?.id); const r = a0(p, o); try { if (p && !had && this.cart.some((i) => i.phoneId === p.id) && !o.silent) setTimeout(() => SellSuggest.show(p), 250); } catch (e) { console.warn(e); } return r; };
+  /* لو شلت سطر الضمان الممتد من الفاتورة: يرجع ضمان الجهاز زي ما كان */
+  const sc = Sales.create.bind(Sales);
+  Sales.create = function (o) {
+    try { if (o.items) o.items = o.items.filter((x) => !x.extW || o.items.some((y) => y.phoneId === x.extW.phoneId)); const items = o.items || []; items.forEach((it) => { if (it.phoneId && it.extDays && !items.some((x) => x.extW && x.extW.phoneId === it.phoneId)) { it.warrantyDays = Math.max(0, (Number(it.warrantyDays) || 0) - it.extDays); delete it.extDays; } }); } catch (_) {}
+    return sc(o);
+  };
+  /* إعدادات الضمان الممتد من قسم الموبايلات */
+  const PH = Modules.phones; if (PH) { const r0 = PH.render.bind(PH); PH.render = function (el) { r0(el); try { const tr = $('#phTrade', el); if (tr && !$('#ewBtn', el)) { const b = document.createElement('button'); b.className = 'btn'; b.id = 'ewBtn'; b.innerHTML = `${icon('shield')}${L('الضمان الممتد', 'Extended warranty')}`; b.onclick = () => ExtWarranty.settings(); tr.after(b); } } catch (_) {} }; }
+  /* البحث في المخزون بالرف والموديل */
+  if (I) { const s0 = UI.table; UI.table = function (host, o) { try { if (o && o.exportName === 'products' && o.searchText) { const st = o.searchText; o.searchText = (p) => `${st(p)} ${p.shelf || ''} ${p.compat || ''}`; } } catch (_) {} return s0.call(UI, host, o); }; }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   1) طلبات العملاء للحاجات الناقصة — «مفيش دلوقتي؟ سيب رقمك» — أول ما الصنف يدخل في فاتورة شراء
+      العميل يوصله «طلبك وصل» على واتساب. والطلبات بتدخل في النواقص (الطلبية المقترحة والمناقصة)
+   2) رشّح صاحبك — كل عميل ليه كود، ولما صاحبه يشتري بالكود أول مرة الاتنين ياخدوا نقاط
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const CustReq = {
+  n(s) { return String(s || '').toLowerCase().replace(/[إأآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/[\s\-_./()]+/g, ''); },
+  waiting() { return DB.filter('custRequests', (r) => r.status === 'waiting').sort((a, b) => (a.date < b.date ? -1 : 1)); },
+  add(pre = {}) {
+    const prods = DB.filter('products', (p) => p.active !== false && p.type !== 'service').slice(0, 1500); const custs = DB.filter('customers', (c) => c.phone).slice(0, 1500);
+    const m = UI.modal({ title: L('طلب عميل — صنف مش موجود', 'Customer request — out of stock'), icon: 'bell', size: 'md', body: UI.form([
+      { name: 'item', label: L('العميل عايز إيه؟', 'What does the customer want?'), required: true, value: pre.item || '', col: 12, attrs: 'list="crP" autocomplete="off"' },
+      { name: 'qty', label: L('الكمية', 'Qty'), type: 'number', value: 1, col: 4 }, { name: 'phone', label: L('موبايل العميل (واتساب)', 'Customer mobile (WhatsApp)'), type: 'tel', required: true, value: pre.phone || '', col: 8, attrs: 'list="crC" dir="ltr"' },
+      { name: 'name', label: L('اسم العميل', 'Customer name'), value: pre.name || '', col: 6 }, { name: 'deposit', label: L('عربون (اختياري)', 'Deposit (optional)'), type: 'number', value: 0, col: 6 },
+      { name: 'note', label: L('ملاحظة (لون / موديل…)', 'Note (color / model…)'), col: 12 }]) + `<datalist id="crP">${prods.map((p) => `<option value="${esc(p.name)}">`).join('')}</datalist><datalist id="crC">${custs.map((c) => `<option value="${esc(c.phone)}">${esc(c.name)}</option>`).join('')}</datalist>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('سجّل الطلب', 'Save request'), cls: 'primary', icon: 'check', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); const ph = String(v.phone || '').replace(/\D/g, ''); if (ph.length < 10) return UI.toast(L('اكتب رقم موبايل صحيح', 'Enter a valid mobile'), 'err');
+        const p = DB.find('products', (y) => y.name === v.item.trim()); const cu = DB.find('customers', (c) => c.phone && String(c.phone).replace(/\D/g, '').endsWith(ph.slice(-10)));
+        const dep = Number(v.deposit) || 0; if (dep > 0 && !App.needShift()) return;
+        const r = DB.insert('custRequests', { item: v.item.trim(), productId: p ? p.id : null, qty: Math.max(1, Number(v.qty) || 1), phone: ph, name: v.name || (cu && cu.name) || '', customerId: cu ? cu.id : null, deposit: dep, note: v.note || '', status: 'waiting', date: nowISO(), userId: Session.user.id });
+        if (dep > 0) cashMove(dep, 'request-deposit', 'REQ-' + r.id.slice(0, 6), `${r.name} — ${r.item}`);
+        audit('request.add', `${r.item} ${ph}`); x.close(); UI.toast(L('اتسجّل الطلب ✓ — أول ما يوصل هنبعتله', 'Saved ✓ — we will notify on arrival')); if (App.current === 'purchases') App.reload();
+      } }] });
+    const ph = $('[name=phone]', m.el); ph.addEventListener('change', () => { const d = ph.value.replace(/\D/g, ''); const cu = DB.find('customers', (c) => c.phone && String(c.phone).replace(/\D/g, '').endsWith(d.slice(-10))); const nm = $('[name=name]', m.el); if (cu && !nm.value) nm.value = cu.name; });
+  },
+  msg(r) { const st = DB.settings().store || {}; return `${L('أهلاً', 'Hi')} ${String(r.name || '').split(' ')[0]} 👋\n${L(`طلبك وصل: ${r.item}`, `Your request arrived: ${r.item}`)} ✅${r.deposit ? `\n${L(`(دافع عربون ${money(r.deposit)})`, `(deposit ${money(r.deposit)})`)}` : ''}\n${L('عدّي علينا في أي وقت', 'Drop by any time')} 🌹\n\n${st.name || ''}${st.address ? `\n📍 ${st.address}` : ''}`; },
+  notify(list, auto) {
+    if (!list.length) return; const linked = typeof WaLink !== 'undefined' && WaLink.ready();
+    if (auto && linked) { list.forEach((r) => { WaLink.queue(r.phone, this.msg(r), { kind: 'request', ref: r.id, prio: 1 }); DB.update('custRequests', r.id, { status: 'notified', notifiedAt: nowISO() }); }); UI.toast(`🔔 ${L(`اتبعت لـ ${list.length} عميل إن طلبهم وصل`, `${list.length} customers notified`)}`, 'ok', 6000); return; }
+    const m = UI.modal({ title: L('طلبات عملاء وصلت 🔔', 'Customer requests arrived 🔔'), icon: 'bell', size: 'md', body: `<p class="faint" style="margin-top:0">${L('الأصناف دي فيه عملاء مستنيينها — ابعتلهم:', 'Customers are waiting for these:')}</p>${list.map((r) => `<div class="cr-it"><div style="flex:1;min-width:160px"><b>${esc(r.name || r.phone)}</b> <span class="faint" dir="ltr">${esc(r.phone)}</span><div class="faint" style="font-size:12.5px">${esc(r.item)} × ${r.qty}${r.deposit ? ` · ${L('عربون', 'deposit')} ${money(r.deposit, false)}` : ''}</div></div><button class="btn sm" data-crw="${r.id}">${icon('whatsapp')}${L('ابعت', 'Send')}</button></div>`).join('')}`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, ...(linked ? [{ label: L('ابعت للكل', 'Send to all'), cls: 'primary', icon: 'send', onClick: (x) => { x.close(); this.notify(list, true); } }] : [])] });
+    $$('[data-crw]', m.el).forEach((b) => (b.onclick = () => { const r = DB.get('custRequests', b.dataset.crw); sendWhatsApp(r.phone, this.msg(r)); DB.update('custRequests', r.id, { status: 'notified', notifiedAt: nowISO() }); b.disabled = true; b.textContent = '✓'; }));
+  },
+  /* أصناف دخلت المخزن ← الطلبات اللي مستنياها */
+  onArrive(items) {
+    const ids = new Set(items.filter((i) => i.productId).map((i) => i.productId)); const names = items.map((i) => this.n(i.name || (DB.get('products', i.productId) || {}).name)).filter((x) => x.length >= 4);
+    const w = this.waiting(); const linked = w.filter((r) => r.productId && ids.has(r.productId));
+    const fuzzy = w.filter((r) => !r.productId && names.some((nm) => { const t = this.n(r.item); return t.length >= 4 && (nm.includes(t) || t.includes(nm)); }));
+    if (linked.length) this.notify(linked, DB.settings().custRequests?.auto !== false);
+    if (fuzzy.length) setTimeout(() => this.notify(fuzzy, false), linked.length ? 1200 : 0);
+  },
+  cardHTML() {
+    const w = this.waiting(); const by = {}; w.forEach((r) => { const k = r.productId || 't:' + this.n(r.item); (by[k] ||= { name: r.productId ? DB.get('products', r.productId)?.name || r.item : r.item, pid: r.productId, list: [] }).list.push(r); });
+    const groups = Object.values(by).sort((a, b) => b.list.length - a.list.length);
+    return `<div class="card card-b mb cr-box"><div class="row wrap" style="gap:8px;align-items:center"><b style="flex:1">🔔 ${L('طلبات العملاء للحاجات الناقصة', 'Customer requests')} ${w.length ? `<span class="tag warn">${w.length}</span>` : ''}</b><button class="btn sm" id="crAdd">${icon('plus')}${L('طلب جديد', 'New request')}</button></div>
+      ${groups.length ? groups.slice(0, 12).map((g) => `<div class="cr-it"><div style="flex:1;min-width:180px"><b>${esc(g.name)}</b> <span class="tag">${sum(g.list, (r) => r.qty)} ${L('مطلوب', 'wanted')}</span>${g.pid ? '' : ` <span class="tag warn" title="${L('مش مربوط بصنف — هيتقترح لما صنف شبهه يدخل', 'Not linked to a product')}">${L('نص حر', 'Free text')}</span>`}<div class="faint" style="font-size:12px">${g.list.map((r) => `${esc(r.name || r.phone)} (${fmtDate(r.date)})`).join(' · ')}</div></div><button class="btn sm" data-crn="${g.list.map((r) => r.id).join(',')}">${icon('whatsapp')}${L('وصل؟ ابعت', 'Arrived? notify')}</button><button class="btn sm ghost" data-crx="${g.list.map((r) => r.id).join(',')}" title="${L('إلغاء', 'Cancel')}">${icon('x')}</button></div>`).join('') : `<div class="faint" style="font-size:13px">${L('لما عميل يسأل على حاجة مش موجودة سجّل طلبه — من هنا أو من نقطة البيع.', 'Log requests for out-of-stock items here or from the POS.')}</div>`}</div>`;
+  },
+  bind(el) {
+    $('#crAdd', el) && ($('#crAdd', el).onclick = () => this.add());
+    $$('[data-crn]', el).forEach((b) => (b.onclick = () => this.notify(b.dataset.crn.split(',').map((id) => DB.get('custRequests', id)).filter(Boolean), false)));
+    $$('[data-crx]', el).forEach((b) => (b.onclick = async () => { if (!(await UI.confirm(L('إلغاء الطلبات دي؟ (لو فيه عربون رجّعه للعميل)', 'Cancel these requests?')))) return; b.dataset.crx.split(',').forEach((id) => DB.update('custRequests', id, { status: 'cancelled', cancelledAt: nowISO() })); App.reload(); }));
+  }
+};
+
+const Referral = {
+  cfg() { return { on: false, refPts: 100, newPts: 50, ...(DB.settings().referral || {}) }; },
+  code(c) { if (c.refCode) return c.refCode; const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let k; do { const b = new Uint8Array(5); crypto.getRandomValues(b); k = 'R' + [...b].map((x) => A[x % A.length]).join(''); } while (DB.find('customers', (x) => x.refCode === k)); DB.update('customers', c.id, { refCode: k }); c.refCode = k; return k; },
+  byCode(k) { k = String(k || '').trim().toUpperCase(); return k ? DB.find('customers', (c) => c.refCode === k) : null; },
+  count(cid) { return DB.filter('customers', (c) => c.referredBy === cid).length; },
+  share(c) {
+    const k = this.code(c); const cf = this.cfg(); const st = DB.settings().store || {}; const lp = typeof Loyalty !== 'undefined' && Loyalty.on();
+    const t = `${L('أهلاً', 'Hi')} ${String(c.name || '').split(' ')[0]} 🌹\n${L(`كود الترشيح بتاعك في ${st.name || 'المحل'}:`, 'Your referral code:')} *${k}*\n${L('أي صاحب ليك يشتري لأول مرة ويقول الكود ده', 'When a friend buys for the first time with this code')}${lp ? ` ${L(`تاخد ${cf.refPts} نقطة وهو ياخد ${cf.newPts} نقطة هدية`, `you get ${cf.refPts} points and they get ${cf.newPts}`)} 🎁` : ''}`;
+    sendWhatsApp(c.phone, t);
+  },
+  /* بعد الفاتورة */
+  apply(sale, code) {
+    const ref = this.byCode(code); const cf = this.cfg(); if (!ref) return UI.toast(L('كود الترشيح ده مش موجود', 'Referral code not found'), 'warn', 5000);
+    if (!sale.customerId) return UI.toast(L('كود الترشيح محتاج تختار العميل الجديد في الفاتورة', 'Pick the new customer to apply the code'), 'warn', 6000);
+    const cu = DB.get('customers', sale.customerId); if (!cu || cu.id === ref.id) return UI.toast(L('العميل مينفعش يرشّح نفسه', 'Cannot refer oneself'), 'warn');
+    if (cu.referredBy) return UI.toast(L('العميل ده اترشّح قبل كده', 'Already referred'), 'info');
+    if (DB.find('sales', (s) => s.customerId === cu.id && s.id !== sale.id && s.status !== 'cancelled')) return UI.toast(L('الترشيح للعملاء الجداد بس (أول شراء)', 'Referral is for first purchases only'), 'info', 5000);
+    DB.update('customers', cu.id, { referredBy: ref.id, referredAt: nowISO(), referralSale: sale.no });
+    const lp = typeof Loyalty !== 'undefined' && Loyalty.on();
+    if (lp) { if (cf.refPts) Loyalty.tx(ref.id, cf.refPts, 'referral', sale.no, L(`ترشيح ${cu.name}`, `Referred ${cu.name}`), sale.id); if (cf.newPts) Loyalty.tx(cu.id, cf.newPts, 'referral-welcome', sale.no, L(`هدية ترشيح من ${ref.name}`, `Welcome gift from ${ref.name}`), sale.id); }
+    audit('referral', `${ref.name} → ${cu.name}`);
+    if (lp && typeof WaLink !== 'undefined' && WaLink.ready() && ref.phone) WaLink.queue(ref.phone, `${L('أهلاً', 'Hi')} ${String(ref.name).split(' ')[0]} 🌹\n${L(`شكراً إنك رشّحتنا لـ ${String(cu.name).split(' ')[0]} — اتضافلك ${cf.refPts} نقطة 🎁`, `Thanks for referring — you got ${cf.refPts} points`)}\n${Loyalty.line(ref.id)}`, { kind: 'referral', ref: sale.no });
+    UI.toast(`🎁 ${L(`اتسجّل الترشيح: ${ref.name}${lp ? ` +${cf.refPts} — ${cu.name} +${cf.newPts} نقطة` : ''}`, 'Referral recorded')}`, 'ok', 6000);
+  },
+  top() { const c = {}; DB.filter('customers', (x) => x.referredBy).forEach((x) => (c[x.referredBy] = (c[x.referredBy] || 0) + 1)); return Object.entries(c).map(([id, n]) => ({ c: DB.get('customers', id), n })).filter((x) => x.c).sort((a, b) => b.n - a.n).slice(0, 5); },
+  settings() {
+    const c = this.cfg();
+    UI.modal({ title: L('رشّح صاحبك', 'Refer a friend'), icon: 'users', size: 'md', body: UI.form([{ name: 'on', label: L('تشغيل كود الترشيح في البيع', 'Enable referral codes at checkout'), type: 'checkbox', col: 12 }, { name: 'refPts', label: L('نقاط للي رشّح', 'Points for the referrer'), type: 'number', col: 6 }, { name: 'newPts', label: L('نقاط هدية للعميل الجديد', 'Welcome points for the new customer'), type: 'number', col: 6 }], c) + `<div class="faint" style="font-size:12.5px;line-height:1.8">${typeof Loyalty !== 'undefined' && Loyalty.on() ? L('النقاط بتتضاف لرصيد نقاط الولاء وتتصرف خصم زي أي نقاط.', 'Points go to the loyalty balance.') : `⚠️ ${L('نقاط الولاء مقفولة — الترشيح هيتسجل بس من غير نقاط. شغّلها من «نقاط الولاء».', 'Loyalty is off — referrals are tracked without points.')}`}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { const v = UI.read(x.el); DB.saveSettings({ referral: { on: !!v.on, refPts: Number(v.refPts) || 0, newPts: Number(v.newPts) || 0 } }); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); App.reload(); } }] });
+  }
+};
+
+(() => {
+  /* المشتريات: كارت الطلبات + الإشعار لما الأصناف تدخل */
+  const PU = Modules.purchases;
+  if (PU) { const r0 = PU.render.bind(PU); PU.render = function (el) { r0(el); try { const k = $('#puKpi', el); if (k) { const w = document.createElement('div'); w.innerHTML = CustReq.cardHTML(); k.after(w.firstElementChild); CustReq.bind(el); } } catch (e) { console.warn(e); } }; }
+  const bi = DB.insert.bind(DB);
+  DB.insert = function (col, doc) { const r = bi(col, doc); try { if (col === 'purchases' && r && Array.isArray(r.items) && r.items.length) setTimeout(() => CustReq.onArrive(r.items), 400); } catch (_) {} return r; };
+  /* النواقص والمناقصة: الطلبات بتتحسب */
+  if (typeof StockPlan !== 'undefined') { const c0 = StockPlan.calc.bind(StockPlan); StockPlan.calc = function () { const rows = c0(); try { const q = {}; CustReq.waiting().forEach((r) => { if (r.productId) q[r.productId] = (q[r.productId] || 0) + r.qty; }); rows.forEach((x) => { if (q[x.id]) { x.req = q[x.id]; x.need = true; x.sug = Math.max(x.sug || 0, q[x.id] + Math.max(0, (x.min || 0) - (x.qty || 0))); } }); } catch (_) {} return rows; }; }
+  /* نقطة البيع: زرار «طلب عميل» + كود الترشيح */
+  const P = Modules.pos;
+  if (P) {
+    const r0 = P.render.bind(P);
+    P.render = function (el) { r0(el); try { const q = $('#posQuick', el); if (q && !$('#posReq', el)) { const b = document.createElement('button'); b.className = 'btn lg'; b.id = 'posReq'; b.title = L('طلب عميل — صنف مش موجود', 'Customer request'); b.innerHTML = icon('bell'); b.onclick = () => CustReq.add({ item: ($('#posQ')?.value || '').trim() }); q.after(b); } } catch (_) {} };
+    const g0 = P.renderGrid.bind(P);
+    P.renderGrid = function () { const r = g0(); try { const q = ($('#posQ')?.value || '').trim(); const g = $('#posGrid'); if (q.length >= 2 && g && !$('.prod', g) && !$('#posReqE', g)) { g.insertAdjacentHTML('beforeend', `<div style="grid-column:1/-1;text-align:center"><button class="btn primary" id="posReqE">${icon('bell')}${L(`«${q}» مش موجود — سجّل طلب للعميل`, 'Not found — log a request')}</button></div>`); $('#posReqE').onclick = () => CustReq.add({ item: q }); } } catch (_) {} return r; };
+    const c0 = P.checkout.bind(P);
+    P.checkout = function () { const out = c0(); try { Referral._code = ''; if (!Referral.cfg().on) return out; const m = [...$$('.modal-bg')].pop(); const n = m && $('#payNotes', m); if (n && !$('#payRef', m)) { n.insertAdjacentHTML('afterend', `<label class="lbl mt">🎁 ${L('كود ترشيح (لو العميل جاي من طرف حد)', 'Referral code (if referred)')}</label><input id="payRef" dir="ltr" style="text-transform:uppercase" placeholder="R…">`); $('#payRef', m).oninput = (e) => (Referral._code = e.target.value.trim()); } } catch (_) {} return out; };
+    const sc = Sales.create.bind(Sales);
+    Sales.create = function (o) { const s = sc(o); try { const k = Referral._code; Referral._code = ''; if (k && Referral.cfg().on && s) setTimeout(() => Referral.apply(s, k), 300); } catch (_) {} return s; };
+  }
+  /* العملاء: الكود في كشف الحساب + أكتر المرشّحين */
+  const C = Modules.customers;
+  if (C) {
+    const s0 = C.statement.bind(C);
+    C.statement = function (c) { const r = s0(c); try { if (c && c.phone) { const m = [...$$('.modal-bg')].pop(); const f = m && $('.modal-f', m); if (f) { const b = document.createElement('button'); b.className = 'btn'; b.innerHTML = `🎁 ${L('كود الترشيح', 'Referral code')}`; b.title = Referral.code(DB.get('customers', c.id) || c); b.onclick = () => Referral.share(DB.get('customers', c.id) || c); f.prepend(b); } } } catch (_) {} return r; };
+    const r0 = C.render.bind(C);
+    C.render = function (el) { r0(el); try { const top = Referral.top(); const row = $('#cuCollect', el)?.parentElement; if (row && !$('#rfBtn', el)) { const b = document.createElement('button'); b.className = 'btn'; b.id = 'rfBtn'; b.innerHTML = `${icon('users')}${L('رشّح صاحبك', 'Refer a friend')}`; b.onclick = () => Referral.settings(); row.insertBefore(b, $('#cuCollect', el)); }
+      if (top.length && row) row.insertAdjacentHTML('beforebegin', `<div class="card card-b mb rf-box"><b>🏆 ${L('أكتر عملاء بيجيبولك زباين', 'Top referrers')}</b><div class="row wrap mt" style="gap:8px">${top.map((x, i) => `<span class="rf-chip">${['🥇', '🥈', '🥉', '4', '5'][i]} ${esc(x.c.name)} <b class="num">${x.n}</b></span>`).join('')}</div></div>`); } catch (e) { console.warn(e); } };
+  }
+  if (typeof Notify !== 'undefined') { const l0 = Notify.list.bind(Notify); Notify.list = function () { const l = l0(); try { const old = CustReq.waiting().filter((r) => Date.now() - Date.parse(r.date) > 7 * 864e5); if (old.length) l.push({ type: 'info', icon: 'bell', t: L(`${old.length} طلب عميل مستني من أكتر من أسبوع`, `${old.length} customer requests waiting 7+ days`), s: L('المشتريات', 'Purchases'), go: () => App.go('purchases') }); } catch (_) {} return l; }; }
 })();
 
 </script>

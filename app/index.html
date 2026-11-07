@@ -2150,6 +2150,35 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .ms-ic.ok { background: var(--ok-bg); } .ms-ic.warn { background: var(--warn-bg); }
 .ms-tx { flex: 1; min-width: 180px; display: grid; } .ms-tx small { color: var(--text-3); }
 .ms-sms { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px; font-size: 13px; line-height: 1.8; margin-bottom: 10px; white-space: pre-wrap; }
+
+/* ===== الإصدار 1.11 ===== */
+.wg-alt { border-radius: var(--r-sm); padding: 10px 12px; border: 1.5px solid var(--warn); background: var(--warn-bg); }
+.wg-alt.err { border-color: var(--err); background: var(--err-bg); }
+.wg-alt .btn { background: var(--surface); }
+.sg-box { border: 2px solid var(--err); background: var(--err-bg); color: var(--err); border-radius: var(--r); padding: 12px 14px; margin-top: 10px; display: grid; gap: 6px; animation: tcpop .3s ease-out; }
+.sg-link { display: inline-block; font-size: 12px; color: var(--err); margin-top: 4px; text-decoration: none; font-weight: 700; }
+.dc-box { text-align: center; }
+.dc-qr { width: 200px; max-width: 70%; margin: 6px auto 8px; background: #fff; padding: 8px; border-radius: 14px; border: 1px solid var(--line); }
+.dc-qr svg { display: block; width: 100%; height: auto; }
+.dc-r { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 14px; text-align: start; }
+.dc-r:last-child { border-bottom: 0; }
+.dc-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pp-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.pp-prev { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); padding: 10px; display: flex; justify-content: center; }
+.pp-prev img { width: 100%; max-height: 66vh; object-fit: contain; border-radius: 10px; box-shadow: var(--shadow); }
+.pp-th { width: 38px; height: 38px; border-radius: 12px; border: 2px solid var(--line); cursor: pointer; }
+.pp-th.on { border-color: var(--p); box-shadow: 0 0 0 3px var(--p-100); }
+.pp-pic { width: 48px; height: 48px; object-fit: cover; border-radius: 10px; border: 2px solid var(--line); cursor: pointer; }
+.pp-pic.on { border-color: var(--p); }
+@media (max-width: 760px) { .pp-wrap { grid-template-columns: 1fr; } .pp-prev img { max-height: 52vh; } }
+.rb-box { display: grid; gap: 8px; }
+.rb-it { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 9px 0; border-top: 1px dashed var(--line); }
+.rb-it.new { background: linear-gradient(90deg, transparent, var(--p-50)); }
+.rb-tx { flex: 1; min-width: 200px; display: grid; gap: 2px; } .rb-tx small { color: var(--text-2); }
+.cpl-wrap { border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--surface-2); }
+.cpl-wrap canvas { display: block; width: 100%; height: auto; touch-action: none; cursor: crosshair; }
+.cpl-sel:not(:empty) { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 12px; }
+.cpl-sel input[type=range] { width: 100%; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2423,6 +2452,9 @@ const ICONS = {
   keyboard: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M7 15h10"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   star: '<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+  map: '<path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3zM9 3v15M15 6v15"/>',
   copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
   play: '<path d="M6 3l14 9-14 9z"/>',
   stop: '<rect x="5" y="5" width="14" height="14" rx="2"/>',
@@ -2439,7 +2471,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.10.0', build: '', trialHours: 168 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.11.0', build: '', trialHours: 168 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -10884,6 +10916,18 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.11.0', d: '2026-11-07', items: [
+    ['alert', L('قايمة أرقام النصابين المشتركة: وانت بتكتب رقم العميل في عملية المحفظة، لو محل تاني مبلّغ عنه («حوّلتلك بالغلط»، رسالة وهمية، إيصال مزوّر) يطلع تحذير أحمر — وكمان على رسائل التحويل اللي جاية. وتقدر تبلّغ عن رقم من نفس الشاشة', 'Shared scammer-number list')],
+    ['wallet', L('المحفظة البديلة: لو العملية هتعدّي الليمت أو رصيد المحفظة مش مكفي أو هتقرّب من الليمت، البرنامج يقترح المحافظ اللي تاخدها كاملة وتحوّل عليها بضغطة', 'Alternative wallet suggestion')],
+    ['phone', L('فحص الموبايل المستعمل بلينك: البائع يفتح لينك على الموبايل اللي هيتباع، ويتفحص اللمس والألوان والسماعة والمايك والكاميرات والهزاز والشحن والحساسات — والنتيجة تعلّم خانات الفحص لوحدها وتتحفظ مع الجهاز', 'Used-phone check via link')],
+    ['image', L('بوست جاهز لكل موبايل: تصميم بصورة الجهاز ومواصفاته وسعره ولوجو المحل — 4 أشكال، مقاس بوست أو ستوري، تحميل أو مشاركة', 'Ready-made phone post')],
+    ['calendar', L('حجز معاد صيانة أونلاين: العميل يحجز من لينك المحل (أو QR تطبعه)، والحجز يظهر في الصيانة — «استلام الجهاز» بيملا النموذج لوحده و«تأكيد» بيبعتله المعاد واتساب', 'Online repair booking')],
+    ['map', L('مخطط الكاميرات على صورة المكان: صوّر المكان، حط الكاميرات واتجاهها وزاوية الرؤية، والمخطط بيتطبع مع عرض السعر والفاتورة', 'Camera layout on a site photo')],
+    ['star', L('التقييم بقى بعد تسليم الصيانة وتركيب الكاميرات كمان، واللي يقيّم كويس يوصله لينك تقييم المحل على جوجل', 'Ratings after repairs/CCTV + Google review link')],
+    ['whatsapp', L('شرائح جديدة في رسائل العملاء: اشتروا موبايل من سنة، ضمانهم قرب يخلص، صلّحوا من 6 شهور، كاميرات محتاجة صيانة — وكل شريحة ليها رسالة جاهزة', 'Smart campaign segments')],
+    ['swap', L('زرار «استبدال» في نقطة البيع', 'Trade-in button in POS')],
+    ['settings', L('مهم: شغّل ملف supabase/pos-1.11.sql مرة واحدة في Supabase (أرقام النصابين + الفحص بلينك + الحجز أونلاين)', 'Run supabase/pos-1.11.sql')]
+  ] },
   { v: '1.10.0', d: '2026-11-07', items: [
     ['shield', L('التأكد من وصول التحويل قبل التسليم: لما العميل يدفع محفظة أو إنستا باي، البرنامج يستنى رسالة الشركة بنفس المبلغ على نفس المحفظة ويقولك «وصل فعلاً ✓» — وصورة التحويل المزوّرة مبقتش تعدّي (والتأكيد من غير رسالة محتاج موافقة المدير)', 'Verify the transfer SMS before handover')],
     ['camera', L('فاتورة المورد من صورة: صوّر الفاتورة الورق والأصناف والكميات والأسعار ورقم الفاتورة والمورد بيتملوا لوحدهم — بتراجعها وتضيف بضغطة (محتاج مفتاح المساعد الذكي)', 'Supplier invoice from a photo')],
@@ -14018,7 +14062,7 @@ Modules.targets = {
 
 /* ===================== 3) تقييم العميل بعد البيع ===================== */
 const Ratings = {
-  cfg() { return { on: false, delayMin: 60, cooldownDays: 7, alertBelow: 2, minTotal: 0, ownerPhone: '', template: 'أهلاً {customer} 🌹\nشكراً إنك اشتريت من *{store}*.\nممكن تقيّم تجربتك؟ رد برقم بس من 1 لـ 5\n5️⃣ ممتازة — 1️⃣ سيئة\nرأيك بيفرق معانا 🙏', thanksGood: 'شكراً على تقييمك ⭐ يسعدنا نشوفك تاني في {store} 🌹', thanksBad: 'آسفين جداً إن تجربتك مكانتش زي ما تستاهل 🙏 اكتبلنا حصل إيه، وصاحب المحل هيتواصل معاك بنفسه.', ...(DB.settings().ratings || {}) }; },
+  cfg() { return { reviewUrl: '', reviewMin: 4, reviewText: 'لو عندك دقيقة، اكتب رأيك على جوجل ⭐ بيفرق معانا جداً:', on: false, delayMin: 60, cooldownDays: 7, alertBelow: 2, minTotal: 0, ownerPhone: '', template: 'أهلاً {customer} 🌹\nشكراً إنك اشتريت من *{store}*.\nممكن تقيّم تجربتك؟ رد برقم بس من 1 لـ 5\n5️⃣ ممتازة — 1️⃣ سيئة\nرأيك بيفرق معانا 🙏', thanksGood: 'شكراً على تقييمك ⭐ يسعدنا نشوفك تاني في {store} 🌹', thanksBad: 'آسفين جداً إن تجربتك مكانتش زي ما تستاهل 🙏 اكتبلنا حصل إيه، وصاحب المحل هيتواصل معاك بنفسه.', ...(DB.settings().ratings || {}) }; },
   fill(t, map) { return String(t || '').replace(/\{(\w+)\}/g, (m0, k) => (k in map ? map[k] : m0)); },
   owner() { const c = this.cfg(); return c.ownerPhone || DB.settings().ownerReport?.phone || ''; },
   /* بعد الفاتورة: طلب التقييم بيتبعت بعد مدة (افتراضي ساعة) — مرة واحدة كل أسبوع للعميل بالكتير */
@@ -14046,7 +14090,7 @@ const Ratings = {
       if (r.score == null) {
         const sc = this.parse(msg.text); if (!sc) return;
         DB.update('ratings', r.id, { score: sc, ratedAt: nowISO() }); audit('rating', `${r.saleNo} ${sc}`);
-        WaLink.queue(r.phone, this.fill(sc > c.alertBelow ? c.thanksGood : c.thanksBad, { customer: r.customerName, store: st }), { kind: 'rating', ref: r.saleNo, prio: 1 });
+        WaLink.queue(r.phone, this.fill(sc > c.alertBelow ? c.thanksGood : c.thanksBad, { customer: r.customerName, store: st }) + (c.reviewUrl && sc >= (Number(c.reviewMin) || 4) ? `\n\n${c.reviewText || ''}\n${c.reviewUrl}` : ''), { kind: 'rating', ref: r.saleNo, prio: 1 }); if (c.reviewUrl && sc >= (Number(c.reviewMin) || 4)) DB.update('ratings', r.id, { reviewAsked: true });
         if (sc <= (Number(c.alertBelow) || 2)) this.alert({ ...r, score: sc });
       } else if (!r.comment && r.ratedAt && Date.now() - Date.parse(r.ratedAt) < 6 * 3600e3 && String(msg.text || '').trim().length > 2 && !this.parse(msg.text)) {
         DB.update('ratings', r.id, { comment: String(msg.text).slice(0, 500) });
@@ -14089,7 +14133,9 @@ Modules.ratings = {
       { name: 'delayMin', label: L('ابعت الطلب بعد (دقيقة) من البيع', 'Send after (minutes)'), type: 'number', col: 4 }, { name: 'cooldownDays', label: L('مرة واحدة لكل عميل كل (يوم)', 'Once per customer every (days)'), type: 'number', col: 4 }, { name: 'minTotal', label: L('للفواتير اللي أكبر من (ج.م)', 'Only invoices above (EGP)'), type: 'number', col: 4 },
       { name: 'alertBelow', label: L('نبّهني لو التقييم أقل من أو يساوي', 'Alert me at or below'), type: 'select', col: 4, options: [[1, '1'], [2, '2'], [3, '3']] }, { name: 'ownerPhone', label: L('رقم صاحب المحل للتنبيه (فاضي = رقم تقرير الوردية)', 'Owner number (empty = shift report number)'), col: 8, attrs: 'dir="ltr"' },
       { name: 'template', label: L('رسالة طلب التقييم — {customer} {store}', 'Request message'), type: 'textarea', col: 12, attrs: 'style="min-height:120px"' },
-      { name: 'thanksGood', label: L('رد التقييم الكويس', 'Reply to good rating'), type: 'textarea', col: 6 }, { name: 'thanksBad', label: L('رد التقييم الضعيف', 'Reply to low rating'), type: 'textarea', col: 6 }], c) +
+      { name: 'thanksGood', label: L('رد التقييم الكويس', 'Reply to good rating'), type: 'textarea', col: 6 }, { name: 'thanksBad', label: L('رد التقييم الضعيف', 'Reply to low rating'), type: 'textarea', col: 6 },
+      { name: 'reviewUrl', label: L('لينك تقييم المحل على جوجل (اختياري) — بيتبعت للي قيّم كويس بس', 'Google review link (optional) — sent to happy customers only'), col: 8, attrs: 'dir="ltr" placeholder="https://g.page/r/…/review"' }, { name: 'reviewMin', label: L('ابعته من تقييم', 'Send from rating'), type: 'select', col: 4, options: [[5, '5 ⭐'], [4, '4 ⭐ +'], [3, '3 ⭐ +']] },
+      { name: 'reviewText', label: L('سطر طلب تقييم جوجل', 'Google review line'), col: 12 }], c) +
       `<div class="tag warn mt" style="white-space:normal;line-height:1.8">🛡️ ${L('للحماية من الحظر: الطلب بيروح لعملاءك المتسجلين بس، مرة واحدة في الأسبوع للعميل، ومن خلال طابور واتساب الهادي. والرد بيتقري من واتساب المحل على الكمبيوتر المربوط.', 'Anti-ban: only your registered customers, once a week, via the paced queue.')}</div>`,
       actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => { const v = UI.read(x.el); DB.saveSettings({ ratings: { ...v, on: !!v.on, delayMin: Math.max(1, Number(v.delayMin) || 60), cooldownDays: Math.max(1, Number(v.cooldownDays) || 7), minTotal: Number(v.minTotal) || 0, alertBelow: Number(v.alertBelow) || 2 } }); audit('ratings.settings'); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); if (App.current === 'ratings') App.go('ratings'); } }] });
   }
@@ -18288,6 +18334,503 @@ const MachineSms = {
   const m0 = M.main.bind(M);
   M.main = function (el) { m0(el); try { if (!(typeof SmsLink !== 'undefined' && (SmsLink.cfg().enabled || MachineSms.pending().length))) return; const grid = $('#mcCards', el); if (!grid) return; const w = document.createElement('div'); w.innerHTML = MachineSms.sectionHTML(); grid.parentNode.insertBefore(w.firstElementChild, grid); MachineSms.bind(el); } catch (e) { console.warn(e); } };
   if (typeof Notify !== 'undefined') { const l0 = Notify.list.bind(Notify); Notify.list = function () { const l = l0(); try { const n = MachineSms.pending().length; if (n) l.push({ type: 'info', icon: 'zap', t: L(`${n} رسالة شحن رصيد ماكينة مستنية تتسجل`, `${n} machine top-up SMS to record`), s: L('ماكينات الشحن', 'Machines'), go: () => App.go('machines') }); } catch (_) {} return l; }; }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   حماية عمليات المحافظ
+   1) اقتراح المحفظة البديلة: لو العملية هتعدّي الليمت أو هتقرّب منه (أو الرصيد مش مكفي) — زرار يحوّلك على محفظة فيها ليمت
+   2) قايمة أرقام النصابين المشتركة بين المحلات («حوّلتلك بالغلط رجّعهم»، رسائل وهمية، إيصالات مزوّرة)
+      — الكشف وانت بتكتب رقم العميل، وعلى رسائل المحافظ الجاية، والبلاغ من جهاز مفعّل بس (supabase/pos-1.11.sql)
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const ScamGuard = {
+  cache: {}, TTL: 10 * 60e3,
+  KINDS: () => [['reverse', L('«حوّلتلك بالغلط رجّعهم»', '“Sent by mistake, send it back”')], ['fake_sms', L('رسالة تحويل وهمية', 'Fake transfer SMS')], ['fake_receipt', L('صورة تحويل / إيصال مزوّر', 'Fake receipt / screenshot')], ['other', L('نصب بطريقة تانية', 'Other fraud')]],
+  kindName(k) { return (this.KINDS().find((x) => x[0] === k) || [k, k])[1]; },
+  on() { return typeof Cloud !== 'undefined' && Cloud.ok(); },
+  norm(v) { let d = String(v || '').replace(/[٠-٩]/g, (x) => '٠١٢٣٤٥٦٧٨٩'.indexOf(x)).replace(/\D/g, ''); if (d.startsWith('20') && d.length === 12) d = '0' + d.slice(2); if (d.length === 10 && d.startsWith('1')) d = '0' + d; return d; },
+  valid(v) { return /^01[0125][0-9]{8}$/.test(this.norm(v)); },
+  async check(phones) {
+    const list = [...new Set(phones.map((x) => this.norm(x)).filter((x) => this.valid(x)))]; if (!list.length || !this.on()) return [];
+    const fresh = list.filter((x) => !this.cache[x] || Date.now() - this.cache[x].at > this.TTL);
+    if (fresh.length) {
+      try { const r = await Cloud.rpc('pos_scam_check', { p_mid: await License.machineId(), p_phones: fresh.slice(0, 4) }); fresh.forEach((x) => (this.cache[x] = { at: Date.now(), v: (r || []).filter((f) => f.phone === x) })); }
+      catch (e) { console.warn('scam check', e.message); return null; }
+    }
+    return list.flatMap((x) => (this.cache[x] ? this.cache[x].v : []));
+  },
+  warnHTML(flags) {
+    return `<div class="sg-box"><b>🚨 ${L('الرقم ده مبلّغ عنه إنه نصّاب', 'This number is reported as a scammer')}</b>${flags.slice(0, 3).map((f) => `<div class="ig-r">${esc(this.kindName(f.kind))} — ${f.mine ? L('بلاغ من محلك', 'your report') : `${esc(f.store || '')} <span dir="ltr">${esc(f.sphone || '')}</span>`} · ${fmtDate(f.at)}${f.note ? `<div class="faint">${esc(f.note)}</div>` : ''}</div>`).join('')}
+      <div style="font-size:12.5px;line-height:1.8">${L('ماتسلّمش فلوس ولا ترجّع تحويل للرقم ده غير لما تتأكد من رسالة الشركة بنفسك.', 'Do not hand cash or send money back until you verify the carrier SMS yourself.')}</div></div>`;
+  },
+  async report(pre = {}) {
+    if (!this.on()) return UI.toast(L('البلاغ محتاج نت وسيرفر التفعيل', 'Needs the cloud server'), 'warn');
+    UI.modal({ title: L('بلّغ عن رقم نصّاب', 'Report a scammer number'), icon: 'alert', size: 'sm', body: UI.form([
+      { name: 'phone', label: L('رقم الموبايل', 'Mobile number'), required: true, value: pre.phone || '', col: 12, attrs: 'dir="ltr" inputmode="tel" maxlength="14"' },
+      { name: 'kind', label: L('نوع النصب', 'Kind'), type: 'select', options: this.KINDS(), value: pre.kind || 'reverse', col: 12 },
+      { name: 'note', label: L('اللي حصل باختصار', 'What happened'), type: 'textarea', col: 12, value: pre.note || '' },
+      { name: 'agree', label: L('أنا متأكد والبلاغ ده مسؤوليتي — هيظهر لكل المحلات باسم محلي', 'I am sure; this report shows to all shops under my store name'), type: 'checkbox', col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('بلّغ', 'Report'), cls: 'danger', icon: 'alert', onClick: async (x) => {
+        const v = UI.read(x.el); const ph = this.norm(v.phone); if (!this.valid(ph)) return UI.toast(L('اكتب رقم موبايل مصري صحيح (11 رقم)', 'Enter a valid Egyptian mobile'), 'err'); if (!v.agree) return UI.toast(L('لازم توافق على الإقرار', 'Please confirm'), 'warn');
+        try { const st = DB.settings().store || {}; await Cloud.rpc('pos_scam_flag', { p_mid: await License.machineId(), p_phone: ph, p_kind: v.kind, p_note: String(v.note || '').slice(0, 200), p_store: st.name || '', p_sphone: st.phone || '' }); delete this.cache[ph]; audit('scam.flag', ph); x.close(); UI.toast(L('اتبلّغ ✓ — أي محل يتعامل مع الرقم ده هيظهرله تحذير', 'Reported ✓')); }
+        catch (e) { UI.toast(/not allowed/.test(e.message) ? L('الجهاز لازم يكون مفعّل عشان يبلّغ', 'Device must be activated') : /404|function/.test(e.message) ? L('السيرفر محتاج تحديث — شغّل ملف pos-1.11.sql', 'Run pos-1.11.sql') : e.message, 'err', 7000); }
+      } }] });
+  },
+  async mine() {
+    let list = []; try { list = (await Cloud.rpc('pos_scam_mine', { p_mid: await License.machineId() })) || []; } catch (e) { return UI.toast(e.message, 'err'); }
+    const m = UI.modal({ title: L('أرقام النصابين', 'Scammer numbers'), icon: 'alert', size: 'lg', body: `<div class="row mb wrap" style="gap:8px"><input id="sgQ" dir="ltr" inputmode="tel" placeholder="${L('اكشف على رقم…', 'Check a number…')}" style="max-width:220px"><button class="btn" id="sgChk">${icon('search')}${L('اكشف', 'Check')}</button><div class="spacer"></div><button class="btn danger" id="sgNew">${icon('plus')}${L('بلّغ عن رقم', 'Report a number')}</button></div><div id="sgRes"></div>
+      <h4 style="margin:12px 0 6px">${L('بلاغات محلك', 'Your reports')}</h4><div class="tbl-wrap"><table class="tbl stack"><thead><tr><th>${L('الرقم', 'Number')}</th><th>${L('النوع', 'Kind')}</th><th>${L('ملاحظة', 'Note')}</th><th>${L('التاريخ', 'Date')}</th><th></th></tr></thead><tbody>
+      ${list.map((f) => `<tr><td dir="ltr" class="mono">${esc(f.phone)}</td><td>${esc(this.kindName(f.kind))}</td><td>${esc(f.note || '')}</td><td>${fmtDate(f.at)}</td><td>${f.active ? `<button class="btn sm ghost" data-un="${esc(f.phone)}">${L('إلغاء البلاغ', 'Withdraw')}</button>` : `<span class="tag">${L('ملغي', 'Withdrawn')}</span>`}</td></tr>`).join('') || `<tr><td colspan="5">${UI.empty(L('مفيش بلاغات من محلك', 'No reports yet'), 'shield')}</td></tr>`}</tbody></table></div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }] });
+    $('#sgNew', m.el).onclick = () => { m.close(); this.report(); };
+    $('#sgChk', m.el).onclick = async () => { const q = $('#sgQ', m.el).value; if (!this.valid(q)) return UI.toast(L('رقم غير صحيح', 'Invalid number'), 'warn'); delete this.cache[this.norm(q)]; const f = await this.check([q]); $('#sgRes', m.el).innerHTML = f === null ? `<div class="faint">${L('مفيش اتصال', 'Offline')}</div>` : f.length ? this.warnHTML(f) : `<div class="ig-ok">✅ ${L('الرقم ده مش مبلّغ عنه', 'Not reported')}</div>`; };
+    $$('[data-un]', m.el).forEach((b) => (b.onclick = async () => { if (!(await UI.confirm(L('إلغاء البلاغ؟', 'Withdraw this report?')))) return; try { await Cloud.rpc('pos_scam_unflag', { p_mid: await License.machineId(), p_phone: b.dataset.un }); delete this.cache[b.dataset.un]; m.close(); this.mine(); } catch (e) { UI.toast(e.message, 'err'); } }));
+  }
+};
+
+const WalletAlt = {
+  /* المحافظ اللي تقدر تاخد العملية دي كاملة */
+  options(type, a, exceptId) {
+    const W = Modules.wallets; const isIn = type === 'withdraw';
+    return DB.filter('wallets', (w) => w.active !== false && !w.hidden && w.id !== exceptId && !(Wallets.reservedBy(w) && !Session.can('wallets.manage')))
+      .map((w) => { const av = W.avail(w); const day = isIn ? av.inDay : av.outDay, mon = isIn ? av.inMonth : av.outMonth; const room = Math.min(day == null ? Infinity : day, mon == null ? Infinity : mon); const bal = Wallets.balance(w); return { w, room, bal, ok: !Wallets.checkLimit(w, type, a) && room >= a && (isIn || bal >= a) }; })
+      .filter((x) => x.ok).sort((x, y) => y.room - x.room);
+  },
+  /* m = المودال، type = withdraw/deposit، wid = المحفظة الحالية، pick(id) = تحويل العملية على محفظة تانية */
+  render(host, a, type, wid, pick) {
+    const w = DB.get('wallets', wid); if (!host) return; if (!a || !w || !['withdraw', 'deposit'].includes(type)) { host.innerHTML = ''; return; }
+    const isIn = type === 'withdraw'; const av = Modules.wallets.avail(w); const day = isIn ? av.inDay : av.outDay; const lim = isIn ? w.dailyInLimit : w.dailyLimit;
+    const over = !!Wallets.checkLimit(w, type, a); const noBal = !isIn && Wallets.balance(w) < a; const near = !over && day != null && lim && (day - a) / lim < 0.15;
+    if (!over && !noBal && !near) { host.innerHTML = ''; return; }
+    const alts = this.options(type, a, wid).slice(0, 3);
+    const why = over ? L('العملية دي هتعدّي ليمت المحفظة', 'This exceeds the wallet limit') : noBal ? L(`رصيد المحفظة مش مكفي (${money(Wallets.balance(w))})`, 'Insufficient wallet balance') : L(`بعد العملية هيفضل ${money(Math.max(0, day - a))} بس من ليمت النهارده`, 'Close to today’s limit');
+    host.innerHTML = `<div class="wg-alt ${over || noBal ? 'err' : 'warn'}"><b>${over || noBal ? '⛔' : '⚠️'} ${why}</b>${alts.length ? `<div class="faint" style="margin:4px 0">${L('استخدم بدلها:', 'Use instead:')}</div><div class="row wrap" style="gap:6px">${alts.map((x) => `<button type="button" class="btn sm" data-wgalt="${x.w.id}"><i class="color-dot wdot-${x.w.network}"></i>${esc(x.w.name)} <span class="faint num">${L('متاح', 'room')} ${x.room === Infinity ? '∞' : money(x.room, false)}</span></button>`).join('')}</div>` : `<div class="faint" style="margin-top:4px">${L('مفيش محفظة تانية تاخد المبلغ كله — قسّمه على أكتر من محفظة', 'No other wallet can take it all — split it')}</div>`}</div>`;
+    $$('[data-wgalt]', host).forEach((b) => (b.onclick = () => pick(b.dataset.wgalt)));
+  }
+};
+
+(() => {
+  const W = Modules.wallets; if (!W) return;
+  /* نموذج «عملية جديدة» (opForm) */
+  const attach = (m, type0, external) => {
+    const el = m; const q = (n) => $(`[name=${n}]`, el); if (!q('amount') || $('#wgAlt', el)) return;
+    const warn = $('#opfWarn', el) || $('#opSum', el); const alt = document.createElement('div'); alt.id = 'wgAlt'; alt.className = 'mt'; warn.after(alt);
+    const scam = document.createElement('div'); scam.id = 'wgScam'; alt.after(scam);
+    const cur = () => ({ wid: q('walletId')?.value || el.dataset.wid || $('#opW button.active', el)?.dataset.w, type: (q('type')?.value || $('#opType button.active', el)?.dataset.t || type0 || '').replace(/^x/, ''), ext: String(q('type')?.value || '').startsWith('x') || external });
+    const pick = (id) => {
+      const s = q('walletId'); if (s) { s.value = id; s.dispatchEvent(new Event('change', { bubbles: true })); s.dispatchEvent(new Event('input', { bubbles: true })); return upd(); }
+      const b = $(`#opW button[data-w="${id}"]`, el); if (b) { b.click(); return upd(); }
+      const keep = { amount: q('amount').value, clientPhone: q('clientPhone')?.value || '', clientName: q('clientName')?.value || '', note: q('note')?.value || '' }; const ty = q('type')?.value || type0;
+      el.remove(); W.opForm(ty.replace(/^x/, ''), DB.get('wallets', id), { external: ty.startsWith('x') });
+      setTimeout(() => { const n = [...$$('.modal-bg')].pop(); if (!n) return; Object.entries(keep).forEach(([k, v]) => { const i = $(`[name=${k}]`, n); if (i && v) { i.value = v; i.dispatchEvent(new Event('input', { bubbles: true })); } }); }, 60);
+    };
+    const upd = () => setTimeout(() => { const c = cur(); WalletAlt.render(alt, c.ext ? 0 : Number(q('amount').value) || 0, c.type, c.wid, pick); }, 0);
+    ['amount', 'type', 'walletId', 'pending'].forEach((n) => { const i = q(n); if (i) { i.addEventListener('input', upd); i.addEventListener('change', upd); } });
+    $$('#opW button, #opType button, [name=limitMode]', el).forEach((b) => b.addEventListener('click', upd)); upd();
+    const ph = q('clientPhone'); let tm = null;
+    if (ph && ScamGuard.on()) {
+      const run = () => { clearTimeout(tm); tm = setTimeout(async () => { if (!ScamGuard.valid(ph.value)) { scam.innerHTML = ''; return; } const f = await ScamGuard.check([ph.value]); scam.innerHTML = f && f.length ? ScamGuard.warnHTML(f) : ''; if (f && f.length) try { SmsSound.play('danger'); } catch (_) {} }, 450); };
+      ph.addEventListener('input', run); ph.addEventListener('change', run); if (ph.value) run();
+      const r = document.createElement('a'); r.href = '#'; r.className = 'sg-link'; r.textContent = '🚩 ' + L('بلّغ عن الرقم ده إنه نصّاب', 'Report this number'); r.onclick = (e) => { e.preventDefault(); ScamGuard.report({ phone: ph.value }); };
+      (ph.closest('.opf-r') || ph.closest('.f') || ph.parentElement).appendChild(r);
+    }
+  };
+  ['opForm', 'opDialog'].forEach((fn) => { if (typeof W[fn] !== 'function') return; const f0 = W[fn].bind(W); W[fn] = function (type, w0, o = {}) { const before = $$('.modal-bg').length; const out = f0(type, w0, o); try { const m = [...$$('.modal-bg')].pop(); if (m && $$('.modal-bg').length > before && !(o && o.edit)) attach(m, type, o && o.external); } catch (e) { console.warn('wallet guard', e); } return out; }; });
+  /* زرار «أرقام النصابين» في صفحة المحافظ */
+  const r0 = W.render.bind(W);
+  W.render = function (el) { r0(el); try { if (!ScamGuard.on()) return; const row = $('.row', el); if (!row || $('#sgBtn', el)) return; const b = document.createElement('button'); b.className = 'btn'; b.id = 'sgBtn'; b.innerHTML = `${icon('alert')}${L('أرقام النصابين', 'Scam numbers')}`; b.onclick = () => ScamGuard.mine(); row.appendChild(b); } catch (_) {} };
+  /* الكشف على رقم الطرف التاني في رسائل المحافظ الجاية */
+  if (typeof SmsLink !== 'undefined') {
+    const p0 = SmsLink.process.bind(SmsLink);
+    SmsLink.process = function () {
+      const o = p0();
+      try {
+        if (ScamGuard.on()) { const fresh = DB.filter('smsInbox', (s) => s.parsed && s.parsed.party && !s.scamChecked && Date.parse(s.at) > Date.now() - 3 * 3600e3).slice(0, 4);
+          if (fresh.length) { fresh.forEach((s) => DB.update('smsInbox', s.id, { scamChecked: true })); ScamGuard.check(fresh.map((s) => s.parsed.party)).then((f) => { if (f && f.length) { const ph = [...new Set(f.map((x) => x.phone))]; fresh.filter((s) => ph.includes(ScamGuard.norm(s.parsed.party))).forEach((s) => DB.update('smsInbox', s.id, { scam: true })); try { SmsSound.play('danger'); } catch (_) {} UI.toast(`🚨 ${L('تحويل من رقم مبلّغ عنه إنه نصّاب', 'Transfer from a reported scammer')}: ${ph.join('، ')} — ${L('ماتسلّمش فلوس ولا ترجّع حاجة قبل ما تتأكد', 'verify before acting')}`, 'err', 12000); } }); }
+        }
+      } catch (_) {}
+      return o;
+    };
+  }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   فحص الموبايل المستعمل بلينك — البائع يفتح اللينك على الموبايل اللي هيتباع
+   الصفحة (check.html) بتفحص اللمس والألوان والسماعة والمايك والكاميرات والهزاز والشحن والحساسات،
+   والنتيجة بترجع للبرنامج وتعلّم «الفحص» في نموذج الجهاز وتتحفظ معاه (وبتظهر في العقد).
+   محتاج supabase/pos-1.11.sql
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const DevCheck = {
+  NAMES: () => ({ screen: L('الشاشة واللمس', 'Screen & touch'), pixels: L('ألوان الشاشة', 'Display colors'), speaker: L('السماعة', 'Speaker'), mic: L('المايك', 'Mic'), camBack: L('الكاميرا الخلفية', 'Rear camera'), camFront: L('الكاميرا الأمامية', 'Front camera'), vibrate: L('الهزاز', 'Vibration'), charge: L('الشحن', 'Charging'), motion: L('الحساسات', 'Sensors') }),
+  on() { return typeof Cloud !== 'undefined' && Cloud.ok(); },
+  link(t) { return `${Cloud.site()}/check.html?t=${t}`; },
+  /* ربط نتيجة الفحص بخانات «الفحص» في نموذج الجهاز */
+  toChecks(r) {
+    const both = (a, b) => (a === false || b === false ? false : a === true || b === true ? true : null);
+    return { screen: both(r.screen, r.pixels), cams: both(r.camBack, r.camFront), charge: r.charge, speaker: r.speaker, mic: r.mic };
+  },
+  rows(r) { const N = this.NAMES(); return Object.keys(N).map((k) => `<div class="dc-r"><span>${N[k]}</span><b class="${r[k] === true ? 'pos' : r[k] === false ? 'neg' : 'faint'}">${r[k] === true ? '✓ ' + L('سليم', 'OK') : r[k] === false ? '✗ ' + L('فيه مشكلة', 'Problem') : '— ' + L('اتخطّى', 'Skipped')}</b></div>`).join(''); },
+  summary(r) { const N = Object.keys(this.NAMES()); const ok = N.filter((k) => r[k] === true).length, bad = N.filter((k) => r[k] === false).length; return { ok, bad, n: N.length }; },
+  /* يفتح شاشة اللينك ويستنى النتيجة */
+  async start(phone, cb) {
+    if (!this.on()) return UI.toast(L('الفحص بلينك محتاج نت وسيرفر التفعيل', 'Needs the cloud server'), 'warn');
+    const t = 'K' + Cloud.token(18); const st = DB.settings().store || {};
+    try { await Cloud.rpc('pos_devcheck_new', { p_mid: await License.machineId(), p_token: t, p_store: st.name || '' }); }
+    catch (e) { return UI.toast(/404|function/.test(e.message) ? L('السيرفر محتاج تحديث — شغّل ملف pos-1.11.sql', 'Run pos-1.11.sql') : e.message, 'err', 7000); }
+    const u = this.link(t); let timer = null, done = false;
+    const m = UI.modal({ title: L('فحص الموبايل بلينك', 'Phone check link'), icon: 'phone', size: 'sm', body: `<div class="dc-box" id="dcB">
+        <p style="margin:0 0 8px;line-height:1.9">${L('افتح اللينك ده <b>على الموبايل اللي هتشتريه</b> (امسح الـ QR بكاميرته أو ابعتهوله واتساب). الفحص بياخد دقيقتين والنتيجة هتظهر هنا لوحدها.', 'Open this link <b>on the phone being bought</b>. Results appear here automatically.')}</p>
+        <div class="dc-qr">${QR.svg(u, { ecl: 'M' })}</div><input class="mono" readonly value="${esc(u)}" dir="ltr" style="font-size:12px">
+        <div class="row wrap mt" style="gap:6px;justify-content:center"><button type="button" class="btn sm" id="dcCopy">${icon('copy')}${L('نسخ', 'Copy')}</button>${phone ? `<button type="button" class="btn sm" id="dcWa">${icon('whatsapp')}${L('ابعته واتساب', 'Send on WhatsApp')}</button>` : ''}</div>
+        <div class="faint mt" id="dcSt"><span class="tc-spin" style="width:18px;height:18px;border-width:3px;display:inline-block;vertical-align:middle"></span> ${L('مستنيين نتيجة الفحص…', 'Waiting for the result…')}</div></div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => { done = true; clearInterval(timer); x.close(); } }] });
+    $('#dcCopy', m.el).onclick = () => { try { navigator.clipboard.writeText(u); UI.toast(L('اتنسخ ✓', 'Copied ✓')); } catch (_) {} };
+    if ($('#dcWa', m.el)) $('#dcWa', m.el).onclick = () => sendWhatsApp(phone, `${L('افتح اللينك ده من الموبايل اللي هتبيعه عشان نفحصه في دقيقتين:', 'Open this link on the phone you are selling:')}\n${u}`);
+    const poll = async () => {
+      if (done || !document.body.contains(m.el)) return clearInterval(timer);
+      try { const r = await Cloud.rpc('pos_devcheck_result', { p_mid: await License.machineId(), p_token: t }); if (r && r.result) { done = true; clearInterval(timer); const res = { ...r.result, token: t, at: r.at || nowISO() }; const s = this.summary(res);
+        $('#dcB', m.el).innerHTML = `<div class="tc-ok" style="margin:0 auto">${s.bad ? '!' : '✓'}</div><h3 style="text-align:center;margin:8px 0">${s.bad ? L(`فيه ${s.bad} مشكلة`, `${s.bad} problem(s)`) : L('الفحص سليم', 'All checks passed')} <span class="faint">(${s.ok}/${s.n})</span></h3>${this.rows(res)}${res.info && res.info.model ? `<div class="faint mt">📱 ${esc(res.info.model)} · ${esc(res.info.os || '')}${res.battery != null ? ` · 🔋 ${res.battery}%` : ''}</div>` : ''}`;
+        try { SmsSound.play(s.bad ? 'warn' : 'ok'); } catch (_) {} cb && cb(res); } } catch (_) {}
+    };
+    timer = setInterval(poll, 3000); setTimeout(poll, 1500);
+  }
+};
+
+(() => {
+  const P = Modules.phones; if (!P) return;
+  const b0 = P.bindFields.bind(P);
+  P.bindFields = function (el, p = {}) {
+    b0(el, p);
+    try {
+      if (!DevCheck.on()) return; const box = $('#phUsed', el); if (!box || $('#dcBtn', el)) return;
+      el._devCheck = p.devCheck || null;
+      const w = document.createElement('div'); w.className = 'dc-line mt';
+      const draw = () => { const r = el._devCheck; const s = r && DevCheck.summary(r); w.innerHTML = `<button type="button" class="btn sm" id="dcBtn">📲 ${L('فحص بلينك على موبايل البائع', 'Check via link')}</button>${r ? `<span class="tag ${s.bad ? 'err' : 'ok'}">${s.bad ? L(`${s.bad} مشكلة`, `${s.bad} issues`) : L('الفحص سليم', 'Passed')} · ${s.ok}/${s.n}</span><button type="button" class="btn sm ghost" id="dcView">${L('التفاصيل', 'Details')}</button>` : `<span class="faint" style="font-size:12px">${L('بيعلّم خانات الفحص لوحده', 'Fills the checks automatically')}</span>`}`;
+        $('#dcBtn', w).onclick = () => DevCheck.start($('[name=sellerPhone]', el)?.value || '', (res) => { el._devCheck = res; const ck = DevCheck.toChecks(res); Object.entries(ck).forEach(([k, v]) => { const i = $(`[data-ck="${k}"]`, el); if (i && v !== null) i.checked = !!v; }); draw(); });
+        const vb = $('#dcView', w); if (vb) vb.onclick = () => UI.modal({ title: L('نتيجة فحص الموبايل', 'Phone check result'), icon: 'phone', size: 'sm', body: DevCheck.rows(el._devCheck), actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }] });
+      };
+      const lbl = [...$$('.lbl', box)].find((x) => /الفحص|Checks/.test(x.textContent)); (lbl || box.lastElementChild).before(w); draw();
+    } catch (e) { console.warn('devcheck', e); }
+  };
+  const rf = P.readFields.bind(P);
+  P.readFields = function (el) { const r = rf(el); try { if (r && r.out && el._devCheck) r.out.devCheck = el._devCheck; } catch (_) {} return r; };
+  const d0 = P.details.bind(P);
+  P.details = function (p) {
+    const r = d0(p);
+    try { const x = DB.get('phones', p.id) || p; if (x.devCheck) { const m = [...$$('.modal-bg')].pop(); const body = m && $('.modal-b', m); if (body) { const s = DevCheck.summary(x.devCheck); const c = document.createElement('div'); c.className = 'card card-b mt'; c.innerHTML = `<b>📲 ${L('فحص الموبايل بلينك', 'Link check')}</b> <span class="tag ${s.bad ? 'err' : 'ok'}">${s.ok}/${s.n}</span> <span class="faint">${fmtDT(x.devCheck.at)}</span>${DevCheck.rows(x.devCheck)}`; body.appendChild(c); } } } catch (_) {}
+    return r;
+  };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   بوست جاهز لكل موبايل — تصميم 1080×1350 (فيسبوك / إنستجرام) أو 1080×1920 (ستوري واتساب)
+   صورة الجهاز + الماركة والموديل + المواصفات + السعر + الضمان + لوجو المحل ورقمه + QR الكتالوج
+   تحميل PNG أو مشاركة مباشرة من الموبايل.
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const PhonePost = {
+  THEMES: [['wine', L('عنابي', 'Wine'), ['#8B1A2B', '#3d0912'], '#ffd27a'], ['night', L('ليلي', 'Night'), ['#1b2433', '#05070b'], '#59d0ff'], ['gold', L('ذهبي', 'Gold'), ['#2a2114', '#0d0a05'], '#e9c46a'], ['light', L('فاتح', 'Light'), ['#ffffff', '#f1e9ea'], '#8B1A2B']],
+  img(src) { return new Promise((res) => { if (!src) return res(null); const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; }); },
+  round(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); },
+  async draw(p, o) {
+    const W = 1080, H = o.story ? 1920 : 1350; const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+    const th = this.THEMES.find((t) => t[0] === o.theme) || this.THEMES[0]; const light = th[0] === 'light'; const fg = light ? '#231719' : '#ffffff', sub = light ? '#6e6062' : 'rgba(255,255,255,.72)', acc = th[3];
+    try { await document.fonts.load('900 60px Cairo'); await document.fonts.load('700 30px Cairo'); } catch (_) {}
+    const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, th[2][0]); bg.addColorStop(1, th[2][1]); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.globalAlpha = light ? 0.06 : 0.08; g.fillStyle = acc; g.beginPath(); g.arc(W * 0.9, H * 0.12, 380, 0, 7); g.fill(); g.beginPath(); g.arc(W * 0.05, H * 0.78, 300, 0, 7); g.fill(); g.globalAlpha = 1;
+    g.direction = 'rtl'; g.textAlign = 'right'; const st = DB.settings().store || {}; const F = (w, s) => `${w} ${s}px Cairo, Tahoma, sans-serif`;
+    // الهيدر: اللوجو + اسم المحل
+    const logo = await this.img(typeof logoSrc === 'function' ? logoSrc() : ''); let y = 70;
+    if (logo) { const s = 96 / Math.max(logo.width, logo.height); g.save(); this.round(g, W - 70 - 110, y - 7, 110, 110, 26); g.fillStyle = '#fff'; g.fill(); g.restore(); g.drawImage(logo, W - 70 - 110 + (110 - logo.width * s) / 2, y - 7 + (110 - logo.height * s) / 2, logo.width * s, logo.height * s); }
+    g.fillStyle = fg; g.font = F(900, 44); g.fillText(st.name || '', W - 70 - (logo ? 130 : 0), y + 50); g.fillStyle = sub; g.font = F(600, 28); g.fillText(o.tag || L('متاح دلوقتي', 'Available now'), W - 70 - (logo ? 130 : 0), y + 92);
+    // صورة الجهاز
+    const top = 250, ph = o.story ? 1100 : 560; const im = await this.img(o.photo);
+    g.save(); this.round(g, 70, top, W - 140, ph, 44); g.fillStyle = light ? '#f6eff0' : 'rgba(255,255,255,.07)'; g.fill(); g.clip();
+    if (im) { const s = Math.max((W - 140) / im.width, ph / im.height); g.drawImage(im, 70 + (W - 140 - im.width * s) / 2, top + (ph - im.height * s) / 2, im.width * s, im.height * s); }
+    else { g.fillStyle = light ? '#e8dcde' : 'rgba(255,255,255,.12)'; this.round(g, W / 2 - 130, top + ph / 2 - 230, 260, 460, 46); g.fill(); g.fillStyle = light ? '#d4c2c5' : 'rgba(255,255,255,.18)'; this.round(g, W / 2 - 112, top + ph / 2 - 205, 224, 400, 30); g.fill(); g.beginPath(); g.arc(W / 2, top + ph / 2 + 210, 10, 0, 7); g.fill(); }
+    g.restore();
+    // شارة الحالة
+    const cond = p.condition === 'used' ? L('مستعمل', 'Used') + (p.grade ? ` ${p.grade}` : '') : L('جديد', 'New'); g.font = F(800, 32); const cw = g.measureText(cond).width + 56;
+    g.fillStyle = acc; this.round(g, 100, top + 30, cw, 64, 32); g.fill(); g.fillStyle = light ? '#fff' : '#1a1a1a'; g.textAlign = 'center'; g.fillText(cond, 100 + cw / 2, top + 74); g.textAlign = 'right';
+    // الاسم والمواصفات
+    y = top + ph + 96; g.fillStyle = fg; g.font = F(900, 66); g.fillText([p.brand, p.model].filter(Boolean).join(' '), W - 70, y);
+    const specs = [p.storage && `${p.storage}${/\D/.test(String(p.storage)) ? '' : 'GB'}`, p.ram && `RAM ${p.ram}${/\D/.test(String(p.ram)) ? '' : 'GB'}`, p.color, p.condition === 'used' && p.battery ? `🔋 ${p.battery}%` : '', o.warranty || ''].filter(Boolean);
+    let x = W - 70; y += 40; g.font = F(700, 30);
+    specs.forEach((s) => { const w = g.measureText(s).width + 44; if (x - w < 70) { x = W - 70; y += 74; } g.fillStyle = light ? '#f1e6e8' : 'rgba(255,255,255,.12)'; this.round(g, x - w, y, w, 58, 29); g.fill(); g.fillStyle = fg; g.fillText(s, x - 22, y + 40); x -= w + 14; });
+    // السعر
+    y += 150; if (o.price) { g.fillStyle = sub; g.font = F(700, 30); g.fillText(L('السعر', 'Price'), W - 70, y - 64); g.fillStyle = acc; g.font = F(900, 96); g.fillText(`${Number(o.price).toLocaleString('ar-EG-u-nu-latn')} ${cur() || 'ج.م'}`, W - 70, y + 18); }
+    if (o.note) { g.fillStyle = fg; g.font = F(700, 32); g.fillText(o.note.slice(0, 48), W - 70, y + 82); }
+    // الفوتر: الرقم + QR
+    const fy = H - 130; g.fillStyle = light ? 'rgba(139,26,43,.08)' : 'rgba(0,0,0,.28)'; g.fillRect(0, fy - 40, W, 170);
+    g.fillStyle = fg; g.font = F(800, 38); g.fillText(`📞 ${st.phone || ''}`, W - 70, fy + 22); g.fillStyle = sub; g.font = F(600, 26); g.fillText((st.address || '').slice(0, 52), W - 70, fy + 66);
+    const url = o.qr && typeof Catalog !== 'undefined' && Catalog.url && Catalog.url(); if (url) { const q = await this.img(QR.dataURL(url, 220, { border: 1 })); if (q) { g.fillStyle = '#fff'; this.round(g, 70, fy - 30, 150, 150, 18); g.fill(); g.drawImage(q, 80, fy - 20, 130, 130); } }
+    return c;
+  },
+  async open(p) {
+    p = DB.get('phones', p.id) || p; const pics = [...(p.devPhotos || []), ...(p.photos || [])].filter(Boolean);
+    const o = { theme: 'wine', story: false, price: p.price || '', photo: pics[0] || '', warranty: p.warrantyDays ? L(`ضمان ${p.warrantyDays} يوم`, `${p.warrantyDays}-day warranty`) : '', tag: L('متاح دلوقتي', 'Available now'), note: '', qr: true };
+    const m = UI.modal({ title: L('بوست جاهز للموبايل', 'Ready-made post'), icon: 'image', size: 'xl', body: `<div class="pp-wrap"><div class="pp-prev"><img id="ppImg" alt=""></div><div class="pp-ctl">
+      <label class="lbl">${L('الشكل', 'Theme')}</label><div class="row wrap" style="gap:6px" id="ppTh">${this.THEMES.map((t) => `<button type="button" class="pp-th ${t[0] === o.theme ? 'on' : ''}" data-th="${t[0]}" style="background:linear-gradient(135deg,${t[2][0]},${t[2][1]})" title="${t[1]}"></button>`).join('')}</div>
+      <label class="lbl mt">${L('المقاس', 'Size')}</label><div class="tabs" id="ppSz"><button data-s="0" class="active">${L('بوست', 'Post')} 4:5</button><button data-s="1">${L('ستوري', 'Story')} 9:16</button></div>
+      <div class="row wrap mt" style="gap:6px">${pics.map((x, i) => `<img src="${x}" data-pic="${i}" class="pp-pic ${i === 0 ? 'on' : ''}">`).join('')}<button type="button" class="btn sm" id="ppPick">${icon('camera')}${L('صورة', 'Photo')}</button></div>
+      ${UI.form([{ name: 'price', label: L('السعر', 'Price'), type: 'number', value: o.price, col: 6 }, { name: 'warranty', label: L('الضمان', 'Warranty'), value: o.warranty, col: 6 }, { name: 'tag', label: L('العنوان الصغير', 'Tagline'), value: o.tag, col: 12 }, { name: 'note', label: L('سطر إضافي (عرض / تقسيط…)', 'Extra line'), value: '', col: 12 }, { name: 'qr', label: L('QR لكتالوج المحل', 'Catalog QR'), type: 'checkbox', value: true, col: 12 }])}
+      </div></div>`,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('تحميل', 'Download'), icon: 'download', onClick: () => this.save(m, p) }, ...(navigator.share ? [{ label: L('مشاركة', 'Share'), cls: 'primary', icon: 'share', onClick: () => this.share(m, p) }] : [])] });
+    let busy = null;
+    const redraw = async () => { const v = UI.read(m.el); Object.assign(o, { price: v.price, warranty: v.warranty, tag: v.tag, note: v.note, qr: !!v.qr }); const id = (busy = {}); const c = await this.draw(p, o); if (id !== busy) return; m._c = c; $('#ppImg', m.el).src = c.toDataURL('image/jpeg', 0.9); };
+    $$('[data-th]', m.el).forEach((b) => (b.onclick = () => { o.theme = b.dataset.th; $$('[data-th]', m.el).forEach((x) => x.classList.toggle('on', x === b)); redraw(); }));
+    $$('#ppSz button', m.el).forEach((b) => (b.onclick = () => { o.story = b.dataset.s === '1'; $$('#ppSz button', m.el).forEach((x) => x.classList.toggle('active', x === b)); redraw(); }));
+    $$('[data-pic]', m.el).forEach((b) => (b.onclick = () => { o.photo = pics[+b.dataset.pic]; $$('[data-pic]', m.el).forEach((x) => x.classList.toggle('on', x === b)); redraw(); }));
+    $('#ppPick', m.el).onclick = async () => { const x = await pickImage(1200); if (x) { o.photo = x; $$('[data-pic]', m.el).forEach((y) => y.classList.remove('on')); redraw(); } };
+    $$('input', m.el).forEach((i) => i.addEventListener(i.type === 'checkbox' ? 'change' : 'input', () => { clearTimeout(m._t); m._t = setTimeout(redraw, 250); }));
+    redraw();
+  },
+  file(p) { return `${[p.brand, p.model].filter(Boolean).join('-') || 'phone'}-${p.code || ''}.png`.replace(/\s+/g, '-'); },
+  async save(m, p) { if (!m._c) return; const u = m._c.toDataURL('image/png'); if (typeof saveFile === 'function') { try { return await saveFile(this.file(p), u.split(',')[1], { base64: true, mime: 'image/png' }); } catch (_) {} } const a = document.createElement('a'); a.href = u; a.download = this.file(p); document.body.appendChild(a); a.click(); a.remove(); },
+  async share(m, p) { if (!m._c) return; try { const b = await new Promise((r) => m._c.toBlob(r, 'image/png')); const f = new File([b], this.file(p), { type: 'image/png' }); if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f], title: [p.brand, p.model].join(' ') }); else this.save(m, p); } catch (e) { if (e.name !== 'AbortError') this.save(m, p); } }
+};
+
+(() => {
+  const P = Modules.phones; if (!P) return;
+  const d0 = P.details.bind(P);
+  P.details = function (p) { const r = d0(p); try { const x = DB.get('phones', p.id) || p; if (x.status !== 'sold') { const m = [...$$('.modal-bg')].pop(); const f = m && $('.modal-f', m); if (f) { const b = document.createElement('button'); b.className = 'btn'; b.innerHTML = `${icon('image')}${L('بوست جاهز', 'Post')}`; b.onclick = () => PhonePost.open(x); f.prepend(b); } } } catch (_) {} return r; };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   حجز معاد صيانة أونلاين — العميل يحجز من لينك المحل (book.html) والحجز يظهر في قسم الصيانة
+   «استلام الجهاز» بيفتح نموذج الاستلام متملي ببيانات الحجز، و«تأكيد على واتساب» بيبعت للعميل المعاد.
+   محتاج supabase/pos-1.11.sql
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const RepairBook = {
+  cfg() { const st = DB.settings().store || {}; return { on: false, token: '', cursor: 0, hours: '', note: '', slots: ['الصبح', 'الضهر', 'بالليل'], off: [5], items: [], ...(DB.settings().repairBook || {}), name: st.name || '', phone: st.phone || '', address: st.address || '' }; },
+  save(p) { const c = this.cfg(); const { name, phone, address, ...rest } = { ...c, ...p }; DB.saveSettings({ repairBook: rest }); },
+  avail() { return typeof Cloud !== 'undefined' && Cloud.ok(); },
+  link(c = this.cfg()) { return c.token ? `${Cloud.site()}/book.html?s=${c.token}` : ''; },
+  types() { try { return (Modules.repairs.cfg().deviceTypes || []).slice(0, 8); } catch (_) { return []; } },
+  async publish(c = this.cfg()) { await Cloud.rpc('pos_book_set', { p_mid: await License.machineId(), p_token: c.token, p_data: { v: 1, on: !!c.on, name: c.name, phone: c.phone, address: c.address, hours: c.hours, note: c.note, slots: c.slots, off: c.off, types: this.types() } }); },
+  items() { return (this.cfg().items || []).slice().sort((a, b) => (a.at < b.at ? 1 : -1)); },
+  fresh() { return this.items().filter((b) => b.status === 'new'); },
+  async pull(manual) {
+    const c = this.cfg(); if (!c.on || !c.token || !this.avail() || this._busy) return; this._busy = true;
+    try {
+      const rows = (await Cloud.rpc('pos_book_pull', { p_mid: await License.machineId(), p_token: c.token, p_after: Number(c.cursor) || 0 })) || [];
+      if (rows.length) {
+        const have = new Set(c.items.map((x) => x.id)); const add = rows.filter((r) => !have.has(r.id)).map((r) => ({ id: r.id, at: r.at, status: 'new', ...r.data }));
+        this.save({ cursor: Math.max(...rows.map((r) => r.id)), items: [...c.items, ...add].slice(-80) });
+        if (add.length) { try { SmsSound.play('ok'); } catch (_) {} UI.toast(`📅 ${L(`حجز صيانة جديد: ${add.map((b) => b.name).join('، ')}`, `New repair booking: ${add.length}`)}`, 'info', 7000); if (App.current === 'repairs') App.reload(); else App.refreshTop && App.refreshTop(); }
+      } else if (manual) UI.toast(L('مفيش حجوزات جديدة', 'No new bookings'), 'info');
+    } catch (e) { if (manual) UI.toast(e.message, 'err'); } finally { this._busy = false; }
+  },
+  start() { this.pull(); },
+  set(id, patch) { const c = this.cfg(); this.save({ items: c.items.map((b) => (b.id === id ? { ...b, ...patch } : b)) }); },
+  when(b) { try { return `${new Date(b.date).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'ar-EG-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' })} — ${b.slot || ''}`; } catch (_) { return b.date || ''; } },
+  confirm(b) { const st = DB.settings().store || {}; sendWhatsApp(b.phone, `${L('أهلاً', 'Hi')} ${String(b.name || '').split(' ')[0]} 👋\n${L(`معاد صيانة ${[b.type, b.brand, b.model].filter(Boolean).join(' ')} اتأكد ✓`, 'Your repair appointment is confirmed ✓')}\n📅 ${this.when(b)}${st.address ? `\n📍 ${st.address}` : ''}\n\n${st.name || ''}`); this.set(b.id, { status: b.status === 'new' ? 'confirmed' : b.status }); App.reload(); },
+  receive(b) {
+    this.set(b.id, { status: 'received' });
+    Modules.repairs.receive(null, null, { phone: b.phone, customerName: b.name, deviceType: b.type, brand: b.brand, model: b.model, issue: b.issue, notes: L(`حجز أونلاين — ${this.when(b)}`, 'Online booking') });
+  },
+  cardHTML() {
+    const SO = (b) => `${b.date || ''}|${(this.cfg().slots || []).indexOf(b.slot)}`; const list = this.items().filter((b) => ['new', 'confirmed'].includes(b.status)).sort((a, b) => (SO(a) < SO(b) ? -1 : 1)); if (!list.length && !this.cfg().on) return '';
+    return `<div class="card card-b mb rb-box"><div class="row wrap" style="gap:8px;align-items:center"><b style="flex:1">📅 ${L('حجوزات أونلاين', 'Online bookings')} ${this.fresh().length ? `<span class="tag warn">${this.fresh().length} ${L('جديد', 'new')}</span>` : ''}</b><button class="btn sm ghost" id="rbPull">${icon('refresh')}</button><button class="btn sm" id="rbSet">${icon('settings')}${L('الحجز أونلاين', 'Online booking')}</button></div>
+      ${list.length ? list.map((b) => `<div class="rb-it ${b.status}"><div class="rb-tx"><b>${esc(b.name)} <span class="faint" dir="ltr">${esc(b.phone)}</span></b><small>${esc([b.type, b.brand, b.model].filter(Boolean).join(' '))} — ${esc(b.issue || '')}</small><small>📅 ${esc(this.when(b))} ${b.status === 'confirmed' ? `<span class="tag ok">${L('اتأكد', 'Confirmed')}</span>` : ''}</small></div>
+        <div class="row" style="gap:6px"><button class="btn sm primary" data-rbr="${b.id}">${L('استلام الجهاز', 'Receive')}</button><button class="btn sm" data-rbc="${b.id}">${icon('whatsapp')}${L('تأكيد', 'Confirm')}</button><button class="btn sm ghost" data-rbx="${b.id}" title="${L('إلغاء', 'Cancel')}">${icon('x')}</button></div></div>`).join('') : `<div class="faint" style="font-size:13px">${L('مفيش حجوزات دلوقتي — ابعت لينك الحجز لعملاءك أو حطه على صفحة المحل.', 'No bookings — share your booking link.')}</div>`}</div>`;
+  },
+  bind(el) {
+    const g = (id) => this.items().find((b) => String(b.id) === String(id));
+    $('#rbSet', el) && ($('#rbSet', el).onclick = () => this.settings());
+    $('#rbPull', el) && ($('#rbPull', el).onclick = () => this.pull(true));
+    $$('[data-rbr]', el).forEach((x) => (x.onclick = () => this.receive(g(x.dataset.rbr))));
+    $$('[data-rbc]', el).forEach((x) => (x.onclick = () => this.confirm(g(x.dataset.rbc))));
+    $$('[data-rbx]', el).forEach((x) => (x.onclick = async () => { if (await UI.confirm(L('إلغاء الحجز ده؟', 'Cancel this booking?'))) { this.set(Number(x.dataset.rbx) || x.dataset.rbx, { status: 'cancelled' }); App.reload(); } }));
+  },
+  settings() {
+    if (!this.avail()) return UI.toast(L('الحجز أونلاين محتاج نت وسيرفر التفعيل', 'Needs the cloud server'), 'warn');
+    const c = this.cfg(); const DAYS = [[6, L('السبت', 'Sat')], [0, L('الحد', 'Sun')], [1, L('الاتنين', 'Mon')], [2, L('التلات', 'Tue')], [3, L('الأربع', 'Wed')], [4, L('الخميس', 'Thu')], [5, L('الجمعة', 'Fri')]];
+    const m = UI.modal({ title: L('حجز معاد صيانة أونلاين', 'Online repair booking'), icon: 'calendar', size: 'lg', body: `<p class="faint" style="margin-top:0;line-height:1.9">${L('العميل يفتح لينك المحل، يختار الجهاز والعطل واليوم والوقت — والحجز يوصلك هنا في الصيانة.', 'Customers book from your link; bookings appear here.')}</p>` + UI.form([
+      { name: 'on', label: L('تشغيل الحجز أونلاين', 'Enable online booking'), type: 'checkbox', col: 12 },
+      { name: 'hours', label: L('مواعيد الشغل', 'Working hours'), col: 6, attrs: `placeholder="${L('مثلاً: 11 الصبح لـ 11 بالليل', 'e.g. 11am – 11pm')}"` },
+      { name: 'slotsTxt', label: L('الفترات (افصل بفاصلة)', 'Slots (comma separated)'), col: 6 },
+      { name: 'note', label: L('ملاحظة للعميل', 'Note to customers'), col: 12 }], { ...c, slotsTxt: (c.slots || []).join('، ') }) +
+      `<label class="lbl">${L('أيام الإجازة', 'Days off')}</label><div class="row wrap" style="gap:10px">${DAYS.map(([d, n]) => `<label class="check"><input type="checkbox" data-off="${d}" ${(c.off || []).includes(d) ? 'checked' : ''}> ${n}</label>`).join('')}</div>
+      ${c.token ? `<div class="card card-b mt" style="text-align:center"><div class="dc-qr" style="margin:0 auto">${QR.svg(this.link(c), { ecl: 'M' })}</div><input class="mono" readonly value="${esc(this.link(c))}" dir="ltr" style="font-size:12px;margin-top:6px"><div class="row wrap mt" style="gap:6px;justify-content:center"><button type="button" class="btn sm" id="rbCopy">${icon('copy')}${L('نسخ اللينك', 'Copy link')}</button><button type="button" class="btn sm" id="rbPrint">${icon('printer')}${L('اطبع ورقة QR للمحل', 'Print QR sheet')}</button></div></div>` : ''}`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ ونشر', 'Save & publish'), cls: 'primary', icon: 'check', onClick: async (x) => {
+        const v = UI.read(x.el); const p = { on: !!v.on, hours: v.hours || '', note: v.note || '', slots: String(v.slotsTxt || '').split(/[,،]/).map((s) => s.trim()).filter(Boolean).slice(0, 6), off: $$('[data-off]:checked', x.el).map((i) => Number(i.dataset.off)), token: c.token || 'B' + Cloud.token(14) };
+        if (!p.slots.length) p.slots = ['الصبح', 'الضهر', 'بالليل'];
+        try { await this.publish({ ...this.cfg(), ...p }); } catch (e) { return UI.toast(/404|function/.test(e.message) ? L('السيرفر محتاج تحديث — شغّل ملف pos-1.11.sql', 'Run pos-1.11.sql') : e.message, 'err', 7000); }
+        this.save(p); audit('repairbook.cfg', p.on ? 'on' : 'off'); x.close(); this.start(); UI.toast(L('اتحفظ واتنشر ✓', 'Saved & published ✓')); if (!c.token) this.settings(); else App.reload();
+      } }] });
+    if ($('#rbCopy', m.el)) $('#rbCopy', m.el).onclick = () => { try { navigator.clipboard.writeText(this.link(c)); UI.toast(L('اتنسخ ✓', 'Copied ✓')); } catch (_) {} };
+    if ($('#rbPrint', m.el)) $('#rbPrint', m.el).onclick = () => printHTML(reportDoc(L('احجز معاد صيانة', 'Book a repair'), `<div style="text-align:center;padding:30px 0"><h1 style="font-size:34px;margin:0 0 10px">📱 ${L('احجز معاد الصيانة من موبايلك', 'Book your repair from your phone')}</h1><p style="font-size:18px">${L('امسح الكود — اختار الجهاز والعطل والمعاد، ومتستناش في المحل', 'Scan, pick your device, issue and time')}</p><div style="width:320px;margin:20px auto">${QR.svg(this.link(c), { ecl: 'M' })}</div><b style="font-size:22px">${esc(DB.settings().store.name || '')}</b><div dir="ltr" style="font-size:13px;color:#666;margin-top:8px">${esc(this.link(c))}</div></div>`), { type: 'report' });
+  }
+};
+
+(() => {
+  const R = Modules.repairs; if (!R) return;
+  const r0 = R.render.bind(R);
+  R.render = function (el) { r0(el); try { const h = RepairBook.cardHTML(); const body = $('#rpBody', el); if (body) { const w = document.createElement('div'); w.id = 'rbHost'; if (h) w.innerHTML = h; else w.innerHTML = `<div class="row mb" style="justify-content:flex-end"><button class="btn sm" id="rbSet">${icon('calendar')}${L('الحجز أونلاين', 'Online booking')}</button></div>`; body.before(w); RepairBook.bind(w); } } catch (e) { console.warn(e); } };
+  if (typeof Notify !== 'undefined') { const l0 = Notify.list.bind(Notify); Notify.list = function () { const l = l0(); try { const n = RepairBook.fresh().length; if (n) l.push({ type: 'info', icon: 'calendar', t: L(`${n} حجز صيانة أونلاين جديد`, `${n} new online repair bookings`), s: L('الصيانة', 'Repairs'), go: () => App.go('repairs') }); } catch (_) {} return l; }; }
+  setInterval(() => { try { if (Session.user && !document.hidden) RepairBook.pull(); } catch (_) {} }, 90000); setTimeout(() => { try { if (Session.user) RepairBook.pull(); } catch (_) {} }, 6000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && RepairBook.cfg().on) RepairBook.pull(); });
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   مخطط الكاميرات على صورة المكان — صوّر المكان (أو ارسم على مربعات)، اضغط تحط كاميرا، اسحبها،
+   ولفّ اتجاهها ووسّع زاوية الرؤية. المخطط بيتحفظ مع العملية وبيتطبع مع عرض السعر / الفاتورة.
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const CvPlan = {
+  TYPES: () => [['dome', L('دوم (داخلي)', 'Dome')], ['bullet', L('بولت (خارجي)', 'Bullet')], ['ptz', L('PTZ متحركة', 'PTZ')], ['wifi', L('واي فاي 360', 'Wi-Fi 360')], ['dvr', L('جهاز التسجيل', 'DVR/NVR')]],
+  COLORS: { dome: '#1f6feb', bullet: '#8B1A2B', ptz: '#7c3aed', wifi: '#0e9f6e', dvr: '#111827' },
+  _ic: {},
+  img(src) { if (!src) return Promise.resolve(null); if (this._ic.src === src) return Promise.resolve(this._ic.img); return new Promise((res) => { const i = new Image(); i.onload = () => { this._ic = { src, img: i }; res(i); }; i.onerror = () => res(null); i.src = src; }); },
+  /* الرسم على canvas بأي مقاس */
+  async paint(c, plan, sel = -1) {
+    const g = c.getContext('2d'); const W = c.width, H = c.height; const bg = await this.img(plan.bg);
+    g.fillStyle = '#f4f1f1'; g.fillRect(0, 0, W, H);
+    if (bg) g.drawImage(bg, 0, 0, W, H); else { g.strokeStyle = '#ddd2d4'; g.lineWidth = 1; const s = W / 24; for (let x = 0; x <= W; x += s) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); } for (let y = 0; y <= H; y += s) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); } }
+    const R = Math.max(14, W / 48);
+    plan.cams.forEach((m, i) => {
+      const x = m.x * W, y = m.y * H, col = this.COLORS[m.type] || this.COLORS.dome;
+      if (m.type !== 'dvr') { const a = (m.dir * Math.PI) / 180, f = (Math.max(20, Math.min(360, m.fov || 90)) * Math.PI) / 360, len = (m.range || 0.22) * W;
+        const gr = g.createRadialGradient(x, y, R * 0.6, x, y, len); gr.addColorStop(0, col + '88'); gr.addColorStop(1, col + '00'); g.fillStyle = gr; g.beginPath(); g.moveTo(x, y); g.arc(x, y, len, a - f, a + f); g.closePath(); g.fill(); }
+      g.beginPath(); g.arc(x, y, R + (i === sel ? 5 : 3), 0, 7); g.fillStyle = i === sel ? '#ffd27a' : '#fff'; g.fill();
+      g.beginPath(); g.arc(x, y, R, 0, 7); g.fillStyle = col; g.fill();
+      g.fillStyle = '#fff'; g.font = `800 ${Math.round(R * 1.05)}px Cairo, Tahoma, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(m.type === 'dvr' ? 'R' : String(this.no(plan, i)), x, y + 1);
+      if (m.label) { g.font = `700 ${Math.round(R * 0.85)}px Cairo, Tahoma, sans-serif`; const tw = g.measureText(m.label).width + 14; g.fillStyle = 'rgba(0,0,0,.72)'; g.fillRect(x - tw / 2, y + R + 6, tw, R * 1.3); g.fillStyle = '#fff'; g.fillText(m.label, x, y + R + 6 + R * 0.65); }
+    });
+  },
+  no(plan, i) { return plan.cams.slice(0, i + 1).filter((m) => m.type !== 'dvr').length; },
+  async render(plan, w = 1400) { const bg = await this.img(plan.bg); const ratio = bg ? bg.height / bg.width : 0.66; const c = document.createElement('canvas'); c.width = w; c.height = Math.round(w * ratio); await this.paint(c, plan); return c.toDataURL('image/jpeg', 0.86); },
+  edit(j) {
+    j = DB.get('cctvJobs', j.id) || j; const plan = JSON.parse(JSON.stringify(j.plan && j.plan.cams ? { bg: j.plan.bg || '', cams: j.plan.cams } : { bg: '', cams: [] })); let sel = -1, drag = null;
+    const m = UI.modal({ title: L('مخطط الكاميرات', 'Camera layout') + ' — ' + esc(j.no || ''), icon: 'map', size: 'xl', body: `<div class="cp-tools row wrap" style="gap:6px;margin-bottom:8px"><button type="button" class="btn sm" id="cpBg">${icon('camera')}${L('صورة المكان', 'Site photo')}</button><button type="button" class="btn sm ghost" id="cpGrid">${L('مربعات بدل الصورة', 'Grid instead')}</button><span class="faint" style="font-size:12px">${L('اضغط على المكان تحط كاميرا — اسحبها تحركها', 'Tap to add a camera — drag to move')}</span></div>
+      <div class="cpl-wrap"><canvas id="cpC"></canvas></div>
+      <div id="cpSel" class="cpl-sel mt"></div><div class="faint mt" id="cpN" style="font-size:12.5px"></div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ المخطط', 'Save layout'), cls: 'primary', icon: 'check', onClick: async (x) => { const img = plan.cams.length || plan.bg ? await this.render(plan) : ''; DB.update('cctvJobs', j.id, { plan: plan.cams.length || plan.bg ? { ...plan, img, at: nowISO() } : null }); audit('cctv.plan', `${j.no} ${plan.cams.length}`); x.close(); UI.toast(L('اتحفظ المخطط ✓ — هيتطبع مع عرض السعر والفاتورة', 'Layout saved ✓')); } }] });
+    const c = $('#cpC', m.el);
+    const size = async () => { const bg = await this.img(plan.bg); const w = Math.min(1400, Math.max(600, c.parentElement.clientWidth * (window.devicePixelRatio || 1))); c.width = w; c.height = Math.round(w * (bg ? bg.height / bg.width : 0.66)); draw(); };
+    const draw = () => { this.paint(c, plan, sel); $('#cpN', m.el).textContent = `${plan.cams.filter((x) => x.type !== 'dvr').length} ${L('كاميرا', 'cameras')}`; };
+    const pos = (e) => { const r = c.getBoundingClientRect(); return { x: Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), y: Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)) }; };
+    const hit = (p) => { const r = c.getBoundingClientRect(); const R = (Math.max(14, c.width / 48) / c.width) * r.width + 8; for (let i = plan.cams.length - 1; i >= 0; i--) { const dx = (plan.cams[i].x - p.x) * r.width, dy = (plan.cams[i].y - p.y) * r.height; if (Math.hypot(dx, dy) <= R) return i; } return -1; };
+    const panel = () => {
+      const box = $('#cpSel', m.el); const cm = plan.cams[sel]; if (!cm) { box.innerHTML = ''; return; }
+      box.innerHTML = `<div class="row wrap" style="gap:10px;align-items:end"><div style="min-width:130px"><label class="lbl">${L('النوع', 'Type')}</label><select id="cpT">${this.TYPES().map(([k, n]) => `<option value="${k}" ${cm.type === k ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+        <div style="flex:1;min-width:140px"><label class="lbl">${L('المكان / الاسم', 'Label')}</label><input id="cpL" value="${esc(cm.label || '')}" placeholder="${L('المدخل / الكاشير…', 'Entrance…')}"></div>
+        ${cm.type === 'dvr' ? '' : `<div style="flex:1;min-width:150px"><label class="lbl">${L('الاتجاه', 'Direction')} <span id="cpDv">${cm.dir}°</span></label><input type="range" id="cpD" min="0" max="359" value="${cm.dir}"></div>
+        <div style="flex:1;min-width:150px"><label class="lbl">${L('زاوية الرؤية', 'Field of view')} <span id="cpFv">${cm.fov}°</span></label><input type="range" id="cpF" min="30" max="360" step="5" value="${cm.fov}"></div>
+        <div style="flex:1;min-width:150px"><label class="lbl">${L('المدى', 'Range')}</label><input type="range" id="cpR" min="0.08" max="0.6" step="0.01" value="${cm.range}"></div>`}
+        <button type="button" class="btn sm danger" id="cpDel">${icon('trash')}${L('مسح', 'Delete')}</button></div>`;
+      $('#cpT', box).onchange = (e) => { cm.type = e.target.value; if (cm.type === 'wifi' && cm.fov < 300) cm.fov = 360; panel(); draw(); };
+      $('#cpL', box).oninput = (e) => { cm.label = e.target.value.slice(0, 24); draw(); };
+      if ($('#cpD', box)) { $('#cpD', box).oninput = (e) => { cm.dir = +e.target.value; $('#cpDv', box).textContent = cm.dir + '°'; draw(); }; $('#cpF', box).oninput = (e) => { cm.fov = +e.target.value; $('#cpFv', box).textContent = cm.fov + '°'; draw(); }; $('#cpR', box).oninput = (e) => { cm.range = +e.target.value; draw(); }; }
+      $('#cpDel', box).onclick = () => { plan.cams.splice(sel, 1); sel = -1; panel(); draw(); };
+    };
+    c.addEventListener('pointerdown', (e) => { const p = pos(e); const i = hit(p); if (i >= 0) { sel = i; drag = { i, moved: false }; c.setPointerCapture(e.pointerId); } else { plan.cams.push({ x: p.x, y: p.y, type: 'dome', dir: 90, fov: 90, range: 0.22, label: '' }); sel = plan.cams.length - 1; } panel(); draw(); });
+    c.addEventListener('pointermove', (e) => { if (!drag) return; const p = pos(e); plan.cams[drag.i].x = p.x; plan.cams[drag.i].y = p.y; drag.moved = true; draw(); });
+    c.addEventListener('pointerup', () => { drag = null; });
+    $('#cpBg', m.el).onclick = async () => { const x = await pickImage(1400); if (x) { plan.bg = x; size(); } };
+    $('#cpGrid', m.el).onclick = () => { plan.bg = ''; size(); };
+    setTimeout(size, 30);
+  },
+  sectionHTML(j) { return j && j.plan && j.plan.img ? `<h2>${L('مخطط أماكن الكاميرات', 'Camera layout')}</h2><img src="${j.plan.img}" style="width:100%;border:1px solid #ddd;border-radius:8px">${(j.plan.cams || []).some((x) => x.label) ? `<div style="columns:2;font-size:12px;line-height:1.9;margin-top:6px">${j.plan.cams.map((x, i) => (x.label ? `<div><b>${x.type === 'dvr' ? 'R' : this.no(j.plan, i)}</b> — ${esc(x.label)}</div>` : '')).join('')}</div>` : ''}` : ''; }
+};
+
+(() => {
+  const M = Modules.cctv; if (!M) return;
+  /* زرار المخطط في تفاصيل العملية / عرض السعر */
+  const v0 = M.view.bind(M);
+  M.view = function (j) { const r = v0(j); try { const m = [...$$('.modal-bg')].pop(); const f = m && $('.modal-f', m); if (f && !$('#cplBtn', f)) { const x = DB.get('cctvJobs', j.id) || j; const b = document.createElement('button'); b.className = 'btn'; b.id = 'cplBtn'; b.innerHTML = `${icon('map')}${x.plan ? L('المخطط ✓', 'Layout ✓') : L('مخطط الكاميرات', 'Camera layout')}`; b.onclick = () => CvPlan.edit(x); f.prepend(b); } } catch (_) {} return r; };
+  /* إضافة المخطط للطباعة */
+  const p0 = M.print.bind(M);
+  M.print = function (j) { const x = DB.get('cctvJobs', j.id) || j; if (!x.plan || !x.plan.img) return p0(j); const rd = window.reportDoc; window.reportDoc = function (t, body, ...rest) { return rd(t, body + CvPlan.sectionHTML(x), ...rest); }; try { return p0(j); } finally { window.reportDoc = rd; } };
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   تكميلات على الموجود:
+   1) تقييم العميل بعد تسليم الصيانة وبعد تركيب الكاميرات (مش بعد البيع بس) + لينك تقييم جوجل للي قيّم كويس
+   2) شرائح ذكية في رسائل العملاء: موبايل عدّى عليه سنة، ضمان قرب يخلص، صيانة من 6 شهور، كاميرات محتاجة صيانة
+   3) زرار «استبدال» في نقطة البيع
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+(() => {
+  /* ---------- 1) التقييم بعد الصيانة والكاميرات ---------- */
+  if (typeof Ratings !== 'undefined') {
+    Ratings.askFor = function ({ name, phone, no, total, kind }) {
+      const c = this.cfg(); if (!c.on || c.services === false || typeof WaLink === 'undefined' || !WaLink.ready() || !phone) return;
+      const ph = waPhone(phone); if (!ph) return; const cut = Date.now() - (Number(c.cooldownDays) || 7) * 864e5;
+      if (DB.find('ratings', (r) => r.phone === ph && Date.parse(r.askedAt) > cut)) return;
+      const cu = DB.find('customers', (x) => x.phone && waPhone(x.phone) === ph);
+      const intro = kind === 'repair' ? L('شكراً إنك صلّحت جهازك عندنا', 'Thanks for repairing with us') : L('شكراً إنك ركّبت الكاميرات معانا', 'Thanks for installing with us');
+      const t = this.fill(c.template, { customer: (cu && cu.name) || name || '', store: DB.settings().store.name, no }).replace(/شكراً إنك اشتريت من/, intro + ' في');
+      const q = WaLink.queue(phone, t, { kind: 'rating', ref: no }); if (!q) return;
+      const when = new Date(Date.now() + Math.max(1, Number(c.delayMin) || 60) * 60e3).toISOString(); DB.update('waQueue', q.id, { retryAt: when });
+      DB.insert('ratings', { saleId: null, saleNo: no, src: kind, customerId: cu ? cu.id : null, customerName: (cu && cu.name) || name || '', phone: ph, userId: Session.user?.id, userName: Session.user?.name, total: total || 0, askedAt: when, score: null, comment: '' });
+    };
+    const bu = DB.update.bind(DB);
+    DB.update = function (col, id, patch) {
+      const r = bu(col, id, patch);
+      try {
+        if (col === 'repairs' && patch && patch.stage === 'delivered') { const x = DB.get('repairs', id); if (x) setTimeout(() => Ratings.askFor({ name: x.customerName, phone: x.phone, no: x.no, total: Repairs.total(x), kind: 'repair' }), 0); }
+        if (col === 'cctvJobs' && patch && patch.status === 'installed') { const x = DB.get('cctvJobs', id); if (x) setTimeout(() => Ratings.askFor({ name: x.customerName, phone: x.phone, no: x.no, total: CCTV.total(x), kind: 'cctv' }), 0); }
+      } catch (e) { console.warn('rating ask', e); }
+      return r;
+    };
+  }
+
+  /* ---------- 2) شرائح ذكية للحملات ---------- */
+  if (typeof Campaigns !== 'undefined') {
+    const SMART = () => [
+      ['phoneYear', L('📱 اشتروا موبايل من حوالي سنة (عرض إكسسوارات / تبديل)', 'Bought a phone ~1 year ago')],
+      ['warrantyEnd', L('🛡️ ضمان موبايلهم بيخلص خلال 30 يوم', 'Phone warranty ends within 30 days')],
+      ['repairOld', L('🔧 صلّحوا جهاز من 5–7 شهور', 'Repaired 5–7 months ago')],
+      ['cctvCare', L('📹 ركّبوا كاميرات من 6 شهور أو أكتر (صيانة دورية)', 'CCTV installed 6+ months ago')]];
+    const TPL = {
+      phoneYear: 'أهلاً {name} 🌹\nبقالك سنة مع موبايلك الجديد من {store} 🎉\nعندنا عروض على الجرابات والشواحن والسكرينات الأصلية — ولو حابب تبدّل موبايلك بأحدث، هنقيّم القديم بأحسن سعر.\n{catalog}',
+      warrantyEnd: 'أهلاً {name} 🌹\nضمان موبايلك من {store} قرب يخلص. لو فيه أي ملاحظة على الجهاز عدّي علينا قبل ما الضمان ينتهي ونفحصهولك ببلاش 🔧',
+      repairOld: 'أهلاً {name} 🌹\nإزاي جهازك بعد الصيانة؟ 😊\nلو محتاج تغيير بطارية أو تنضيف أو سكرينة جديدة، عندنا خصم خاص لعملاء الصيانة في {store}.',
+      cctvCare: 'أهلاً {name} 🌹\nعدّى 6 شهور على تركيب كاميرات المراقبة. ننصح بزيارة صيانة: تنضيف العدسات، فحص الهارد وأيام التسجيل، وتحديث المشاهدة على الموبايل — كلّمنا نحدد معاد 📹\n{store}'
+    };
+    const s0 = Campaigns.segs.bind(Campaigns), a0 = Campaigns.audience.bind(Campaigns);
+    Campaigns.segs = function () { return [...s0(), ...SMART()]; };
+    Campaigns.audience = function (seg, cat) {
+      if (!SMART().some((x) => x[0] === seg)) return a0(seg, cat);
+      const ok = DB.filter('customers', (c) => c.phone && waPhone(c.phone) && !c.noMarketing && c.active !== false); const byPh = {}; ok.forEach((c) => (byPh[waPhone(c.phone)] = c));
+      const pick = (list) => { const ids = new Set(); const out = []; list.forEach((x) => { const c = (x.customerId && DB.get('customers', x.customerId)) || byPh[waPhone(x.phone || x.customerPhone || '')]; if (c && byPh[waPhone(c.phone)] && !ids.has(c.id)) { ids.add(c.id); out.push(c); } }); return out; };
+      const now = Date.now(), D = 864e5;
+      if (seg === 'phoneYear') return pick(DB.filter('phones', (p) => p.status === 'sold' && p.soldAt && now - Date.parse(p.soldAt) > 330 * D && now - Date.parse(p.soldAt) < 400 * D));
+      if (seg === 'warrantyEnd') return pick(DB.filter('phones', (p) => p.status === 'sold' && p.warrantyUntil && Date.parse(p.warrantyUntil) > now && Date.parse(p.warrantyUntil) - now < 30 * D));
+      if (seg === 'repairOld') return pick(DB.filter('repairs', (r) => r.stage === 'delivered' && r.deliveredAt && now - Date.parse(r.deliveredAt) > 150 * D && now - Date.parse(r.deliveredAt) < 215 * D));
+      if (seg === 'cctvCare') return pick(DB.filter('cctvJobs', (j) => j.status === 'installed' && j.installedAt && now - Date.parse(j.installedAt) > 180 * D && !(j.amc && j.amc.on)));
+      return [];
+    };
+    const c0 = Campaigns.compose.bind(Campaigns);
+    Campaigns.compose = function (...a) {
+      const r = c0(...a);
+      try { const m = [...$$('.modal-bg')].pop(); const sel = m && $('#cpSeg', m); const ta = m && $('#cpText', m); if (sel && ta) { let auto = false; sel.addEventListener('change', () => { const t = TPL[sel.value]; if (t && (auto || !ta.dataset.touched)) { ta.value = t; auto = true; ta.dispatchEvent(new Event('input', { bubbles: true })); } }); ta.addEventListener('input', (e) => { if (e.isTrusted) { ta.dataset.touched = 1; auto = false; } }); } } catch (_) {}
+      return r;
+    };
+  }
+
+  /* ---------- 3) زرار الاستبدال في نقطة البيع ---------- */
+  const P = Modules.pos;
+  if (P && Modules.phones && Modules.phones.tradeIn) {
+    const r0 = P.render.bind(P);
+    P.render = function (el) { r0(el); try { const held = $('#posHeld', el); if (held && !$('#posTrade', el) && typeof Phones !== 'undefined' && Phones.on() && Session.can('phones')) { const b = document.createElement('button'); b.className = 'btn sm'; b.id = 'posTrade'; b.title = L('استبدال: جهاز العميل القديم مقابل جهاز جديد', 'Trade-in'); b.innerHTML = `${icon('swap')}<span>${L('استبدال', 'Trade-in')}</span>`; b.onclick = () => Modules.phones.tradeIn(); held.after(b); } } catch (_) {} };
+  }
 })();
 
 </script>

@@ -2209,6 +2209,18 @@ html[data-vw="md"] .user-chip > div:last-child { display: none; }
 .cr-box { display: grid; gap: 6px; }
 .cr-it { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 0; border-top: 1px dashed var(--line); }
 .rf-chip { background: var(--surface-2); border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; font-size: 13px; }
+/* تزويد رصيد الماكينات + المناديب */
+.tp-src { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tp-src button { border: 2px solid var(--line); border-radius: var(--r-sm); background: var(--surface); padding: 10px 6px; display: grid; justify-items: center; gap: 2px; cursor: pointer; font: inherit; font-weight: 700; font-size: 13px; color: var(--text); }
+.tp-src button span { font-size: 22px; line-height: 1.2; }
+.tp-src button.active { border-color: var(--p); background: var(--p-50); color: var(--p); box-shadow: 0 0 0 3px var(--p-100); }
+.rp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.rp-card.off { opacity: .6; }
+.rp-av { width: 40px; height: 40px; border-radius: 12px; background: var(--p); color: #fff; display: grid; place-items: center; font-weight: 900; font-size: 18px; flex: none; }
+.rp-bal { display: flex; justify-content: space-between; align-items: baseline; margin: 12px 0 8px; padding: 10px 12px; border-radius: var(--r-sm); background: var(--surface-2); }
+.rp-bal b { font-size: 22px; } .rp-bal.neg b { color: var(--err); } .rp-bal.pos b { color: var(--ok); }
+.rp-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; }
+.rp-stats span { display: block; font-size: 11.5px; color: var(--text-3); } .rp-stats b { font-size: 14px; }
 </style>
   <style>/* =========================================================
  * Markaz Ahllan POS — Modern UI layer (v2)
@@ -2485,6 +2497,7 @@ const ICONS = {
   image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
   share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
   map: '<path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3zM9 3v15M15 6v15"/>',
+  list: '<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/>',
   copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
   play: '<path d="M6 3l14 9-14 9z"/>',
   stop: '<rect x="5" y="5" width="14" height="14" rx="2"/>',
@@ -2501,7 +2514,7 @@ function icon(name, cls = '') {
  * Markaz Ahllan POS — Core (i18n, DB, utils, UI kit)
  * جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
  * ========================================================= */
-const APP = { name: 'Markaz Ahllan POS', version: '1.12.0', build: '', trialHours: 168 };
+const APP = { name: 'Markaz Ahllan POS', version: '1.13.0', build: '', trialHours: 168 };
 /* رقم الإصدار الحقيقي من النظام نفسه (أندرويد / ويندوز) — عشان ما يفضلش مكتوب ثابت */
 APP.platform = () => (window.api && window.api.isDesktop ? 'windows' : (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'android' : 'web');
 APP.platformName = () => ({ windows: L('ويندوز (ديسكتوب)', 'Windows desktop'), android: L('أندرويد', 'Android'), web: L('ويب / متصفح', 'Web / browser') })[APP.platform()];
@@ -2565,7 +2578,7 @@ const AVATAR_COLORS = ['#8B1A2B', '#1F5FA8', '#16825D', '#B26A00', '#6B2C91', '#
 function avatarColor(s) { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return AVATAR_COLORS[h % AVATAR_COLORS.length]; }
 
 /* ---------------- Database (Realm via Electron IPC / browser fallback) ---------------- */
-const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx', 'ratings', 'promos', 'transfers', 'orders', 'quotes', 'campaigns', 'eReceipts', 'eInvoices', 'finSales', 'cheques', 'custRequests'];
+const COLLECTIONS = ['settings', 'users', 'categories', 'products', 'customers', 'suppliers', 'sales', 'purchases', 'stockMoves', 'customerTx', 'supplierTx', 'machines', 'machineTx', 'wallets', 'walletTx', 'cashMoves', 'capital', 'expenses', 'shifts', 'employees', 'attendance', 'payrollAdj', 'payroll', 'auditLog', 'notifications', 'branches', 'devices', 'losses', 'repairs', 'lines', 'subLines', 'subPays', 'subBills', 'smsInbox', 'phones', 'cctvJobs', 'installments', 'instPays', 'waQueue', 'loyaltyTx', 'ratings', 'promos', 'transfers', 'orders', 'quotes', 'campaigns', 'eReceipts', 'eInvoices', 'finSales', 'cheques', 'custRequests', 'repTx'];
 
 const DEFAULT_SETTINGS = {
   appName: 'Markaz Ahllan POS',
@@ -10946,6 +10959,12 @@ Modules.settings = {
    جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
    ========================================================= */
 const CHANGELOG = [
+  { v: '1.13.0', d: '2026-11-07', items: [
+    ['whatsapp', L('علاج نهائي لـ «Waiting for this message»: واتساب غيّرت نظام تعريف الأرقام (LID) والمكتبة القديمة مكانتش بتدعمه، فالرسالة كانت بتوصل والعميل مش قادر يفتحها. اتنقلنا لمكتبة واتساب الإصدار 7 — بعد التحديث امسح الجهاز القديم من «الأجهزة المرتبطة» واربط بالـ QR مرة واحدة', 'WhatsApp “Waiting for this message” fixed (Baileys 7 / LID) — relink once')],
+    ['plus', L('تزويد رصيد الماكينات بقى بمصدره: كاش من الدرج، خزنة/بنك، محفظة، إنستا باي، مندوب، أو أي طريقة تانية — وكل تزويد بيتسجل بمصدره في سجل العمليات', 'Machine top-ups now record their source')],
+    ['user', L('حسابات المناديب: لو زوّدت من مندوب تقدر تدفعله جزء والباقي يتسجل آجل. تبويب «المناديب» في الماكينات بيوريك كل مندوب زوّد كام وادّفعله كام وليه كام — النهارده أو امبارح أو الأسبوع أو الشهر أو أي فترة — مع كشف حساب برصيد متحرك، سداد بضغطة، وإرسال الرصيد للمندوب على واتساب، وتنبيه لو عدّى الحد', 'Rep accounts with balances, statements and payments')],
+    ['zap', L('رسالة «تم شحن رصيدك» بقت بتفتح شاشة التزويد الجديدة متملية بالمبلغ — تختار المصدر وتأكّد', 'Top-up SMS opens the new top-up screen')]
+  ] },
   { v: '1.12.0', d: '2026-11-07', items: [
     ['percent', L('شركات التقسيط (فاليو، أمان، كونتكت، سهولة، بريميوم): طريقة دفع جديدة في البيع — المقدّم كاش والباقي على الشركة. صفحة «شركات التقسيط» بتوريك المستحق على كل شركة والمتأخر، والتسوية بضغطة لما الفلوس توصل، والعمولة بتتسجل مصروف', 'Financing companies')],
     ['calendar', L('المصاريف الثابتة الشهرية: الإيجار والكهربا والنت بمعاد كل واحد — تنبيه قبلها، تسجيل بضغطة، ونصيب اليوم الواحد منها (في صفحة المصروفات)', 'Monthly fixed expenses')],
@@ -12365,8 +12384,8 @@ const WaLink = {
       ? `<div class="wa-st ${this.hostOnline() ? 'on' : ''}"><div class="wa-ic">${icon('whatsapp')}</div><div><b>${this.hostOnline() ? L('واتساب متصل على كمبيوتر المحل ✓', 'WhatsApp is linked on the shop computer ✓') : L('واتساب مش مربوط', 'WhatsApp not linked')}</b><small>${L('الربط بيتم من نسخة الكمبيوتر (ويندوز): الإعدادات ← واتساب ← ربط. بعد كده أي رسالة من الموبايل أو الفروع بتتبعت تلقائي من الكمبيوتر (لازم المزامنة تكون شغالة).', 'Link from the Windows app; phones queue messages via sync.')}</small></div></div>`
       : s.state === 'unavailable' ? `<div class="wa-st"><div class="wa-ic">${icon('alert')}</div><div><b>${L('خاصية الربط مش متثبتة في النسخة دي', 'Linking is not installed in this build')}</b><small>${L('حدّث البرنامج لآخر إصدار. لحد ما تتحدث، الإرسال بيفتح واتساب عادي.', 'Update the app; meanwhile messages open WhatsApp normally.')}</small>${s.error || s.libErr ? `<small dir="ltr" style="display:block;opacity:.6;font-size:10.5px;margin-top:4px;word-break:break-all">${esc(s.error || s.libErr)}</small>` : ''}</div></div>`
       : s.state === 'open' ? `<div class="wa-st on"><div class="wa-ic">${icon('whatsapp')}</div><div><b>${L('متصل', 'Connected')} — <span dir="ltr">+${esc(s.me?.id || '')}</span> ${s.me?.name ? '· ' + esc(s.me.name) : ''}</b><small>${L('الرسايل بتتبعت تلقائي من البرنامج. الجلسة محفوظة ومش هتخرج إلا لو ضغطت تسجيل خروج.', 'Messages are sent automatically. The session stays until you log out.')}</small></div><button class="btn ghost" id="waOut">${icon('logout')}${L('تسجيل خروج', 'Log out')}</button></div>`
-      : s.state === 'qr' && s.qr ? `<div class="wa-qr"><div class="wa-qr-box">${QR.svg(s.qr, { color: '#075E54', ecl: 'L', border: 3 })}</div><ol><li>${L('افتح واتساب على موبايل المحل', 'Open WhatsApp on the shop phone')}</li><li>${L('الإعدادات ← الأجهزة المرتبطة ← ربط جهاز', 'Settings → Linked devices → Link a device')}</li><li>${L('وجّه الكاميرا على الكود ده', 'Point the camera at this code')}</li></ol></div>`
-      : `<div class="wa-st"><div class="wa-ic">${icon('whatsapp')}</div><div><b>${s.state === 'connecting' ? L('جاري الاتصال…', 'Connecting…') : L('واتساب مش مربوط', 'WhatsApp not linked')}</b><small>${s.error ? esc(s.error) : L('اربط رقم المحل مرة واحدة بالـ QR، وبعد كده الإيصالات والتذكيرات بتتبعت تلقائي.', 'Link once with a QR, then receipts and reminders go out automatically.')}</small></div>${s.state !== 'connecting' ? `<button class="btn wa" id="waGo">${icon('qr')}${L('ربط بالـ QR', 'Link with QR')}</button>` : ''}</div>`;
+      : s.state === 'qr' && s.qr ? `${/^relink/.test(s.error || '') ? `<div class="tag warn mb" style="white-space:normal;padding:8px;line-height:1.8">🔄 ${L('اتحدّثت خاصية واتساب لإصدار جديد بيحل مشكلة «Waiting for this message». امسح الـ QR مرة واحدة بس — وقبلها من موبايل المحل امسح الجهاز القديم «Markaz Ahllan POS» من الأجهزة المرتبطة.', 'WhatsApp linking was upgraded to fix “Waiting for this message”. Scan the QR once — first remove the old “Markaz Ahllan POS” from Linked devices on the shop phone.')}</div>` : ''}<div class="wa-qr"><div class="wa-qr-box">${QR.svg(s.qr, { color: '#075E54', ecl: 'L', border: 3 })}</div><ol><li>${L('افتح واتساب على موبايل المحل', 'Open WhatsApp on the shop phone')}</li><li>${L('الإعدادات ← الأجهزة المرتبطة ← ربط جهاز', 'Settings → Linked devices → Link a device')}</li><li>${L('وجّه الكاميرا على الكود ده', 'Point the camera at this code')}</li></ol></div>`
+      : `<div class="wa-st"><div class="wa-ic">${icon('whatsapp')}</div><div><b>${s.state === 'connecting' ? L('جاري الاتصال…', 'Connecting…') : L('واتساب مش مربوط', 'WhatsApp not linked')}</b><small>${s.error ? esc(/logged out/.test(s.error) ? L('الربط اتلغى من موبايل المحل — اربط تاني', 'Unlinked from the phone — link again') : /^relink/.test(s.error) ? L('اتحدّثت خاصية واتساب — اربط تاني مرة واحدة', 'Upgraded — link once more') : s.error) : L('اربط رقم المحل مرة واحدة بالـ QR، وبعد كده الإيصالات والتذكيرات بتتبعت تلقائي.', 'Link once with a QR, then receipts and reminders go out automatically.')}</small></div>${s.state !== 'connecting' ? `<button class="btn wa" id="waGo">${icon('qr')}${L('ربط بالـ QR', 'Link with QR')}</button>` : ''}</div>`;
     b.innerHTML = `${head}
       <div class="tag warn mt" style="white-space:normal;padding:8px;line-height:1.8">${icon('shield')} ${L('للحماية من الحظر: الرسايل بتتبعت واحدة واحدة بفاصل زمني، وبحد يومي، والتذكيرات في ساعات العمل بس. ابعت لعملائك بس، ومتبعتش إعلانات جماعية لأرقام مش محفوظة عندك.', 'To avoid bans: messages are spaced, capped daily, reminders only in work hours. Only message your own customers.')}</div>
       <div class="grid g2 mt"><div class="card card-b"><h3 style="margin-top:0">${L('الإعدادات', 'Settings')}</h3>${UI.form([
@@ -19334,6 +19353,153 @@ const Referral = {
       if (top.length && row) row.insertAdjacentHTML('beforebegin', `<div class="card card-b mb rf-box"><b>🏆 ${L('أكتر عملاء بيجيبولك زباين', 'Top referrers')}</b><div class="row wrap mt" style="gap:8px">${top.map((x, i) => `<span class="rf-chip">${['🥇', '🥈', '🥉', '4', '5'][i]} ${esc(x.c.name)} <b class="num">${x.n}</b></span>`).join('')}</div></div>`); } catch (e) { console.warn(e); } };
   }
   if (typeof Notify !== 'undefined') { const l0 = Notify.list.bind(Notify); Notify.list = function () { const l = l0(); try { const old = CustReq.waiting().filter((r) => Date.now() - Date.parse(r.date) > 7 * 864e5); if (old.length) l.push({ type: 'info', icon: 'bell', t: L(`${old.length} طلب عميل مستني من أكتر من أسبوع`, `${old.length} customer requests waiting 7+ days`), s: L('المشتريات', 'Purchases'), go: () => App.go('purchases') }); } catch (_) {} return l; }; }
+})();
+
+</script>
+  <script>
+/* =====================================================================
+   تزويد رصيد الماكينات + حسابات المناديب
+   - شاشة «تزويد الرصيد»: زوّدت منين؟ كاش من الدرج / خزنة-بنك / محفظة / إنستا باي / مندوب / طريقة تانية
+   - المندوب: تقدر تدفعله جزء دلوقتي والباقي يتسجل عليك ليه (آجل)
+   - تبويب «المناديب»: كل مندوب زوّد كام وادّفعله كام وليه كام — النهارده أو أي فترة — وكشف حساب برصيد متحرك وسداد بضغطة
+   جميع الحقوق محفوظة للمصمم و المطور - م/ أسامة حسن بدري - 01145060007
+   ===================================================================== */
+const MachineReps = {
+  list(all) { return (DB.settings().machineReps || []).filter((r) => r && r.name && (all || r.active !== false)); },
+  get(id) { return (DB.settings().machineReps || []).find((r) => r.id === id) || null; },
+  save(list) { DB.saveSettings({ machineReps: list }); },
+  tx(repId) { return DB.filter('repTx', (t) => t.repId === repId && t.status !== 'void'); },
+  delta(t) { return t.type === 'topup' ? Number(t.due) || 0 : t.type === 'payment' ? -(Number(t.amount) || 0) : Number(t.amount) || 0; },
+  /* اللي ليه عليك (موجب = إنت مديون للمندوب) */
+  balance(repId, until) { return round2(sum(this.tx(repId).filter((t) => !until || t.date < until), (t) => this.delta(t))); },
+  period(repId, from, to) {
+    const rows = this.tx(repId).filter((t) => inRange(t.date, from, to)); const tops = rows.filter((t) => t.type === 'topup'); const pays = rows.filter((t) => t.type === 'payment');
+    return { charged: round2(sum(tops, (t) => t.amount)), bonus: round2(sum(tops, (t) => t.bonus || 0)), paidNow: round2(sum(tops, (t) => t.paid || 0)), credit: round2(sum(tops, (t) => t.due || 0)), payments: round2(sum(pays, (t) => t.amount)), count: tops.length, rows };
+  },
+  edit(r0, after) {
+    const r = r0 || { id: 'rp' + Date.now().toString(36), name: '', phone: '', providers: [], active: true };
+    const m = UI.modal({ title: r0 ? L('تعديل مندوب', 'Edit rep') : L('مندوب جديد', 'New rep'), icon: 'user', size: 'sm', body: UI.form([{ name: 'name', label: L('اسم المندوب', 'Rep name'), required: true, col: 12 }, { name: 'phone', label: L('موبايله', 'Mobile'), type: 'tel', col: 12 }, { name: 'company', label: L('تبع شركة (اختياري)', 'Company (optional)'), col: 12, attrs: `placeholder="${L('مثلاً: فوري / أمان', 'e.g. Fawry')}"` }, { name: 'limit', label: L('أقصى مبلغ آجل مسموح (اختياري)', 'Max credit (optional)'), type: 'number', col: 12 }], r) +
+      `<label class="lbl">${L('بيزوّد أنهي ماكينات؟', 'Which machine types?')}</label><div class="row wrap" style="gap:10px">${Object.entries(PROVIDERS).map(([k, n]) => `<label class="check"><input type="checkbox" data-pv="${k}" ${(r.providers || []).includes(k) ? 'checked' : ''}> ${L(...n)}</label>`).join('')}</div>`,
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('حفظ', 'Save'), cls: 'primary', icon: 'check', onClick: (x) => {
+        if (!UI.validate(x.el)) return; const v = UI.read(x.el); const doc = { ...r, name: v.name.trim(), phone: v.phone || '', company: v.company || '', limit: Number(v.limit) || 0, providers: $$('[data-pv]:checked', x.el).map((c) => c.dataset.pv) };
+        const all = DB.settings().machineReps || []; this.save(r0 ? all.map((y) => (y.id === r.id ? doc : y)) : [...all, doc]); audit('rep.save', doc.name); x.close(); UI.toast(L('اتحفظ ✓', 'Saved ✓')); after ? after(doc) : App.reload();
+      } }] });
+    return m;
+  },
+  /* سداد للمندوب */
+  pay(rep, pre) {
+    const bal = this.balance(rep.id);
+    UI.modal({ title: L('سداد للمندوب', 'Pay the rep') + ' — ' + esc(rep.name), icon: 'money', size: 'sm', body: `<div class="stat-mini mb"><span class="l">${L('ليه عليك دلوقتي', 'You owe')}</span><span class="v num ${bal > 0 ? 'neg' : ''}">${money(bal)}</span></div>` + UI.form([{ name: 'amount', label: L('المبلغ', 'Amount'), type: 'number', value: pre || (bal > 0 ? bal : ''), required: true, col: 12 }, { name: 'src', label: L('الدفع من', 'Paid from'), type: 'select', options: PAY_SRC(), col: 12 }, { name: 'note', label: L('ملاحظة / رقم الإيصال', 'Note / receipt'), col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('سداد', 'Pay'), cls: 'primary', icon: 'check', onClick: (x) => {
+        const v = UI.read(x.el); const a = round2(Number(v.amount) || 0); if (!(a > 0)) return UI.toast(L('اكتب المبلغ', 'Enter amount'), 'err'); if (v.src === 'drawer' && !App.needShift()) return;
+        const t = DB.insert('repTx', { repId: rep.id, repName: rep.name, type: 'payment', amount: a, src: v.src, note: v.note || '', date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null });
+        payFromSource(v.src, a, 'rep-payment', t.id); audit('rep.pay', `${rep.name} ${a}`); x.close(); UI.toast(L(`اتسجّل سداد ${money(a)} ✓ — باقي ليه ${money(this.balance(rep.id))}`, 'Paid ✓')); App.reload();
+      } }] });
+  },
+  /* كشف حساب برصيد متحرك */
+  statement(rep, from, to) {
+    const open = this.balance(rep.id, from ? from + 'T00:00:00' : null); const rows = this.tx(rep.id).filter((t) => inRange(t.date, from, to)).sort((a, b) => (a.date < b.date ? -1 : 1)); let run = open;
+    const lines = rows.map((t) => { run = round2(run + this.delta(t)); const mc = t.machineId ? DB.get('machines', t.machineId) : null; return { t, run, mc }; });
+    const desc = (t, mc) => (t.type === 'topup' ? `${L('تزويد', 'Top-up')} ${esc(mc ? mc.name : '')} — ${money(t.amount, false)}${t.paid ? ` (${L('مدفوع', 'paid')} ${money(t.paid, false)})` : ''}` : t.type === 'payment' ? L('سداد', 'Payment') : L('تسوية', 'Adjustment')) + (t.note ? ` — ${esc(t.note)}` : '');
+    const html = `<div class="stat-mini mb"><span class="l">${L('رصيد أول المدة', 'Opening balance')}</span><span class="v num">${money(open)}</span></div><div class="tbl-wrap"><table class="tbl stack"><thead><tr><th>${L('التاريخ', 'Date')}</th><th>${L('البيان', 'Description')}</th><th>${L('عليك (آجل)', 'Credit')}</th><th>${L('سداد', 'Paid')}</th><th>${L('الرصيد', 'Balance')}</th></tr></thead><tbody>
+      ${lines.map(({ t, run: r, mc }) => `<tr><td>${fmtDT(t.date)}</td><td>${desc(t, mc)}</td><td class="num">${t.type === 'topup' && t.due ? money(t.due, false) : t.type === 'adjust' && t.amount > 0 ? money(t.amount, false) : ''}</td><td class="num">${t.type === 'payment' ? money(t.amount, false) : t.type === 'adjust' && t.amount < 0 ? money(-t.amount, false) : ''}</td><td class="num"><b>${money(r, false)}</b></td></tr>`).join('') || `<tr><td colspan="5">${UI.empty(L('مفيش حركات في الفترة دي', 'No transactions in this period'), 'list')}</td></tr>`}</tbody></table></div>
+      <div class="stat-mini mt"><span class="l">${L('الرصيد آخر المدة (ليه عليك)', 'Closing balance (you owe)')}</span><span class="v num ${run > 0 ? 'neg' : ''}">${money(run)}</span></div>`;
+    UI.modal({ title: L('كشف حساب مندوب', 'Rep statement') + ' — ' + esc(rep.name), icon: 'list', size: 'lg', body: `<div class="faint mb">${from ? fmtDate(from) : L('من البداية', 'From start')} → ${to ? fmtDate(to) : L('لحد النهارده', 'Today')}</div>` + html,
+      actions: [{ label: L('إغلاق', 'Close'), onClick: (x) => x.close() }, { label: L('طباعة', 'Print'), icon: 'printer', onClick: () => printHTML(reportDoc(`${L('كشف حساب مندوب', 'Rep statement')} — ${esc(rep.name)}`, `<p>${from ? fmtDate(from) : L('من البداية', 'From start')} → ${to ? fmtDate(to) : fmtDate(dayKey())}</p>` + html.replace(/class="tbl-wrap"|class="tbl stack"/g, '')), { type: 'report' }) },
+        ...(rep.phone ? [{ label: L('ابعتله الرصيد', 'Send balance'), icon: 'whatsapp', onClick: () => { const st = DB.settings().store || {}; const p = this.period(rep.id, from, to); sendWhatsApp(rep.phone, `${L('أهلاً', 'Hi')} ${String(rep.name).split(' ')[0]} 👋\n${L('كشف حسابك مع', 'Your statement with')} ${st.name || ''}\n${from ? fmtDate(from) : ''}${to ? ' → ' + fmtDate(to) : ''}\n• ${L('زوّدت', 'Charged')}: ${money(p.charged)} (${p.count} ${L('مرة', 'times')})\n• ${L('ادّفعلك', 'Paid')}: ${money(round2(p.paidNow + p.payments))}\n• ${L('ليك عندنا لحد دلوقتي', 'Balance due')}: ${money(this.balance(rep.id))}`); } }] : [])] });
+  },
+  /* ====== شاشة تزويد الرصيد ====== */
+  SRCS: () => [['drawer', '💵', L('كاش من الدرج', 'Cash drawer')], ['outside', '🏦', L('خزنة / بنك', 'Safe / bank')], ['wallet', '📱', L('محفظة', 'Wallet')], ['instapay', '⚡', L('إنستا باي', 'InstaPay')], ['rep', '🧑‍💼', L('مندوب', 'Rep')], ['other', '✏️', L('طريقة تانية', 'Other')]],
+  ipWallets() { return DB.filter('wallets', (w) => w.active !== false && ['instapay', 'bank'].includes(w.network)); },
+  cashWallets() { return DB.filter('wallets', (w) => w.active !== false && !['instapay', 'bank'].includes(w.network)); },
+  topup(m, pre = {}) {
+    const last = DB.settings().lastTopupSrc || 'drawer'; let src = pre.src || last;
+    const md = UI.modal({ title: L('تزويد رصيد الماكينة', 'Top up machine') + ' — ' + esc(m.name), icon: 'plus', size: 'md', body: `<div class="stat-mini mb"><span class="l">${L('الرصيد الحالي', 'Current balance')}</span><span class="v num">${money(Machines.balance(m))}</span></div>` +
+      UI.form([{ name: 'amount', label: L('مبلغ التزويد (اللي اتدفع / اتسجّل عليك)', 'Top-up amount'), type: 'number', required: true, value: pre.amount || '', col: 6 }, { name: 'bonus', label: L('رصيد إضافي / بونص', 'Bonus'), type: 'number', value: 0, col: 6 }]) +
+      `<label class="lbl">${L('زوّدت الرصيد منين؟', 'Where did the balance come from?')}</label><div class="tp-src" id="tpSrc">${this.SRCS().map(([k, e, n]) => `<button type="button" data-s="${k}" class="${k === src ? 'active' : ''}"><span>${e}</span>${n}</button>`).join('')}</div><div id="tpBody" class="mt"></div><div id="tpSum" class="mt"></div>` +
+      UI.form([{ name: 'note', label: L('ملاحظة / رقم الإيصال', 'Note / receipt'), value: pre.note || '', col: 12 }]),
+      actions: [{ label: L('إلغاء', 'Cancel'), onClick: (x) => x.close() }, { label: L('تزويد', 'Top up'), cls: 'primary', icon: 'check', onClick: (x) => this.saveTopup(x, m, src, pre) }] });
+    const q = (n) => $(`[name=${n}]`, md.el);
+    const reps = () => { const l = this.list(); const pv = l.filter((r) => (r.providers || []).includes(m.provider)); return [...pv, ...l.filter((r) => !pv.includes(r))]; };
+    const body = () => {
+      const b = $('#tpBody', md.el); const PAY_NOW = PAY_SRC();
+      if (src === 'wallet') { const ws = this.cashWallets(); b.innerHTML = ws.length ? UI.form([{ name: 'wid', label: L('المحفظة', 'Wallet'), type: 'select', options: ws.map((w) => [w.id, `${w.name} — ${money(Wallets.balance(w), false)}`]), col: 12 }]) : `<div class="tag warn">${L('مفيش محافظ', 'No wallets')}</div>`; }
+      else if (src === 'instapay') { const ws = this.ipWallets(); b.innerHTML = UI.form([{ name: 'wid', label: L('من حساب', 'From account'), type: 'select', options: [...ws.map((w) => [w.id, `${w.name} — ${money(Wallets.balance(w), false)}`]), ['', L('حساب خارج البرنامج (البنك)', 'Account outside the app')]], col: 6 }, { name: 'ref', label: L('رقم العملية', 'Reference'), col: 6, attrs: 'dir="ltr"' }]); }
+      else if (src === 'rep') { const l = reps(); b.innerHTML = `<div class="row" style="gap:8px;align-items:end"><div style="flex:1">${UI.form([{ name: 'repId', label: L('المندوب', 'Rep'), type: 'select', options: l.length ? l.map((r) => [r.id, r.name + (r.company ? ` — ${r.company}` : '')]) : [['', L('ضيف مندوب الأول', 'Add a rep first')]], col: 12 }])}</div><button type="button" class="btn" id="tpNewRep">${icon('plus')}${L('مندوب', 'Rep')}</button></div><div id="tpRepBal"></div>` + UI.form([{ name: 'paidNow', label: L('دفعتله كام دلوقتي؟ (الباقي آجل عليك)', 'Paid now? (rest on credit)'), type: 'number', value: 0, col: 6 }, { name: 'paySrc', label: L('الدفع من', 'Paid from'), type: 'select', options: PAY_NOW, col: 6 }]);
+        $('#tpNewRep', b).onclick = () => this.edit(null, (doc) => { body(); q('repId').value = doc.id; sumUp(); }); }
+      else if (src === 'other') b.innerHTML = UI.form([{ name: 'method', label: L('الطريقة', 'Method'), col: 6, attrs: `list="tpMeth" placeholder="${L('تحويل بنكي / فوري باي…', 'Bank transfer…')}"` }, { name: 'paySrc', label: L('الفلوس اتخصمت من', 'Money taken from'), type: 'select', options: PAY_NOW, value: 'outside', col: 6 }]) + `<datalist id="tpMeth">${[L('تحويل بنكي', 'Bank transfer'), L('فوري باي', 'Fawry Pay'), L('كارت فيزا', 'Visa card'), L('من شريك', 'From a partner'), L('من فرع تاني', 'From another branch')].map((x) => `<option value="${x}">`).join('')}</datalist>`;
+      else b.innerHTML = '';
+      $$('input,select', b).forEach((i) => i.addEventListener('input', sumUp)); $$('select', b).forEach((i) => i.addEventListener('change', sumUp)); sumUp();
+    };
+    const sumUp = () => {
+      const a = Number(q('amount').value) || 0, bo = Number(q('bonus').value) || 0; const s = $('#tpSum', md.el); let extra = '';
+      if (src === 'rep') { const r = this.get(q('repId')?.value); const pn = Math.min(a, Number(q('paidNow')?.value) || 0); const bal = r ? this.balance(r.id) : 0; const due = round2(a - pn);
+        if ($('#tpRepBal', md.el)) $('#tpRepBal', md.el).innerHTML = r ? `<div class="faint" style="font-size:12.5px;margin-top:4px">${L('ليه عليك دلوقتي', 'You owe now')}: <b class="num">${money(bal)}</b>${r.limit ? ` · ${L('الحد', 'limit')} ${money(r.limit, false)}` : ''}</div>` : '';
+        extra = `<div class="stat-mini"><span class="l">${L('هيتسجّل آجل للمندوب', 'Added to rep credit')}</span><span class="v num neg">${money(due)}</span><span class="faint" style="font-size:11px">${L('رصيده هيبقى', 'balance becomes')} ${money(round2(bal + due))}${r && r.limit && bal + due > r.limit ? ` ⚠️ ${L('فوق الحد', 'over limit')}` : ''}</span></div>`; }
+      s.innerHTML = a ? `<div class="grid g2">${extra}<div class="stat-mini"><span class="l">${L('رصيد الماكينة هيبقى', 'Machine balance becomes')}</span><span class="v num pos">${money(round2(Machines.balance(m) + a + bo))}</span></div></div>` : '';
+    };
+    $$('#tpSrc button', md.el).forEach((x) => (x.onclick = () => { src = x.dataset.s; $$('#tpSrc button', md.el).forEach((y) => y.classList.toggle('active', y === x)); body(); }));
+    q('amount').addEventListener('input', sumUp); q('bonus').addEventListener('input', sumUp); body();
+    return md;
+  },
+  saveTopup(x, m, src, pre) {
+    const v = UI.read(x.el); const a = round2(Number(v.amount) || 0), bo = round2(Number(v.bonus) || 0); if (!(a > 0)) return UI.toast(L('اكتب المبلغ', 'Enter amount'), 'err');
+    let pay = { src: 'outside', amt: a }, label = '', extra = {};
+    if (src === 'drawer') { pay = { src: 'drawer', amt: a }; label = L('كاش من الدرج', 'Cash drawer'); }
+    else if (src === 'outside') { label = L('خزنة / بنك', 'Safe / bank'); }
+    else if (src === 'wallet') { const w = DB.get('wallets', v.wid); if (!w) return UI.toast(L('اختار المحفظة', 'Choose a wallet'), 'err'); if (Wallets.balance(w) < a) return UI.toast(L(`رصيد المحفظة مش مكفي (${money(Wallets.balance(w))})`, 'Insufficient wallet balance'), 'err'); pay = { src: 'w:' + w.id, amt: a }; label = L('محفظة: ', 'Wallet: ') + w.name; }
+    else if (src === 'instapay') { const w = v.wid && DB.get('wallets', v.wid); pay = w ? { src: 'w:' + w.id, amt: a } : { src: 'outside', amt: a }; label = L('إنستا باي', 'InstaPay') + (w ? ` — ${w.name}` : '') + (v.ref ? ` #${v.ref}` : ''); extra.ref = v.ref || ''; }
+    else if (src === 'rep') { const r = this.get(v.repId); if (!r) return UI.toast(L('اختار المندوب أو ضيف واحد', 'Pick or add a rep'), 'err'); const pn = round2(Math.min(a, Math.max(0, Number(v.paidNow) || 0))); pay = { src: v.paySrc, amt: pn }; label = L('مندوب: ', 'Rep: ') + r.name + (a - pn > 0 ? ` (${L('آجل', 'credit')} ${money(a - pn, false)})` : ''); extra = { repId: r.id, repPaid: pn, repDue: round2(a - pn) }; }
+    else if (src === 'other') { if (!String(v.method || '').trim()) return UI.toast(L('اكتب الطريقة', 'Type the method'), 'err'); pay = { src: v.paySrc || 'outside', amt: a }; label = String(v.method).trim(); }
+    if (pay.src === 'drawer' && pay.amt > 0 && !App.needShift()) return;
+    const t = DB.insert('machineTx', { machineId: m.id, type: 'topup', amount: a, commission: bo, balanceDelta: round2(a + bo), cashDelta: pay.src === 'drawer' ? -pay.amt : 0, src, srcLabel: label, ...extra, note: [label, v.note].filter(Boolean).join(' — '), smsId: pre.smsId || null, date: nowISO(), userId: Session.user.id, shiftId: Session.shift()?.id || null });
+    if (pay.amt > 0) payFromSource(pay.src, pay.amt, src === 'rep' ? 'rep-payment' : 'machine-topup', t.id);
+    if (src === 'rep') DB.insert('repTx', { repId: extra.repId, repName: this.get(extra.repId).name, type: 'topup', amount: a, bonus: bo, paid: extra.repPaid, due: extra.repDue, paySrc: pay.src, machineId: m.id, machineTxId: t.id, note: v.note || '', date: t.date, userId: Session.user.id, shiftId: Session.shift()?.id || null });
+    try { DB.saveSettings({ lastTopupSrc: src }); } catch (_) {}
+    audit('machine.topup', `${m.name} ${a} ${label}`); x.close(); UI.toast(L('اتزوّد الرصيد ✓', 'Topped up ✓') + (extra.repDue ? ` — ${L('ليه عليك', 'you owe')} ${money(this.balance(extra.repId))}` : '')); pre.onDone && pre.onDone(t); App.reload();
+  },
+  /* ====== تبويب المناديب ====== */
+  st: { p: 'today', from: dayKey(), to: dayKey() },
+  range(p) { const d = new Date(); const k = (x) => dayKey(x); if (p === 'today') return [k(d), k(d)]; if (p === 'yday') { const y = addDays(d, -1); return [k(y), k(y)]; } if (p === 'week') return [k(addDays(d, -6)), k(d)]; if (p === 'month') return [k(new Date(d.getFullYear(), d.getMonth(), 1)), k(d)]; if (p === 'all') return ['', '']; return [this.st.from, this.st.to]; },
+  page(el) {
+    const reps = this.list(true); const [from, to] = this.st.p === 'custom' ? [this.st.from, this.st.to] : this.range(this.st.p); const P = (id) => this.period(id, from || null, to || null);
+    const owed = round2(sum(reps, (r) => this.balance(r.id))); const all = reps.map((r) => ({ r, p: P(r.id), bal: this.balance(r.id) }));
+    el.innerHTML = `<div class="row wrap mb" style="gap:8px;align-items:center"><div class="tabs" id="rpP">${[['today', L('النهارده', 'Today')], ['yday', L('امبارح', 'Yesterday')], ['week', L('آخر 7 أيام', 'Last 7 days')], ['month', L('الشهر ده', 'This month')], ['all', L('الكل', 'All')], ['custom', L('فترة…', 'Range…')]].map(([k, n]) => `<button data-p="${k}" class="${this.st.p === k ? 'active' : ''}">${n}</button>`).join('')}</div>${this.st.p === 'custom' ? `<input type="date" id="rpF" value="${this.st.from}" style="max-width:150px"><input type="date" id="rpT" value="${this.st.to}" style="max-width:150px">` : ''}<div class="spacer"></div><button class="btn primary" id="rpNew">${icon('plus')}${L('مندوب جديد', 'New rep')}</button></div>
+      <div class="grid g4 mb">${UI.kpi(L('ليهم عليك (كل المناديب)', 'Owed to all reps'), money(owed), 'user', owed > 0 ? 'hero' : '', `${reps.length} ${L('مندوب', 'reps')}`)}${UI.kpi(L('زوّدوا في الفترة', 'Charged in period'), money(round2(sum(all, (x) => x.p.charged))), 'plus', 'c-info', `${sum(all, (x) => x.p.count)} ${L('مرة', 'times')}`)}${UI.kpi(L('اتدفعلهم في الفترة', 'Paid in period'), money(round2(sum(all, (x) => x.p.paidNow + x.p.payments))), 'money', 'c-ok')}${UI.kpi(L('اتضاف آجل في الفترة', 'New credit in period'), money(round2(sum(all, (x) => x.p.credit))), 'clock', 'c-warn')}</div>
+      <div class="rp-grid">${all.map(({ r, p, bal }) => `<div class="card card-b rp-card ${r.active === false ? 'off' : ''}"><div class="row" style="align-items:center;gap:8px"><div class="rp-av">${esc((r.name || '?').trim().charAt(0))}</div><div style="flex:1;min-width:0"><b>${esc(r.name)}</b><div class="faint" style="font-size:12px">${esc(r.company || '')} ${r.phone ? `<span dir="ltr">${esc(r.phone)}</span>` : ''}</div></div><button class="btn sm ghost" data-re="${r.id}">${icon('edit')}</button></div>
+        <div class="rp-bal ${bal > 0 ? 'neg' : 'pos'}"><span>${L('ليه عليك', 'You owe')}</span><b class="num">${money(bal)}</b></div>
+        <div class="rp-stats"><div><span>${L('زوّد', 'Charged')}</span><b class="num">${money(p.charged, false)}</b></div><div><span>${L('ادّفعله', 'Paid')}</span><b class="num">${money(round2(p.paidNow + p.payments), false)}</b></div><div><span>${L('آجل جديد', 'New credit')}</span><b class="num">${money(p.credit, false)}</b></div></div>
+        <div class="row mt" style="gap:6px"><button class="btn sm primary" data-rpay="${r.id}" ${bal > 0 ? '' : 'disabled'}>${icon('money')}${L('سداد', 'Pay')}</button><button class="btn sm" data-rst="${r.id}">${icon('list')}${L('كشف حساب', 'Statement')}</button></div></div>`).join('') || `<div class="card card-b">${UI.empty(L('ضيف المناديب اللي بيزوّدولك رصيد الماكينات — وكل تزويد منهم هيتسجل ويتحسب.', 'Add the reps who top up your machines.'), 'user')}</div>`}</div>
+      <h3 class="mt" style="margin-bottom:8px">${L('حركات المناديب في الفترة', 'Rep transactions in period')}</h3><div id="rpTbl"></div>`;
+    $$('#rpP button', el).forEach((b) => (b.onclick = () => { this.st.p = b.dataset.p; App.go('machines'); }));
+    if ($('#rpF', el)) { const ch = () => { this.st.from = $('#rpF', el).value; this.st.to = $('#rpT', el).value; App.go('machines'); }; $('#rpF', el).onchange = ch; $('#rpT', el).onchange = ch; }
+    $('#rpNew', el).onclick = () => this.edit(null);
+    $$('[data-re]', el).forEach((b) => (b.onclick = () => this.edit(this.get(b.dataset.re))));
+    $$('[data-rpay]', el).forEach((b) => (b.onclick = () => this.pay(this.get(b.dataset.rpay))));
+    $$('[data-rst]', el).forEach((b) => (b.onclick = () => this.statement(this.get(b.dataset.rst), from || null, to || null)));
+    const rows = DB.filter('repTx', (t) => t.status !== 'void' && inRange(t.date, from || null, to || null)).sort((a, b) => (a.date < b.date ? 1 : -1));
+    UI.table($('#rpTbl', el), { rows, exportName: 'reps', emptyIcon: 'user', searchText: (t) => `${t.repName} ${t.note}`,
+      columns: [{ key: 'date', label: L('الوقت', 'Time'), render: (t) => fmtDT(t.date) }, { label: L('المندوب', 'Rep'), render: (t) => esc(t.repName || this.get(t.repId)?.name || ''), exportVal: (t) => t.repName },
+        { label: L('العملية', 'Operation'), render: (t) => (t.type === 'topup' ? `<span class="tag info">${L('تزويد', 'Top-up')}</span> ${esc(DB.get('machines', t.machineId)?.name || '')}` : `<span class="tag ok">${L('سداد', 'Payment')}</span>`), exportVal: (t) => t.type },
+        { key: 'amount', label: L('المبلغ', 'Amount'), render: (t) => money(t.amount, false) }, { label: L('اتدفع', 'Paid'), render: (t) => money(t.type === 'topup' ? t.paid || 0 : t.amount, false), exportVal: (t) => (t.type === 'topup' ? t.paid || 0 : t.amount) },
+        { label: L('آجل', 'Credit'), render: (t) => (t.type === 'topup' && t.due ? `<b class="neg">${money(t.due, false)}</b>` : '—'), exportVal: (t) => t.due || 0 }],
+      footer: (r) => `<td colspan="3">${L('الإجمالي', 'Total')}</td><td class="num">${money(sum(r.filter((t) => t.type === 'topup'), (t) => t.amount), false)}</td><td class="num">${money(sum(r, (t) => (t.type === 'topup' ? t.paid || 0 : t.amount)), false)}</td><td class="num">${money(sum(r, (t) => t.due || 0), false)}</td>` });
+  }
+};
+
+(() => {
+  const M = Modules.machines; if (!M) return;
+  /* شاشة التزويد الجديدة بدل القديمة (ورسائل «تم شحن رصيدك» بتفتحها متملية) */
+  M.topupDialog = function (m, pre) { return MachineReps.topup(m, pre || {}); };
+  if (typeof MachineSms !== 'undefined') MachineSms.record = function (sms) { const m = DB.get('machines', sms.machineId); if (!m) return; const p = sms.mp || {}; MachineReps.topup(m, { amount: p.amount || '', note: L('من رسالة SMS', 'From SMS') + (p.txId ? ` #${p.txId}` : ''), smsId: sms.id, onDone: (t) => DB.update('smsInbox', sms.id, { mstate: 'done', txId: t.id }) }); };
+  /* تبويب «المناديب» */
+  const s0 = M.subs.bind(M);
+  M.subs = function () { const l = s0(); if (!l.some((x) => x.tab === 'reps')) l.splice(1, 0, { tab: 'reps', label: L('المناديب', 'Reps'), icon: 'user' }); return l; };
+  const m0 = M.main.bind(M);
+  M.main = function (el) { if (this.tab === 'reps') return MachineReps.page(el); return m0(el); };
+  /* مصدر التزويد بيظهر في سجل العمليات */
+  if (typeof MTX_TYPES !== 'undefined') MTX_TYPES.topup = ['تزويد رصيد الماكينة', 'Machine top-up', 'ok'];
+  if (typeof Notify !== 'undefined') { const l0 = Notify.list.bind(Notify); Notify.list = function () { const l = l0(); try { MachineReps.list().forEach((r) => { const b = MachineReps.balance(r.id); if (r.limit && b > r.limit) l.push({ type: 'warn', icon: 'user', t: L(`المندوب ${r.name} ليه ${money(b)} — فوق الحد (${money(r.limit)})`, `Rep ${r.name} over credit limit`), s: L('الماكينات ← المناديب', 'Machines → Reps'), go: () => { M.tab = 'reps'; App.go('machines'); } }); }); } catch (_) {} return l; }; }
 })();
 
 </script>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8B1A2B">
+<title>كارت هدية — مركز أهلاً</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#8B1A2B;--p2:#5E0F1C;--bg:#f7f1f2;--s:#fff;--t:#231719;--t2:#6e6062;--l:#ecdfe1;--ok:#16825D;--okb:#e7f5ee;--w:#B26A00;--wb:#fff4e0}
+@media (prefers-color-scheme:dark){:root{--bg:#140b0d;--s:#1f1416;--t:#f5ecee;--t2:#b9a9ac;--l:#33242a;--okb:#123326;--wb:#3a2a0e}}
+*{box-sizing:border-box}body{margin:0;font-family:Cairo,Tahoma,Arial,sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.wrap{max-width:520px;margin:0 auto;padding:16px}.card{background:var(--s);border:1px solid var(--l);border-radius:20px;padding:16px;margin-bottom:12px}
+.gc{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;text-align:center;position:relative;overflow:hidden;border:0;padding:20px 16px}
+.gc::after{content:'';position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.07);top:-110px;inset-inline-end:-80px}
+.gc .shop{font-weight:800;opacity:.95}.gc .t{font-size:15px;opacity:.9;margin-top:2px}.gc .amt{font-size:42px;font-weight:900;margin:8px 0 0;line-height:1.2}.gc .of{font-size:13px;opacity:.85}
+.gc .qr{background:#fff;border-radius:16px;padding:10px;width:210px;margin:14px auto 8px;position:relative;z-index:1}.gc .qr svg{width:100%;height:auto;display:block}
+.gc .no{font-size:21px;font-weight:900;letter-spacing:3px;direction:ltr}.gc .hint{font-size:13px;opacity:.92;margin-top:4px}
+.pill{display:inline-block;border-radius:99px;padding:3px 12px;font-weight:800;font-size:13px}.ok{background:var(--okb);color:var(--ok)}.w{background:var(--wb);color:var(--w)}
+.row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--l)}.row:last-child{border:0}.row span{color:var(--t2)}
+.msg{font-size:17px;line-height:1.9;text-align:center}.foot{text-align:center;color:var(--t2);font-size:12px;margin:18px 0 8px;line-height:1.8}.empty{text-align:center;padding:40px 10px;color:var(--t2);line-height:2}
+.gw{display:block;margin:14px auto 0;padding:8px;background:none;border:0;cursor:pointer;position:relative;z-index:1;max-width:100%}.gw img{display:block;height:50px;width:auto;max-width:100%}.gw:disabled{opacity:.6}.gwe{font-size:12.5px;margin-top:4px;opacity:.9}
+.btn{display:block;text-align:center;background:#25D366;color:#fff;border-radius:14px;padding:12px;font-weight:800;text-decoration:none;margin-top:10px}
+</style>
+<script src="js/qr.js"></script>
+</head>
+<body>
+<div class="wrap" id="app"><div class="card empty">⏳ جاري التحميل…</div></div>
+<script>
+const SUPA = 'https://inxlleknypxzegzgzmfl.supabase.co', ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlueGxsZWtueXB4emVnemd6bWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMzcwMzQsImV4cCI6MjEwNzkxMzAzNH0.JzWJf2nE5rhYGKQBtPRbf9RBA-0C7lIGw-IM0uTtu2s';
+const Q = new URLSearchParams(location.search); const T = Q.get('t') || '';
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const m = (v, c) => `${Number(v || 0).toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 2 })} ${esc(c || 'ج.م')}`;
+const dt = (s) => { try { return new Date(s).toLocaleDateString('ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (_) { return s; } };
+const fmt = (c) => String(c || '').replace(/(\d{4})(\d{4})(\d{4})/, '$1 $2 $3');
+const wa = (p) => { let d = String(p || '').replace(/\D/g, ''); if (d.startsWith('0')) d = '20' + d.slice(1); return d; };
+const show = (h) => (document.getElementById('app').innerHTML = h);
+async function load() {
+  if (!/^G[A-Za-z0-9]{10,40}$/.test(T)) return show('<div class="card empty">🔗<br><b>الرابط مش كامل</b><br>افتح الرابط اللي وصلك تاني.</div>');
+  try {
+    const r = await fetch(SUPA + '/rest/v1/rpc/pos_track_get', { method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_token: T }) });
+    const j = await r.json(); const d = j && j.data; if (!d || d.kind !== 'gift') return show('<div class="card empty">🔎<br><b>مش لاقيين الكارت ده</b><br>ممكن لسه ما اترفعش — جرّب كمان دقيقة.</div>');
+    render(d);
+  } catch (e) { show('<div class="card empty">📶<br><b>مفيش اتصال</b><br>اتأكد من النت وجرّب تاني.</div>'); }
+}
+function render(d) {
+  const st = d.store || {}; document.title = 'كارت هدية — ' + (st.name || ''); const c = d.cur;
+  const u = location.origin + location.pathname + '?t=' + encodeURIComponent(T) + '&g=' + encodeURIComponent(d.code);
+  const state = { active: '<span class="pill ok">شغال ✓</span>', used: '<span class="pill w">اتصرف بالكامل</span>', expired: '<span class="pill w">انتهت صلاحيته</span>', void: '<span class="pill w">ملغي</span>' }[d.st] || '';
+  let h = `<div class="card gc"><div class="shop">${esc(st.name || '')}</div><div class="t">🎁 كارت هدية</div><div class="amt">${m(d.bal, c)}</div>${Number(d.bal) < Number(d.amount) ? `<div class="of">الباقي من ${m(d.amount, c)}</div>` : ''}
+    ${d.st === 'active' && typeof QR !== 'undefined' ? `<div class="qr">${QR.svg(u, { ecl: 'M' })}</div><div class="no">${fmt(d.code)}</div><div class="hint">ورّي الكارت ده للكاشير — بيتصرف على أي مشتريات</div>` : ''}
+    ${d.st === 'active' && d.gw && /Android/i.test(navigator.userAgent) ? `<button class="gw" id="gwBtn" aria-label="الإضافة إلى محفظة Google"><img src="gw-ar.svg" alt="الإضافة إلى محفظة Google" width="312" height="50"></button><div class="gwe" id="gwErr"></div>` : ''}</div>`;
+  if (d.msg || d.to || d.from) h += `<div class="card">${d.to ? `<div class="msg">إلى <b>${esc(d.to)}</b> 💝</div>` : ''}${d.msg ? `<div class="msg">«${esc(d.msg)}»</div>` : ''}${d.from ? `<div class="msg" style="color:var(--t2);font-size:15px">من ${esc(d.from)}</div>` : ''}</div>`;
+  h += `<div class="card"><div class="row"><span>الحالة</span>${state}</div><div class="row"><span>قيمة الكارت</span><b>${m(d.amount, c)}</b></div><div class="row"><span>الرصيد</span><b>${m(d.bal, c)}</b></div>${d.exp ? `<div class="row"><span>صالح لحد</span><b>${dt(d.exp)}</b></div>` : ''}</div>`;
+  if (st.phone) h += `<a class="btn" href="https://wa.me/${wa(st.phone)}?text=${encodeURIComponent('أهلاً، عندي كارت هدية رقم ' + fmt(d.code))}">💬 كلّم المحل واتساب</a>`;
+  h += `<div class="foot">${esc(st.name || '')}${st.address ? ' · ' + esc(st.address) : ''}<br>Markaz Ahllan POS · م/ أسامة حسن بدري</div>`;
+  show(h);
+  const gb = document.getElementById('gwBtn'); if (gb) gb.onclick = async () => {
+    const er = document.getElementById('gwErr'); gb.disabled = true; er.textContent = '⏳ لحظة…';
+    try { const r = await fetch(SUPA + '/functions/v1/wallet-pass', { method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ act: 'link', t: T }) }); const j = await r.json(); if (!r.ok || !j.url) throw new Error(j.error || r.status); location.href = j.url; }
+    catch (e) { gb.disabled = false; er.textContent = 'مقدرناش نجهّز الكارت دلوقتي — جرّب كمان شوية.'; }
+  };
+}
+load(); setInterval(load, 120000);
+</script>
+</body>
+</html>

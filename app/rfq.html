@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8B1A2B">
+<title>طلب أسعار — مركز أهلاً</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#8B1A2B;--p2:#5E0F1C;--bg:#f7f1f2;--s:#fff;--t:#231719;--t2:#6e6062;--l:#ecdfe1;--ok:#16825D;--okb:#e7f5ee;--e:#b3261e;--eb:#fdeceb}
+@media (prefers-color-scheme:dark){:root{--bg:#140b0d;--s:#1f1416;--t:#f5ecee;--t2:#b9a9ac;--l:#33242a;--okb:#123326;--eb:#3a1614}}
+*{box-sizing:border-box}body{margin:0;font-family:Cairo,Tahoma,Arial,sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.top{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:22px 18px 70px;text-align:center}
+.top small{opacity:.85}.top h1{margin:4px 0 0;font-size:22px}
+.wrap{max-width:620px;margin:-52px auto 30px;padding:0 14px}
+.card{background:var(--s);border-radius:20px;padding:18px;box-shadow:0 10px 30px rgba(60,10,20,.12);margin-bottom:12px}
+.msg{text-align:center;padding:40px 10px;color:var(--t2)}.msg b{display:block;font-size:20px;color:var(--t);margin:8px 0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--t2);font-size:13.5px}.meta b{color:var(--t)}
+.note{margin-top:10px;background:var(--bg);border-radius:12px;padding:10px 12px;font-size:14px}
+h3{margin:0 0 10px;font-size:16px}
+.it{display:grid;grid-template-columns:1fr 112px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--l)}.it:last-child{border-bottom:0}
+.it b{display:block;font-size:15px}.it small{color:var(--t2);font-size:12.5px}
+input,textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--l);background:var(--s);color:var(--t)}
+input:focus,textarea:focus{outline:none;border-color:var(--p)}
+.it input{text-align:center;font-weight:800}
+label{display:block;font-size:13px;color:var(--t2);font-weight:700;margin:10px 0 4px}
+.tot{display:flex;justify-content:space-between;align-items:center;font-size:15px;margin-top:6px}.tot b{font-size:22px;color:var(--p)}
+.btn{display:flex;width:100%;align-items:center;justify-content:center;gap:6px;padding:14px;border-radius:14px;font:inherit;font-size:16px;font-weight:800;border:0;background:var(--p);color:#fff;cursor:pointer;margin-top:14px}
+.btn:disabled{opacity:.6}
+.err{color:var(--e);font-size:13.5px;margin-top:8px;min-height:1em}
+.ok{text-align:center;padding:30px 10px}.ok .ic{font-size:48px}.ok b{display:block;font-size:20px;margin:6px 0}
+.foot{text-align:center;color:var(--t2);font-size:12px;margin-top:6px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="top"><small>طلب عرض أسعار</small><h1 id="shop">…</h1></div>
+<div class="wrap" id="app"><div class="card msg">⏳ جاري التحميل…</div></div>
+<script>
+const SUPA = 'https://inxlleknypxzegzgzmfl.supabase.co', ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlueGxsZWtueXB4emVnemd6bWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMzcwMzQsImV4cCI6MjEwNzkxMzAzNH0.JzWJf2nE5rhYGKQBtPRbf9RBA-0C7lIGw-IM0uTtu2s';
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const dt = (s) => { try { return new Date(s).toLocaleDateString('ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (_) { return ''; } };
+const n = (v) => Number(v || 0).toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 2 });
+const T = new URLSearchParams(location.search).get('t') || '';
+const KEY = 'mah:rfq:' + T;
+const rpc = (fn, body) => fetch(SUPA + '/rest/v1/rpc/' + fn, { method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(async (r) => { const j = await r.json().catch(() => null); if (!r.ok) throw new Error((j && (j.message || j.hint)) || 'HTTP ' + r.status); return j; });
+const show = (h) => (document.getElementById('app').innerHTML = h);
+let D = null;
+async function load() {
+  if (!/^[A-Za-z0-9]{12,40}$/.test(T)) return show('<div class="card msg">🔗<b>الرابط مش كامل</b>اطلب اللينك من المحل تاني.</div>');
+  try {
+    const j = await rpc('pos_rfq_get', { p_token: T });
+    if (!j || !j.data) return show('<div class="card msg">🔎<b>الطلب مش موجود</b>ممكن يكون اتلغى أو انتهى.</div>');
+    D = j.data; document.getElementById('shop').textContent = D.store?.name || ''; document.title = 'طلب أسعار — ' + (D.store?.name || '');
+    if (j.closed) return show(`<div class="card msg">🔒<b>الطلب ده اتقفل</b>شكراً لاهتمامك — تواصل مع ${esc(D.store?.name || 'المحل')} لو عندك عرض.</div>`);
+    render();
+  } catch (e) { show('<div class="card msg">📶<b>مفيش اتصال</b>اتأكد من النت وجرّب تاني.</div>'); }
+}
+function saved() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (_) { return {}; } }
+function remember(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (_) {} }
+function render() {
+  const sv = saved(); const pr = sv.prices || {};
+  const late = D.until && Date.parse(D.until) + 864e5 < Date.now();
+  show(`<div class="card"><div class="meta"><span>رقم الطلب: <b>${esc(D.no)}</b></span><span>عدد الأصناف: <b>${D.items.length}</b></span>${D.until ? `<span>آخر معاد: <b style="${late ? 'color:var(--e)' : ''}">${dt(D.until)}</b></span>` : ''}</div>${D.note ? `<div class="note">💬 ${esc(D.note)}</div>` : ''}</div>
+  <div class="card"><h3>📝 اكتب سعر الوحدة لكل صنف</h3><div style="color:var(--t2);font-size:13px;margin:-4px 0 8px">سيب الخانة فاضية لو الصنف مش متوفر عندك.</div>
+  ${D.items.map((i) => `<div class="it"><div><b>${esc(i.n)}</b><small>الكمية المطلوبة: ${n(i.q)}${i.u ? ' ' + esc(i.u) : ''}</small></div><input type="number" inputmode="decimal" min="0" step="0.01" data-k="${esc(i.k)}" data-q="${Number(i.q) || 0}" value="${pr[i.k] ?? ''}" placeholder="السعر"></div>`).join('')}
+  <div class="tot"><span>إجمالي عرضك</span><b id="tot">0</b></div></div>
+  <div class="card"><label>اسم المورد / الشركة</label><input id="nm" value="${esc(sv.name || '')}" autocomplete="organization"><label>رقم الموبايل</label><input id="ph" type="tel" inputmode="tel" dir="ltr" value="${esc(sv.phone || '')}" autocomplete="tel"><label>ملاحظات (مدة التوريد، الضمان…)</label><textarea id="nt" rows="2">${esc(sv.note || '')}</textarea>
+  <button class="btn" id="go">📤 إرسال الأسعار</button><div class="err" id="er"></div></div>
+  <div class="foot">${esc(D.store?.name || '')}${D.store?.address ? ' · ' + esc(D.store.address) : ''}${D.store?.phone ? ' · <span dir="ltr">' + esc(D.store.phone) + '</span>' : ''}<br>Markaz Ahllan POS · م/ أسامة حسن بدري</div>`);
+  const ins = [...document.querySelectorAll('[data-k]')];
+  const tot = () => { document.getElementById('tot').textContent = n(ins.reduce((a, x) => a + (Number(x.value) > 0 ? Number(x.value) * Number(x.dataset.q) : 0), 0)) + ' ج.م'; };
+  ins.forEach((x) => (x.oninput = tot)); tot();
+  document.getElementById('go').onclick = send;
+}
+async function send() {
+  const er = document.getElementById('er'); er.textContent = '';
+  const name = document.getElementById('nm').value.trim(), phone = document.getElementById('ph').value.trim(), note = document.getElementById('nt').value.trim();
+  const prices = {}; document.querySelectorAll('[data-k]').forEach((x) => { const v = Number(x.value); if (v > 0) prices[x.dataset.k] = Math.round(v * 100) / 100; });
+  if (name.length < 2) return (er.textContent = 'اكتب اسمك أو اسم الشركة');
+  if (phone.replace(/\D/g, '').length < 8) return (er.textContent = 'اكتب رقم موبايل صحيح');
+  if (!Object.keys(prices).length) return (er.textContent = 'اكتب سعر صنف واحد على الأقل');
+  const b = document.getElementById('go'); b.disabled = true; b.textContent = '⏳ جاري الإرسال…';
+  try {
+    await rpc('pos_rfq_reply', { p_token: T, p_name: name, p_phone: phone, p_prices: prices, p_note: note });
+    remember({ name, phone, note, prices });
+    show(`<div class="card ok"><div class="ic">✅</div><b>وصلت أسعارك — شكراً!</b><div style="color:var(--t2)">${esc(D.store?.name || 'المحل')} هيراجع العروض ويتواصل معاك.<br>تقدر تفتح نفس اللينك وتعدّل أسعارك في أي وقت قبل قفل الطلب.</div><button class="btn" onclick="render()">✏️ تعديل الأسعار</button></div>`);
+  } catch (e) { b.disabled = false; b.textContent = '📤 إرسال الأسعار'; er.textContent = /closed/.test(e.message) ? 'الطلب اتقفل — مبقاش بيستقبل عروض' : 'مقدرناش نبعت — جرّب تاني (' + e.message + ')'; }
+}
+load();
+</script>
+</body>
+</html>

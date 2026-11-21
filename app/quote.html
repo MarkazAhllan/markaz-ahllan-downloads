@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8B1A2B">
+<title>عرض سعر — مركز أهلاً</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#8B1A2B;--p2:#5E0F1C;--bg:#f7f1f2;--s:#fff;--t:#231719;--t2:#6e6062;--l:#ecdfe1;--ok:#16825D;--okb:#e7f5ee;--w:#B26A00;--wb:#fff4e0;--e:#b3261e;--eb:#fdeceb}
+@media (prefers-color-scheme:dark){:root{--bg:#140b0d;--s:#1f1416;--t:#f5ecee;--t2:#b9a9ac;--l:#33242a;--okb:#123326;--wb:#3a2a0e;--eb:#3a1614}}
+*{box-sizing:border-box}body{margin:0;font-family:Cairo,Tahoma,Arial,sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.top{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:22px 18px 70px;text-align:center}.top small{opacity:.85}.top h1{margin:4px 0 0;font-size:22px}
+.wrap{max-width:560px;margin:-52px auto 30px;padding:0 14px}
+.card{background:var(--s);border-radius:20px;padding:18px;box-shadow:0 10px 30px rgba(60,10,20,.12);margin-bottom:12px}
+.hd{display:flex;align-items:center;gap:12px}.hd .ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:28px;background:var(--wb);flex:none}.hd b{font-size:19px;display:block}.hd span{color:var(--t2);font-size:13.5px}
+.it{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-bottom:1px dashed var(--l);font-size:14.5px}.it:last-child{border:0}.it small{color:var(--t2);font-size:12.5px}.it b{white-space:nowrap}
+.tot{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:14px;padding:12px 14px;margin-top:10px}.tot span{color:var(--t2)}.tot b{font-size:26px;color:var(--p)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.tg{background:var(--okb);color:var(--ok);border-radius:99px;padding:4px 12px;font-weight:800;font-size:13px}.tg.w{background:var(--wb);color:var(--w)}
+.nt{font-size:14px;line-height:1.9;color:var(--t2);white-space:pre-line}
+.fld{display:block;font-size:13px;color:var(--t2);margin:10px 0 4px}.inp{width:100%;font:inherit;font-size:16px;padding:11px 12px;border-radius:12px;border:1.5px solid var(--l);background:var(--s);color:var(--t)}textarea.inp{min-height:70px;resize:vertical}
+.act{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:13px;border-radius:14px;font:inherit;font-weight:800;text-decoration:none;border:1.5px solid var(--l);color:var(--t);background:var(--s);cursor:pointer;width:100%}.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}.btn.ch{color:var(--w);border-color:var(--w)}.btn.wa{background:#25D366;border-color:#25D366;color:#fff}.btn:disabled{opacity:.6}
+.note{font-size:13.5px;margin-top:8px;text-align:center;line-height:1.8}.note.e{color:var(--e)}.done{background:var(--okb);color:var(--ok);border-radius:14px;padding:14px;text-align:center;font-weight:800;line-height:1.9}.done.w{background:var(--wb);color:var(--w)}
+.msg{text-align:center;padding:40px 10px;color:var(--t2)}.msg b{display:block;font-size:20px;color:var(--t);margin:8px 0}
+.foot{text-align:center;color:var(--t2);font-size:12px;margin-top:6px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="top"><small>📹 عرض سعر كاميرات مراقبة</small><h1 id="shop">…</h1></div>
+<div class="wrap" id="app"><div class="card msg">⏳ جاري التحميل…</div></div>
+<script>
+const SUPA = 'https://inxlleknypxzegzgzmfl.supabase.co', ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlueGxsZWtueXB4emVnemd6bWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMzcwMzQsImV4cCI6MjEwNzkxMzAzNH0.JzWJf2nE5rhYGKQBtPRbf9RBA-0C7lIGw-IM0uTtu2s';
+const T = new URLSearchParams(location.search).get('t') || '';
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const m = (v, c) => `${Number(v || 0).toLocaleString('ar-EG-u-nu-latn', { maximumFractionDigits: 2 })} ${esc(c || 'ج.م')}`;
+const dt = (s) => { try { return new Date(s).toLocaleDateString('ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (_) { return ''; } };
+const wa = (p) => { let d = String(p || '').replace(/\D/g, ''); if (d.startsWith('0')) d = '20' + d.slice(1); return d; };
+const digits = (s) => String(s || '').replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g, '');
+const ERR = (e) => /duplicate/.test(e) ? 'اتبعت ردّك من شوية ✓ — لو عايز تغيّر كلّم المحل.' : /required/.test(e) ? 'اكتب رقم موبايلك صح (11 رقم).' : /busy/.test(e) ? 'فيه ضغط دلوقتي — جرّب كمان دقيقة.' : /closed/.test(e) ? 'الخدمة دي مش متاحة دلوقتي — كلّم المحل.' : 'مفيش اتصال — جرّب تاني.';
+let HOLD = 0;
+const show = (h) => (document.getElementById('app').innerHTML = h);
+async function load() {
+  if (!/^Q[A-Za-z0-9]{10,40}$/.test(T)) return show('<div class="card msg">🔗<b>الرابط مش كامل</b>افتح الرابط اللي وصلك تاني.</div>');
+  try {
+    const r = await fetch(SUPA + '/rest/v1/rpc/pos_track_get', { method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_token: T }) });
+    const j = await r.json(); const d = j && j.data; if (!d || d.kind !== 'cvq') return show('<div class="card msg">🔎<b>مش لاقيين العرض ده</b>ممكن لسه ما اترفعش — جرّب كمان دقيقة.</div>');
+    if (Date.now() - HOLD < 180000) return; render(d);
+  } catch (e) { if (!document.getElementById('qBox')) show('<div class="card msg">📶<b>مفيش اتصال</b>اتأكد من النت وجرّب تاني.</div>'); }
+}
+function render(d) {
+  const st = d.store || {}; const c = d.cur; document.getElementById('shop').textContent = st.name || ''; document.title = 'عرض سعر — ' + (st.name || '');
+  const expired = d.st === 'quote' && d.until && Date.parse(d.until) < Date.now() - 864e5;
+  let sent = null; try { sent = localStorage.getItem('cvq:' + T + ':' + d.total); } catch (_) {}
+  const head = d.st === 'quote' ? (expired ? ['⌛', 'العرض انتهى', 'كلّم المحل يجددهولك بنفس الأسعار أو بأسعار النهارده'] : ['📝', 'عرض سعر', `رقم ${esc(d.no)} — ${dt(d.date)}`]) : d.st === 'cancelled' ? ['⛔', 'العرض اتلغى', 'كلّم المحل لو محتاج عرض جديد'] : ['✅', 'العرض اتوافق عليه', d.st === 'installed' ? 'الكاميرات اتركبت — نورتنا 🌹' : 'المحل هيكلمك يحدد ميعاد التركيب'];
+  let h = `<div class="card"><div class="hd"><div class="ic">${head[0]}</div><div><b>${head[1]}</b><span>${head[2]}</span></div></div>${d.name ? `<div class="nt" style="margin-top:10px">أهلاً ${esc(d.name)} 👋${d.place ? ` — ${esc(d.place)}` : ''}</div>` : ''}</div>`;
+  h += `<div class="card"><b>الأجهزة والمستلزمات</b>${d.items.map((i) => `<div class="it"><span>${esc(i.n)}${i.q > 1 ? `<small> × ${i.q}</small>` : ''}</span><b>${m(i.q * i.p, c)}</b>${i.q > 1 ? `<small>${m(i.p, c)} للواحدة</small>` : ''}</div>`).join('')}${d.more ? `<div class="it"><small>+ ${d.more} بند كمان</small></div>` : ''}${d.labor ? `<div class="it"><span>التركيب والتشغيل</span><b>${m(d.labor, c)}</b></div>` : ''}${d.disc ? `<div class="it"><span>خصم</span><b style="color:var(--ok)">− ${m(d.disc, c)}</b></div>` : ''}
+    <div class="tot"><span>الإجمالي</span><b>${m(d.total, c)}</b></div>
+    <div class="tags">${d.cams ? `<span class="tg">📹 ${d.cams} كاميرا</span>` : ''}${d.wm ? `<span class="tg">🛡️ ضمان ${d.wm} شهر</span>` : ''}${d.mm ? `<span class="tg">🔧 صيانة دورية كل ${d.mm} شهر</span>` : ''}${d.until && d.st === 'quote' ? `<span class="tg w">⏳ ساري لحد ${dt(d.until)}</span>` : ''}</div>
+    ${d.notes ? `<div class="nt" style="margin-top:10px">📝 ${esc(d.notes)}</div>` : ''}</div>`;
+  if (d.st === 'quote' && d.ib && !expired) {
+    if (d.resp && !d.resp.ok) h += `<div class="card"><div class="done w">✏️ طلبت تعديل يوم ${dt(d.resp.at)} — المحل هيبعتلك العرض بعد التعديل</div></div>`;
+    else if (sent) h += `<div class="card"><div class="done">${sent === 'ok' ? '✅ موافقتك وصلت المحل — هيكلموك يحددوا ميعاد التركيب' : '📩 طلب التعديل وصل المحل — هيكلموك'}</div></div>`;
+    else h += `<div class="card" id="qBox"><b>رأيك في العرض؟</b>
+      <label class="fld" for="qPh">للتأكيد: رقم موبايلك اللي ادّيته للمحل</label><input class="inp" id="qPh" inputmode="tel" dir="ltr" autocomplete="tel" placeholder="01xxxxxxxxx">
+      <label class="fld" for="qNote">ملاحظة أو التعديل اللي عايزه (اختياري للموافقة)</label><textarea class="inp" id="qNote" maxlength="300" placeholder="مثلاً: عايز كاميرا زيادة على البوابة"></textarea>
+      <div class="act"><button class="btn ok" data-q="1">✅ موافق على العرض</button><button class="btn ch" data-q="0">✏️ عايز أعدّل</button></div><div class="note" id="qMsg"></div></div>`;
+  }
+  if (st.phone) h += `<div class="act"><a class="btn wa" href="https://wa.me/${wa(st.phone)}?text=${encodeURIComponent('أهلاً، بخصوص عرض سعر الكاميرات رقم ' + d.no)}">💬 واتساب</a><a class="btn" href="tel:${esc(st.phone)}">📞 اتصال</a></div>`;
+  h += `<div class="foot">${esc(st.name || '')}${st.address ? ' · ' + esc(st.address) : ''}<br>Markaz Ahllan POS · م/ أسامة حسن بدري</div>`;
+  show(h);
+  const box = document.getElementById('qBox'); if (!box) return;
+  box.addEventListener('input', () => (HOLD = Date.now())); box.addEventListener('focusin', () => (HOLD = Date.now()));
+  box.querySelectorAll('[data-q]').forEach((b) => (b.onclick = async () => {
+    const ok = b.dataset.q === '1'; const ph = digits(document.getElementById('qPh').value); const note = document.getElementById('qNote').value.trim(); const mm = document.getElementById('qMsg'); mm.className = 'note e';
+    if (ph.length < 10) return (mm.textContent = 'اكتب رقم موبايلك اللي ادّيته للمحل (11 رقم).');
+    if (!ok && note.length < 3) return (mm.textContent = 'اكتب التعديل اللي عايزه في كلمتين.');
+    box.querySelectorAll('button').forEach((x) => (x.disabled = true)); mm.className = 'note'; mm.textContent = '⏳ بنبعت…';
+    try {
+      const r = await fetch(SUPA + '/rest/v1/rpc/pos_book_add', { method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_token: d.ib, p_data: { kind: 'cvq', t: T, ok, note: note.slice(0, 300), phone: ph, name: String(d.name || '').trim().length >= 2 ? String(d.name).slice(0, 40) : 'عميل' } }) });
+      const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(String(j.message || j.error || r.status));
+      try { localStorage.setItem('cvq:' + T + ':' + d.total, ok ? 'ok' : 'ch'); } catch (_) {} HOLD = 0;
+      box.innerHTML = `<div class="done">${ok ? '✅ موافقتك وصلت المحل — هيكلموك يحددوا ميعاد التركيب' : '📩 طلب التعديل وصل المحل — هيكلموك'}<br><small style="font-weight:600">لو الرقم مش مطابق للمسجّل عند المحل الرد مش هيتقبل — كلّمهم</small></div>`;
+    } catch (e) { box.querySelectorAll('button').forEach((x) => (x.disabled = false)); mm.className = 'note e'; mm.textContent = ERR(e.message); }
+  }));
+}
+load(); setInterval(load, 90000);
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8B1A2B">
+<title>احجز معاد صيانة — مركز أهلاً</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#8B1A2B;--p2:#5E0F1C;--bg:#f7f1f2;--s:#fff;--t:#231719;--t2:#6e6062;--l:#ecdfe1;--ok:#16825D;--e:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#140b0d;--s:#1f1416;--t:#f5ecee;--t2:#b9a9ac;--l:#33242a}}
+*{box-sizing:border-box}body{margin:0;font-family:Cairo,Tahoma,Arial,sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.top{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:22px 18px 70px;text-align:center}.top small{opacity:.85}.top h1{margin:4px 0 0;font-size:22px}
+.wrap{max-width:560px;margin:-52px auto 30px;padding:0 14px}
+.card{background:var(--s);border-radius:20px;padding:18px;box-shadow:0 10px 30px rgba(60,10,20,.12);margin-bottom:12px}
+.msg{text-align:center;padding:40px 10px;color:var(--t2)}.msg b{display:block;font-size:20px;color:var(--t);margin:8px 0}
+h3{margin:0 0 6px;font-size:17px}.meta{color:var(--t2);font-size:14px;line-height:1.9}
+label{display:block;font-size:13px;color:var(--t2);font-weight:700;margin:12px 0 4px}
+input,textarea,select{width:100%;font:inherit;font-size:16px;padding:11px 12px;border-radius:12px;border:1.5px solid var(--l);background:var(--s);color:var(--t)}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--p)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{font:inherit;font-weight:700;font-size:14px;padding:9px 14px;border-radius:99px;border:1.5px solid var(--l);background:var(--s);color:var(--t);cursor:pointer}.chips button.on{background:var(--p);border-color:var(--p);color:#fff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:flex;width:100%;align-items:center;justify-content:center;gap:6px;padding:14px;border-radius:14px;font:inherit;font-size:16px;font-weight:800;border:0;background:var(--p);color:#fff;cursor:pointer;margin-top:16px;text-decoration:none}
+.btn.wa{background:#25D366}.btn:disabled{opacity:.6}
+.err{color:var(--e);font-size:13.5px;margin-top:8px;min-height:1em}
+.ok{text-align:center;padding:26px 8px}.ok .ic{font-size:50px}.ok b{display:block;font-size:20px;margin:6px 0}
+.foot{text-align:center;color:var(--t2);font-size:12px;margin-top:6px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="top"><small>احجز معاد صيانة</small><h1 id="shop">…</h1></div>
+<div class="wrap" id="app"><div class="card msg">⏳ جاري التحميل…</div></div>
+<script>
+const SUPA = 'https://inxlleknypxzegzgzmfl.supabase.co', ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlueGxsZWtueXB4emVnemd6bWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMzcwMzQsImV4cCI6MjEwNzkxMzAzNH0.JzWJf2nE5rhYGKQBtPRbf9RBA-0C7lIGw-IM0uTtu2s';
+const S = new URLSearchParams(location.search).get('s') || '';
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rpc = (fn, body) => fetch(SUPA + '/rest/v1/rpc/' + fn, { method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(async (r) => { const j = await r.json().catch(() => null); if (!r.ok) throw new Error((j && j.message) || 'HTTP ' + r.status); return j; });
+const $ = (s) => document.querySelector(s); const show = (h) => ($('#app').innerHTML = h);
+const wa = (p) => { let d = String(p || '').replace(/\D/g, ''); if (d.startsWith('0')) d = '20' + d.slice(1); return d; };
+const day = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const dname = (d) => d.toLocaleDateString('ar-EG-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' });
+let C = null; const F = { type: '', slot: '', date: '' };
+async function load() {
+  if (!/^[A-Za-z0-9]{8,40}$/.test(S)) return show('<div class="card msg">🔗<b>الرابط مش كامل</b>اطلب اللينك من المحل تاني.</div>');
+  try {
+    C = await rpc('pos_book_info', { p_token: S });
+    if (!C) return show('<div class="card msg">🔎<b>الصفحة مش موجودة</b></div>');
+    $('#shop').textContent = C.name || ''; document.title = 'احجز معاد صيانة — ' + (C.name || '');
+    if (C.on === false) return show(`<div class="card msg">🔒<b>الحجز أونلاين متوقف دلوقتي</b>${C.phone ? `<a class="btn wa" href="https://wa.me/${wa(C.phone)}">💬 كلّمنا واتساب</a>` : ''}</div>`);
+    render();
+  } catch (e) { show('<div class="card msg">📶<b>مفيش اتصال</b>اتأكد من النت وجرّب تاني.</div>'); }
+}
+function render() {
+  const types = (C.types && C.types.length ? C.types : ['موبايل', 'تابلت', 'لابتوب', 'أخرى']).slice(0, 8);
+  const off = (C.off || []).map(Number); const days = []; for (let i = 0; days.length < 7 && i < 14; i++) { const d = new Date(Date.now() + i * 864e5); if (!off.includes(d.getDay())) days.push(d); }
+  const slots = C.slots && C.slots.length ? C.slots : ['الصبح', 'الضهر', 'بالليل'];
+  show(`<div class="card"><h3>🔧 احجز معاد ومتستناش في المحل</h3><div class="meta">${C.hours ? `⏰ ${esc(C.hours)}<br>` : ''}${C.address ? `📍 ${esc(C.address)}<br>` : ''}${C.note ? esc(C.note) : 'اكتب بياناتك والعطل، والمحل هيأكد معاك المعاد على واتساب.'}</div></div>
+  <div class="card"><label>نوع الجهاز</label><div class="chips" id="ty">${types.map((t) => `<button type="button" data-v="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+  <div class="two"><div><label>الماركة</label><input id="br" placeholder="Samsung / Oppo…"></div><div><label>الموديل</label><input id="md" placeholder="A54…"></div></div>
+  <label>العطل</label><textarea id="is" rows="3" placeholder="مثلاً: الشاشة مكسورة / مش بيشحن / وقع في مياه"></textarea>
+  <label>اليوم</label><div class="chips" id="dy">${days.map((d, i) => `<button type="button" data-v="${day(d)}">${day(d) === day(new Date()) ? 'النهارده' : day(d) === day(new Date(Date.now() + 864e5)) ? 'بكرة' : dname(d)}</button>`).join('')}</div>
+  <label>الوقت</label><div class="chips" id="sl">${slots.map((s) => `<button type="button" data-v="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>
+  <div class="card"><label>الاسم</label><input id="nm" autocomplete="name"><label>رقم الموبايل (واتساب)</label><input id="ph" type="tel" inputmode="tel" dir="ltr" autocomplete="tel" placeholder="01xxxxxxxxx">
+  <button class="btn" id="go">📅 احجز المعاد</button><div class="err" id="er"></div></div>
+  <div class="foot">${esc(C.name || '')}${C.phone ? ' · <span dir="ltr">' + esc(C.phone) + '</span>' : ''}<br>Markaz Ahllan POS · م/ أسامة حسن بدري</div>`);
+  const pick = (id, k) => document.querySelectorAll(`#${id} button`).forEach((b) => (b.onclick = () => { F[k] = b.dataset.v; document.querySelectorAll(`#${id} button`).forEach((x) => x.classList.toggle('on', x === b)); }));
+  pick('ty', 'type'); pick('dy', 'date'); pick('sl', 'slot');
+  try { const s = JSON.parse(localStorage.getItem('mah:book') || '{}'); if (s.name) $('#nm').value = s.name; if (s.phone) $('#ph').value = s.phone; } catch (_) {}
+  $('#go').onclick = send;
+}
+async function send() {
+  const er = $('#er'); er.textContent = '';
+  const d = { name: $('#nm').value.trim(), phone: $('#ph').value.trim(), type: F.type, brand: $('#br').value.trim(), model: $('#md').value.trim(), issue: $('#is').value.trim(), date: F.date, slot: F.slot };
+  if (!d.type) return (er.textContent = 'اختار نوع الجهاز');
+  if (d.issue.length < 3) return (er.textContent = 'اكتب العطل باختصار');
+  if (!d.date || !d.slot) return (er.textContent = 'اختار اليوم والوقت');
+  if (d.name.length < 2) return (er.textContent = 'اكتب اسمك');
+  if (!/^01[0125][0-9]{8}$/.test(d.phone.replace(/\D/g, ''))) return (er.textContent = 'اكتب رقم موبايل صحيح (11 رقم)');
+  const b = $('#go'); b.disabled = true; b.textContent = '⏳ جاري الحجز…';
+  try {
+    await rpc('pos_book_add', { p_token: S, p_data: d }); try { localStorage.setItem('mah:book', JSON.stringify({ name: d.name, phone: d.phone })); } catch (_) {}
+    show(`<div class="card ok"><div class="ic">✅</div><b>اتحجز طلبك</b><div style="color:var(--t2);line-height:1.9">${esc(d.type)} ${esc(d.brand)} ${esc(d.model)}<br>${dname(new Date(d.date))} — ${esc(d.slot)}<br>المحل هيأكد معاك على واتساب.</div>${C.phone ? `<a class="btn wa" href="https://wa.me/${wa(C.phone)}">💬 كلّم المحل واتساب</a>` : ''}</div>`);
+  } catch (e) { b.disabled = false; b.textContent = '📅 احجز المعاد'; er.textContent = /duplicate/.test(e.message) ? 'طلبك وصل قبل كده — المحل هيكلمك.' : /busy/.test(e.message) ? 'فيه ضغط حجوزات دلوقتي — جرّب كمان شوية أو كلّم المحل.' : /closed/.test(e.message) ? 'الحجز أونلاين متوقف دلوقتي.' : 'مقدرناش نحجز — اتأكد من النت وجرّب تاني.'; }
+}
+load();
+</script>
+</body>
+</html>

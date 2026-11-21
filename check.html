@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#8B1A2B">
+<title>فحص الموبايل — مركز أهلاً</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#8B1A2B;--p2:#5E0F1C;--bg:#f7f1f2;--s:#fff;--t:#231719;--t2:#6e6062;--l:#ecdfe1;--ok:#16825D;--okb:#e7f5ee;--e:#b3261e;--eb:#fdeceb;--w:#B26A00;--wb:#fff4e0}
+@media (prefers-color-scheme:dark){:root{--bg:#140b0d;--s:#1f1416;--t:#f5ecee;--t2:#b9a9ac;--l:#33242a;--okb:#123326;--eb:#3a1614;--wb:#3a2a0e}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:Cairo,Tahoma,Arial,sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.top{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:20px 18px 64px;text-align:center}.top small{opacity:.85}.top h1{margin:2px 0 0;font-size:21px}
+.wrap{max-width:560px;margin:-48px auto 30px;padding:0 14px}
+.card{background:var(--s);border-radius:20px;padding:18px;box-shadow:0 10px 30px rgba(60,10,20,.12);margin-bottom:12px}
+.msg{text-align:center;padding:36px 10px;color:var(--t2)}.msg b{display:block;font-size:20px;color:var(--t);margin:8px 0}
+.prog{height:8px;background:var(--l);border-radius:99px;overflow:hidden;margin:4px 0 14px}.prog i{display:block;height:100%;background:var(--p);transition:width .3s}
+.step h2{margin:0 0 6px;font-size:19px}.step p{margin:0 0 12px;color:var(--t2);line-height:1.9}
+.btn{display:flex;width:100%;align-items:center;justify-content:center;gap:6px;padding:14px;border-radius:14px;font:inherit;font-size:16px;font-weight:800;border:0;background:var(--p);color:#fff;cursor:pointer;margin-top:10px}
+.btn.g{background:var(--s);color:var(--t);border:1.5px solid var(--l)}.btn.ok{background:var(--ok)}.btn.no{background:var(--e)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.three .btn{font-size:26px;padding:16px}
+video{width:100%;max-height:46vh;border-radius:14px;background:#000;object-fit:cover}
+.meter{height:18px;background:var(--l);border-radius:99px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ok),#7bd389);transition:width .08s}
+.res{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--l)}.res:last-child{border:0}.res b{flex:1}.res span{font-weight:800}.pass{color:var(--ok)}.fail{color:var(--e)}.skip{color:var(--t2)}
+.info{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}.info span{color:var(--t2)}
+#touch{position:fixed;inset:0;z-index:50;display:grid;background:#000;touch-action:none}
+#touch div{border:1px solid #222;background:#111}#touch div.on{background:#16825D;border-color:#16825D}
+#touchHint{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:51;background:rgba(0,0,0,.75);color:#fff;padding:6px 14px;border-radius:99px;font-size:13px;pointer-events:none;white-space:nowrap}
+#touchX{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:52;background:#b3261e;color:#fff;border:0;border-radius:99px;padding:8px 18px;font:inherit;font-weight:800}
+#colors{position:fixed;inset:0;z-index:50}#colors b{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;padding:6px 14px;border-radius:99px;font-size:13px}
+.foot{text-align:center;color:var(--t2);font-size:12px;margin-top:6px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="top"><small>فحص الموبايل قبل البيع</small><h1 id="shop">…</h1></div>
+<div class="wrap" id="app"><div class="card msg">⏳ جاري التحميل…</div></div>
+<script>
+const SUPA = 'https://inxlleknypxzegzgzmfl.supabase.co', ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlueGxsZWtueXB4emVnemd6bWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMzcwMzQsImV4cCI6MjEwNzkxMzAzNH0.JzWJf2nE5rhYGKQBtPRbf9RBA-0C7lIGw-IM0uTtu2s';
+const T = new URLSearchParams(location.search).get('t') || '';
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rpc = (fn, body) => fetch(SUPA + '/rest/v1/rpc/' + fn, { method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(async (r) => { const j = await r.json().catch(() => null); if (!r.ok) throw new Error((j && j.message) || 'HTTP ' + r.status); return j; });
+const $ = (s) => document.querySelector(s); const show = (h) => ($('#app').innerHTML = h);
+const R = {}; let streams = [];
+const stopAll = () => { streams.forEach((s) => s.getTracks().forEach((t) => t.stop())); streams = []; };
+const NAMES = { screen: 'الشاشة واللمس', pixels: 'ألوان الشاشة', speaker: 'السماعة', mic: 'المايك', camBack: 'الكاميرا الخلفية', camFront: 'الكاميرا الأمامية', vibrate: 'الهزاز', charge: 'الشحن', motion: 'الحساسات' };
+
+function info() {
+  const ua = navigator.userAgent; const m = ua.match(/Android [\d.]+; ([^;)]+?)(?: Build|\))/); const ios = /iPhone|iPad/.test(ua);
+  return { model: m ? m[1].trim() : ios ? 'iPhone' : '', os: (ua.match(/Android [\d.]+/) || ua.match(/OS [\d_]+/) || [''])[0].replace(/_/g, '.'), screen: `${screen.width}×${screen.height} @${devicePixelRatio}x`, ram: navigator.deviceMemory ? navigator.deviceMemory + 'GB+' : '', cores: navigator.hardwareConcurrency || '', net: (navigator.connection && navigator.connection.effectiveType) || '' };
+}
+
+const STEPS = [
+  { k: 'screen', run: stepTouch },
+  { k: 'pixels', run: stepColors },
+  { k: 'speaker', run: stepSpeaker },
+  { k: 'mic', run: stepMic },
+  { k: 'camBack', run: (n) => stepCam(n, 'environment', 'camBack', 'الكاميرا الخلفية') },
+  { k: 'camFront', run: (n) => stepCam(n, 'user', 'camFront', 'الكاميرا الأمامية') },
+  { k: 'vibrate', run: stepVibrate },
+  { k: 'charge', run: stepCharge },
+  { k: 'motion', run: stepMotion }
+];
+let idx = 0;
+function frame(title, body, n) { return `<div class="card step"><div style="display:flex;justify-content:space-between;color:var(--t2);font-size:13px"><span>خطوة ${n + 1} من ${STEPS.length}</span><span>${Object.keys(R).length} اتفحص</span></div><div class="prog"><i style="width:${(n / STEPS.length) * 100}%"></i></div><h2>${title}</h2>${body}</div>`; }
+function next() { stopAll(); idx++; if (idx >= STEPS.length) return finish(); STEPS[idx].run(idx); }
+function verdict(k, v) { R[k] = v; next(); }
+const yesNo = (k, q) => `<p style="margin-top:12px"><b>${q}</b></p><div class="two"><button class="btn ok" onclick="verdict('${k}',true)">✓ أيوه</button><button class="btn no" onclick="verdict('${k}',false)">✗ لأ</button></div><button class="btn g" onclick="verdict('${k}',null)">تخطّي</button>`;
+
+function stepTouch(n) {
+  show(frame('الشاشة واللمس', `<p>هتظهر شبكة مربعات. امسح بصباعك على الشاشة كلها لحد ما كل المربعات تخضرّ — لو فيه حتة مش بتستجيب يبقى اللمس فيه مشكلة.</p><button class="btn" id="go">ابدأ</button><button class="btn g" onclick="verdict('screen',null)">تخطّي</button>`, n));
+  $('#go').onclick = () => {
+    const cols = 6, rows = Math.max(8, Math.round((innerHeight / innerWidth) * 6)); const d = document.createElement('div'); d.id = 'touch'; d.style.gridTemplateColumns = `repeat(${cols},1fr)`; d.style.gridTemplateRows = `repeat(${rows},1fr)`;
+    for (let i = 0; i < cols * rows; i++) d.appendChild(document.createElement('div'));
+    const hint = document.createElement('div'); hint.id = 'touchHint'; const x = document.createElement('button'); x.id = 'touchX'; x.textContent = 'اللمس فيه مشكلة';
+    document.body.append(d, hint, x); let left = cols * rows; hint.textContent = `فاضل ${left} مربع`;
+    const hit = (e) => { e.preventDefault(); for (const t of e.touches || [e]) { const el = document.elementsFromPoint(t.clientX, t.clientY).find((x) => x.parentNode === d); if (el && !el.classList.contains('on')) { el.classList.add('on'); left--; hint.textContent = left ? `فاضل ${left} مربع` : 'تمام ✓'; if (!left) { setTimeout(() => { d.remove(); hint.remove(); x.remove(); verdict('screen', true); }, 350); } } } };
+    d.addEventListener('touchstart', hit, { passive: false }); d.addEventListener('touchmove', hit, { passive: false }); d.addEventListener('pointerdown', hit); d.addEventListener('pointermove', (e) => e.buttons && hit(e));
+    x.onclick = () => { d.remove(); hint.remove(); x.remove(); verdict('screen', false); };
+    try { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(() => {}); } catch (_) {}
+  };
+}
+function stepColors(n) {
+  show(frame('ألوان الشاشة (نقط ميتة / تبقيع)', `<p>هتظهر ألوان على الشاشة كلها. بُص كويس: فيه نقط سودا أو ملونة ثابتة، أو بقع، أو خطوط؟ اضغط على الشاشة عشان تغيّر اللون.</p><button class="btn" id="go">ابدأ</button><button class="btn g" onclick="verdict('pixels',null)">تخطّي</button>`, n));
+  $('#go').onclick = () => {
+    const cs = ['#ffffff', '#000000', '#ff0000', '#00ff00', '#0000ff', '#808080']; let i = 0; const d = document.createElement('div'); d.id = 'colors'; d.style.background = cs[0]; d.innerHTML = '<b>اضغط للون اللي بعده</b>'; document.body.appendChild(d);
+    d.onclick = () => { i++; if (i < cs.length) { d.style.background = cs[i]; return; } d.remove(); try { document.exitFullscreen && document.fullscreenElement && document.exitFullscreen(); } catch (_) {} show(frame('ألوان الشاشة', yesNo('pixels', 'الشاشة كانت سليمة؟ (مفيش نقط ولا بقع ولا خطوط)'), n)); };
+  };
+}
+function stepSpeaker(n) {
+  let count = 1 + Math.floor(Math.random() * 3);
+  show(frame('السماعة', `<p>علّي الصوت واضغط «شغّل» — هتسمع كام صفّارة؟</p><button class="btn" id="play">🔊 شغّل</button><div class="three" style="margin-top:10px"><button class="btn g" data-n="1">1</button><button class="btn g" data-n="2">2</button><button class="btn g" data-n="3">3</button></div><button class="btn g" onclick="verdict('speaker',null)">تخطّي</button>`, n));
+  let played = false;
+  $('#play').onclick = () => { played = true; try { const c = new (window.AudioContext || window.webkitAudioContext)(); for (let i = 0; i < count; i++) { const o = c.createOscillator(), g = c.createGain(); const t = c.currentTime + i * 0.55; o.frequency.value = 880; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.6, t + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.4); } } catch (_) {} };
+  document.querySelectorAll('[data-n]').forEach((b) => (b.onclick = () => { if (!played) return alertBox('اضغط «شغّل» الأول'); verdict('speaker', Number(b.dataset.n) === count); }));
+}
+function alertBox(t) { const d = document.createElement('div'); d.textContent = t; d.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#231719;color:#fff;padding:10px 16px;border-radius:12px;z-index:99'; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
+async function stepMic(n) {
+  show(frame('المايك', `<p>اسمح باستخدام المايك، وبعدين اتكلم أو صقّف قريب من الموبايل — الشريط لازم يتحرك ويوصل للآخر.</p><div class="meter"><i id="lv"></i></div><p id="mst" style="margin-top:8px">…</p><button class="btn g" onclick="verdict('mic',false)">مش بيتحرك</button><button class="btn g" onclick="verdict('mic',null)">تخطّي</button>`, n));
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({ audio: true }); streams.push(s); const c = new (window.AudioContext || window.webkitAudioContext)(); const an = c.createAnalyser(); an.fftSize = 512; c.createMediaStreamSource(s).connect(an); const a = new Uint8Array(an.fftSize); let peak = 0, hits = 0;
+    $('#mst').textContent = 'اتكلم دلوقتي 🎤';
+    const loop = () => { if (idx !== n) return; an.getByteTimeDomainData(a); let m = 0; for (const v of a) m = Math.max(m, Math.abs(v - 128)); const lv = Math.min(100, m * 1.6); peak = Math.max(peak, lv); const el = $('#lv'); if (el) el.style.width = lv + '%'; if (lv > 55) hits++; if (hits > 6) { $('#mst').textContent = 'المايك شغال ✓'; return setTimeout(() => verdict('mic', true), 500); } requestAnimationFrame(loop); };
+    loop();
+  } catch (e) { $('#mst').textContent = 'مقدرناش نفتح المايك — اسمح بالإذن من إعدادات المتصفح أو اضغط تخطّي.'; }
+}
+async function stepCam(n, facing, k, title) {
+  show(frame(title, `<p>اسمح بالكاميرا. لازم تشوف صورة واضحة ومش مهزوزة.</p><video id="v" autoplay playsinline muted></video><p id="cst"></p>${yesNo(k, 'الصورة واضحة؟')}`, n));
+  try { const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: facing } } }).catch(() => navigator.mediaDevices.getUserMedia({ video: { facingMode: facing } })); streams.push(s); $('#v').srcObject = s; }
+  catch (e) { $('#cst').innerHTML = '<b class="fail">مقدرناش نفتح الكاميرا</b> — اسمح بالإذن أو اختار «لأ».'; }
+}
+function stepVibrate(n) {
+  if (!navigator.vibrate) { R.vibrate = null; return next(); }
+  show(frame('الهزاز', `<p>اضغط واحس بالموبايل.</p><button class="btn" onclick="navigator.vibrate([400,200,400])">📳 هزّ</button>${yesNo('vibrate', 'الموبايل اهتز؟')}`, n));
+}
+async function stepCharge(n) {
+  if (!navigator.getBattery) { show(frame('الشحن', `<p>وصّل الشاحن وشوف علامة الشحن ظهرت فوق ولا لأ.</p>${yesNo('charge', 'الشحن شغال؟')}`, n)); return; }
+  const b = await navigator.getBattery(); R._bat = Math.round(b.level * 100);
+  const draw = () => show(frame('الشحن', `<p>البطارية دلوقتي <b>${Math.round(b.level * 100)}%</b>. ${b.charging ? '<b class="pass">الشاحن متوصّل والشحن شغال ✓</b>' : 'وصّل الشاحن دلوقتي — هنعرف لوحدنا لو الشحن شغال.'}</p>${b.charging ? '<button class="btn ok" onclick="verdict(\'charge\',true)">التالي</button>' : '<button class="btn g" onclick="verdict(\'charge\',false)">وصّلته ومش بيشحن</button><button class="btn g" onclick="verdict(\'charge\',null)">تخطّي</button>'}`, n));
+  b.onchargingchange = () => { if (idx === n) { draw(); if (b.charging) setTimeout(() => idx === n && verdict('charge', true), 900); } }; draw();
+}
+function stepMotion(n) {
+  show(frame('الحساسات (الدوران والحركة)', `<p>حرّك الموبايل في إيدك شوية.</p><p id="mo">…</p><button class="btn" id="perm">ابدأ</button><button class="btn g" onclick="verdict('motion',null)">تخطّي</button>`, n));
+  $('#perm').onclick = async () => {
+    try { if (typeof DeviceMotionEvent !== 'undefined' && DeviceMotionEvent.requestPermission) await DeviceMotionEvent.requestPermission(); } catch (_) {}
+    let got = 0; const h = (e) => { const a = e.accelerationIncludingGravity || e.acceleration; if (a && (Math.abs(a.x || 0) + Math.abs(a.y || 0)) > 1) got++; if (got > 15) { window.removeEventListener('devicemotion', h); $('#mo').innerHTML = '<b class="pass">الحساسات شغالة ✓</b>'; setTimeout(() => idx === n && verdict('motion', true), 600); } };
+    window.addEventListener('devicemotion', h); $('#mo').textContent = 'حرّك الموبايل…'; setTimeout(() => { if (idx === n && got <= 15) { window.removeEventListener('devicemotion', h); $('#mo').innerHTML = '<b class="fail">مفيش قراءة من الحساسات</b>'; } }, 8000);
+  };
+}
+async function finish() {
+  const inf = info(); const out = { v: 1, at: new Date().toISOString(), info: inf, battery: R._bat ?? null };
+  Object.keys(NAMES).forEach((k) => (out[k] = R[k] === undefined ? null : R[k]));
+  const rows = Object.entries(NAMES).map(([k, n]) => `<div class="res"><b>${n}</b><span class="${out[k] === true ? 'pass' : out[k] === false ? 'fail' : 'skip'}">${out[k] === true ? '✓ سليم' : out[k] === false ? '✗ فيه مشكلة' : '— اتخطّى'}</span></div>`).join('');
+  show(`<div class="card"><h2 style="margin:0 0 8px">نتيجة الفحص</h2>${rows}</div><div class="card"><div class="info">${inf.model ? `<span>الموديل</span><b>${esc(inf.model)}</b>` : ''}<span>النظام</span><b>${esc(inf.os)}</b><span>الشاشة</span><b dir="ltr">${esc(inf.screen)}</b>${inf.ram ? `<span>الرامات</span><b>${esc(inf.ram)}</b>` : ''}${out.battery != null ? `<span>البطارية</span><b>${out.battery}%</b>` : ''}</div></div><div class="card msg" id="snd">⏳ بنبعت النتيجة للمحل…</div>`);
+  try { await rpc('pos_devcheck_put', { p_token: T, p_result: out }); $('#snd').innerHTML = '✅<b>النتيجة وصلت للمحل</b>تقدر تقفل الصفحة دي.'; }
+  catch (e) { $('#snd').innerHTML = `⚠️<b>مقدرناش نبعت النتيجة</b>${/already/.test(e.message) ? 'الفحص ده اتبعت قبل كده.' : 'اتأكد من النت وجرّب تاني.'}<button class="btn" onclick="finish()">إعادة الإرسال</button>`; }
+}
+async function load() {
+  if (!/^[A-Za-z0-9]{12,40}$/.test(T)) return show('<div class="card msg">🔗<b>الرابط مش كامل</b>اطلب اللينك من المحل تاني.</div>');
+  try {
+    const j = await rpc('pos_devcheck_get', { p_token: T });
+    if (!j) return show('<div class="card msg">⌛<b>اللينك انتهى</b>اطلب لينك جديد من المحل.</div>');
+    $('#shop').textContent = j.store || ''; if (j.done) return show('<div class="card msg">✅<b>الفحص ده اتعمل قبل كده</b>النتيجة عند المحل.</div>');
+    show(`<div class="card"><h2 style="margin:0 0 6px">فحص الموبايل في دقيقتين 📱</h2><p style="color:var(--t2);line-height:1.9;margin:0">الصفحة دي بتفحص الشاشة واللمس، والسماعة والمايك، والكاميرات، والهزاز والشحن والحساسات — والنتيجة بتوصل للمحل على طول.<br>اتفتحت على <b>الموبايل اللي هيتباع</b>؟ لو أيوه ابدأ.</p><button class="btn" onclick="idx=0;STEPS[0].run(0)">ابدأ الفحص</button></div><div class="foot">${esc(j.store || '')}<br>Markaz Ahllan POS · م/ أسامة حسن بدري</div>`);
+  } catch (e) { show('<div class="card msg">📶<b>مفيش اتصال</b>اتأكد من النت وجرّب تاني.</div>'); }
+}
+load();
+</script>
+</body>
+</html>
